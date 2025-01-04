@@ -11,20 +11,20 @@ import 'package:plant_match_v2/core/widgets/app_bar/app_bar_template.dart';
 import 'package:plant_match_v2/core/widgets/form/decoration_input.dart';
 import 'package:plant_match_v2/presentation/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/presentation/profil/presentation/cubit/profil_cubit.dart';
-import 'package:plant_match_v2/presentation/profil/presentation/profil_personal_information/widget/profil_personal_information_wizard/profil_personal_information_wizard_item.dart';
+import 'package:plant_match_v2/presentation/profil/presentation/profil_personal_information/presentation/profil_personal_detail_update/profil_personal_detail_update_item.dart';
 
-class ProfilPersonalInformationWizard extends StatefulWidget {
-  const ProfilPersonalInformationWizard({super.key, required this.profilUser});
+class ProfilPersonalDetailUpdatePage extends StatefulWidget {
+  const ProfilPersonalDetailUpdatePage({super.key, required this.profilUser});
 
   final ProfilUser profilUser;
 
   @override
-  State<ProfilPersonalInformationWizard> createState() =>
-      _ProfilPersonalInformationWizardState();
+  State<ProfilPersonalDetailUpdatePage> createState() =>
+      _ProfilPersonalDetailUpdatePageState();
 }
 
-class _ProfilPersonalInformationWizardState
-    extends State<ProfilPersonalInformationWizard> {
+class _ProfilPersonalDetailUpdatePageState
+    extends State<ProfilPersonalDetailUpdatePage> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
   final int _totalPages = 4;
@@ -170,7 +170,7 @@ class _ProfilPersonalInformationWizardState
                 });
               },
               children: [
-                ProfilPersonalInformationWizardItem(
+                ProfilPersonalDetailUpdateItem(
                   formKey: _formKeyPseudo,
                   title: 'Pseudo d\'affichage',
                   description:
@@ -197,7 +197,7 @@ class _ProfilPersonalInformationWizardState
                     controller: _pseudoController,
                   ),
                 ),
-                ProfilPersonalInformationWizardItem(
+                ProfilPersonalDetailUpdateItem(
                   formKey: _formKeyBirthdayDate,
                   title: 'Date d\'anniversaire',
                   description:
@@ -242,7 +242,7 @@ class _ProfilPersonalInformationWizardState
                     controller: _birthdayDateController,
                   ),
                 ),
-                ProfilPersonalInformationWizardItem(
+                ProfilPersonalDetailUpdateItem(
                   title: 'Bio',
                   description: 'Rédigez une courte description de vous.',
                   formKey: _formKeyBio,
@@ -271,7 +271,7 @@ class _ProfilPersonalInformationWizardState
                     controller: _bioController,
                   ),
                 ),
-                ProfilPersonalInformationWizardItem(
+                ProfilPersonalDetailUpdateItem(
                   title: 'Localisation',
                   description:
                       'Votre position sera utilisée pour vous proposer des profils proches de chez vous.',

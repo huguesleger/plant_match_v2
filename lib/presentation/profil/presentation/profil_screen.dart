@@ -5,9 +5,9 @@ import 'package:plant_match_v2/presentation/profil/data/firebase_profil_repo.dar
 import 'package:plant_match_v2/presentation/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/presentation/profil/presentation/cubit/profil_cubit.dart';
 import 'package:plant_match_v2/presentation/profil/presentation/cubit/profil_state.dart';
+import 'package:plant_match_v2/presentation/profil/presentation/profil_card/profil_card.dart';
+import 'package:plant_match_v2/presentation/profil/presentation/profil_navigation/profil_navigation.dart';
 import 'package:plant_match_v2/presentation/profil/presentation/widget/profil_header.dart';
-import 'package:plant_match_v2/presentation/profil/presentation/widget/profil_list_card.dart';
-import 'package:plant_match_v2/presentation/profil/presentation/widget/profil_list_item_category/profil_list_item_category.dart';
 import 'package:plant_match_v2/presentation/storage/data/firebase_storage_repository.dart';
 
 class ProfilScreen extends StatelessWidget {
@@ -47,7 +47,7 @@ class ProfilScreen extends StatelessWidget {
                       height: 216,
                       child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: 20),
-                        child: ProfilListCard(),
+                        child: ProfilCard(),
                       ),
                     ),
                     const SizedBox(
@@ -61,7 +61,7 @@ class ProfilScreen extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
                               vertical: 30, horizontal: 20),
-                          child: ProfilListItemCategory(profilUser: profilUser),
+                          child: ProfilNavigation(profilUser: profilUser),
                         ),
                       ),
                     ),

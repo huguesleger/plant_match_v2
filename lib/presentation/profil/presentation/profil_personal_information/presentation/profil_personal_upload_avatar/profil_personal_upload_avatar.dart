@@ -6,7 +6,7 @@ import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/presentation/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/presentation/profil/presentation/cubit/profil_cubit.dart';
 import 'package:plant_match_v2/presentation/profil/presentation/cubit/profil_state.dart';
-import 'package:plant_match_v2/presentation/profil/presentation/profil_personal_information/widget/profil_personal_upload_avatar/show_image_source_bottom_sheet.dart';
+import 'package:plant_match_v2/presentation/profil/presentation/profil_personal_information/presentation/profil_personal_upload_avatar/show_image_source_bottom_sheet.dart';
 
 class ProfilPersonalUploadAvatar extends StatefulWidget {
   const ProfilPersonalUploadAvatar({super.key, required this.profilUser});

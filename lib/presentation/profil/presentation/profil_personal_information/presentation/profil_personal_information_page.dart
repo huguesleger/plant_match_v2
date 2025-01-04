@@ -8,13 +8,13 @@ import 'package:plant_match_v2/presentation/profil/data/firebase_profil_repo.dar
 import 'package:plant_match_v2/presentation/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/presentation/profil/presentation/cubit/profil_cubit.dart';
 import 'package:plant_match_v2/presentation/profil/presentation/cubit/profil_state.dart';
-import 'package:plant_match_v2/presentation/profil/presentation/profil_personal_information/widget/profil_personal_information_list_item_category/profil_personal_information_list_item_category.dart';
-import 'package:plant_match_v2/presentation/profil/presentation/profil_personal_information/widget/profil_personal_name_and_email.dart';
-import 'package:plant_match_v2/presentation/profil/presentation/profil_personal_information/widget/profil_personal_upload_avatar/profil_personal_upload_avatar.dart';
+import 'package:plant_match_v2/presentation/profil/presentation/profil_personal_information/presentation/profil_personal_detail/profil_personal_detail_page.dart';
+import 'package:plant_match_v2/presentation/profil/presentation/profil_personal_information/presentation/profil_personal_name_and_email/profil_personal_name_and_email.dart';
+import 'package:plant_match_v2/presentation/profil/presentation/profil_personal_information/presentation/profil_personal_upload_avatar/profil_personal_upload_avatar.dart';
 import 'package:plant_match_v2/presentation/storage/data/firebase_storage_repository.dart';
 
-class ProfilPersonalInformation extends StatelessWidget {
-  ProfilPersonalInformation(
+class ProfilPersonalInformationPage extends StatelessWidget {
+  ProfilPersonalInformationPage(
       {super.key, required this.profilUser, required this.userId});
 
   final String userId;
@@ -85,9 +85,8 @@ class ProfilPersonalInformation extends StatelessWidget {
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
                                       vertical: 20, horizontal: 20),
-                                  child:
-                                      ProfilPersonalInformationListItemCategory(
-                                          profilUser: state.profilUser),
+                                  child: ProfilPersonalDetailPage(
+                                      profilUser: state.profilUser),
                                 ),
                               ),
                             ),

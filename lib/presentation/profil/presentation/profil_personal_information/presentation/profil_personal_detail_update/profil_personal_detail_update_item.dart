@@ -5,8 +5,8 @@ import 'package:plant_match_v2/core/widgets/buttons/button_outlined_rounded.dart
 import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
 
-class ProfilPersonalInformationWizardItem extends StatelessWidget {
-  const ProfilPersonalInformationWizardItem({
+class ProfilPersonalDetailUpdateItem extends StatelessWidget {
+  const ProfilPersonalDetailUpdateItem({
     super.key,
     required this.title,
     required this.description,

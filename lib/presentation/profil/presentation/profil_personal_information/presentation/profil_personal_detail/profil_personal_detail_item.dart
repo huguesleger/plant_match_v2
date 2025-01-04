@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 
-class ProfilPersonalInformationListItem extends StatelessWidget {
-  const ProfilPersonalInformationListItem({
+class ProfilPersonalDetailItem extends StatelessWidget {
+  const ProfilPersonalDetailItem({
     super.key,
     required this.title,
     required this.subtitle,
