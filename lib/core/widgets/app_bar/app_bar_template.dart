@@ -11,8 +11,10 @@ class AppBarTemplate extends StatelessWidget implements PreferredSizeWidget {
     required this.backgroundColor,
     this.shadowColor,
     required this.surfaceTintColor,
-    required this.styleIconButton,
+    this.styleIconButton,
     required this.onPressed,
+    this.actions,
+    this.leading = true,
   });
 
   final double? leadingWith;
@@ -21,8 +23,10 @@ class AppBarTemplate extends StatelessWidget implements PreferredSizeWidget {
   final Color backgroundColor;
   final Color? shadowColor;
   final Color surfaceTintColor;
-  final ButtonStyle styleIconButton;
+  final ButtonStyle? styleIconButton;
   final VoidCallback onPressed;
+  final List<Widget>? actions;
+  final bool? leading;
 
   @override
   Size get preferredSize => const Size.fromHeight(56);
@@ -49,14 +53,18 @@ class AppBarTemplate extends StatelessWidget implements PreferredSizeWidget {
       scrolledUnderElevation: 2,
       shadowColor: shadowColor,
       surfaceTintColor: surfaceTintColor,
-      leading: IconButton(
+      leading: leading == true
+          ? IconButton(
 /*        onPressed: () {
           Navigator.pop(context);
         },*/
-        onPressed: onPressed,
-        style: styleIconButton,
-        icon: const Icon(LucideIcons.chevron_left, color: AppColors.greyDark),
-      ),
+              onPressed: onPressed,
+              style: styleIconButton,
+              icon: const Icon(LucideIcons.chevron_left,
+                  color: AppColors.greyDark),
+            )
+          : const SizedBox.shrink(),
+      actions: actions,
     );
   }
 }

@@ -114,4 +114,32 @@ class ProfilCubit extends Cubit<ProfilState> {
       emit(ProfilError('Erreur lors de l\'enregistrement du profil : $e'));
     }
   }
+
+  Future<void> clearField({
+    required String uid,
+    required String fieldName,
+  }) async {
+    emit(ProfilLoading());
+    try {
+      final currentUser = await profilRepository.getProfilUser(uid);
+
+      if (currentUser == null) {
+        emit(ProfilError('Profil introuvable'));
+        return;
+      }
+
+      final updatedProfilUser = currentUser.copyWith(
+        newUserName: fieldName == 'userName' ? '' : null,
+        newBio: fieldName == 'bio' ? '' : null,
+        newLocalisation: fieldName == 'localisation' ? '' : null,
+        newCountry: fieldName == 'country' ? '' : null,
+      );
+
+      await profilRepository.updateProfilUser(updatedProfilUser);
+
+      emit(ProfilLoaded(updatedProfilUser));
+    } catch (e) {
+      emit(ProfilError('Erreur lors de la réinitialisation du champ : $e'));
+    }
+  }
 }

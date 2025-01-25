@@ -6,7 +6,7 @@ class ProfilUser extends UserAuth {
   final String userName;
   final String localisation;
   final String country;
-  final DateTime birthdayDate;
+  final DateTime? birthdayDate;
 
   ProfilUser({
     required super.uid,
@@ -17,7 +17,7 @@ class ProfilUser extends UserAuth {
     required this.userName,
     required this.localisation,
     required this.country,
-    required this.birthdayDate,
+    this.birthdayDate,
   });
 
   ProfilUser copyWith({
@@ -52,7 +52,7 @@ class ProfilUser extends UserAuth {
       'userName': userName,
       'localisation': localisation,
       'country': country,
-      'birthdayDate': birthdayDate.toIso8601String(),
+      'birthdayDate': birthdayDate?.toIso8601String(),
     };
   }
 
@@ -66,8 +66,9 @@ class ProfilUser extends UserAuth {
       userName: json['userName'] ?? '',
       localisation: json['localisation'] ?? '',
       country: json['country'] ?? '',
-      birthdayDate: DateTime.parse(
-          json['birthdayDate'] ?? DateTime.now().toIso8601String()),
+      birthdayDate: json['birthdayDate'] != null
+          ? DateTime.parse(json['birthdayDate'])
+          : null,
     );
   }
 }

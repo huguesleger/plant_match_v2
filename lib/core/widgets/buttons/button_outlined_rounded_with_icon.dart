@@ -25,6 +25,7 @@ class ButtonOutlinedRoundedWithIcon extends StatelessWidget {
     return OutlinedButton.icon(
       onPressed: onPressed,
       style: OutlinedButton.styleFrom(
+        side: BorderSide(color: borderColor),
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(50),

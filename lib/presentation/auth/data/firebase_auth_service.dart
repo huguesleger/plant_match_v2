@@ -11,21 +11,6 @@ class FirebaseAuthService implements AuthRepository {
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
-/*  @override
-  Future<UserAuth?> getCurrentUser() async {
-    final firebaseUser = _firebaseAuth.currentUser;
-
-    if (firebaseUser != null) {
-      return UserAuth(
-        email: firebaseUser.email!,
-        uid: firebaseUser.uid,
-        fullName: '',
-      );
-    } else {
-      return null;
-    }
-  }*/
-
   @override
   Future<UserAuth?> getCurrentUser() async {
     final firebaseUser = _firebaseAuth.currentUser;

@@ -46,7 +46,7 @@ class _ProfilPersonalUploadAvatarState
           avatarUrl = state.profilUser.profilImg;
         }
 
-        final profilImage = avatarUrl.isNotEmpty
+        final profilImage = avatarUrl.isNotEmpty && avatarUrl.contains('http')
             ? NetworkImage(avatarUrl)
             : const AssetImage('assets/images/avatar.png');
 
