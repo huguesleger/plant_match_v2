@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/core/theme/app_typo.dart';
 
 class ProfilLevelProgressIndicator extends StatelessWidget {
   const ProfilLevelProgressIndicator({
@@ -12,32 +14,71 @@ class ProfilLevelProgressIndicator extends StatelessWidget {
   final int maxPoints;
   final int level;
 
+  double calculateLevelProgression(int currentPoints, int maxPoints) {
+    if (maxPoints == 0) {
+      return 0.0;
+    }
+    return currentPoints / maxPoints;
+  }
+
   @override
   Widget build(BuildContext context) {
-    double progress = currentPoints / maxPoints;
+    double progress = calculateLevelProgression(currentPoints, maxPoints);
 
-    return Container(
-      color: Colors.grey[100],
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Niveau $level',
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          LinearProgressIndicator(
-            value: progress,
-            backgroundColor: Colors.grey[300],
-            color: Colors.green,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            '$currentPoints / $maxPoints points',
-            style: TextStyle(fontSize: 16, color: Colors.grey[700]),
-          ),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            RichText(
+              text: TextSpan(
+                text: 'Niveau ',
+                style: const TextStyle(
+                  fontSize: AppTypo.textS,
+                  color: AppColors.greenMedium,
+                ),
+                children: [
+                  TextSpan(
+                    text: '$level',
+                    style: const TextStyle(
+                      fontSize: AppTypo.textS,
+                      color: AppColors.greenMedium,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            RichText(
+              text: TextSpan(
+                text: 'Niveau ',
+                style: const TextStyle(
+                  fontSize: AppTypo.textS,
+                  color: AppColors.greenMedium,
+                ),
+                children: [
+                  TextSpan(
+                    text: '${level + 1}',
+                    style: const TextStyle(
+                      fontSize: AppTypo.textS,
+                      color: AppColors.greenMedium,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        LinearProgressIndicator(
+          value: progress,
+          backgroundColor: AppColors.blueGreen.withOpacity(0.3),
+          color: AppColors.greenMedium,
+          minHeight: 2,
+        ),
+      ],
     );
   }
 }

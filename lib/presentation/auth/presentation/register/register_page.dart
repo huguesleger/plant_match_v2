@@ -5,7 +5,6 @@ import 'package:plant_match_v2/core/widgets/template/template_page.dart';
 import 'package:plant_match_v2/presentation/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/presentation/auth/presentation/cubit/auth_state.dart';
 import 'package:plant_match_v2/presentation/auth/presentation/register/register_screen.dart';
-import 'package:plant_match_v2/presentation/home/presentation/home_page.dart';
 
 class RegisterPage extends StatelessWidget {
   const RegisterPage({super.key});
