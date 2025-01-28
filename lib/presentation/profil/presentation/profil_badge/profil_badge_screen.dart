@@ -5,6 +5,7 @@ import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
 import 'package:plant_match_v2/presentation/profil/presentation/profil_badge/presentation/profil_badge_card/profil_badge_card.dart';
 import 'package:plant_match_v2/presentation/profil/presentation/profil_badge/presentation/profil_badge_header/profil_badge_card_header.dart';
 import 'package:plant_match_v2/presentation/profil/presentation/profil_badge/presentation/profil_badge_level_card/profil_badge_level_card.dart';
+import 'package:plant_match_v2/presentation/profil/presentation/profil_badge/presentation/profil_badge_level_items/profil_badge_level_items.dart';
 import 'package:plant_match_v2/presentation/user_points/domain/entities/user_points.dart';
 import 'package:plant_match_v2/presentation/user_points/presentation/utils/user_points_utils.dart';
 
@@ -27,35 +28,57 @@ class ProfilBadgeScreen extends StatelessWidget {
           color: AppColors.greenLight,
         ),
         Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
               padding: const EdgeInsets.only(top: 30, left: 20, right: 20),
               child: ProfilBadgeCardHeader(
                   currentPoints: currentPoints, level: level),
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-              child: ProfilBadgeCard(),
-            ),
-            Container(
-              color: AppColors.greyUltraLight,
-              width: double.infinity,
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+            Expanded(
+              child: SingleChildScrollView(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.max,
                   children: [
-                    const TitlePage(
-                      title: 'Mon niveau',
-                      fontSize: AppTypo.textXl,
+                    const Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+                      child: ProfilBadgeCard(),
                     ),
-                    const SizedBox(height: 10),
-                    ProfilBadgeLevelCard(
-                      level: level,
-                      points: currentPoints,
-                      maxPoints: maxPoints,
+                    Container(
+                      color: AppColors.greyUltraLight,
+                      width: double.infinity,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 20, horizontal: 20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            const TitlePage(
+                              title: 'Mon niveau',
+                              fontSize: AppTypo.textXl,
+                            ),
+                            const SizedBox(height: 10),
+                            ProfilBadgeLevelCard(
+                              level: level,
+                              points: currentPoints,
+                              maxPoints: maxPoints,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: TitlePage(
+                        title: 'Mes badges',
+                        fontSize: AppTypo.textXl,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 150,
+                      child: ProfilBadgeLevelItems(),
                     ),
                   ],
                 ),
