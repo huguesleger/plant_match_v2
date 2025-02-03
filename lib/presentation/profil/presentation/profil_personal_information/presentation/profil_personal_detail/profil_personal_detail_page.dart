@@ -8,12 +8,11 @@ import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
 import 'package:plant_match_v2/presentation/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/presentation/profil/presentation/cubit/profil_cubit.dart';
 import 'package:plant_match_v2/presentation/profil/presentation/cubit/profil_state.dart';
-import 'package:plant_match_v2/presentation/profil/presentation/profil_personal_information/widget/profil_personal_information_list_item_category/profil_personal_information_list_item.dart';
-import 'package:plant_match_v2/presentation/profil/presentation/profil_personal_information/widget/profil_personal_information_wizard/profil_personal_information_wizard.dart';
+import 'package:plant_match_v2/presentation/profil/presentation/profil_personal_information/presentation/profil_personal_detail/profil_personal_detail_item.dart';
+import 'package:plant_match_v2/presentation/profil/presentation/profil_personal_information/presentation/profil_personal_detail_wizard/profil_personal_detail_wizard_page.dart';
 
-class ProfilPersonalInformationListItemCategory extends StatelessWidget {
-  const ProfilPersonalInformationListItemCategory(
-      {super.key, required this.profilUser});
+class ProfilPersonalDetailPage extends StatelessWidget {
+  const ProfilPersonalDetailPage({super.key, required this.profilUser});
 
   final ProfilUser profilUser;
 
@@ -28,44 +27,52 @@ class ProfilPersonalInformationListItemCategory extends StatelessWidget {
               title: 'Détail de mon profil',
               fontSize: AppTypo.textXl,
             ),
-            ProfilPersonalInformationListItem(
+            ProfilPersonalDetailItem(
               title: 'Pseudo d\'affichage',
               subtitle: profilUser.userName.isEmpty
                   ? 'A renseigner'
                   : profilUser.userName,
-/*              onTap: () async {
+              onTap: () async {
                 final profilCubit = context.read<ProfilCubit>();
-                profilCubit.getProfilUser(profilUser.uid);
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProfilPersonalInformationWizard(
-                      profilUser: profilUser,
-                    ),
-                  ),
-                );
-                profilCubit.getProfilUser(profilUser.uid);
-              },*/
+                await profilCubit.clearField(
+                    uid: profilUser.uid, fieldName: 'userName');
+              },
             ),
             const Divider(height: 0),
-            ProfilPersonalInformationListItem(
+            ProfilPersonalDetailItem(
               title: 'Date d\'anniversaire',
-              subtitle: profilUser.birthdayDate.toString().isNotEmpty
-                  ? DateFormat('dd/MM/yyyy').format(profilUser.birthdayDate)
+              subtitle: profilUser.birthdayDate != null
+                  ? DateFormat('dd/MM/yyyy').format(profilUser.birthdayDate!)
                   : 'A renseigner',
             ),
             const Divider(height: 0),
-            ProfilPersonalInformationListItem(
+            ProfilPersonalDetailItem(
               title: 'Bio',
               subtitle:
                   profilUser.bio.isEmpty ? 'A renseigner' : profilUser.bio,
+              onTap: () async {
+                final profilCubit = context.read<ProfilCubit>();
+                await profilCubit.clearField(
+                    uid: profilUser.uid, fieldName: 'bio');
+              },
             ),
             const Divider(height: 0),
-            ProfilPersonalInformationListItem(
+            ProfilPersonalDetailItem(
               title: 'Localisation',
               subtitle: profilUser.localisation.isEmpty
                   ? 'A renseigner'
                   : profilUser.localisation,
+              onTap: () async {
+                final profilCubit = context.read<ProfilCubit>();
+                await profilCubit.clearField(
+                  uid: profilUser.uid,
+                  fieldName: 'localisation',
+                );
+                await profilCubit.clearField(
+                  uid: profilUser.uid,
+                  fieldName: 'country',
+                );
+              },
             ),
             const Divider(height: 0),
             const SizedBox(
@@ -81,7 +88,7 @@ class ProfilPersonalInformationListItemCategory extends StatelessWidget {
                   await Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ProfilPersonalInformationWizard(
+                      builder: (context) => ProfilPersonalDetailWizardPage(
                         profilUser: profilUser,
                       ),
                     ),

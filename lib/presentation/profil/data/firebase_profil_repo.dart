@@ -25,7 +25,7 @@ class FirebaseProfilRepo implements ProfilRepository {
             country: userData['country'] ?? '',
             birthdayDate: userData['birthdayDate'] != null
                 ? (userData['birthdayDate'] as Timestamp).toDate()
-                : DateTime.now(),
+                : null,
           );
         }
       }
@@ -47,7 +47,9 @@ class FirebaseProfilRepo implements ProfilRepository {
         'userName': updateProfilUser.userName,
         'localisation': updateProfilUser.localisation,
         'country': updateProfilUser.country,
-        'birthdayDate': Timestamp.fromDate(updateProfilUser.birthdayDate),
+        'birthdayDate': updateProfilUser.birthdayDate != null
+            ? Timestamp.fromDate(updateProfilUser.birthdayDate!)
+            : null,
       });
     } catch (e) {
       throw Exception('Erreur lors de la mise à jour du profil');
@@ -65,7 +67,9 @@ class FirebaseProfilRepo implements ProfilRepository {
         'userName': profilUser.userName,
         'localisation': profilUser.localisation,
         'country': profilUser.country,
-        'birthdayDate': Timestamp.fromDate(profilUser.birthdayDate),
+        'birthdayDate': profilUser.birthdayDate != null
+            ? Timestamp.fromDate(profilUser.birthdayDate!)
+            : null,
       });
     } catch (e) {
       throw Exception('Erreur lors de la création du profil');

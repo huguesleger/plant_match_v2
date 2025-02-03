@@ -2,29 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
-import 'package:form_builder_validators/form_builder_validators.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_template.dart';
+import 'package:plant_match_v2/core/widgets/bottom_bar/bottom_bar.dart';
+import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
 import 'package:plant_match_v2/core/widgets/form/decoration_input.dart';
 import 'package:plant_match_v2/presentation/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/presentation/profil/presentation/cubit/profil_cubit.dart';
-import 'package:plant_match_v2/presentation/profil/presentation/profil_personal_information/widget/profil_personal_information_wizard/profil_personal_information_wizard_item.dart';
+import 'package:plant_match_v2/presentation/profil/presentation/profil_personal_information/presentation/profil_personal_detail_wizard/profil_personal_detail_wizard_item.dart';
+import 'package:plant_match_v2/presentation/profil/presentation/profil_personal_information/widget/profil_personal_detail_location.dart';
 
-class ProfilPersonalInformationWizard extends StatefulWidget {
-  const ProfilPersonalInformationWizard({super.key, required this.profilUser});
+class ProfilPersonalDetailWizardPage extends StatefulWidget {
+  const ProfilPersonalDetailWizardPage({super.key, required this.profilUser});
 
   final ProfilUser profilUser;
 
   @override
-  State<ProfilPersonalInformationWizard> createState() =>
-      _ProfilPersonalInformationWizardState();
+  State<ProfilPersonalDetailWizardPage> createState() =>
+      _ProfilPersonalDetailWizardPageState();
 }
 
-class _ProfilPersonalInformationWizardState
-    extends State<ProfilPersonalInformationWizard> {
+class _ProfilPersonalDetailWizardPageState
+    extends State<ProfilPersonalDetailWizardPage> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
   final int _totalPages = 4;
@@ -32,7 +32,6 @@ class _ProfilPersonalInformationWizardState
   final TextEditingController _pseudoController = TextEditingController();
   final TextEditingController _birthdayDateController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
-  final TextEditingController _cityController = TextEditingController();
   final _formKeyPseudo = GlobalKey<FormBuilderState>();
   final _formKeyBirthdayDate = GlobalKey<FormBuilderState>();
   final _formKeyBio = GlobalKey<FormBuilderState>();
@@ -42,12 +41,10 @@ class _ProfilPersonalInformationWizardState
   void initState() {
     super.initState();
     _pseudoController.text = widget.profilUser.userName;
-    _birthdayDateController.text =
-        widget.profilUser.birthdayDate.toString().isNotEmpty
-            ? DateFormat('dd/MM/yyyy').format(widget.profilUser.birthdayDate)
-            : '';
+    _birthdayDateController.text = widget.profilUser.birthdayDate != null
+        ? DateFormat('dd/MM/yyyy').format(widget.profilUser.birthdayDate!)
+        : '';
     _bioController.text = widget.profilUser.bio;
-    _cityController.text = widget.profilUser.localisation;
   }
 
   @override
@@ -55,7 +52,6 @@ class _ProfilPersonalInformationWizardState
     _pseudoController.dispose();
     _birthdayDateController.dispose();
     _bioController.dispose();
-    _cityController.dispose();
     super.dispose();
   }
 
@@ -66,15 +62,84 @@ class _ProfilPersonalInformationWizardState
   }) {
     if (formKey.currentState?.saveAndValidate() ?? false) {
       final String value = controller.text;
+      updateUserField(value);
 
-      if (value.isNotEmpty || _pseudoController.text.isEmpty) {
-        updateUserField(value);
-        _pageController.nextPage(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeIn,
-        );
+      if (_currentPage < _totalPages - 1) {
+        _onPressedNext();
       }
     }
+  }
+
+  Future<void> _onPressedLocation() async {
+    currentPosition = await getCurrentLocation();
+    await getCurrentAddress();
+    setState(() {
+      context.read<ProfilCubit>().saveProfilUser(
+            widget.profilUser.copyWith(
+              newUserName: _pseudoController.text,
+              newBirthdayDate:
+                  DateFormat('dd/MM/yyyy').parse(_birthdayDateController.text),
+              newBio: _bioController.text,
+              newLocalisation: currentAddress,
+              newCountry: currentCountry,
+            ),
+          );
+    });
+  }
+
+  Future<void> _handlePageAction(int currentPage) async {
+    switch (currentPage) {
+      case 0:
+        _onPressed(
+          formKey: _formKeyPseudo,
+          controller: _pseudoController,
+          updateUserField: (value) {
+            context.read<ProfilCubit>().saveProfilUser(
+                  widget.profilUser.copyWith(newUserName: value),
+                );
+          },
+        );
+        break;
+      case 1:
+        _onPressed(
+          formKey: _formKeyBirthdayDate,
+          controller: _birthdayDateController,
+          updateUserField: (value) {
+            context.read<ProfilCubit>().saveProfilUser(
+                  widget.profilUser.copyWith(
+                    newUserName: _pseudoController.text,
+                    newBirthdayDate: DateFormat('dd/MM/yyyy').parse(value),
+                  ),
+                );
+          },
+        );
+        break;
+      case 2:
+        _onPressed(
+          formKey: _formKeyBio,
+          controller: _bioController,
+          updateUserField: (value) {
+            context.read<ProfilCubit>().saveProfilUser(
+                  widget.profilUser.copyWith(
+                    newUserName: _pseudoController.text,
+                    newBirthdayDate: DateFormat('dd/MM/yyyy')
+                        .parse(_birthdayDateController.text),
+                    newBio: value,
+                  ),
+                );
+          },
+        );
+        break;
+      default:
+        break;
+    }
+  }
+
+  void _onPressedNext() {
+    _pageController.nextPage(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeIn,
+    );
   }
 
   void _onPressedBack() {
@@ -82,46 +147,6 @@ class _ProfilPersonalInformationWizardState
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeIn,
     );
-  }
-
-  Position? currentPosition;
-  late bool servicePermission;
-  late LocationPermission permission;
-
-  String currentAddress = '';
-  String currentCountry = '';
-
-  Future<Position> getCurrentLocation() async {
-    servicePermission = await Geolocator.isLocationServiceEnabled();
-    if (!servicePermission) {
-      throw Exception('Service de localisation désactivé');
-    }
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return await Geolocator.getCurrentPosition(
-          locationSettings: const LocationSettings(
-              accuracy: LocationAccuracy.low, distanceFilter: 10),
-        );
-      }
-    }
-    return await Geolocator.getCurrentPosition();
-  }
-
-  getCurrentAddress() async {
-    try {
-      List<Placemark> p = await placemarkFromCoordinates(
-          currentPosition!.latitude, currentPosition!.longitude);
-
-      Placemark place = p[0];
-      setState(() {
-        currentAddress = "${place.locality}";
-        currentCountry = "${place.country}";
-      });
-    } catch (e) {
-      throw Exception('Erreur de localisation');
-    }
   }
 
   @override
@@ -137,29 +162,25 @@ class _ProfilPersonalInformationWizardState
           ),
           side: const BorderSide(color: AppColors.greyLight),
         ),
+        leading: _currentPage == 0 ? false : true,
         onPressed: () {
-          Navigator.pop(context);
+          _onPressedBack();
         },
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: const Icon(LucideIcons.x),
+            color: AppColors.greyDark,
+          ),
+        ],
       ),
       body: SafeArea(
         child: Stack(
           children: [
             // Progress Indicator
-            TweenAnimationBuilder<double>(
-              tween: Tween<double>(
-                begin: (_currentPage + 1) / _totalPages,
-                end: (_currentPage + 1) / _totalPages,
-              ),
-              duration: const Duration(milliseconds: 300),
-              builder: (context, value, child) {
-                return LinearProgressIndicator(
-                  value: value,
-                  backgroundColor: AppColors.greyLight,
-                  color: AppColors.greenLight,
-                  minHeight: 2,
-                );
-              },
-            ),
+            _ProgressWizard(currentPage: _currentPage, totalPages: _totalPages),
             // PageView
             PageView(
               controller: _pageController,
@@ -170,23 +191,11 @@ class _ProfilPersonalInformationWizardState
                 });
               },
               children: [
-                ProfilPersonalInformationWizardItem(
+                ProfilPersonalDetailWizardItem(
                   formKey: _formKeyPseudo,
                   title: 'Pseudo d\'affichage',
                   description:
                       'Choisissez votre pseudo qui sera visible par les autres utilisateurs.',
-                  onPressed: () {
-                    _onPressed(
-                      formKey: _formKeyPseudo,
-                      controller: _pseudoController,
-                      updateUserField: (value) {
-                        context.read<ProfilCubit>().saveProfilUser(
-                              widget.profilUser.copyWith(newUserName: value),
-                            );
-                      },
-                    );
-                  },
-                  onPressedBack: _onPressedBack,
                   child: FormBuilderTextField(
                     name: 'userName',
                     decoration: DecorationInput.inputDecoration(
@@ -197,25 +206,11 @@ class _ProfilPersonalInformationWizardState
                     controller: _pseudoController,
                   ),
                 ),
-                ProfilPersonalInformationWizardItem(
+                ProfilPersonalDetailWizardItem(
                   formKey: _formKeyBirthdayDate,
                   title: 'Date d\'anniversaire',
                   description:
                       'Renseignez votre date de naissance pour recevoir des points le jour de votre anniversaire.',
-                  onPressed: () {
-                    _onPressed(
-                      formKey: _formKeyBirthdayDate,
-                      controller: _birthdayDateController,
-                      updateUserField: (value) {
-                        context.read<ProfilCubit>().saveProfilUser(
-                              widget.profilUser.copyWith(
-                                  newBirthdayDate:
-                                      DateFormat('dd/MM/yyyy').parse(value)),
-                            );
-                      },
-                    );
-                  },
-                  onPressedBack: _onPressedBack,
                   child: FormBuilderDateTimePicker(
                     name: 'dateOfBirth',
                     inputType: InputType.date,
@@ -226,38 +221,22 @@ class _ProfilPersonalInformationWizardState
                     initialValue: _birthdayDateController.text.isNotEmpty
                         ? DateFormat('dd/MM/yyyy')
                             .parse(_birthdayDateController.text)
-                        : widget.profilUser.birthdayDate,
+                        : null,
                     format: DateFormat('dd/MM/yyyy'),
-                    //initialEntryMode: DatePickerEntryMode.inputOnly,
                     lastDate: DateTime.now(),
                     decoration: DecorationInput.inputDecoration(
                       hintText: 'Entrez votre date de naissance',
                       labelText: 'Date de naissance',
                       suffixIcon: const Icon(LucideIcons.calendar),
                     ),
-
                     locale: const Locale('fr', 'FR'),
-                    validator: FormBuilderValidators.required(
-                        errorText: 'Ce champ est requis'),
                     controller: _birthdayDateController,
                   ),
                 ),
-                ProfilPersonalInformationWizardItem(
+                ProfilPersonalDetailWizardItem(
                   title: 'Bio',
                   description: 'Rédigez une courte description de vous.',
                   formKey: _formKeyBio,
-                  onPressed: () {
-                    _onPressed(
-                      formKey: _formKeyBio,
-                      controller: _bioController,
-                      updateUserField: (value) {
-                        context.read<ProfilCubit>().saveProfilUser(
-                              widget.profilUser.copyWith(newBio: value),
-                            );
-                      },
-                    );
-                  },
-                  onPressedBack: _onPressedBack,
                   child: FormBuilderTextField(
                     name: 'bio',
                     decoration: DecorationInput.inputDecoration(
@@ -271,24 +250,11 @@ class _ProfilPersonalInformationWizardState
                     controller: _bioController,
                   ),
                 ),
-                ProfilPersonalInformationWizardItem(
+                ProfilPersonalDetailWizardItem(
                   title: 'Localisation',
                   description:
                       'Votre position sera utilisée pour vous proposer des profils proches de chez vous.',
-                  labelButton: 'Me géolocaliser',
                   formKey: _formKeyCity,
-                  onPressed: () async {
-                    currentPosition = await getCurrentLocation();
-                    await getCurrentAddress();
-                    setState(() {
-                      context.read<ProfilCubit>().saveProfilUser(
-                            widget.profilUser.copyWith(
-                                newLocalisation: currentAddress,
-                                newCountry: currentCountry),
-                          );
-                    });
-                  },
-                  onPressedBack: _onPressedBack,
                   child: Column(
                     children: [
                       const Text('Localisation'),
@@ -309,6 +275,50 @@ class _ProfilPersonalInformationWizardState
           ],
         ),
       ),
+      bottomNavigationBar: BottomBar(
+        child: ButtonRounded(
+          text: _currentPage == _totalPages - 1 ? 'Me géolocaliser' : 'Suivant',
+          onPressed: () async {
+            if (_currentPage == _totalPages - 1) {
+              await _onPressedLocation();
+            } else {
+              await _handlePageAction(_currentPage);
+            }
+          },
+          bgColor: AppColors.greenLight,
+          textColor: AppColors.blueGreen,
+        ),
+      ),
+    );
+  }
+}
+
+class _ProgressWizard extends StatelessWidget {
+  const _ProgressWizard({
+    required int currentPage,
+    required int totalPages,
+  })  : _currentPage = currentPage,
+        _totalPages = totalPages;
+
+  final int _currentPage;
+  final int _totalPages;
+
+  @override
+  Widget build(BuildContext context) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween<double>(
+        begin: (_currentPage + 1) / _totalPages,
+        end: (_currentPage + 1) / _totalPages,
+      ),
+      duration: const Duration(milliseconds: 300),
+      builder: (context, value, child) {
+        return LinearProgressIndicator(
+          value: value,
+          backgroundColor: AppColors.greyLight,
+          color: AppColors.greenLight,
+          minHeight: 2,
+        );
+      },
     );
   }
 }

@@ -8,6 +8,8 @@ import 'package:plant_match_v2/presentation/auth/data/firebase_auth_service.dart
 import 'package:plant_match_v2/presentation/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/presentation/auth/presentation/cubit/auth_state.dart';
 import 'package:plant_match_v2/presentation/get_started/presentation/get_started_page.dart';
+import 'package:plant_match_v2/presentation/user_points/data/firebase_user_points.dart';
+import 'package:plant_match_v2/presentation/user_points/presentation/cubit/user_points_cubit.dart';
 
 import 'presentation/profil/data/firebase_profil_repo.dart';
 import 'presentation/profil/presentation/cubit/profil_cubit.dart';
@@ -19,20 +21,27 @@ class MyApp extends StatelessWidget {
   final authRepository = FirebaseAuthService();
   final profilRepository = FirebaseProfilRepo();
   final storageRepository = FirebaseStorageRepository();
+  final userPointsRepository = FirebaseUserPoints();
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) =>
-              AuthCubit(authRepository: authRepository)..checkCurrentUser(),
+          create: (context) => AuthCubit(
+              authRepository: authRepository,
+              userPointsRepository: userPointsRepository)
+            ..checkCurrentUser(),
         ),
         BlocProvider(
           create: (context) => ProfilCubit(
             profilRepository: profilRepository,
             storageRepository: storageRepository,
           ),
+        ),
+        BlocProvider(
+          create: (context) =>
+              UserPointsCubit(repository: userPointsRepository),
         ),
       ],
       child: MaterialApp(

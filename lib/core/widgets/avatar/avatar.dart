@@ -28,7 +28,9 @@ class Avatar extends StatelessWidget {
           backgroundColor: AppColors.greyLight,
           radius: 30,
           child: ClipOval(
-            child: imageUrl.isNotEmpty && imageUrl != imgAvatar
+            child: imageUrl.isNotEmpty &&
+                    imageUrl != imgAvatar &&
+                    imageUrl.contains('http')
                 ? Image.network(
                     imageUrl,
                     fit: BoxFit.cover,
