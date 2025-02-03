@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/core/theme/app_typo.dart';
+import 'package:plant_match_v2/core/theme/inter_text_style.dart';
 
 class ProfilBadgeCardHeader extends StatelessWidget {
   const ProfilBadgeCardHeader({
@@ -25,14 +27,14 @@ class ProfilBadgeCardHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Row(
+              Row(
                 children: [
-                  Icon(LucideIcons.star, color: AppColors.white),
-                  SizedBox(width: 10),
+                  const Icon(LucideIcons.star, color: AppColors.white),
+                  const SizedBox(width: 10),
                   Text(
                     'Points',
-                    style: TextStyle(
-                      fontSize: 14,
+                    style: InterTextStyle.inter(
+                      AppTypo.textS,
                       color: AppColors.white,
                       fontWeight: FontWeight.w500,
                     ),
@@ -44,17 +46,16 @@ class ProfilBadgeCardHeader extends StatelessWidget {
                 children: [
                   Text(
                     currentPoints.toString(),
-                    style: const TextStyle(
-                      fontSize: 24,
+                    style: InterTextStyle.inter(
+                      AppTypo.textXl,
                       color: AppColors.white,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                   Text(
                     'Niveau $level',
-                    style: const TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w400,
+                    style: InterTextStyle.inter(
+                      11,
                       color: AppColors.white,
                     ),
                   ),

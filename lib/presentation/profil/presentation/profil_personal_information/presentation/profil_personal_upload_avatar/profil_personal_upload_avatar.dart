@@ -54,6 +54,7 @@ class _ProfilPersonalUploadAvatarState
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             InkWell(
+              borderRadius: BorderRadius.circular(60),
               onTap: () {
                 showImageSourceBottomSheet(
                   context: context,

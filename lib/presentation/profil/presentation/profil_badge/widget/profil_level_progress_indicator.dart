@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
+import 'package:plant_match_v2/core/theme/inter_text_style.dart';
 
 class ProfilLevelProgressIndicator extends StatelessWidget {
   const ProfilLevelProgressIndicator({
@@ -41,10 +42,10 @@ class ProfilLevelProgressIndicator extends StatelessWidget {
                 children: [
                   TextSpan(
                     text: '$level',
-                    style: const TextStyle(
-                      fontSize: AppTypo.textS,
+                    style: InterTextStyle.inter(
+                      AppTypo.textS,
                       color: AppColors.greenMedium,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                 ],
@@ -60,10 +61,10 @@ class ProfilLevelProgressIndicator extends StatelessWidget {
                 children: [
                   TextSpan(
                     text: '${level + 1}',
-                    style: const TextStyle(
-                      fontSize: AppTypo.textS,
+                    style: InterTextStyle.inter(
+                      AppTypo.textS,
                       color: AppColors.greenMedium,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                 ],

@@ -55,13 +55,12 @@ class AppBarTemplate extends StatelessWidget implements PreferredSizeWidget {
       surfaceTintColor: surfaceTintColor,
       leading: leading == true
           ? IconButton(
-/*        onPressed: () {
-          Navigator.pop(context);
-        },*/
               onPressed: onPressed,
               style: styleIconButton,
-              icon: const Icon(LucideIcons.chevron_left,
-                  color: AppColors.greyDark),
+              icon: const Icon(
+                LucideIcons.chevron_left,
+                color: AppColors.greyDark,
+              ),
             )
           : const SizedBox.shrink(),
       actions: actions,

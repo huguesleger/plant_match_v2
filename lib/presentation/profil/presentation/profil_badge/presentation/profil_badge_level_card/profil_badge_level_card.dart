@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
+import 'package:plant_match_v2/core/theme/inter_text_style.dart';
 import 'package:plant_match_v2/presentation/profil/presentation/profil_badge/widget/profil_level_progress_indicator.dart';
 import 'package:plant_match_v2/presentation/user_points/presentation/utils/user_points_utils.dart';
 
@@ -53,14 +54,12 @@ class ProfilBadgeLevelCard extends StatelessWidget {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 10),
-                    child: Text(
-                      _getLevelName(level),
-                      style: const TextStyle(
-                        fontSize: AppTypo.textM,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.blueGreen,
-                      ),
-                    ),
+                    child: Text(_getLevelName(level),
+                        style: InterTextStyle.inter(
+                          AppTypo.textM,
+                          color: AppColors.blueGreen,
+                          fontWeight: FontWeight.w600,
+                        )),
                   ),
                 ],
               ),

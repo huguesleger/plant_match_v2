@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
+import 'package:plant_match_v2/core/widgets/badge/badge_pill.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
 import 'package:plant_match_v2/presentation/profil/presentation/profil_badge/presentation/profil_badge_card/profil_badge_card.dart';
 import 'package:plant_match_v2/presentation/profil/presentation/profil_badge/presentation/profil_badge_header/profil_badge_card_header.dart';
@@ -20,6 +21,7 @@ class ProfilBadgeScreen extends StatelessWidget {
     final currentPoints = points.currentPoints;
     final level = points.level;
     final maxPoints = UserPointsUtils.getMaxPointsForLevel(level);
+    final levels = UserPointsUtils.levelData.length;
 
     return Stack(
       children: [
@@ -38,6 +40,7 @@ class ProfilBadgeScreen extends StatelessWidget {
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Padding(
                       padding:
@@ -69,17 +72,37 @@ class ProfilBadgeScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: TitlePage(
-                        title: 'Mes badges',
-                        fontSize: AppTypo.textXl,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const TitlePage(
+                            title: 'Mes badges',
+                            fontSize: AppTypo.textXl,
+                          ),
+                          BadgePill(
+                            text: Text(
+                              '$level/$levels',
+                              style: const TextStyle(
+                                fontSize: AppTypo.textXs,
+                                color: AppColors.greyDark,
+                              ),
+                            ),
+                            badgeColor: AppColors.greenLight,
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(
+                    const SizedBox(height: 10),
+                    SizedBox(
                       height: 150,
-                      child: ProfilBadgeLevelItems(),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: ProfilBadgeLevelItems(currentLevel: level),
+                      ),
                     ),
+                    const SizedBox(height: 30),
                   ],
                 ),
               ),
