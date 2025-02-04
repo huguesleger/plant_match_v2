@@ -20,6 +20,15 @@ class ProfilCard extends StatelessWidget {
           title: 'Plantes & Boutures',
           description: 'Mon catalogue de ce que j’ai à partager',
           icon: LucideIcons.flower_2,
+          onPressed: () {},
+        ),
+        const SizedBox(width: 10),
+        AppCard(
+          bgColor: AppColors.greenMedium,
+          textColor: AppColors.white,
+          title: 'Badges & Récompenses',
+          description: 'Mes badges et mon niveau',
+          icon: LucideIcons.award,
           onPressed: () {
             Navigator.push(
               context,
@@ -28,15 +37,6 @@ class ProfilCard extends StatelessWidget {
               ),
             );
           },
-        ),
-        const SizedBox(width: 10),
-        AppCard(
-          bgColor: AppColors.greenDark,
-          textColor: AppColors.white,
-          title: 'Plantes & Boutures',
-          description: 'Mon catalogue de ce que j’ai à partager',
-          icon: LucideIcons.flower_2,
-          onPressed: () {},
         ),
         const SizedBox(width: 10),
         AppCard(

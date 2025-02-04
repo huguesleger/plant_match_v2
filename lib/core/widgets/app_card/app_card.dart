@@ -52,7 +52,7 @@ class AppCard extends StatelessWidget {
               Text(
                 title,
                 style: TextStyle(
-                  fontSize: AppTypo.textL,
+                  fontSize: AppTypo.textM,
                   fontWeight: FontWeight.w600,
                   color: textColor,
                   height: 1.2,
