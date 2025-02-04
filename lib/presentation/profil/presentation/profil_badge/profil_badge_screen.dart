@@ -35,7 +35,9 @@ class ProfilBadgeScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(top: 30, left: 20, right: 20),
               child: ProfilBadgeCardHeader(
-                  currentPoints: currentPoints, level: level),
+                currentPoints: currentPoints,
+                level: level,
+              ),
             ),
             Expanded(
               child: SingleChildScrollView(
@@ -61,7 +63,7 @@ class ProfilBadgeScreen extends StatelessWidget {
                               title: 'Mon niveau',
                               fontSize: AppTypo.textXl,
                             ),
-                            const SizedBox(height: 10),
+                            const SizedBox(height: 20),
                             ProfilBadgeLevelCard(
                               level: level,
                               points: currentPoints,
@@ -86,15 +88,15 @@ class ProfilBadgeScreen extends StatelessWidget {
                               '$level/$levels',
                               style: const TextStyle(
                                 fontSize: AppTypo.textXs,
-                                color: AppColors.greyDark,
+                                color: AppColors.white,
                               ),
                             ),
-                            badgeColor: AppColors.greenLight,
+                            badgeColor: AppColors.greenMedium,
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 20),
                     SizedBox(
                       height: 150,
                       child: Padding(
@@ -102,7 +104,7 @@ class ProfilBadgeScreen extends StatelessWidget {
                         child: ProfilBadgeLevelItems(currentLevel: level),
                       ),
                     ),
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 50),
                   ],
                 ),
               ),
