@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -44,7 +45,7 @@ class _ProfilPersonalDetailWizardPageState
     _birthdayDateController.text = widget.profilUser.birthdayDate != null
         ? DateFormat('dd/MM/yyyy').format(widget.profilUser.birthdayDate!)
         : '';
-    _bioController.text = widget.profilUser.bio;
+    _bioController.text = widget.profilUser.bio ?? '';
   }
 
   @override
@@ -82,6 +83,9 @@ class _ProfilPersonalDetailWizardPageState
               newBio: _bioController.text,
               newLocalisation: currentAddress,
               newCountry: currentCountry,
+              newLatitude: currentLatitude,
+              newLongitude: currentLongitude,
+              newPosition: GeoPoint(currentLatitude, currentLongitude),
             ),
           );
     });

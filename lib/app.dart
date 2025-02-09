@@ -4,6 +4,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:plant_match_v2/core/theme/app_theme.dart';
 import 'package:plant_match_v2/core/widgets/error/error_page.dart';
 import 'package:plant_match_v2/core/widgets/template/template_page.dart';
+import 'package:plant_match_v2/presentation/around_me_map/data/firebase_around_me.dart';
+import 'package:plant_match_v2/presentation/around_me_map/presentation/cubit/around_me_cubit.dart';
 import 'package:plant_match_v2/presentation/auth/data/firebase_auth_service.dart';
 import 'package:plant_match_v2/presentation/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/presentation/auth/presentation/cubit/auth_state.dart';
@@ -22,6 +24,7 @@ class MyApp extends StatelessWidget {
   final profilRepository = FirebaseProfilRepo();
   final storageRepository = FirebaseStorageRepository();
   final userPointsRepository = FirebaseUserPoints();
+  final aroundMeRepository = FirebaseAroundMe();
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +45,11 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) =>
               UserPointsCubit(repository: userPointsRepository),
+        ),
+        BlocProvider(
+          create: (context) => AroundMeCubit(
+              aroundMeRepository: aroundMeRepository,
+              profilRepository: profilRepository),
         ),
       ],
       child: MaterialApp(

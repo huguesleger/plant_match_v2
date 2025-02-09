@@ -48,8 +48,7 @@ class ProfilPersonalDetailPage extends StatelessWidget {
             const Divider(height: 0),
             ProfilPersonalDetailItem(
               title: 'Bio',
-              subtitle:
-                  profilUser.bio.isEmpty ? 'A renseigner' : profilUser.bio,
+              subtitle: profilUser.bio != '' ? profilUser.bio! : 'A renseigner',
               onTap: () async {
                 final profilCubit = context.read<ProfilCubit>();
                 await profilCubit.clearField(
@@ -61,7 +60,7 @@ class ProfilPersonalDetailPage extends StatelessWidget {
               title: 'Localisation',
               subtitle: profilUser.localisation.isEmpty
                   ? 'A renseigner'
-                  : profilUser.localisation,
+                  : '${profilUser.localisation} - ${profilUser.country}',
               onTap: () async {
                 final profilCubit = context.read<ProfilCubit>();
                 await profilCubit.clearField(

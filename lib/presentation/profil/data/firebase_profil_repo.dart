@@ -26,6 +26,12 @@ class FirebaseProfilRepo implements ProfilRepository {
             birthdayDate: userData['birthdayDate'] != null
                 ? (userData['birthdayDate'] as Timestamp).toDate()
                 : null,
+            latitude: userData['latitude'],
+            longitude: userData['longitude'],
+            position: userData['position'] != null &&
+                    userData['position']['geopoint'] != null
+                ? userData['position']['geopoint'] as GeoPoint
+                : const GeoPoint(0, 0),
           );
         }
       }
@@ -50,6 +56,11 @@ class FirebaseProfilRepo implements ProfilRepository {
         'birthdayDate': updateProfilUser.birthdayDate != null
             ? Timestamp.fromDate(updateProfilUser.birthdayDate!)
             : null,
+        'latitude': updateProfilUser.latitude,
+        'longitude': updateProfilUser.longitude,
+        'position': {
+          'geopoint': updateProfilUser.position,
+        },
       });
     } catch (e) {
       throw Exception('Erreur lors de la mise à jour du profil');
@@ -70,6 +81,11 @@ class FirebaseProfilRepo implements ProfilRepository {
         'birthdayDate': profilUser.birthdayDate != null
             ? Timestamp.fromDate(profilUser.birthdayDate!)
             : null,
+        'latitude': profilUser.latitude,
+        'longitude': profilUser.longitude,
+        'position': {
+          'geopoint': profilUser.position,
+        },
       });
     } catch (e) {
       throw Exception('Erreur lors de la création du profil');

@@ -16,7 +16,9 @@ class ProfilHeader extends StatelessWidget {
       children: [
         Expanded(
           child: TitlePage(
-            title: profilUser.fullName.toCapitalizeWords(),
+            title: profilUser.userName.isNotEmpty
+                ? profilUser.userName.toCapitalizeWords()
+                : profilUser.fullName.toCapitalizeWords(),
             overflow: TextOverflow.ellipsis,
           ),
         ),

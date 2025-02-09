@@ -7,6 +7,8 @@ late LocationPermission permission;
 
 String currentAddress = '';
 String currentCountry = '';
+double currentLatitude = 0;
+double currentLongitude = 0;
 
 Future<Position> getCurrentLocation() async {
   servicePermission = await Geolocator.isLocationServiceEnabled();
@@ -34,6 +36,8 @@ getCurrentAddress() async {
     Placemark place = p[0];
     currentAddress = "${place.locality}";
     currentCountry = "${place.country}";
+    currentLatitude = currentPosition!.latitude;
+    currentLongitude = currentPosition!.longitude;
   } catch (e) {
     throw Exception('Erreur de localisation');
   }

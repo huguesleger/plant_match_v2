@@ -6,7 +6,6 @@ import 'package:plant_match_v2/presentation/storage/domain/storage_repository.da
 
 class ProfilCubit extends Cubit<ProfilState> {
   final ProfilRepository profilRepository;
-
   final StorageRepository storageRepository;
 
   ProfilCubit({

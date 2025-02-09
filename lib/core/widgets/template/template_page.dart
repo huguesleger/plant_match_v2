@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/widgets/navigation_bottom_bar/navigation_bottom_bar.dart';
+import 'package:plant_match_v2/presentation/around_me_map/presentation/around_me_page.dart';
 import 'package:plant_match_v2/presentation/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/presentation/home/presentation/home_page.dart';
 import 'package:plant_match_v2/presentation/profil/presentation/profil_page.dart';
@@ -26,12 +27,12 @@ class TemplatePageState extends State<TemplatePage> {
     _currentIndex = widget.initialIndex; // Initialise l'index avec le paramètre
 
     final user = context.read<AuthCubit>().currentUser;
-    uid = user!.uid;
+    uid = user?.uid ?? '';
 
     _pages = [
       const HomePage(),
       const Center(child: Text('Search Page Content')),
-      const Center(child: Text('Profile Page Content')),
+      AroundMePage(uid: uid),
       const Center(child: Text('Message Page Content')),
       ProfilPage(uid: uid),
     ];
