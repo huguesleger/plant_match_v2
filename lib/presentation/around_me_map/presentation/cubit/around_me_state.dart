@@ -1,7 +1,5 @@
 import 'package:plant_match_v2/presentation/profil/domain/entity/profil_user.dart';
 
-import '../../domain/entity/around_me.dart';
-
 sealed class AroundMeState {}
 
 class AroundMeInitial extends AroundMeState {}
@@ -9,10 +7,10 @@ class AroundMeInitial extends AroundMeState {}
 class AroundMeLoading extends AroundMeState {}
 
 class AroundMeLoaded extends AroundMeState {
-  final List<AroundMe> users;
-  final ProfilUser profilUser;
+  final List<ProfilUser> users;
+  final ProfilUser currentUser;
 
-  AroundMeLoaded(this.users, this.profilUser);
+  AroundMeLoaded({required this.users, required this.currentUser});
 }
 
 class AroundMeError extends AroundMeState {

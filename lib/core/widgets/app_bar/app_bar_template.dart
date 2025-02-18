@@ -12,7 +12,7 @@ class AppBarTemplate extends StatelessWidget implements PreferredSizeWidget {
     this.shadowColor,
     required this.surfaceTintColor,
     this.styleIconButton,
-    required this.onPressed,
+    this.onPressed,
     this.actions,
     this.leading = true,
   });
@@ -24,7 +24,7 @@ class AppBarTemplate extends StatelessWidget implements PreferredSizeWidget {
   final Color? shadowColor;
   final Color surfaceTintColor;
   final ButtonStyle? styleIconButton;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final List<Widget>? actions;
   final bool? leading;
 

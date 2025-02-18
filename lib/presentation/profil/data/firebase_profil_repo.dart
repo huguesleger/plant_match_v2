@@ -32,6 +32,7 @@ class FirebaseProfilRepo implements ProfilRepository {
                     userData['position']['geopoint'] != null
                 ? userData['position']['geopoint'] as GeoPoint
                 : const GeoPoint(0, 0),
+            isOnline: userData['isOnline'],
           );
         }
       }
@@ -61,6 +62,7 @@ class FirebaseProfilRepo implements ProfilRepository {
         'position': {
           'geopoint': updateProfilUser.position,
         },
+        'isOnline': updateProfilUser.isOnline,
       });
     } catch (e) {
       throw Exception('Erreur lors de la mise à jour du profil');
@@ -86,6 +88,7 @@ class FirebaseProfilRepo implements ProfilRepository {
         'position': {
           'geopoint': profilUser.position,
         },
+        'isOnline': profilUser.isOnline,
       });
     } catch (e) {
       throw Exception('Erreur lors de la création du profil');

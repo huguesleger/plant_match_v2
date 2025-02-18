@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -10,21 +12,58 @@ import 'package:plant_match_v2/presentation/auth/data/firebase_auth_service.dart
 import 'package:plant_match_v2/presentation/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/presentation/auth/presentation/cubit/auth_state.dart';
 import 'package:plant_match_v2/presentation/get_started/presentation/get_started_page.dart';
+import 'package:plant_match_v2/presentation/profil/data/firebase_profil_repo.dart';
+import 'package:plant_match_v2/presentation/profil/presentation/cubit/profil_cubit.dart';
+import 'package:plant_match_v2/presentation/storage/data/firebase_storage_repository.dart';
 import 'package:plant_match_v2/presentation/user_points/data/firebase_user_points.dart';
 import 'package:plant_match_v2/presentation/user_points/presentation/cubit/user_points_cubit.dart';
 
-import 'presentation/profil/data/firebase_profil_repo.dart';
-import 'presentation/profil/presentation/cubit/profil_cubit.dart';
-import 'presentation/storage/data/firebase_storage_repository.dart';
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
 
-class MyApp extends StatelessWidget {
-  MyApp({super.key});
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
 
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   final authRepository = FirebaseAuthService();
   final profilRepository = FirebaseProfilRepo();
   final storageRepository = FirebaseStorageRepository();
   final userPointsRepository = FirebaseUserPoints();
   final aroundMeRepository = FirebaseAroundMe();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.detached ||
+        state == AppLifecycleState.paused) {
+      _setUserOffline();
+    }
+  }
+
+  Future<void> _setUserOffline() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .update({
+        'isOnline': false,
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,8 +87,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => AroundMeCubit(
-              aroundMeRepository: aroundMeRepository,
-              profilRepository: profilRepository),
+            aroundMeRepository: aroundMeRepository,
+            profilRepository: profilRepository,
+          ),
         ),
       ],
       child: MaterialApp(
@@ -64,7 +104,6 @@ class MyApp extends StatelessWidget {
         supportedLocales: const [Locale('fr')],
         home: BlocBuilder<AuthCubit, AuthState>(
           builder: (context, authState) {
-            print(authState);
             return Scaffold(
               body: switch (authState) {
                 AuthInitial() || AuthLoading() => const Center(

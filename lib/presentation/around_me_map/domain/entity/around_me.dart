@@ -13,6 +13,7 @@ class AroundMe extends ProfilUser {
     required super.localisation,
     required super.country,
     required super.position,
+    required super.isOnline,
   });
 
   @override
@@ -30,6 +31,7 @@ class AroundMe extends ProfilUser {
       'position': {
         'geopoint': position,
       },
+      'isOnline': isOnline,
     };
   }
 
@@ -47,6 +49,7 @@ class AroundMe extends ProfilUser {
       position: json['position'] != null && json['position']['geopoint'] != null
           ? json['position']['geopoint'] as GeoPoint
           : const GeoPoint(0, 0),
+      isOnline: json['isOnline'],
     );
   }
 }

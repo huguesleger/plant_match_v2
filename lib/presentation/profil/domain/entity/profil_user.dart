@@ -11,6 +11,7 @@ class ProfilUser extends UserAuth {
   final double? latitude;
   final double? longitude;
   final GeoPoint position;
+  final bool isOnline;
 
   ProfilUser({
     required super.uid,
@@ -25,6 +26,7 @@ class ProfilUser extends UserAuth {
     this.longitude,
     required this.position,
     this.birthdayDate,
+    required this.isOnline,
   });
 
   ProfilUser copyWith({
@@ -37,6 +39,7 @@ class ProfilUser extends UserAuth {
     double? newLatitude,
     double? newLongitude,
     GeoPoint? newPosition,
+    bool? newIsOnline,
   }) {
     return ProfilUser(
       uid: uid,
@@ -51,6 +54,7 @@ class ProfilUser extends UserAuth {
       latitude: newLatitude ?? latitude,
       longitude: newLongitude ?? longitude,
       position: newPosition ?? position,
+      isOnline: newIsOnline ?? isOnline,
     );
   }
 
@@ -71,27 +75,32 @@ class ProfilUser extends UserAuth {
       'position': {
         'geopoint': position,
       },
+      'isOnline': isOnline,
     };
   }
 
   factory ProfilUser.fromJson(Map<String, dynamic> json) {
     return ProfilUser(
-      uid: json['uid'],
-      email: json['email'],
-      fullName: json['fullName'],
+      uid: json['uid'] ?? '',
+      email: json['email'] ?? '',
+      fullName: json['fullName'] ?? '',
       bio: json['bio'] ?? '',
       profilImg: json['profilImg'] ?? '',
       userName: json['userName'] ?? '',
       localisation: json['localisation'] ?? '',
       country: json['country'] ?? '',
       birthdayDate: json['birthdayDate'] != null
-          ? DateTime.parse(json['birthdayDate'])
+          ? (json['birthdayDate'] is Timestamp
+              ? (json['birthdayDate'] as Timestamp).toDate()
+              : DateTime.tryParse(json['birthdayDate'].toString()))
           : null,
-      latitude: json['latitude'],
-      longitude: json['longitude'],
+      latitude: (json['latitude'] != null) ? json['latitude'].toDouble() : 0.0,
+      longitude:
+          (json['longitude'] != null) ? json['longitude'].toDouble() : 0.0,
       position: json['position'] != null && json['position']['geopoint'] != null
           ? json['position']['geopoint'] as GeoPoint
           : const GeoPoint(0, 0),
+      isOnline: json['isOnline'] ?? false,
     );
   }
 }

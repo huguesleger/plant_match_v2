@@ -56,6 +56,10 @@ class FirebaseAuthService implements AuthRepository {
             .doc(user.uid)
             .get();
 
+        await _firebaseFirestore.collection('users').doc(user.uid).update({
+          'isOnline': true,
+        });
+
         return UserAuth(
           uid: user.uid,
           email: user.email!,
@@ -103,6 +107,7 @@ class FirebaseAuthService implements AuthRepository {
       await _firebaseFirestore.collection('users').doc(userAuth.uid).set({
         'email': userAuth.email,
         'fullName': userAuth.fullName,
+        'isOnline': true,
       });
 
       return userAuth;
@@ -141,6 +146,7 @@ class FirebaseAuthService implements AuthRepository {
         await _firebaseFirestore.collection('users').doc(userAuth.uid).set({
           'email': userAuth.email,
           'fullName': userAuth.fullName,
+          'isOnline': true,
         });
         return userAuth;
       } else {
@@ -185,6 +191,7 @@ class FirebaseAuthService implements AuthRepository {
           await _firebaseFirestore.collection('users').doc(userAuth.uid).set({
             'email': userAuth.email,
             'fullName': userAuth.fullName,
+            'isOnline': true,
           });
 
           return userAuth;
@@ -201,6 +208,18 @@ class FirebaseAuthService implements AuthRepository {
 
   @override
   Future<void> logOut() async {
-    await _firebaseAuth.signOut();
+    try {
+      User? user = _firebaseAuth.currentUser;
+      if (user != null) {
+        await _firebaseFirestore.collection('users').doc(user.uid).update({
+          'isOnline': false,
+        });
+      }
+      await _firebaseAuth.signOut();
+/*      await _googleSignIn.signOut();
+      await FacebookAuth.instance.logOut();*/
+    } catch (e) {
+      throw Exception("Erreur lors de la déconnexion.");
+    }
   }
 }

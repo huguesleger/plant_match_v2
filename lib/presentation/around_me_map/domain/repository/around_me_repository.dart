@@ -1,8 +1,7 @@
-import 'package:plant_match_v2/presentation/around_me_map/domain/entity/around_me.dart';
+import 'package:plant_match_v2/presentation/profil/domain/entity/profil_user.dart';
 
 abstract class AroundMeRepository {
-  Future<List<AroundMe>> getPlacesAroundMe(
-      String uid, double latitude, double longitude);
+  Future<List<ProfilUser>> getAllUserUids();
 
-  Future<List<AroundMe>> getAllUsers(String uid);
+  Future<void> updateUserLocation(ProfilUser user);
 }

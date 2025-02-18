@@ -71,6 +71,14 @@ class ProfilPersonalDetailPage extends StatelessWidget {
                   uid: profilUser.uid,
                   fieldName: 'country',
                 );
+                await profilCubit.clearField(
+                  uid: profilUser.uid,
+                  fieldName: 'latitude',
+                );
+                await profilCubit.clearField(
+                  uid: profilUser.uid,
+                  fieldName: 'longitude',
+                );
               },
             ),
             const Divider(height: 0),

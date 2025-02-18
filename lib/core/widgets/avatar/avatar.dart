@@ -6,9 +6,18 @@ import 'package:plant_match_v2/presentation/profil/presentation/cubit/profil_cub
 import 'package:plant_match_v2/presentation/profil/presentation/cubit/profil_state.dart';
 
 class Avatar extends StatelessWidget {
-  const Avatar({super.key, required this.profilUser});
+  const Avatar({
+    super.key,
+    required this.profilUser,
+    this.radius = 30,
+    this.imgSizeAvatar = 60,
+    this.defaultSizeAvatar = 45,
+  });
 
   final ProfilUser profilUser;
+  final double? radius;
+  final double? imgSizeAvatar;
+  final double? defaultSizeAvatar;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +35,7 @@ class Avatar extends StatelessWidget {
 
         return CircleAvatar(
           backgroundColor: AppColors.greyLight,
-          radius: 30,
+          radius: radius,
           child: ClipOval(
             child: imageUrl.isNotEmpty &&
                     imageUrl != imgAvatar &&
@@ -34,17 +43,17 @@ class Avatar extends StatelessWidget {
                 ? Image.network(
                     imageUrl,
                     fit: BoxFit.cover,
-                    width: 60,
-                    height: 60,
+                    width: imgSizeAvatar,
+                    height: imgSizeAvatar,
                   )
-                : const Stack(
+                : Stack(
                     children: [
                       Align(
                         alignment: Alignment.bottomCenter,
                         child: Image(
-                          image: AssetImage(imgAvatar),
-                          width: 45,
-                          height: 45,
+                          image: const AssetImage(imgAvatar),
+                          width: defaultSizeAvatar,
+                          height: defaultSizeAvatar,
                         ),
                       ),
                     ],

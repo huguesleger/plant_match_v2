@@ -1,41 +1,61 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:plant_match_v2/presentation/around_me_map/domain/entity/around_me.dart';
 import 'package:plant_match_v2/presentation/around_me_map/domain/repository/around_me_repository.dart';
 import 'package:plant_match_v2/presentation/around_me_map/presentation/cubit/around_me_state.dart';
+import 'package:plant_match_v2/presentation/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/presentation/profil/domain/repository/profil_repository.dart';
 
 class AroundMeCubit extends Cubit<AroundMeState> {
   final AroundMeRepository aroundMeRepository;
   final ProfilRepository profilRepository;
-  AroundMe? _currentPlace;
 
   AroundMeCubit(
       {required this.aroundMeRepository, required this.profilRepository})
       : super(AroundMeInitial());
 
-  AroundMe? get currentPlace => _currentPlace;
-
-  Future<void> fetchPlacesAroundMe(
-      String uid, double latitude, double longitude) async {
-    emit(AroundMeLoading());
+  Future<void> getAllUserProfiles(String uid) async {
     try {
-      final places =
-          await aroundMeRepository.getPlacesAroundMe(uid, latitude, longitude);
-      final profilUser = await profilRepository.getProfilUser(uid);
-      emit(AroundMeLoaded(places, profilUser!));
+      final users = await aroundMeRepository.getAllUserUids();
+      final currentUser = await profilRepository.getProfilUser(uid);
+
+      if (currentUser == null) {
+        emit(AroundMeError("Utilisateur introuvable"));
+        return;
+      }
+
+      emit(AroundMeLoaded(currentUser: currentUser, users: users));
     } catch (e) {
-      emit(AroundMeError('Erreur: $e'));
+      emit(AroundMeError("Erreur lors du chargement des utilisateurs"));
     }
   }
 
-  Future<void> fetchAllUsers(String uid) async {
-    emit(AroundMeLoading());
+  Future<void> fetchConnectedUsers(String uid) async {
     try {
-      final users = await aroundMeRepository.getAllUsers(uid);
-      final profilUser = await profilRepository.getProfilUser(uid);
-      emit(AroundMeLoaded(users, profilUser!));
+      emit(AroundMeLoading());
+      final users = await aroundMeRepository.getAllUserUids();
+      final currentUser = await profilRepository.getProfilUser(uid);
+      final connectedUsers = users.where((user) => user.uid != uid).toList();
+
+      if (currentUser == null) {
+        emit(AroundMeError("Utilisateur introuvable"));
+        return;
+      }
+
+      emit(AroundMeLoaded(currentUser: currentUser, users: connectedUsers));
     } catch (e) {
-      emit(AroundMeError('Erreur: $e'));
+      emit(AroundMeError(
+          "Erreur lors de la récupération des utilisateurs : $e"));
+    }
+  }
+
+  void updateUserLocation(ProfilUser updatedUser) async {
+    emit(AroundMeLoading());
+
+    try {
+      await aroundMeRepository.updateUserLocation(updatedUser);
+      final users = await aroundMeRepository.getAllUserUids();
+      emit(AroundMeLoaded(currentUser: updatedUser, users: users));
+    } catch (e) {
+      emit(AroundMeError("Erreur de mise à jour de la localisation : $e"));
     }
   }
 }

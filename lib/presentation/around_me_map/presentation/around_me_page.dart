@@ -9,12 +9,12 @@ import 'package:plant_match_v2/presentation/profil/data/firebase_profil_repo.dar
 import 'package:plant_match_v2/presentation/storage/data/firebase_storage_repository.dart';
 
 class AroundMePage extends StatelessWidget {
-  AroundMePage({super.key, required this.uid});
-
+  final String uid;
   final aroundMeRepository = FirebaseAroundMe();
   final profilRepository = FirebaseProfilRepo();
   final storageRepository = FirebaseStorageRepository();
-  final String uid;
+
+  AroundMePage({super.key, required this.uid});
 
   @override
   Widget build(BuildContext context) {
@@ -22,25 +22,16 @@ class AroundMePage extends StatelessWidget {
       create: (context) => AroundMeCubit(
         aroundMeRepository: aroundMeRepository,
         profilRepository: profilRepository,
-      )..fetchAllUsers(uid),
+      )..getAllUserProfiles(uid),
       child: BlocBuilder<AroundMeCubit, AroundMeState>(
         builder: (context, state) {
-          if (state is AroundMeLoading) {
-            return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            );
-          } else if (state is AroundMeError) {
-            return ErrorPage(errorMessage: state.message);
-          } else if (state is AroundMeLoaded) {
-            return AroundMeMapScreen(
-              profilUser: state.profilUser, // Passer profilUser en paramètre
-              users: state.users, // Passer les autres utilisateurs en paramètre
-            );
-          }
-
-          return const Scaffold(
-            body: Center(child: Text("Aucune donnée disponible")),
-          );
+          return switch (state) {
+            AroundMeInitial() || AroundMeLoading() => const Center(
+                child: CircularProgressIndicator(),
+              ),
+            AroundMeLoaded() => const AroundMeMapScreen(),
+            AroundMeError() => ErrorPage(errorMessage: state.message),
+          };
         },
       ),
     );

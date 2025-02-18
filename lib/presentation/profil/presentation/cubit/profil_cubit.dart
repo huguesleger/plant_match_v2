@@ -35,6 +35,8 @@ class ProfilCubit extends Cubit<ProfilState> {
     String? newLocalisation,
     String? newCountry,
     DateTime? newBirthdayDate,
+    double? newLatitude,
+    double? newLongitude,
   }) async {
     emit(ProfilLoading());
     try {
@@ -64,6 +66,8 @@ class ProfilCubit extends Cubit<ProfilState> {
         newLocalisation: newLocalisation ?? currentUser.localisation,
         newCountry: newCountry ?? currentUser.country,
         newBirthdayDate: newBirthdayDate ?? currentUser.birthdayDate,
+        newLatitude: newLatitude ?? currentUser.latitude,
+        newLongitude: newLongitude ?? currentUser.longitude,
       );
 
       await profilRepository.updateProfilUser(updatedProfilUser);
@@ -132,6 +136,8 @@ class ProfilCubit extends Cubit<ProfilState> {
         newBio: fieldName == 'bio' ? '' : null,
         newLocalisation: fieldName == 'localisation' ? '' : null,
         newCountry: fieldName == 'country' ? '' : null,
+        newLatitude: fieldName == 'latitude' ? 0 : null,
+        newLongitude: fieldName == 'longitude' ? 0 : null,
       );
 
       await profilRepository.updateProfilUser(updatedProfilUser);
