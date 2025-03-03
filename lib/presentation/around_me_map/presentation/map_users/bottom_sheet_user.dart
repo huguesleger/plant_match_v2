@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
+import 'package:plant_match_v2/core/extension/first_word_before_space/first_word_after_space.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
+import 'package:plant_match_v2/core/theme/inter_text_style.dart';
 import 'package:plant_match_v2/core/widgets/app_bottom_sheet/app_bottom_sheet.dart';
 import 'package:plant_match_v2/core/widgets/avatar/avatar.dart';
-import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
 import 'package:plant_match_v2/presentation/profil/domain/entity/profil_user.dart';
 
 void bottomSheetUser({
   required BuildContext context,
   required ProfilUser user,
+  double? distance,
 }) {
   AppBottomSheet.showBottomSheet(
     context,
@@ -22,15 +25,27 @@ void bottomSheetUser({
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
               children: [
-                Avatar(profilUser: user, radius: 45, imgSizeAvatar: 90),
+                Avatar(
+                  profilUser: user,
+                  radius: 45,
+                  imgSizeAvatar: 90,
+                  defaultSizeAvatar: 65,
+                ),
                 const SizedBox(width: 10),
                 Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    TitlePage(
-                      title: user.userName.toCapitalize(),
-                      fontSize: AppTypo.text,
-                      color: AppColors.greyDark,
-                      fontWeight: FontWeight.w500,
+                    Text(
+                      user.userName.isNotEmpty
+                          ? user.userName.toCapitalize()
+                          : user.fullName
+                              .getFirstWordBeforeSpace()
+                              .toCapitalize(),
+                      style: InterTextStyle.inter(
+                        AppTypo.textM,
+                        color: AppColors.greyDark,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     const SizedBox(height: 5),
                     Container(
@@ -41,21 +56,25 @@ void bottomSheetUser({
                       decoration: BoxDecoration(
                         color: user.isOnline
                             ? AppColors.blueGreen
-                            : AppColors.greyUltraLight,
+                            : AppColors.greyLight,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Row(
                         children: [
-                          const Icon(
-                            Icons.circle,
-                            color: AppColors.greenLight,
-                            size: 6,
-                          ),
+                          user.isOnline
+                              ? const Icon(
+                                  Icons.circle,
+                                  color: AppColors.greenLight,
+                                  size: 6,
+                                )
+                              : const SizedBox.shrink(),
                           const SizedBox(width: 2),
                           Text(
                             user.isOnline ? "En ligne" : "Hors ligne",
-                            style: const TextStyle(
-                              color: AppColors.white,
+                            style: TextStyle(
+                              color: user.isOnline
+                                  ? AppColors.white
+                                  : AppColors.greyDark,
                               fontSize: 8,
                               fontWeight: FontWeight.bold,
                               height: 1.5,
@@ -66,6 +85,28 @@ void bottomSheetUser({
                     ),
                   ],
                 ),
+                const Spacer(),
+                if (distance != null)
+                  Column(
+                    children: [
+                      const Icon(
+                        LucideIcons.map_pin,
+                        color: AppColors.greenLight,
+                        size: 25,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Text(
+                          "$distance km",
+                          style: InterTextStyle.inter(
+                            AppTypo.textS,
+                            color: AppColors.greyDark,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
               ],
             ),
           ),

@@ -3,6 +3,7 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/presentation/around_me_map/presentation/map_users/bottom_sheet_user.dart';
 import 'package:plant_match_v2/presentation/profil/domain/entity/profil_user.dart';
 
@@ -23,13 +24,19 @@ class MapUsers extends StatefulWidget {
 class _MapUsersState extends State<MapUsers> {
   late final MapController _mapController;
   double _currentZoom = 12.0;
-  final double _minZoom = 10.0;
+  final double _minZoom = 6.0;
   final double _maxZoom = 16.0;
 
   @override
   void initState() {
     super.initState();
     _mapController = MapController();
+  }
+
+  void _centerOnUser() {
+    setState(() {
+      _mapController.move(_getUserPosition(widget.currentUser), _currentZoom);
+    });
   }
 
   void _zoomIn() {
@@ -48,6 +55,29 @@ class _MapUsersState extends State<MapUsers> {
         _mapController.move(_mapController.camera.center, _currentZoom);
       });
     }
+  }
+
+  List<Map<String, dynamic>> _calculateDistancesForUsers(
+      ProfilUser currentUser, List<ProfilUser> users) {
+    const Distance distance = Distance();
+    List<Map<String, dynamic>> userDistances = [];
+
+    for (var user in users) {
+      if (user.uid != currentUser.uid) {
+        double meters = distance.as(
+          LengthUnit.Meter,
+          LatLng(currentUser.latitude ?? 0.0, currentUser.longitude ?? 0.0),
+          LatLng(user.latitude ?? 0.0, user.longitude ?? 0.0),
+        );
+        double km = meters / 1000;
+        double distanceKm = double.parse(km.toStringAsFixed(2));
+        userDistances.add({
+          'user': user,
+          'distance': distanceKm,
+        });
+      }
+    }
+    return userDistances;
   }
 
   @override
@@ -89,23 +119,59 @@ class _MapUsersState extends State<MapUsers> {
           ),
         ),
         Positioned(
-          bottom: 40,
-          right: 40,
+          bottom: 30,
+          right: 30,
           child: Column(
             children: [
               FloatingActionButton(
-                onPressed: _zoomIn,
+                onPressed: _centerOnUser,
                 backgroundColor: AppColors.white,
                 mini: true,
-                child: const Icon(LucideIcons.plus, color: AppColors.blueGreen),
+                child: const Icon(
+                  LucideIcons.locate_fixed,
+                  color: AppColors.blueGreen,
+                  size: AppTypo.textM,
+                ),
               ),
-              const SizedBox(height: 8),
-              FloatingActionButton(
-                onPressed: _zoomOut,
-                backgroundColor: AppColors.white,
-                mini: true,
-                child:
-                    const Icon(LucideIcons.minus, color: AppColors.blueGreen),
+              const SizedBox(height: 5),
+              Container(
+                width: 40,
+                decoration: BoxDecoration(
+                  color: AppColors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.black.withValues(alpha: 0.3),
+                      blurRadius: 5,
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      onPressed: _zoomIn,
+                      icon: const Icon(
+                        LucideIcons.plus,
+                        color: AppColors.blueGreen,
+                        size: AppTypo.textM,
+                      ),
+                    ),
+                    Container(
+                      height: 1,
+                      width: 25,
+                      color: Colors.grey.shade300,
+                    ),
+                    IconButton(
+                      onPressed: _zoomOut,
+                      icon: const Icon(
+                        LucideIcons.minus,
+                        color: AppColors.blueGreen,
+                        size: AppTypo.textM,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -120,6 +186,13 @@ class _MapUsersState extends State<MapUsers> {
 
   Widget _buildUserMarker(ProfilUser user) {
     bool isCurrentUser = user.uid == widget.currentUser.uid;
+    List<Map<String, dynamic>> userDistances =
+        _calculateDistancesForUsers(widget.currentUser, widget.users);
+
+    double distance = userDistances.firstWhere(
+      (item) => item['user'].uid == user.uid,
+      orElse: () => {'distance': 0.0},
+    )['distance'];
 
     return isCurrentUser
         ? Stack(
@@ -149,7 +222,7 @@ class _MapUsersState extends State<MapUsers> {
           )
         : IconButton(
             onPressed: () {
-              bottomSheetUser(context: context, user: user);
+              bottomSheetUser(context: context, user: user, distance: distance);
             },
             style: ButtonStyle(
               shape: WidgetStateProperty.all(const CircleBorder()),
