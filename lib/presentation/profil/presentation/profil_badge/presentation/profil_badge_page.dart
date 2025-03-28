@@ -20,6 +20,7 @@ class ProfilBadgePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBarTemplate(
         title: 'Mes badges',
+        centerTitle: true,
         backgroundColor: AppColors.greenLight,
         surfaceTintColor: AppColors.white,
         styleIconButton: IconButton.styleFrom(

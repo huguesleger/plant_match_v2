@@ -60,6 +60,7 @@ dependencies:
   geocoding: ^3.0.0
   flutter_map: ^7.0.2
   latlong2: ^0.9.1
+  dotted_border: ^2.1.0
 
 flutter_native_splash:
   color: "#12F4A9"

@@ -30,6 +30,7 @@ class ProfilPersonalInformationPage extends StatelessWidget {
         title: 'Informations personnelles',
         backgroundColor: AppColors.white,
         surfaceTintColor: AppColors.white,
+        centerTitle: true,
         styleIconButton: IconButton.styleFrom(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),

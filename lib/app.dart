@@ -11,12 +11,15 @@ import 'package:plant_match_v2/presentation/around_me_map/presentation/cubit/aro
 import 'package:plant_match_v2/presentation/auth/data/firebase_auth_service.dart';
 import 'package:plant_match_v2/presentation/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/presentation/auth/presentation/cubit/auth_state.dart';
+import 'package:plant_match_v2/presentation/catolog/presentation/cubit/catalog_cubit.dart';
 import 'package:plant_match_v2/presentation/get_started/presentation/get_started_page.dart';
 import 'package:plant_match_v2/presentation/profil/data/firebase_profil_repo.dart';
 import 'package:plant_match_v2/presentation/profil/presentation/cubit/profil_cubit.dart';
 import 'package:plant_match_v2/presentation/storage/data/firebase_storage_repository.dart';
 import 'package:plant_match_v2/presentation/user_points/data/firebase_user_points.dart';
 import 'package:plant_match_v2/presentation/user_points/presentation/cubit/user_points_cubit.dart';
+
+import 'presentation/catolog/data/firebase_catalog_repository.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -31,6 +34,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   final storageRepository = FirebaseStorageRepository();
   final userPointsRepository = FirebaseUserPoints();
   final aroundMeRepository = FirebaseAroundMe();
+  final catalogRepository = FirebaseCatalogRepository();
 
   @override
   void initState() {
@@ -89,6 +93,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           create: (context) => AroundMeCubit(
             aroundMeRepository: aroundMeRepository,
             profilRepository: profilRepository,
+          ),
+        ),
+        BlocProvider(
+          create: (context) => CatalogCubit(
+            catalogRepository: catalogRepository,
+            storageRepository: storageRepository,
           ),
         ),
       ],

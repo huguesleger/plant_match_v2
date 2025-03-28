@@ -19,7 +19,6 @@ class LevelDetailPage extends StatelessWidget {
       appBar: AppBarHeaderImage(
         image: const Image(
             image: AssetImage('assets/images/bg_profil_level_detail.jpg')),
-        headerHeight: 215,
         onPressed: () {
           Navigator.pop(context);
         },

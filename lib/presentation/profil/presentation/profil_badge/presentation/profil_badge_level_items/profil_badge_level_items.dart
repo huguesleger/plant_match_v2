@@ -42,7 +42,7 @@ class ProfilBadgeLevelItems extends StatelessWidget {
 
     return Card.filled(
       color: isCurrentOrPreviousLevel
-          ? AppColors.greenDark.withOpacity(0.3)
+          ? AppColors.greenDark.withValues(alpha: 0.3)
           : AppColors.greyUltraLight,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),

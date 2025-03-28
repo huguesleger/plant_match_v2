@@ -7,7 +7,6 @@ class TitlePage extends StatelessWidget {
     super.key,
     required this.title,
     this.subtitle,
-    this.isSubtitle = false,
     this.fontSize = 32,
     this.color = AppColors.blueGreen,
     this.fontWeight = FontWeight.w600,
@@ -17,7 +16,6 @@ class TitlePage extends StatelessWidget {
 
   final String title;
   final String? subtitle;
-  final bool isSubtitle;
   final double fontSize;
   final Color color;
   final FontWeight fontWeight;
@@ -26,18 +24,8 @@ class TitlePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return isSubtitle != true
-        ? Text(
-            title,
-            style: TextStyle(
-              fontSize: fontSize,
-              fontFamily: 'Chillax',
-              color: color,
-              fontWeight: fontWeight,
-              overflow: overflow,
-            ),
-          )
-        : Column(
+    return subtitle != null && subtitle!.isNotEmpty
+        ? Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
@@ -59,6 +47,16 @@ class TitlePage extends StatelessWidget {
                 textAlign: textAlign,
               ),
             ],
+          )
+        : Text(
+            title,
+            style: TextStyle(
+              fontSize: fontSize,
+              fontFamily: 'Chillax',
+              color: color,
+              fontWeight: fontWeight,
+              overflow: overflow,
+            ),
           );
   }
 }

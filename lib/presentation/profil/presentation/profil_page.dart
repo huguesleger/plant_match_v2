@@ -23,8 +23,7 @@ class ProfilPage extends StatelessWidget {
         ..getProfilUser(uid),
       child: BlocBuilder<ProfilCubit, ProfilState>(
         builder: (context, state) {
-          return Scaffold(
-              body: switch (state) {
+          return switch (state) {
             ProfilInitial() || ProfilLoading() => const Center(
                 child: CircularProgressIndicator(),
               ),
@@ -33,7 +32,7 @@ class ProfilPage extends StatelessWidget {
                 userId: uid,
               ),
             ProfilError() => ErrorPage(errorMessage: state.message),
-          });
+          };
         },
       ),
     );

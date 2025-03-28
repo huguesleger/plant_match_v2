@@ -24,7 +24,7 @@ class TemplatePageState extends State<TemplatePage> {
   void initState() {
     super.initState();
 
-    _currentIndex = widget.initialIndex; // Initialise l'index avec le paramètre
+    _currentIndex = widget.initialIndex;
 
     final user = context.read<AuthCubit>().currentUser;
     uid = user?.uid ?? '';
@@ -47,9 +47,9 @@ class TemplatePageState extends State<TemplatePage> {
   @override
   Widget build(BuildContext context) {
     return NavigationBottomBar(
-      body: _pages[_currentIndex], // Contenu spécifique de la page
-      currentIndex: _currentIndex, // Index actuel
-      onTap: _onPageChanged, // Callback pour changer de page
+      body: _pages[_currentIndex],
+      currentIndex: _currentIndex,
+      onTap: _onPageChanged,
     );
   }
 }

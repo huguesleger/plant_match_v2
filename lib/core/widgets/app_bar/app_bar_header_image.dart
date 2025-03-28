@@ -12,7 +12,7 @@ class AppBarHeaderImage extends StatelessWidget implements PreferredSizeWidget {
     required this.onPressed,
     this.styleIconButton,
     this.leadingWith = 80,
-    required this.headerHeight,
+    this.headerHeight = 215,
   });
 
   final Image image;
@@ -22,10 +22,10 @@ class AppBarHeaderImage extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback onPressed;
   final ButtonStyle? styleIconButton;
   final double? leadingWith;
-  final double headerHeight;
+  final double? headerHeight;
 
   @override
-  Size get preferredSize => Size.fromHeight(headerHeight - 59);
+  Size get preferredSize => Size.fromHeight(headerHeight! - 59);
 
   @override
   Widget build(BuildContext context) {

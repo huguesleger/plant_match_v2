@@ -166,6 +166,7 @@ class _ProfilPersonalDetailWizardPageState
           ),
           side: const BorderSide(color: AppColors.greyLight),
         ),
+        centerTitle: true,
         leading: _currentPage == 0 ? false : true,
         onPressed: () {
           _onPressedBack();

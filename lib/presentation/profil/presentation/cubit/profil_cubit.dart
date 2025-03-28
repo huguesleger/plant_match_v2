@@ -51,7 +51,9 @@ class ProfilCubit extends Cubit<ProfilState> {
 
       if (imageUrl != null) {
         imageDownloadUrl = await storageRepository.uploadImageFromUrl(
-            path: imageUrl, fileName: currentUser.uid);
+            path: imageUrl,
+            fileName: currentUser.uid,
+            folder: 'profile_images');
       }
 
       if (imageUrl == null && imageDownloadUrl == null) {

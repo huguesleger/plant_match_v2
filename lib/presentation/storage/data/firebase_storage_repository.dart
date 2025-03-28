@@ -8,9 +8,10 @@ class FirebaseStorageRepository implements StorageRepository {
 
   @override
   Future<String?> uploadImageFromUrl(
-      {required String path, required String fileName}) {
-    return _uploadImage(
-        path: path, fileName: fileName, folder: "profile_images");
+      {required String path,
+      required String fileName,
+      required String folder}) {
+    return _uploadImage(path: path, fileName: fileName, folder: folder);
   }
 
   Future<String?> _uploadImage(

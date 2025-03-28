@@ -9,17 +9,20 @@ class BottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 20) +
+          const EdgeInsets.only(top: 16, bottom: 8),
       decoration: BoxDecoration(
         color: AppColors.white,
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withOpacity(0.1),
+            color: AppColors.black.withValues(alpha: 0.1),
             blurRadius: 15.0,
           )
         ],
       ),
-      child: Padding(padding: const EdgeInsets.only(bottom: 20), child: child),
+      child: SafeArea(
+        child: child,
+      ),
     );
   }
 }
