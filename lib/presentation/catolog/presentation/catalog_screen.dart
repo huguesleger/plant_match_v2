@@ -8,10 +8,14 @@ import 'package:plant_match_v2/presentation/catolog/presentation/add_plant_wizar
 import 'package:plant_match_v2/presentation/catolog/widget/catalog_card_is_empty.dart';
 
 class CatalogScreen extends StatelessWidget {
-  const CatalogScreen({super.key, required this.uid, required this.catalog});
+  const CatalogScreen({
+    super.key,
+    required this.uid,
+    required this.catalog,
+  });
 
   final String uid;
-  final List<Catalog> catalog;
+  final Catalog catalog;
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +38,10 @@ class CatalogScreen extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-                  AddPlantWizardPage(userId: uid, catalog: catalog),
+              builder: (context) => AddPlantWizardPage(
+                userId: uid,
+                catalog: catalog,
+              ),
             ),
           );
         },

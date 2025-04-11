@@ -7,15 +7,18 @@ class FirebaseStorageRepository implements StorageRepository {
   final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
 
   @override
-  Future<String?> uploadImageFromUrl(
-      {required String path,
-      required String fileName,
-      required String folder}) {
+  Future<String?> uploadImageFromUrl({
+    required String path,
+    required String fileName,
+    required String folder,
+  }) {
     return _uploadImage(path: path, fileName: fileName, folder: folder);
   }
 
   Future<String?> _uploadImage(
-      {required String path, required String fileName, required folder}) async {
+      {required String path,
+      required String fileName,
+      required String folder}) async {
     try {
       final file = File(path);
       final ref = _firebaseStorage.ref().child('$folder/$fileName');

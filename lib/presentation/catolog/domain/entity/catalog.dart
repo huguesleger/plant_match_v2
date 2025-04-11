@@ -49,7 +49,7 @@ class Catalog {
       uid: json['uid'],
       name: json['name'],
       description: json['description'],
-      images: List<String>.from(json['images'] ?? []),
+      images: List<String>.from(json['images']),
       environment: Environment.values.byName(json['environment']),
       family: Family.values.byName(json['family']),
       levelMaintenance:

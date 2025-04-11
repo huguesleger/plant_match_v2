@@ -14,17 +14,20 @@ import 'package:plant_match_v2/core/widgets/form/decoration_input.dart';
 import 'package:plant_match_v2/core/widgets/title_with_icon/title_with_icon.dart';
 import 'package:plant_match_v2/presentation/catolog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/presentation/catolog/presentation/add_plant_wizard/add_plant_wizard_item.dart';
+import 'package:plant_match_v2/presentation/catolog/presentation/cubit/catalog_cubit.dart';
+import 'package:plant_match_v2/presentation/catolog/presentation/util/string_to_enum.dart';
 import 'package:plant_match_v2/presentation/catolog/widget/catalog_upload_image.dart';
 import 'package:plant_match_v2/presentation/catolog/widget/selectable_item.dart';
 
-import '../cubit/catalog_cubit.dart';
-
 class AddPlantWizardPage extends StatefulWidget {
-  const AddPlantWizardPage(
-      {super.key, required this.userId, required this.catalog});
+  const AddPlantWizardPage({
+    super.key,
+    required this.userId,
+    required this.catalog,
+  });
 
   final String userId;
-  final List<Catalog> catalog;
+  final Catalog catalog;
 
   @override
   State<AddPlantWizardPage> createState() => _AddPlantWizardPageState();
@@ -50,7 +53,8 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
       TextEditingController();
   final TextEditingController _plantDescriptionController =
       TextEditingController();
-  final _formKey = GlobalKey<FormBuilderState>();
+
+  //final _formKey = GlobalKey<FormBuilderState>();
   final _formKeyPlantName = GlobalKey<FormBuilderState>();
   final _formKeyPlantImage = GlobalKey<FormBuilderState>();
   final _formKeyPlantCategory = GlobalKey<FormBuilderState>();
@@ -75,16 +79,156 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
       );
     }
   }*/
+/*  void _onPressedNext() {
+    if (_formKeyPlantName.currentState?.saveAndValidate() ?? false) {
+      context.read<CatalogCubit>().saveCatalog(
+            widget.catalog.copyWith(
+              newName: _plantNameController.text,
+            ),
+          );
+
+      _pageController.nextPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeIn,
+      );
+    }
+  }*/
+
   void _onPressedNext() {
-    if (_formKey.currentState?.saveAndValidate() ?? false) {
-      if (_currentPage == _totalPages - 1) {
-      } else {
-        // Sinon, on passe à la page suivante avec animation
+    // On détermine le formulaire et la validation selon la page actuelle
+    switch (_currentPage) {
+      case 0: // Page pour nom de la plante
+        if (_formKeyPlantName.currentState?.saveAndValidate() ?? false) {
+/*          context.read<CatalogCubit>().saveCatalog(
+                widget.catalog.copyWith(
+                  newName: _plantNameController.text,
+                ),
+              );*/
+          context.read<CatalogCubit>().updateCatalog(
+                catalogId: widget.catalog.uid,
+                newName: _plantNameController.text,
+              );
+          _pageController.nextPage(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeIn,
+          );
+        }
+        break;
+      case 1: // Page pour image de la plante
+        if (_formKeyPlantImage.currentState?.saveAndValidate() ?? false) {
+          print("📸 Image avant enregistrement: ${_plantImageController.text}");
+
+          // Récupérer les images de Firebase via le Cubit et les sauvegarder
+          final catalogCubit = context.read<CatalogCubit>();
+          final currentState = catalogCubit.state;
+
+          /*         List<String> uploadedImages = [_plantImageController.text];
+
+          catalogCubit.updateCatalog(
+            catalogId: widget.catalog.uid,
+            images: uploadedImages,
+          );*/
+          _pageController.nextPage(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeIn,
+          );
+        }
+        break;
+      case 2: // Page pour la catégorie de la plante
+/*        context.read<CatalogCubit>().saveCatalog(
+              widget.catalog.copyWith(
+                newName: _plantNameController.text,
+                newImages: [_plantImageController.text],
+                newEnvironment:
+                    getEnvironmentFromString(_plantCategoryController.text),
+              ),
+            );*/
+        context.read<CatalogCubit>().updateCatalog(
+              catalogId: widget.catalog.uid,
+              newName: _plantNameController.text,
+              images: widget.catalog.images,
+              newEnvironment:
+                  getEnvironmentFromString(_plantCategoryController.text),
+            );
+/*        final updatedCatalog = widget.catalog.copyWith(
+            newEnvironment:
+                getEnvironmentFromString(_plantCategoryController.text));*/
         _pageController.nextPage(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeIn,
         );
-      }
+        break;
+      case 3: // Page pour la famille de la plante
+/*        context.read<CatalogCubit>().saveCatalog(
+              widget.catalog.copyWith(
+                newName: _plantNameController.text,
+                newImages: [_plantImageController.text],
+                newEnvironment:
+                    getEnvironmentFromString(_plantCategoryController.text),
+                newFamily: getFamilyFromString(_plantFamilyController.text),
+              ),
+            );*/
+        context.read<CatalogCubit>().updateCatalog(
+              catalogId: widget.catalog.uid,
+              newFamily: getFamilyFromString(_plantFamilyController.text),
+            );
+        _pageController.nextPage(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeIn,
+        );
+        break;
+/*      case 4:
+        context.read<CatalogCubit>().saveCatalog(
+              widget.catalog.copyWith(
+                newLevelMaintenance: getLevelMaintenanceFromString(
+                    _plantMaintenanceController.text),
+              ),
+            );
+        _pageController.nextPage(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeIn,
+        );
+        break;*/
+/*      case 5:
+        context.read<CatalogCubit>().saveCatalog(
+              widget.catalog.copyWith(
+                newWatering:
+                    getWateringFromString(_plantWateringController.text),
+              ),
+            );
+        _pageController.nextPage(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeIn,
+        );
+        break;*/
+/*      case 6:
+        context.read<CatalogCubit>().saveCatalog(
+              widget.catalog.copyWith(
+                newLighting: getLightingFromString(
+                  _plantLightingController.text,
+                ),
+              ),
+            );
+        _pageController.nextPage(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeIn,
+        );
+        break;*/
+/*      case 7:
+        print('toto');
+        context.read<CatalogCubit>().saveCatalog(
+              widget.catalog.copyWith(
+                newName: _plantNameController.value.text,
+                newDescription: _plantDescriptionController.text,
+              ),
+            );
+        _pageController.nextPage(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeIn,
+        );
+        break;*/
+      default:
+        break;
     }
   }
 
@@ -103,40 +247,41 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
     if (formKey.currentState?.saveAndValidate() ?? false) {
       final String value = controller.text;
       updateCatalogField(value);
+      print('value');
 
       if (_currentPage < _totalPages - 1) {
         _onPressedNext();
+        print('ggg');
       }
     }
   }
 
-  Future<void> _handleCatalogPageAction(int currentPage) async {
+/*  Future<void> _handleCatalogPageAction(int currentPage) async {
     switch (currentPage) {
-      case 0:
+      case 0: // Page for plant name
         _onPressed(
           formKey: _formKeyPlantName,
           controller: _plantNameController,
           updateCatalogField: (value) {
-            try {
-              Catalog catalogToUpdate = widget.catalog
-                  .firstWhere((catalog) => catalog.uid == widget.userId);
-
-              context.read<CatalogCubit>().saveCatalog(catalogToUpdate);
-            } catch (e) {
-              print("Aucun catalogue correspondant trouvé !");
-            }
+            context.read<CatalogCubit>().saveCatalog(
+                  widget.catalog.copyWith(
+                    newName: value,
+                  ),
+                );
           },
         );
         break;
       default:
         break;
     }
-  }
+  }*/
 
   void onSelect(String value) {
     setState(() {
       selectedValue = value;
       print(selectedValue);
+      _plantCategoryController.text = value;
+      print(_plantCategoryController.text);
     });
   }
 
@@ -229,6 +374,7 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                       return Expanded(
                         child: CatalogUploadImage(
                           userId: widget.userId,
+                          catalogId: widget.userId,
                           field: field,
                         ),
                       );
@@ -245,6 +391,15 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                   description: 'Sélectionner une catégorie pour votre plante',
                   child: FormBuilderField(
                     name: 'category',
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: FormBuilderValidators.compose([
+                      FormBuilderValidators.required(
+                          errorText: 'Ce champ est requis'),
+                    ]),
+                    onSaved: (value) {
+                      _plantCategoryController.text = value.toString();
+                      print(_plantCategoryController.text);
+                    },
                     builder: (FormFieldState<dynamic> field) {
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -254,8 +409,13 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                               icon: LucideIcons.house,
                               label: "Intérieur",
                               value: "indoor",
-                              isSelected: selectedValue == "indoor",
-                              onTap: onSelect,
+                              isSelected:
+                                  _plantCategoryController.text == "indoor",
+                              onTap: (value) {
+                                onSelect(value);
+                                field.didChange(value);
+                                print(_plantCategoryController.text);
+                              },
                             ),
                           ),
                           const SizedBox(width: 10),
@@ -264,8 +424,13 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                               icon: LucideIcons.fence,
                               label: "Extérieur",
                               value: "outdoor",
-                              isSelected: selectedValue == "outdoor",
-                              onTap: onSelect,
+                              isSelected:
+                                  _plantCategoryController.text == "outdoor",
+                              onTap: (value) {
+                                onSelect(value);
+                                field.didChange(value);
+                                print(_plantCategoryController.text);
+                              },
                             ),
                           ),
                         ],
@@ -443,7 +608,7 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
         child: ButtonRounded(
           text: _currentPage == _totalPages - 1 ? 'Enregistrer' : 'Suivant',
           onPressed: () {
-            _handleCatalogPageAction(_currentPage);
+            _onPressedNext();
           },
           bgColor: AppColors.greenLight,
           textColor: AppColors.blueGreen,

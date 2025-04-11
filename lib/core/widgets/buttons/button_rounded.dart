@@ -4,7 +4,7 @@ class ButtonRounded extends StatelessWidget {
   const ButtonRounded({
     super.key,
     required this.text,
-    required this.onPressed,
+    this.onPressed,
     required this.bgColor,
     required this.textColor,
     this.fontSize = 14,
@@ -12,7 +12,7 @@ class ButtonRounded extends StatelessWidget {
   });
 
   final String text;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final Color bgColor;
   final Color textColor;
   final double? fontSize;
@@ -24,6 +24,7 @@ class ButtonRounded extends StatelessWidget {
       onPressed: onPressed,
       style: FilledButton.styleFrom(
         backgroundColor: bgColor,
+        foregroundColor: bgColor,
         padding: padding,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(50),
