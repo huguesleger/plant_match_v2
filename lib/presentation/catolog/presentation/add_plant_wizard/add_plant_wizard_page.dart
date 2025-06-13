@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -16,7 +14,6 @@ import 'package:plant_match_v2/presentation/catolog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/presentation/catolog/presentation/add_plant_wizard/add_plant_wizard_item.dart';
 import 'package:plant_match_v2/presentation/catolog/presentation/cubit/catalog_cubit.dart';
 import 'package:plant_match_v2/presentation/catolog/presentation/util/string_to_enum.dart';
-import 'package:plant_match_v2/presentation/catolog/widget/catalog_upload_image.dart';
 import 'package:plant_match_v2/presentation/catolog/widget/selectable_item.dart';
 
 class AddPlantWizardPage extends StatefulWidget {
@@ -99,14 +96,10 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
     switch (_currentPage) {
       case 0: // Page pour nom de la plante
         if (_formKeyPlantName.currentState?.saveAndValidate() ?? false) {
-/*          context.read<CatalogCubit>().saveCatalog(
+          context.read<CatalogCubit>().saveCatalog(
                 widget.catalog.copyWith(
-                  newName: _plantNameController.text,
+                  name: _plantNameController.text,
                 ),
-              );*/
-          context.read<CatalogCubit>().updateCatalog(
-                catalogId: widget.catalog.uid,
-                newName: _plantNameController.text,
               );
           _pageController.nextPage(
             duration: const Duration(milliseconds: 300),
@@ -114,7 +107,7 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
           );
         }
         break;
-      case 1: // Page pour image de la plante
+/*      case 1: // Page pour image de la plante
         if (_formKeyPlantImage.currentState?.saveAndValidate() ?? false) {
           print("📸 Image avant enregistrement: ${_plantImageController.text}");
 
@@ -122,33 +115,26 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
           final catalogCubit = context.read<CatalogCubit>();
           final currentState = catalogCubit.state;
 
-          /*         List<String> uploadedImages = [_plantImageController.text];
+          */ /*         List<String> uploadedImages = [_plantImageController.text];
 
           catalogCubit.updateCatalog(
             catalogId: widget.catalog.uid,
             images: uploadedImages,
-          );*/
+          );*/ /*
           _pageController.nextPage(
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeIn,
           );
         }
-        break;
-      case 2: // Page pour la catégorie de la plante
-/*        context.read<CatalogCubit>().saveCatalog(
+        break;*/
+      case 1: // Page pour la catégorie de la plante
+        context.read<CatalogCubit>().saveCatalog(
               widget.catalog.copyWith(
-                newName: _plantNameController.text,
-                newImages: [_plantImageController.text],
-                newEnvironment:
+                name: _plantNameController.text,
+                image: _plantImageController.text,
+                environment:
                     getEnvironmentFromString(_plantCategoryController.text),
               ),
-            );*/
-        context.read<CatalogCubit>().updateCatalog(
-              catalogId: widget.catalog.uid,
-              newName: _plantNameController.text,
-              images: widget.catalog.images,
-              newEnvironment:
-                  getEnvironmentFromString(_plantCategoryController.text),
             );
 /*        final updatedCatalog = widget.catalog.copyWith(
             newEnvironment:
@@ -158,19 +144,15 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
           curve: Curves.easeIn,
         );
         break;
-      case 3: // Page pour la famille de la plante
-/*        context.read<CatalogCubit>().saveCatalog(
+      case 2: // Page pour la famille de la plante
+        context.read<CatalogCubit>().saveCatalog(
               widget.catalog.copyWith(
-                newName: _plantNameController.text,
-                newImages: [_plantImageController.text],
-                newEnvironment:
+                name: _plantNameController.text,
+                image: _plantImageController.text,
+                environment:
                     getEnvironmentFromString(_plantCategoryController.text),
-                newFamily: getFamilyFromString(_plantFamilyController.text),
+                family: getFamilyFromString(_plantFamilyController.text),
               ),
-            );*/
-        context.read<CatalogCubit>().updateCatalog(
-              catalogId: widget.catalog.uid,
-              newFamily: getFamilyFromString(_plantFamilyController.text),
             );
         _pageController.nextPage(
           duration: const Duration(milliseconds: 300),
@@ -363,7 +345,7 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                     ]),
                   ),
                 ),
-                AddPlantWizardItem(
+                /*AddPlantWizardItem(
                   formKey: _formKeyPlantImage,
                   title: 'Ajouter une photo',
                   description:
@@ -385,7 +367,7 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                           errorText: 'Ce champ est requis'),
                     ]),
                   ),
-                ),
+                ),*/
                 AddPlantWizardItem(
                   title: 'Quel environnement ?',
                   description: 'Sélectionner une catégorie pour votre plante',

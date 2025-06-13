@@ -9,9 +9,9 @@ class CatalogInitial extends CatalogState {}
 class CatalogLoading extends CatalogState {}
 
 class CatalogLoaded extends CatalogState {
-  final Catalog catalog;
+  final List<Catalog> catalogs;
 
-  const CatalogLoaded(this.catalog);
+  const CatalogLoaded(this.catalogs);
 }
 
 class CatalogError extends CatalogState {

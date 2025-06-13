@@ -1,11 +1,13 @@
 import 'package:plant_match_v2/presentation/catolog/domain/entity/catalog.dart';
 
 abstract class CatalogRepository {
-  Future<void> createCatalog(Catalog catalog);
+  Future<List<Catalog>> getUserCatalogs(String userId);
 
-  Future<Catalog?> getCatalog(String uid);
+  Future<Catalog?> getCatalogById(String uid);
+
+  Future<String> createCatalog(Catalog catalog);
 
   Future<void> updateCatalog(Catalog catalog);
 
-  Future<void> updateImageCatalog(String uid, List<String> imageUrls);
+  Future<void> deleteCatalog(String uid);
 }

@@ -57,9 +57,9 @@ class _CatalogUploadImageState extends State<CatalogUploadImage> {
       });
 
       // Appel Cubit → upload dans Firebase et mise à jour du catalog
-      await context
+/*      await context
           .read<CatalogCubit>()
-          .updateImageCatalog(widget.catalogId, filesToUpload);
+          .updateImageCatalog(widget.catalogId, filesToUpload);*/
 
       // Marquer le champ comme "valide"
       widget.field?.didChange(_selectedImages);
@@ -90,10 +90,10 @@ class _CatalogUploadImageState extends State<CatalogUploadImage> {
   Widget build(BuildContext context) {
     return BlocBuilder<CatalogCubit, CatalogState>(
       builder: (context, state) {
-        if (state is CatalogLoaded) {
-          catalogImages = state.catalog.images;
+/*        if (state is CatalogLoaded) {
+          catalogImages = state.catalogs.images;
           print("🖼️ Images du catalogue: $catalogImages");
-        }
+        }*/
 
         return Column(
           children: [

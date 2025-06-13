@@ -16,6 +16,17 @@ Environment? getEnvironmentFromString(String value) {
   return stringToEnum<Environment>(value, Environment.values);
 }
 
+/*Environment? getEnvironmentFromString(String value) {
+  switch (value.toLowerCase()) {
+    case 'intérieur':
+      return Environment.indoor;
+    case 'extérieur':
+      return Environment.outdoor;
+    default:
+      return null;
+  }
+}*/
+
 Family? getFamilyFromString(String value) {
   return stringToEnum<Family>(value, Family.values);
 }
