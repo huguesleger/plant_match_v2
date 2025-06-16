@@ -11,11 +11,11 @@ import 'package:uuid/uuid.dart';
 class CatalogScreen extends StatelessWidget {
   const CatalogScreen({
     super.key,
-    required this.uid,
+    required this.userId,
     required this.catalogs,
   });
 
-  final String uid;
+  final String userId;
   final List<Catalog> catalogs;
 
   @override
@@ -29,34 +29,34 @@ class CatalogScreen extends StatelessWidget {
           Navigator.pop(context);
         },
         styleIconButton: IconButton.styleFrom(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
           backgroundColor: AppColors.white,
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () async {
+        onPressed: () {
           const uuid = Uuid();
           final generatedId = uuid.v4();
-
           final newCatalog = Catalog(
-            uid: '',
-            userId: uid,
+            uid: generatedId,
+            userId: userId,
             name: '',
             image: '',
             description: '',
-            environment: Environment.indoor,
-            family: Family.aquatic,
-            levelMaintenance: LevelMaintenance.medium,
-            watering: Watering.little,
-            lighting: Lighting.indirectLight,
+            environment: null,
+            family: null,
+            levelMaintenance: null,
+            watering: null,
+            lighting: null,
           );
 
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => AddPlantWizardPage(
-                userId: uid,
+                userId: userId,
                 catalog: newCatalog,
               ),
             ),
@@ -105,10 +105,11 @@ class CatalogScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
-/*            Expanded(
+                  /* Expanded(
               child: GridView.builder(
                 padding: const EdgeInsets.only(top: 20, bottom: 100),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                gridDelegate:
+                const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   mainAxisSpacing: 20,
                   crossAxisSpacing: 20,

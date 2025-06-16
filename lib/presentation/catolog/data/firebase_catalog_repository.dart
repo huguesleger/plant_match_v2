@@ -2,93 +2,62 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:plant_match_v2/presentation/catolog/domain/repository/catalog_repository.dart';
 
 import '../domain/entity/catalog.dart';
-import 'package:uuid/uuid.dart';
 
 class FirebaseCatalogRepository implements CatalogRepository {
-  final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
-  final Uuid _uuid = const Uuid();
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   @override
-/*  Future<String> createCatalog(Catalog catalog) async {
-    final generatedId = _uuid.v4();
+  Future<void> createCatalog(Catalog catalog) async {
+    try {
+      // Générer un nouvel UID pour ce catalogue
+      final newDocRef = FirebaseFirestore.instance.collection('catalogs').doc();
 
-    final catalogWithUid = catalog
-        .copyWith(
-          name: catalog.name,
-          description: catalog.description,
-          image: catalog.image,
-        )
-        .copyWith(
-          uid: generatedId,
-        );
+      // Ajouter l'UID généré au catalogue
+      final newCatalog = catalog.copyWith(uid: newDocRef.id);
 
-    await _firebaseFirestore
-        .collection('catalogs')
-        .doc(generatedId)
-        .set(catalogWithUid.toJson());
-
-    return generatedId;
-  }*/
-  Future<String> createCatalog(Catalog catalog) async {
-    final newCatalog = catalog.copyWith(
-        uid: _uuid.v4()); // Génère un nouvel UID pour le catalogue
-    final docRef = await _firebaseFirestore
-        .collection('catalogs')
-        .add(newCatalog.toJson());
-    return docRef.id;
+      // Enregistrer le catalogue dans Firestore
+      await newDocRef.set(newCatalog.toJson());
+    } catch (e) {
+      print("Erreur lors de la création du catalogue: $e");
+      throw Exception("Erreur lors de la création du catalogue");
+    }
   }
 
   @override
-  Future<List<Catalog>> getUserCatalogs(String userId) async {
-    final snapshot = await _firebaseFirestore
+  Future<void> updateCatalog(Catalog catalog) async {
+    try {
+      await firestore.collection('catalogs').doc(catalog.uid).set(
+            catalog.toJson(),
+            SetOptions(merge: true), // crée ou met à jour le doc
+          );
+    } catch (e) {
+      throw Exception('Erreur lors de la mise à jour du catalogue : $e');
+    }
+  }
+
+  @override
+  Future<List<Catalog>> getCatalogsByUserId(String userId) async {
+    final querySnapshot = await firestore
         .collection('catalogs')
         .where('userId', isEqualTo: userId)
         .get();
 
-    return snapshot.docs.map((doc) => Catalog.fromJson(doc.data())).toList();
+    return querySnapshot.docs
+        .map((doc) => Catalog.fromJson(doc.data()))
+        .toList();
   }
 
-  @override /*
-  Future<Catalog?> getCatalogById(String uid) async {
-    final doc = await _firebaseFirestore.collection('catalogs').doc(uid).get();
-    if (doc.exists && doc.data() != null) {
+  @override
+  Future<Catalog?> getCatalogById(String catalogId) async {
+    final doc = await firestore.collection('catalogs').doc(catalogId).get();
+    if (doc.exists) {
       return Catalog.fromJson(doc.data()!);
     }
     return null;
-  }*/
-  Future<Catalog?> getCatalogById(String uid) async {
-    try {
-      final docSnapshot =
-          await _firebaseFirestore.collection('catalogs').doc(uid).get();
-      if (docSnapshot.exists) {
-        return Catalog.fromJson(docSnapshot
-            .data()!); // Assurez-vous que `Catalog.fromMap` fonctionne correctement
-      } else {
-        return null; // Si le document n'existe pas, retourne null
-      }
-    } catch (e) {
-      throw Exception("Erreur lors de la récupération du catalogue : $e");
-    }
-  }
-
-/*  @override
-  Future<void> createCatalog(Catalog catalog) async {
-    await _firebaseFirestore
-        .collection('catalogs')
-        .doc(catalog.uid)
-        .set(catalog.toJson());
-  }*/
-
-  @override
-  Future<void> updateCatalog(Catalog catalog) async {
-    await _firebaseFirestore
-        .collection('catalogs')
-        .doc(catalog.uid)
-        .update(catalog.toJson());
   }
 
   @override
-  Future<void> deleteCatalog(String uid) async {
-    await _firebaseFirestore.collection('catalogs').doc(uid).delete();
+  Future<void> deleteCatalog(String catalogId) async {
+    await firestore.collection('catalogs').doc(catalogId).delete();
   }
 }

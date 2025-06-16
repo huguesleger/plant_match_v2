@@ -1,14 +1,14 @@
 class Catalog {
   final String uid;
-  final userId;
+  final String userId;
   final String name;
   final String description;
   final String image;
-  final Environment environment;
-  final Family family;
-  final LevelMaintenance levelMaintenance;
-  final Watering watering;
-  final Lighting lighting;
+  final Environment? environment;
+  final List<Family>? family;
+  final LevelMaintenance? levelMaintenance;
+  final Watering? watering;
+  final Lighting? lighting;
 
   Catalog({
     required this.uid,
@@ -16,27 +16,28 @@ class Catalog {
     required this.name,
     required this.description,
     required this.image,
-    required this.environment,
-    required this.family,
-    required this.levelMaintenance,
-    required this.watering,
-    required this.lighting,
+    this.environment,
+    this.family,
+    this.levelMaintenance,
+    this.watering,
+    this.lighting,
   });
 
   Catalog copyWith({
     String? name,
     String? uid,
+    String? userId,
     String? description,
     String? image,
     Environment? environment,
-    Family? family,
+    List<Family>? family,
     LevelMaintenance? levelMaintenance,
     Watering? watering,
     Lighting? lighting,
   }) {
     return Catalog(
       uid: uid ?? this.uid,
-      userId: userId,
+      userId: userId ?? this.userId,
       name: name ?? this.name,
       description: description ?? this.description,
       image: image ?? this.image,
@@ -50,17 +51,28 @@ class Catalog {
 
   factory Catalog.fromJson(Map<String, dynamic> json) {
     return Catalog(
-      uid: json['uid'],
-      userId: json['userId'],
-      name: json['name'],
-      description: json['description'],
-      image: json['image'],
-      environment: Environment.values.byName(json['environment']),
-      family: Family.values.byName(json['family']),
-      levelMaintenance:
-          LevelMaintenance.values.byName(json['levelMaintenance']),
-      watering: Watering.values.byName(json['watering']),
-      lighting: Lighting.values.byName(json['lighting']),
+      uid: json['uid'] ?? '',
+      userId: json['userId'] ?? '',
+      name: json['name'] ?? '',
+      description: json['description'] ?? '',
+      image: json['image'] ?? '',
+      environment: json['environment'] != null
+          ? Environment.values.byName(json['environment'])
+          : null,
+      family: json['family'] != null && json['family'] is List
+          ? (json['family'] as List<dynamic>)
+              .map((e) => Family.values.byName(e.toString()))
+              .toList()
+          : null,
+      levelMaintenance: json['levelMaintenance'] != null
+          ? LevelMaintenance.values.byName(json['levelMaintenance'])
+          : null,
+      watering: json['watering'] != null
+          ? Watering.values.byName(json['watering'])
+          : null,
+      lighting: json['lighting'] != null
+          ? Lighting.values.byName(json['lighting'])
+          : null,
     );
   }
 
@@ -71,11 +83,11 @@ class Catalog {
       'name': name,
       'description': description,
       'image': image,
-      'environment': environment.name,
-      'family': family.name,
-      'levelMaintenance': levelMaintenance.name,
-      'watering': watering.name,
-      'lighting': lighting.name,
+      'environment': environment?.name,
+      'family': family?.map((e) => e.name).toList() ?? [],
+      'levelMaintenance': levelMaintenance?.name,
+      'watering': watering?.name,
+      'lighting': lighting?.name,
     };
   }
 }
@@ -83,6 +95,7 @@ class Catalog {
 enum Environment {
   indoor,
   outdoor,
+  uknown,
 }
 
 enum Family {

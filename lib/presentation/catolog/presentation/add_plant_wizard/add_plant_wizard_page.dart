@@ -33,12 +33,9 @@ class AddPlantWizardPage extends StatefulWidget {
 class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
   int _currentPage = 0;
   final int _totalPages = 8;
-  String? selectedValue;
-  List<String> selectedValues = [];
-  String? selectedItem;
   final PageController _pageController = PageController();
+
   final TextEditingController _plantNameController = TextEditingController();
-  final TextEditingController _plantImageController = TextEditingController();
   final TextEditingController _plantCategoryController =
       TextEditingController();
   final TextEditingController _plantFamilyController = TextEditingController();
@@ -51,9 +48,7 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
   final TextEditingController _plantDescriptionController =
       TextEditingController();
 
-  //final _formKey = GlobalKey<FormBuilderState>();
   final _formKeyPlantName = GlobalKey<FormBuilderState>();
-  final _formKeyPlantImage = GlobalKey<FormBuilderState>();
   final _formKeyPlantCategory = GlobalKey<FormBuilderState>();
   final _formKeyPlantFamily = GlobalKey<FormBuilderState>();
   final _formKeyPlantMaintenance = GlobalKey<FormBuilderState>();
@@ -61,157 +56,40 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
   final _formKeyPlantLighting = GlobalKey<FormBuilderState>();
   final _formKeyPlantDescription = GlobalKey<FormBuilderState>();
 
-/*  void _onPressedNext() {
-    _pageController.nextPage(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeIn,
-    );
-    _formKeyPlantName.currentState?.saveAndValidate() ?? false;
-  }*/
-/*  void _onPressedNext() {
-    if (_formKey.currentState?.saveAndValidate() ?? false) {
-      _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeIn,
-      );
-    }
-  }*/
-/*  void _onPressedNext() {
-    if (_formKeyPlantName.currentState?.saveAndValidate() ?? false) {
-      context.read<CatalogCubit>().saveCatalog(
-            widget.catalog.copyWith(
-              newName: _plantNameController.text,
-            ),
-          );
+  List<String> selectedValues = [];
 
-      _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeIn,
-      );
-    }
-  }*/
+  String? selectedValue;
+  String? _selectedMaintenance;
+  String? _selectedWatering;
+  String? _selectedLighting;
 
-  void _onPressedNext() {
-    // On détermine le formulaire et la validation selon la page actuelle
-    switch (_currentPage) {
-      case 0: // Page pour nom de la plante
-        if (_formKeyPlantName.currentState?.saveAndValidate() ?? false) {
-          context.read<CatalogCubit>().saveCatalog(
-                widget.catalog.copyWith(
-                  name: _plantNameController.text,
-                ),
-              );
-          _pageController.nextPage(
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeIn,
-          );
-        }
-        break;
-/*      case 1: // Page pour image de la plante
-        if (_formKeyPlantImage.currentState?.saveAndValidate() ?? false) {
-          print("📸 Image avant enregistrement: ${_plantImageController.text}");
+  @override
+  void initState() {
+    super.initState();
+    _selectedMaintenance = _plantMaintenanceController.text;
+    _selectedWatering = _plantWateringController.text;
+    _selectedLighting = _plantLightingController.text;
+    loadCatalogForUser();
+  }
 
-          // Récupérer les images de Firebase via le Cubit et les sauvegarder
-          final catalogCubit = context.read<CatalogCubit>();
-          final currentState = catalogCubit.state;
+  @override
+  void dispose() {
+    _plantNameController.dispose();
+    _plantCategoryController.dispose();
+    _plantFamilyController.dispose();
+    _plantMaintenanceController.dispose();
+    _plantWateringController.dispose();
+    _plantLightingController.dispose();
+    _plantDescriptionController.dispose();
+    super.dispose();
+  }
 
-          */ /*         List<String> uploadedImages = [_plantImageController.text];
+  void loadCatalogForUser() {
+    // Charger ou initialiser un catalogue
+  }
 
-          catalogCubit.updateCatalog(
-            catalogId: widget.catalog.uid,
-            images: uploadedImages,
-          );*/ /*
-          _pageController.nextPage(
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeIn,
-          );
-        }
-        break;*/
-      case 1: // Page pour la catégorie de la plante
-        context.read<CatalogCubit>().saveCatalog(
-              widget.catalog.copyWith(
-                name: _plantNameController.text,
-                image: _plantImageController.text,
-                environment:
-                    getEnvironmentFromString(_plantCategoryController.text),
-              ),
-            );
-/*        final updatedCatalog = widget.catalog.copyWith(
-            newEnvironment:
-                getEnvironmentFromString(_plantCategoryController.text));*/
-        _pageController.nextPage(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeIn,
-        );
-        break;
-      case 2: // Page pour la famille de la plante
-        context.read<CatalogCubit>().saveCatalog(
-              widget.catalog.copyWith(
-                name: _plantNameController.text,
-                image: _plantImageController.text,
-                environment:
-                    getEnvironmentFromString(_plantCategoryController.text),
-                family: getFamilyFromString(_plantFamilyController.text),
-              ),
-            );
-        _pageController.nextPage(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeIn,
-        );
-        break;
-/*      case 4:
-        context.read<CatalogCubit>().saveCatalog(
-              widget.catalog.copyWith(
-                newLevelMaintenance: getLevelMaintenanceFromString(
-                    _plantMaintenanceController.text),
-              ),
-            );
-        _pageController.nextPage(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeIn,
-        );
-        break;*/
-/*      case 5:
-        context.read<CatalogCubit>().saveCatalog(
-              widget.catalog.copyWith(
-                newWatering:
-                    getWateringFromString(_plantWateringController.text),
-              ),
-            );
-        _pageController.nextPage(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeIn,
-        );
-        break;*/
-/*      case 6:
-        context.read<CatalogCubit>().saveCatalog(
-              widget.catalog.copyWith(
-                newLighting: getLightingFromString(
-                  _plantLightingController.text,
-                ),
-              ),
-            );
-        _pageController.nextPage(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeIn,
-        );
-        break;*/
-/*      case 7:
-        print('toto');
-        context.read<CatalogCubit>().saveCatalog(
-              widget.catalog.copyWith(
-                newName: _plantNameController.value.text,
-                newDescription: _plantDescriptionController.text,
-              ),
-            );
-        _pageController.nextPage(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeIn,
-        );
-        break;*/
-      default:
-        break;
-    }
+  void _onPressedNext() async {
+    await _handlePageAction(_currentPage);
   }
 
   void _onPressedBack() {
@@ -221,49 +99,126 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
     );
   }
 
-  void _onPressed({
-    required GlobalKey<FormBuilderState> formKey,
-    required TextEditingController controller,
-    required Function(String) updateCatalogField,
-  }) {
-    if (formKey.currentState?.saveAndValidate() ?? false) {
-      final String value = controller.text;
-      updateCatalogField(value);
-      print('value');
+  Future<void> _handlePageAction(int page) async {
+    Catalog updatedCatalog = widget.catalog;
 
-      if (_currentPage < _totalPages - 1) {
-        _onPressedNext();
-        print('ggg');
-      }
+    switch (page) {
+      case 0:
+        if (_formKeyPlantName.currentState?.saveAndValidate() ?? false) {
+          updatedCatalog =
+              updatedCatalog.copyWith(name: _plantNameController.text);
+          _updateCatalogInFirebase(updatedCatalog);
+          _onPressedNextPage();
+        }
+        break;
+      case 1:
+        updatedCatalog = updatedCatalog.copyWith(
+          name: _plantNameController.text,
+          environment: getEnvironmentFromString(_plantCategoryController.text),
+        );
+        _updateCatalogInFirebase(updatedCatalog);
+        _onPressedNextPage();
+        break;
+      case 2:
+        updatedCatalog = updatedCatalog.copyWith(
+          name: _plantNameController.text,
+          environment: getEnvironmentFromString(_plantCategoryController.text),
+          family: selectedValues
+              .map(getFamilyFromString)
+              .whereType<Family>()
+              .toList(),
+        );
+        _updateCatalogInFirebase(updatedCatalog);
+        _onPressedNextPage();
+        break;
+      case 3:
+        updatedCatalog = updatedCatalog.copyWith(
+          name: _plantNameController.text,
+          environment: getEnvironmentFromString(_plantCategoryController.text),
+          family: selectedValues
+              .map(getFamilyFromString)
+              .whereType<Family>()
+              .toList(),
+          levelMaintenance:
+              getLevelMaintenanceFromString(_plantMaintenanceController.text),
+        );
+        _updateCatalogInFirebase(updatedCatalog);
+        _onPressedNextPage();
+        break;
+      case 4:
+        updatedCatalog = updatedCatalog.copyWith(
+          name: _plantNameController.text,
+          environment: getEnvironmentFromString(_plantCategoryController.text),
+          family: selectedValues
+              .map(getFamilyFromString)
+              .whereType<Family>()
+              .toList(),
+          levelMaintenance:
+              getLevelMaintenanceFromString(_plantMaintenanceController.text),
+          watering: getWateringFromString(_plantWateringController.text),
+        );
+        _updateCatalogInFirebase(updatedCatalog);
+        _onPressedNextPage();
+        break;
+      case 5:
+        updatedCatalog = updatedCatalog.copyWith(
+          name: _plantNameController.text,
+          environment: getEnvironmentFromString(_plantCategoryController.text),
+          family: selectedValues
+              .map(getFamilyFromString)
+              .whereType<Family>()
+              .toList(),
+          levelMaintenance:
+              getLevelMaintenanceFromString(_plantMaintenanceController.text),
+          watering: getWateringFromString(_plantWateringController.text),
+          lighting: getLightingFromString(_plantLightingController.text),
+        );
+        _updateCatalogInFirebase(updatedCatalog);
+        _onPressedNextPage();
+        break;
+      case 6:
+        updatedCatalog = updatedCatalog.copyWith(
+          name: _plantNameController.text,
+          environment: getEnvironmentFromString(_plantCategoryController.text),
+          family: selectedValues
+              .map(getFamilyFromString)
+              .whereType<Family>()
+              .toList(),
+          levelMaintenance:
+              getLevelMaintenanceFromString(_plantMaintenanceController.text),
+          watering: getWateringFromString(_plantWateringController.text),
+          lighting: getLightingFromString(_plantLightingController.text),
+          description: _plantDescriptionController.text,
+        );
+        _updateCatalogInFirebase(updatedCatalog);
+        _onPressedNextPage();
+        break;
+      case 7:
+        // Dernière étape (si besoin)
+        break;
     }
   }
 
-/*  Future<void> _handleCatalogPageAction(int currentPage) async {
-    switch (currentPage) {
-      case 0: // Page for plant name
-        _onPressed(
-          formKey: _formKeyPlantName,
-          controller: _plantNameController,
-          updateCatalogField: (value) {
-            context.read<CatalogCubit>().saveCatalog(
-                  widget.catalog.copyWith(
-                    newName: value,
-                  ),
-                );
-          },
-        );
-        break;
-      default:
-        break;
+  void _onPressedNextPage() {
+    _pageController.nextPage(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeIn,
+    );
+    setState(() => _currentPage++);
+  }
+
+  void _updateCatalogInFirebase(Catalog updatedCatalog) {
+    if (updatedCatalog.userId.isEmpty) {
+      context.read<CatalogCubit>().createCatalog(updatedCatalog);
+    } else {
+      context.read<CatalogCubit>().updateCatalog(updatedCatalog);
     }
-  }*/
+  }
 
   void onSelect(String value) {
     setState(() {
       selectedValue = value;
-      print(selectedValue);
       _plantCategoryController.text = value;
-      print(_plantCategoryController.text);
     });
   }
 
@@ -271,18 +226,9 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
     setState(() {
       if (selectedValues.contains(value)) {
         selectedValues.remove(value);
-        print(selectedValues);
       } else {
         selectedValues.add(value);
-        print(selectedValues);
       }
-    });
-  }
-
-  void _onItemSelected(String? value) {
-    setState(() {
-      selectedItem = value;
-      print(selectedItem);
     });
   }
 
@@ -345,29 +291,6 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                     ]),
                   ),
                 ),
-                /*AddPlantWizardItem(
-                  formKey: _formKeyPlantImage,
-                  title: 'Ajouter une photo',
-                  description:
-                      'Sélectionner ou ajouter une photo de votre plante',
-                  child: FormBuilderField<List<File>>(
-                    name: 'plantImage',
-                    builder: (FormFieldState<List<File>> field) {
-                      return Expanded(
-                        child: CatalogUploadImage(
-                          userId: widget.userId,
-                          catalogId: widget.userId,
-                          field: field,
-                        ),
-                      );
-                    },
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    validator: FormBuilderValidators.compose([
-                      FormBuilderValidators.required(
-                          errorText: 'Ce champ est requis'),
-                    ]),
-                  ),
-                ),*/
                 AddPlantWizardItem(
                   title: 'Quel environnement ?',
                   description: 'Sélectionner une catégorie pour votre plante',
@@ -380,7 +303,6 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                     ]),
                     onSaved: (value) {
                       _plantCategoryController.text = value.toString();
-                      print(_plantCategoryController.text);
                     },
                     builder: (FormFieldState<dynamic> field) {
                       return Row(
@@ -396,7 +318,6 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                               onTap: (value) {
                                 onSelect(value);
                                 field.didChange(value);
-                                print(_plantCategoryController.text);
                               },
                             ),
                           ),
@@ -411,7 +332,6 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                               onTap: (value) {
                                 onSelect(value);
                                 field.didChange(value);
-                                print(_plantCategoryController.text);
                               },
                             ),
                           ),
@@ -454,16 +374,26 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                                 title: 'Facile',
                                 subtitle: 'Très résistante, peu d\'arrosage',
                                 value: 'low',
-                                onItemSelected: _onItemSelected,
-                                selectedItem: selectedItem,
+                                selectedItem: _selectedMaintenance,
+                                onItemSelected: (value) {
+                                  setState(() {
+                                    _selectedMaintenance = value;
+                                    _plantMaintenanceController.text = value;
+                                  });
+                                },
                               ),
                               const SizedBox(height: 20),
                               ItemRadio(
                                 title: 'Moyen',
                                 subtitle: 'Quelques soins réguliers',
                                 value: 'medium',
-                                onItemSelected: _onItemSelected,
-                                selectedItem: selectedItem,
+                                selectedItem: _selectedMaintenance,
+                                onItemSelected: (value) {
+                                  setState(() {
+                                    _selectedMaintenance = value;
+                                    _plantMaintenanceController.text = value;
+                                  });
+                                },
                               ),
                               const SizedBox(height: 20),
                               ItemRadio(
@@ -471,8 +401,13 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                                 subtitle:
                                     'Sensible, besoin de conditions spécifiques.',
                                 value: 'high',
-                                onItemSelected: _onItemSelected,
-                                selectedItem: selectedItem,
+                                selectedItem: _selectedMaintenance,
+                                onItemSelected: (value) {
+                                  setState(() {
+                                    _selectedMaintenance = value;
+                                    _plantMaintenanceController.text = value;
+                                  });
+                                },
                               ),
                             ],
                           );
@@ -501,15 +436,25 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                               ItemRadio(
                                 title: 'Peu d\'eau',
                                 value: 'little',
-                                onItemSelected: _onItemSelected,
-                                selectedItem: selectedItem,
+                                selectedItem: _selectedWatering,
+                                onItemSelected: (value) {
+                                  setState(() {
+                                    _selectedWatering = value;
+                                    _plantWateringController.text = value;
+                                  });
+                                },
                               ),
                               const SizedBox(height: 20),
                               ItemRadio(
                                 title: 'Arrosage régulier',
                                 value: 'regularly',
-                                onItemSelected: _onItemSelected,
-                                selectedItem: selectedItem,
+                                selectedItem: _selectedWatering,
+                                onItemSelected: (value) {
+                                  setState(() {
+                                    _selectedWatering = value;
+                                    _plantWateringController.text = value;
+                                  });
+                                },
                               ),
                             ],
                           );
@@ -536,24 +481,39 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                           return Column(
                             children: [
                               ItemRadio(
-                                title: 'Soleil direct',
+                                title: 'Soleil directe',
                                 value: 'sun',
-                                onItemSelected: _onItemSelected,
-                                selectedItem: selectedItem,
+                                selectedItem: _selectedLighting,
+                                onItemSelected: (value) {
+                                  setState(() {
+                                    _selectedLighting = value;
+                                    _plantLightingController.text = value;
+                                  });
+                                },
                               ),
                               const SizedBox(height: 20),
                               ItemRadio(
                                 title: 'Lumière indirecte',
                                 value: 'indirectLight',
-                                onItemSelected: _onItemSelected,
-                                selectedItem: selectedItem,
+                                selectedItem: _selectedLighting,
+                                onItemSelected: (value) {
+                                  setState(() {
+                                    _selectedLighting = value;
+                                    _plantLightingController.text = value;
+                                  });
+                                },
                               ),
                               const SizedBox(height: 20),
                               ItemRadio(
                                 title: 'Ombre',
                                 value: 'shade',
-                                onItemSelected: _onItemSelected,
-                                selectedItem: selectedItem,
+                                selectedItem: _selectedLighting,
+                                onItemSelected: (value) {
+                                  setState(() {
+                                    _selectedLighting = value;
+                                    _plantLightingController.text = value;
+                                  });
+                                },
                               ),
                             ],
                           );
@@ -564,25 +524,29 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                 ),
                 AddPlantWizardItem(
                   title: 'Description',
-                  description: 'Note personnelle ou détails spécifiques',
+                  description: 'Ajouter une brève description',
                   child: Column(
                     children: [
+                      const TitleWithIcon(
+                        icon: LucideIcons.pen,
+                        title: 'Description',
+                        bgColor: AppColors.greenDark,
+                        iconColor: AppColors.greenLight,
+                      ),
+                      const SizedBox(height: 20),
                       FormBuilderTextField(
-                        name: 'Description',
+                        name: 'description',
                         decoration: DecorationInput.inputDecoration(
-                          hintText: 'Ajoutez une description',
+                          hintText: 'Description de la plante',
                           labelText: 'Description',
-                          alignLabelWithHint: true,
                         ),
-                        minLines: 3,
-                        maxLines: 5,
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        controller: _plantDescriptionController,
                       ),
                     ],
                   ),
                 ),
               ],
-            )
+            ),
           ],
         ),
       ),
@@ -701,7 +665,7 @@ class ItemRadio extends StatelessWidget {
   final String? subtitle;
   final String value;
   final String? selectedItem;
-  final Function(String?) onItemSelected;
+  final Function(String) onItemSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -731,7 +695,9 @@ class ItemRadio extends StatelessWidget {
           value: value,
           groupValue: selectedItem,
           onChanged: (String? newValue) {
-            onItemSelected(newValue);
+            if (newValue != null) {
+              onItemSelected(newValue);
+            }
           },
           activeColor: AppColors.greenDark,
         ),

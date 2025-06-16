@@ -27,8 +27,19 @@ Environment? getEnvironmentFromString(String value) {
   }
 }*/
 
-Family? getFamilyFromString(String value) {
+/*Family? getFamilyFromString(String value) {
   return stringToEnum<Family>(value, Family.values);
+}*/
+
+/*Family? getFamilyFromString(String value) {
+  return Family.values.firstWhere((e) => e.name == value);
+}*/
+Family getFamilyFromString(String value) {
+  return Family.values.firstWhere(
+    (f) => f.name == value,
+    orElse: () =>
+        Family.aquatic, // Remplace par une valeur par défaut si nécessaire
+  );
 }
 
 LevelMaintenance? getLevelMaintenanceFromString(String value) {

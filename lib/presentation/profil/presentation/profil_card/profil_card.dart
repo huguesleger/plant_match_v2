@@ -26,7 +26,7 @@ class ProfilCard extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (context) => CatalogPage(
-                  uid: userId,
+                  userId: userId,
                 ),
               ),
             );
