@@ -98,7 +98,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         BlocProvider(
           create: (context) => CatalogCubit(
             catalogRepository: catalogRepository,
-            //storageRepository: storageRepository,
+            storageRepository: storageRepository,
           ),
         ),
       ],

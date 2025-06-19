@@ -1,7 +1,7 @@
 import 'package:plant_match_v2/presentation/catolog/domain/entity/catalog.dart';
 
 abstract class CatalogRepository {
-  Future<void> createCatalog(Catalog catalog);
+  Future<String> createEmptyCatalog(String userId);
 
   Future<void> updateCatalog(Catalog catalog);
 

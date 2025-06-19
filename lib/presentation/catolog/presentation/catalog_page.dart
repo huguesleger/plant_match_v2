@@ -5,6 +5,7 @@ import 'package:plant_match_v2/presentation/catolog/data/firebase_catalog_reposi
 import 'package:plant_match_v2/presentation/catolog/presentation/catalog_screen.dart';
 import 'package:plant_match_v2/presentation/catolog/presentation/cubit/catalog_cubit.dart';
 import 'package:plant_match_v2/presentation/catolog/presentation/cubit/catalog_state.dart';
+import 'package:plant_match_v2/presentation/storage/data/firebase_storage_repository.dart';
 
 class CatalogPage extends StatelessWidget {
   final String userId;
@@ -15,12 +16,14 @@ class CatalogPage extends StatelessWidget {
   });
 
   final catalogRepository = FirebaseCatalogRepository();
+  final storageRepository = FirebaseStorageRepository();
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => CatalogCubit(
         catalogRepository: catalogRepository,
+        storageRepository: storageRepository,
       )..loadUserCatalogs(userId),
       child: BlocBuilder<CatalogCubit, CatalogState>(
         builder: (context, state) {

@@ -3,7 +3,7 @@ class Catalog {
   final String userId;
   final String name;
   final String description;
-  final String image;
+  final List<String> images;
   final Environment? environment;
   final List<Family>? family;
   final LevelMaintenance? levelMaintenance;
@@ -15,7 +15,7 @@ class Catalog {
     required this.userId,
     required this.name,
     required this.description,
-    required this.image,
+    required this.images,
     this.environment,
     this.family,
     this.levelMaintenance,
@@ -24,11 +24,11 @@ class Catalog {
   });
 
   Catalog copyWith({
-    String? name,
     String? uid,
     String? userId,
+    String? name,
     String? description,
-    String? image,
+    List<String>? images,
     Environment? environment,
     List<Family>? family,
     LevelMaintenance? levelMaintenance,
@@ -40,7 +40,7 @@ class Catalog {
       userId: userId ?? this.userId,
       name: name ?? this.name,
       description: description ?? this.description,
-      image: image ?? this.image,
+      images: images ?? this.images,
       environment: environment ?? this.environment,
       family: family ?? this.family,
       levelMaintenance: levelMaintenance ?? this.levelMaintenance,
@@ -55,12 +55,12 @@ class Catalog {
       userId: json['userId'] ?? '',
       name: json['name'] ?? '',
       description: json['description'] ?? '',
-      image: json['image'] ?? '',
+      images: List<String>.from(json['images'] ?? null),
       environment: json['environment'] != null
           ? Environment.values.byName(json['environment'])
           : null,
-      family: json['family'] != null && json['family'] is List
-          ? (json['family'] as List<dynamic>)
+      family: json['family'] is List
+          ? (json['family'] as List)
               .map((e) => Family.values.byName(e.toString()))
               .toList()
           : null,
@@ -82,9 +82,9 @@ class Catalog {
       'userId': userId,
       'name': name,
       'description': description,
-      'image': image,
+      'images': images,
       'environment': environment?.name,
-      'family': family?.map((e) => e.name).toList() ?? [],
+      'family': family?.map((e) => e.name).toList(),
       'levelMaintenance': levelMaintenance?.name,
       'watering': watering?.name,
       'lighting': lighting?.name,

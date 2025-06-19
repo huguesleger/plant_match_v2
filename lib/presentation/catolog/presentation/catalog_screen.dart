@@ -5,6 +5,7 @@ import 'package:plant_match_v2/core/widgets/app_bar/app_bar_header_image.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
 import 'package:plant_match_v2/presentation/catolog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/presentation/catolog/presentation/add_plant_wizard/add_plant_wizard_page.dart';
+import 'package:plant_match_v2/presentation/catolog/presentation/catalog_card_item.dart';
 import 'package:plant_match_v2/presentation/catolog/widget/catalog_card_is_empty.dart';
 import 'package:uuid/uuid.dart';
 
@@ -43,7 +44,7 @@ class CatalogScreen extends StatelessWidget {
             uid: generatedId,
             userId: userId,
             name: '',
-            image: '',
+            images: [],
             description: '',
             environment: null,
             family: null,
@@ -105,23 +106,23 @@ class CatalogScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  /* Expanded(
-              child: GridView.builder(
-                padding: const EdgeInsets.only(top: 20, bottom: 100),
-                gridDelegate:
-                const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 20,
-                  crossAxisSpacing: 20,
-                  childAspectRatio: 0.75,
-                ),
-                itemCount: catalogs.length,
-                itemBuilder: (context, index) {
-                  final catalog = catalogs[index];
-                  return CatalogCardItem(catalog: catalog);
-                },
-              ),
-            ),*/
+                  Expanded(
+                    child: GridView.builder(
+                      padding: const EdgeInsets.only(top: 20, bottom: 100),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 20,
+                        crossAxisSpacing: 20,
+                        childAspectRatio: 0.75,
+                      ),
+                      itemCount: catalogs.length,
+                      itemBuilder: (context, index) {
+                        final catalog = catalogs[index];
+                        return CatalogCardItem(catalog: catalog);
+                      },
+                    ),
+                  ),
                 ],
               ),
       ),

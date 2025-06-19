@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -14,6 +16,7 @@ import 'package:plant_match_v2/presentation/catolog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/presentation/catolog/presentation/add_plant_wizard/add_plant_wizard_item.dart';
 import 'package:plant_match_v2/presentation/catolog/presentation/cubit/catalog_cubit.dart';
 import 'package:plant_match_v2/presentation/catolog/presentation/util/string_to_enum.dart';
+import 'package:plant_match_v2/presentation/catolog/widget/catalog_upload_image.dart';
 import 'package:plant_match_v2/presentation/catolog/widget/selectable_item.dart';
 
 class AddPlantWizardPage extends StatefulWidget {
@@ -47,6 +50,7 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
       TextEditingController();
   final TextEditingController _plantDescriptionController =
       TextEditingController();
+  final TextEditingController _plantImageController = TextEditingController();
 
   final _formKeyPlantName = GlobalKey<FormBuilderState>();
   final _formKeyPlantCategory = GlobalKey<FormBuilderState>();
@@ -56,20 +60,35 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
   final _formKeyPlantLighting = GlobalKey<FormBuilderState>();
   final _formKeyPlantDescription = GlobalKey<FormBuilderState>();
 
-  List<String> selectedValues = [];
+  final _formKeyPlantImage = GlobalKey<FormBuilderState>();
 
+  List<String> selectedValues = [];
   String? selectedValue;
   String? _selectedMaintenance;
   String? _selectedWatering;
   String? _selectedLighting;
 
+  late Catalog currentCatalog;
+
   @override
   void initState() {
     super.initState();
-    _selectedMaintenance = _plantMaintenanceController.text;
-    _selectedWatering = _plantWateringController.text;
-    _selectedLighting = _plantLightingController.text;
-    loadCatalogForUser();
+    currentCatalog = widget.catalog;
+    _initializeControllers();
+  }
+
+  void _initializeControllers() {
+    _plantNameController.text = currentCatalog.name;
+    _plantCategoryController.text = currentCatalog.environment?.name ?? '';
+    _plantMaintenanceController.text =
+        currentCatalog.levelMaintenance?.name ?? '';
+    _plantWateringController.text = currentCatalog.watering?.name ?? '';
+    _plantLightingController.text = currentCatalog.lighting?.name ?? '';
+    _plantDescriptionController.text = currentCatalog.description;
+    _plantImageController.text =
+        currentCatalog.images.isNotEmpty ? currentCatalog.images.first : '';
+    selectedValues =
+        currentCatalog.family?.map((family) => family.name).toList() ?? [];
   }
 
   @override
@@ -81,15 +100,12 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
     _plantWateringController.dispose();
     _plantLightingController.dispose();
     _plantDescriptionController.dispose();
+    _pageController.dispose();
     super.dispose();
   }
 
-  void loadCatalogForUser() {
-    // Charger ou initialiser un catalogue
-  }
-
-  void _onPressedNext() async {
-    await _handlePageAction(_currentPage);
+  void _onPressedNext() {
+    _handlePageAction(_currentPage);
   }
 
   void _onPressedBack() {
@@ -97,104 +113,72 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeIn,
     );
+    setState(() => _currentPage--);
   }
 
   Future<void> _handlePageAction(int page) async {
-    Catalog updatedCatalog = widget.catalog;
-
     switch (page) {
       case 0:
         if (_formKeyPlantName.currentState?.saveAndValidate() ?? false) {
-          updatedCatalog =
-              updatedCatalog.copyWith(name: _plantNameController.text);
-          _updateCatalogInFirebase(updatedCatalog);
+          currentCatalog =
+              currentCatalog.copyWith(name: _plantNameController.text);
+          await _updateCatalogInFirebase(currentCatalog);
           _onPressedNextPage();
         }
         break;
       case 1:
-        updatedCatalog = updatedCatalog.copyWith(
-          name: _plantNameController.text,
+        currentCatalog = currentCatalog.copyWith(
           environment: getEnvironmentFromString(_plantCategoryController.text),
         );
-        _updateCatalogInFirebase(updatedCatalog);
+        await _updateCatalogInFirebase(currentCatalog);
         _onPressedNextPage();
         break;
       case 2:
-        updatedCatalog = updatedCatalog.copyWith(
-          name: _plantNameController.text,
-          environment: getEnvironmentFromString(_plantCategoryController.text),
+        currentCatalog = currentCatalog.copyWith(
           family: selectedValues
               .map(getFamilyFromString)
               .whereType<Family>()
               .toList(),
         );
-        _updateCatalogInFirebase(updatedCatalog);
+        await _updateCatalogInFirebase(currentCatalog);
         _onPressedNextPage();
         break;
       case 3:
-        updatedCatalog = updatedCatalog.copyWith(
-          name: _plantNameController.text,
-          environment: getEnvironmentFromString(_plantCategoryController.text),
-          family: selectedValues
-              .map(getFamilyFromString)
-              .whereType<Family>()
-              .toList(),
+        currentCatalog = currentCatalog.copyWith(
           levelMaintenance:
               getLevelMaintenanceFromString(_plantMaintenanceController.text),
         );
-        _updateCatalogInFirebase(updatedCatalog);
+        await _updateCatalogInFirebase(currentCatalog);
         _onPressedNextPage();
         break;
       case 4:
-        updatedCatalog = updatedCatalog.copyWith(
-          name: _plantNameController.text,
-          environment: getEnvironmentFromString(_plantCategoryController.text),
-          family: selectedValues
-              .map(getFamilyFromString)
-              .whereType<Family>()
-              .toList(),
-          levelMaintenance:
-              getLevelMaintenanceFromString(_plantMaintenanceController.text),
+        currentCatalog = currentCatalog.copyWith(
           watering: getWateringFromString(_plantWateringController.text),
         );
-        _updateCatalogInFirebase(updatedCatalog);
+        await _updateCatalogInFirebase(currentCatalog);
         _onPressedNextPage();
         break;
       case 5:
-        updatedCatalog = updatedCatalog.copyWith(
-          name: _plantNameController.text,
-          environment: getEnvironmentFromString(_plantCategoryController.text),
-          family: selectedValues
-              .map(getFamilyFromString)
-              .whereType<Family>()
-              .toList(),
-          levelMaintenance:
-              getLevelMaintenanceFromString(_plantMaintenanceController.text),
-          watering: getWateringFromString(_plantWateringController.text),
+        currentCatalog = currentCatalog.copyWith(
           lighting: getLightingFromString(_plantLightingController.text),
         );
-        _updateCatalogInFirebase(updatedCatalog);
+        await _updateCatalogInFirebase(currentCatalog);
         _onPressedNextPage();
         break;
       case 6:
-        updatedCatalog = updatedCatalog.copyWith(
-          name: _plantNameController.text,
-          environment: getEnvironmentFromString(_plantCategoryController.text),
-          family: selectedValues
-              .map(getFamilyFromString)
-              .whereType<Family>()
-              .toList(),
-          levelMaintenance:
-              getLevelMaintenanceFromString(_plantMaintenanceController.text),
-          watering: getWateringFromString(_plantWateringController.text),
-          lighting: getLightingFromString(_plantLightingController.text),
+        currentCatalog = currentCatalog.copyWith(
           description: _plantDescriptionController.text,
         );
-        _updateCatalogInFirebase(updatedCatalog);
+        await _updateCatalogInFirebase(currentCatalog);
         _onPressedNextPage();
         break;
       case 7:
-        // Dernière étape (si besoin)
+        if (_formKeyPlantImage.currentState?.saveAndValidate() ?? false) {
+          // 🔄 Recharge le catalog depuis le Cubit après upload
+          await _updateCatalogInFirebase(currentCatalog);
+
+          _onPressedNextPage();
+        }
         break;
     }
   }
@@ -207,12 +191,9 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
     setState(() => _currentPage++);
   }
 
-  void _updateCatalogInFirebase(Catalog updatedCatalog) {
-    if (updatedCatalog.userId.isEmpty) {
-      context.read<CatalogCubit>().createCatalog(updatedCatalog);
-    } else {
-      context.read<CatalogCubit>().updateCatalog(updatedCatalog);
-    }
+  Future<void> _updateCatalogInFirebase(Catalog updatedCatalog) async {
+    final catalogCubit = context.read<CatalogCubit>();
+    await catalogCubit.updateCatalog(updatedCatalog);
   }
 
   void onSelect(String value) {
@@ -247,14 +228,10 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
         ),
         leading: _currentPage == 0 ? false : true,
         centerTitle: true,
-        onPressed: () {
-          _onPressedBack();
-        },
+        onPressed: _onPressedBack,
         actions: [
           IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
+            onPressed: () => Navigator.pop(context),
             icon: const Icon(LucideIcons.x),
             color: AppColors.greyDark,
           ),
@@ -268,9 +245,7 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
               controller: _pageController,
               physics: const NeverScrollableScrollPhysics(),
               onPageChanged: (page) {
-                setState(() {
-                  _currentPage = page;
-                });
+                setState(() => _currentPage = page);
               },
               children: [
                 AddPlantWizardItem(
@@ -301,9 +276,8 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                       FormBuilderValidators.required(
                           errorText: 'Ce champ est requis'),
                     ]),
-                    onSaved: (value) {
-                      _plantCategoryController.text = value.toString();
-                    },
+                    onSaved: (value) =>
+                        _plantCategoryController.text = value.toString(),
                     builder: (FormFieldState<dynamic> field) {
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -545,6 +519,27 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                     ],
                   ),
                 ),
+                AddPlantWizardItem(
+                  formKey: _formKeyPlantImage,
+                  title: 'Ajouter une photo',
+                  description:
+                      'Sélectionner ou ajouter une photo de votre plante',
+                  child: FormBuilderField<List<File>>(
+                    name: 'plantImage',
+                    builder: (FormFieldState<List<File>> field) {
+                      return CatalogUploadImage(
+                        userId: widget.userId,
+                        catalogId: widget.catalog.uid,
+                        field: field,
+                      );
+                    },
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: FormBuilderValidators.compose([
+                      FormBuilderValidators.required(
+                          errorText: 'Ce champ est requis'),
+                    ]),
+                  ),
+                ),
               ],
             ),
           ],
@@ -554,7 +549,12 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
         child: ButtonRounded(
           text: _currentPage == _totalPages - 1 ? 'Enregistrer' : 'Suivant',
           onPressed: () {
-            _onPressedNext();
+            if (_currentPage == _totalPages - 1) {
+              _handlePageAction(_currentPage);
+              Navigator.pop(context);
+            } else {
+              _onPressedNext();
+            }
           },
           bgColor: AppColors.greenLight,
           textColor: AppColors.blueGreen,
@@ -578,9 +578,8 @@ class _ProgressWizard extends StatelessWidget {
   Widget build(BuildContext context) {
     return TweenAnimationBuilder<double>(
       tween: Tween<double>(
-        begin: (_currentPage + 1) / _totalPages,
-        end: (_currentPage + 1) / _totalPages,
-      ),
+          begin: (_currentPage + 1) / _totalPages,
+          end: (_currentPage + 1) / _totalPages),
       duration: const Duration(milliseconds: 300),
       builder: (context, value, child) {
         return LinearProgressIndicator(
@@ -598,13 +597,13 @@ class GridSelectableItem extends StatelessWidget {
   final List<String> selectedValues;
   final Function(String) onSelect;
 
-  GridSelectableItem({
+  const GridSelectableItem({
     super.key,
     required this.selectedValues,
     required this.onSelect,
   });
 
-  final List<Map<String, dynamic>> items = [
+  final List<Map<String, dynamic>> items = const [
     {"label": "Tropicale", "value": "tropical", "icon": LucideIcons.tree_palm},
     {
       "label": "Succulente/Cactée",
@@ -638,7 +637,6 @@ class GridSelectableItem extends StatelessWidget {
       itemCount: items.length,
       itemBuilder: (context, index) {
         final item = items[index];
-
         return SelectableItem(
           icon: item["icon"] as IconData,
           label: item["label"] as String,
@@ -681,13 +679,11 @@ class ItemRadio extends StatelessWidget {
       ),
       child: ListTile(
         tileColor: isSelected
-            ? AppColors.greenDark.withValues(alpha: 0.1)
+            ? AppColors.greenDark.withOpacity(0.1)
             : AppColors.greyUltraLight,
-        title: Text(
-          title,
-          style: const TextStyle(
-              color: AppColors.greyMedium, fontSize: AppTypo.textS),
-        ),
+        title: Text(title,
+            style: const TextStyle(
+                color: AppColors.greyMedium, fontSize: AppTypo.textS)),
         subtitle: subtitle == null
             ? null
             : Text(subtitle!, style: const TextStyle(fontSize: AppTypo.textXs)),
@@ -704,10 +700,7 @@ class ItemRadio extends StatelessWidget {
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(15),
-          ),
-        ),
+            borderRadius: BorderRadius.all(Radius.circular(15))),
       ),
     );
   }
