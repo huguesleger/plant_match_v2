@@ -24,7 +24,7 @@ class CatalogPage extends StatelessWidget {
       create: (context) => CatalogCubit(
         catalogRepository: catalogRepository,
         storageRepository: storageRepository,
-      )..loadUserCatalogs(userId),
+      )..getCatalogsByUserId(userId),
       child: BlocBuilder<CatalogCubit, CatalogState>(
         builder: (context, state) {
           return Scaffold(
@@ -32,9 +32,10 @@ class CatalogPage extends StatelessWidget {
               CatalogInitial() || CatalogLoading() => const Center(
                   child: CircularProgressIndicator(),
                 ),
-              CatalogLoaded(:final catalogs) => CatalogScreen(
+              CatalogLoaded(:final catalogs, :final catalog) => CatalogScreen(
                   userId: userId,
                   catalogs: catalogs,
+                  catalog: catalog,
                 ),
               CatalogError(:final message) => ErrorPage(errorMessage: message),
             },

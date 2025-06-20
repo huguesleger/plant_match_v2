@@ -9,19 +9,23 @@ import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/theme/inter_text_style.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
+import 'package:plant_match_v2/presentation/catolog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/presentation/catolog/presentation/cubit/catalog_cubit.dart';
-import 'package:plant_match_v2/presentation/catolog/presentation/cubit/catalog_state.dart';
 
 class CatalogUploadImage extends StatefulWidget {
   final String userId;
   final String catalogId;
   final FormFieldState<dynamic>? field;
+  final Catalog catalog;
+  final void Function(Catalog updated)? onCatalogUpdated;
 
   const CatalogUploadImage({
     super.key,
     required this.userId,
     required this.catalogId,
     this.field,
+    required this.catalog,
+    this.onCatalogUpdated,
   });
 
   @override
@@ -30,73 +34,66 @@ class CatalogUploadImage extends StatefulWidget {
 
 class _CatalogUploadImageState extends State<CatalogUploadImage> {
   final ImagePicker _picker = ImagePicker();
-  final List<File> _selectedImages = [];
-  List<String> catalogImages = [];
   static const int maxImages = 3;
+  List<String> catalogImages = [];
 
   @override
   void initState() {
     super.initState();
-    _loadInitialCatalogImages();
   }
 
-  Future<void> _loadInitialCatalogImages() async {
-    final currentState = context.read<CatalogCubit>().state;
-    if (currentState is CatalogLoaded) {
-      final matching =
-          currentState.catalogs.where((c) => c.uid == widget.catalogId);
-      if (matching.isNotEmpty) {
-        setState(() => catalogImages = matching.first.images);
+  Future<void> _pickImages() async {
+    try {
+      final pickedFiles = await _picker.pickMultiImage(imageQuality: 80);
+      if (pickedFiles.isEmpty) return;
+
+      final newImages = pickedFiles
+          .take(maxImages - catalogImages.length)
+          .map((x) => x.path)
+          .toList();
+
+      setState(() {
+        catalogImages.addAll(newImages);
+      });
+
+      widget.field?.didChange(catalogImages.map((path) => File(path)).toList());
+
+      if (mounted) {
+        final updatedCatalog =
+            await context.read<CatalogCubit>().uploadCatalogImages(
+                  catalog: widget.catalog,
+                  catalogId: widget.catalog.catalogId ?? widget.catalogId,
+                  imagePaths: newImages,
+                );
+
+        if (updatedCatalog != null) {
+          // Met à jour localement le widget si besoin
+          setState(() {
+            catalogImages = updatedCatalog.images;
+          });
+
+          // Appelle le callback pour notifier le parent
+          widget.onCatalogUpdated
+              ?.call(updatedCatalog); // <-- Appel du callback
+        }
+        print("📷 Images sélectionnées: $catalogImages");
+      }
+    } catch (e, st) {
+      print("🛑 Erreur _pickImages(): $e\n$st");
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Erreur lors de la sélection d’image.')),
+        );
       }
     }
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _loadInitialCatalogImages();
-  }
-
-  Future<void> _pickImages() async {
-    final images = await _picker.pickMultiImage();
-    if (!mounted || images.isEmpty) return;
-
-    final availableSlots = maxImages - (catalogImages.length);
-    if (availableSlots <= 0) {
-      _showMaxImagesAlert();
-      return;
-    }
-
-    final toAdd = images.take(availableSlots);
-    final filesToUpload = toAdd.map((x) => File(x.path)).toList();
-
-    setState(() => catalogImages.addAll(filesToUpload.map((f) => f.path)));
-
-    // Upload images to Firebase
-    await context.read<CatalogCubit>().uploadImagesToCatalog(
-          widget.userId,
-          widget.catalogId,
-          filesToUpload.map((f) => f.path).toList(),
-        );
-
-    // Recharge images depuis Firebase pour éviter les problèmes
-    await _loadInitialCatalogImages();
-    widget.field?.didChange(catalogImages.map((p) => File(p)).toList());
-  }
-
   void _deleteImage(int index) {
-    final path = catalogImages[index];
+    setState(() {
+      catalogImages.removeAt(index);
+    });
 
-    setState(() => catalogImages.removeAt(index));
-    widget.field?.didChange(catalogImages.map((p) => File(p)).toList());
-
-    // Optionnel : supprimer aussi du backend via Cubit si nécessaire
-  }
-
-  void _showMaxImagesAlert() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Vous ne pouvez ajouter que 3 images.")),
-    );
+    widget.field?.didChange(catalogImages.map((path) => File(path)).toList());
   }
 
   @override

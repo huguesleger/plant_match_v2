@@ -12,109 +12,102 @@ class CatalogCubit extends Cubit<CatalogState> {
       {required this.catalogRepository, required this.storageRepository})
       : super(CatalogInitial());
 
-  Future<void> createEmptyCatalog(String userId) async {
-    emit(CatalogLoading());
-    try {
-      final uid = await catalogRepository.createEmptyCatalog(userId);
-      final catalog = await catalogRepository.getCatalogById(uid);
-      if (catalog != null) {
-        emit(CatalogLoaded([catalog]));
-      } else {
-        emit(CatalogError("Erreur: création échouée"));
-      }
-    } catch (e) {
-      emit(CatalogError("Erreur création : $e"));
-    }
-  }
-
-  Future<void> updateCatalog(Catalog updated) async {
-    emit(CatalogLoading());
-    try {
-      await catalogRepository.updateCatalog(updated);
-      final fullCatalog = await catalogRepository.getCatalogById(updated.uid);
-      if (fullCatalog != null) {
-        final currentState = state;
-        if (currentState is CatalogLoaded) {
-          final updatedList = currentState.catalogs.map((c) {
-            return c.uid == updated.uid ? fullCatalog : c;
-          }).toList();
-          emit(CatalogLoaded(updatedList));
-        } else {
-          emit(CatalogLoaded([fullCatalog]));
-        }
-      } else {
-        emit(CatalogError("Mise à jour échouée"));
-      }
-    } catch (e) {
-      emit(CatalogError("Erreur mise à jour : $e"));
-    }
-  }
-
-  Future<void> loadUserCatalogs(String userId) async {
+  Future<void> getCatalogsByUserId(String userId) async {
     emit(CatalogLoading());
     try {
       final catalogs = await catalogRepository.getCatalogsByUserId(userId);
-      emit(CatalogLoaded(catalogs));
+      final catalog = await catalogRepository.getCatalogById(userId);
+      if (catalog == null) {
+        final catalogEmpty = Catalog(
+          userId: userId,
+          name: '',
+          description: '',
+          images: [],
+          environment: Environment.indoor,
+          family: [Family.flower],
+          levelMaintenance: LevelMaintenance.low,
+          watering: Watering.little,
+          lighting: Lighting.sun,
+        );
+        return emit(CatalogLoaded(catalogs, catalogEmpty));
+      }
+      emit(CatalogLoaded(catalogs, catalog));
     } catch (e) {
       emit(CatalogError("Erreur chargement : $e"));
     }
   }
 
-  Future<void> uploadImagesToCatalog(
-      String userId, String catalogId, List<String> imagePaths) async {
+  Future<String> addCatalog(Catalog catalog) async {
     emit(CatalogLoading());
-
     try {
-      // 🔍 Récupère le catalogue actuel
-      final catalog = await catalogRepository.getCatalogById(catalogId);
-      if (catalog == null) {
-        emit(CatalogError("Catalogue non trouvé"));
-        return;
-      }
+      final id = await catalogRepository.createCatalog(catalog);
+      final catalogs =
+          await catalogRepository.getCatalogsByUserId(catalog.userId);
+      emit(CatalogLoaded(catalogs, catalog.copyWith(newCatalogId: id)));
+      return id;
+    } catch (e) {
+      emit(CatalogError("Erreur ajout : $e"));
+      rethrow;
+    }
+  }
 
-      // 🔼 Upload des nouvelles images
-      List<String> newImageUrls = [];
-      for (String imagePath in imagePaths) {
-        final imageUrl = await storageRepository.uploadImageFromUrl(
-          path: imagePath,
-          fileName: "$catalogId${imagePath.split('/').last}",
-          folder: 'catalog_images',
-        );
-        if (imageUrl != null) {
-          newImageUrls.add(imageUrl);
+  Future<void> updateCatalog(Catalog catalog) async {
+    emit(CatalogLoading());
+    try {
+      await catalogRepository.updateCatalog(catalog);
+      final catalogs =
+          await catalogRepository.getCatalogsByUserId(catalog.userId);
+      emit(CatalogLoaded(catalogs, catalog));
+    } catch (e) {
+      emit(CatalogError("Erreur mise à jour : $e"));
+    }
+  }
+
+  Future<Catalog?> uploadCatalogImages({
+    required Catalog catalog,
+    required List<String> imagePaths,
+    required String catalogId,
+  }) async {
+    emit(CatalogLoading());
+    try {
+      final List<String> uploadedUrls = [];
+
+      // On vérifie si les images sont déjà présentes dans catalog.images
+      for (final imagePath in imagePaths) {
+        final fileName = "${catalogId}_${imagePath.split('/').last}";
+
+        // Si l'image est déjà dans le catalogue, on ne l'upload pas à nouveau
+        if (!catalog.images.contains(imagePath)) {
+          final imageUrl = await storageRepository.uploadImageFromUrl(
+            path: imagePath,
+            fileName: fileName,
+            folder: 'catalog_images',
+          );
+          if (imageUrl != null) {
+            uploadedUrls.add(imageUrl);
+          }
         }
       }
 
-      // 🧠 Fusionne sans doublons avec les anciennes images
-      final updatedImageList = {
-        ...catalog.images,
-        ...newImageUrls,
-      }.toList();
+      // Mettre à jour le catalogue avec les nouvelles images
+      final updatedCatalog = catalog.copyWith(
+        newCatalogId: catalogId,
+        newImages: [
+          ...catalog.images,
+          ...uploadedUrls
+        ], // N'ajoute que les nouvelles images
+      );
 
-      // 🔄 Met à jour le catalogue
-      final updatedCatalog = catalog.copyWith(images: updatedImageList);
       await catalogRepository.updateCatalog(updatedCatalog);
 
-      // 📥 Recharge depuis la source (si besoin pour la cohérence)
-      final refreshedCatalog =
-          await catalogRepository.getCatalogById(catalogId);
-      if (refreshedCatalog == null) {
-        emit(CatalogError("Échec de la récupération du catalogue mis à jour"));
-        return;
-      }
+      final catalogs =
+          await catalogRepository.getCatalogsByUserId(catalog.userId);
+      emit(CatalogLoaded(catalogs, updatedCatalog));
 
-      // 📢 Mets à jour l’état global
-      final currentState = state;
-      if (currentState is CatalogLoaded) {
-        final updatedList = currentState.catalogs.map((c) {
-          return c.uid == catalogId ? refreshedCatalog : c;
-        }).toList();
-        emit(CatalogLoaded(updatedList));
-      } else {
-        emit(CatalogLoaded([refreshedCatalog]));
-      }
-    } catch (e, stack) {
-      emit(CatalogError("Erreur lors du téléchargement des images : $e"));
+      return updatedCatalog;
+    } catch (e) {
+      emit(CatalogError("Erreur upload d’images : $e"));
+      return null;
     }
   }
 }

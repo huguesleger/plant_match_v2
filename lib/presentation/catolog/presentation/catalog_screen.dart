@@ -7,17 +7,18 @@ import 'package:plant_match_v2/presentation/catolog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/presentation/catolog/presentation/add_plant_wizard/add_plant_wizard_page.dart';
 import 'package:plant_match_v2/presentation/catolog/presentation/catalog_card_item.dart';
 import 'package:plant_match_v2/presentation/catolog/widget/catalog_card_is_empty.dart';
-import 'package:uuid/uuid.dart';
 
 class CatalogScreen extends StatelessWidget {
   const CatalogScreen({
     super.key,
     required this.userId,
     required this.catalogs,
+    required this.catalog,
   });
 
   final String userId;
   final List<Catalog> catalogs;
+  final Catalog catalog;
 
   @override
   Widget build(BuildContext context) {
@@ -38,27 +39,11 @@ class CatalogScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          const uuid = Uuid();
-          final generatedId = uuid.v4();
-          final newCatalog = Catalog(
-            uid: generatedId,
-            userId: userId,
-            name: '',
-            images: [],
-            description: '',
-            environment: null,
-            family: null,
-            levelMaintenance: null,
-            watering: null,
-            lighting: null,
-          );
-
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => AddPlantWizardPage(
-                userId: userId,
-                catalog: newCatalog,
+                catalog: catalog,
               ),
             ),
           );

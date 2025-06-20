@@ -22,11 +22,9 @@ import 'package:plant_match_v2/presentation/catolog/widget/selectable_item.dart'
 class AddPlantWizardPage extends StatefulWidget {
   const AddPlantWizardPage({
     super.key,
-    required this.userId,
     required this.catalog,
   });
 
-  final String userId;
   final Catalog catalog;
 
   @override
@@ -68,28 +66,27 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
   String? _selectedWatering;
   String? _selectedLighting;
 
-  late Catalog currentCatalog;
+  //late Catalog currentCatalog;
+  Catalog? _catalog;
 
   @override
   void initState() {
     super.initState();
-    currentCatalog = widget.catalog;
-    _initializeControllers();
+    //urrentCatalog = widget.catalog;
+    //_initializeControllers();
   }
 
-  void _initializeControllers() {
+/*  void _initializeControllers() {
     _plantNameController.text = currentCatalog.name;
-    _plantCategoryController.text = currentCatalog.environment?.name ?? '';
-    _plantMaintenanceController.text =
-        currentCatalog.levelMaintenance?.name ?? '';
-    _plantWateringController.text = currentCatalog.watering?.name ?? '';
-    _plantLightingController.text = currentCatalog.lighting?.name ?? '';
+    _plantCategoryController.text = currentCatalog.environment.name;
+    _plantMaintenanceController.text = currentCatalog.levelMaintenance.name;
+    _plantWateringController.text = currentCatalog.watering.name;
+    _plantLightingController.text = currentCatalog.lighting.name;
     _plantDescriptionController.text = currentCatalog.description;
-    _plantImageController.text =
-        currentCatalog.images.isNotEmpty ? currentCatalog.images.first : '';
+    _plantImageController.text = currentCatalog.image;
     selectedValues =
-        currentCatalog.family?.map((family) => family.name).toList() ?? [];
-  }
+        currentCatalog.family.map((family) => family.name).toList() ?? [];
+  }*/
 
   @override
   void dispose() {
@@ -120,62 +117,119 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
     switch (page) {
       case 0:
         if (_formKeyPlantName.currentState?.saveAndValidate() ?? false) {
-          currentCatalog =
-              currentCatalog.copyWith(name: _plantNameController.text);
-          await _updateCatalogInFirebase(currentCatalog);
+          final updated = (_catalog ?? widget.catalog).copyWith(
+              newName: _plantNameController.text,
+              newImages: _catalog?.images ?? []);
+
+          if (updated.catalogId == null) {
+            final id = await context.read<CatalogCubit>().addCatalog(updated);
+            setState(() {
+              _catalog = updated.copyWith(newCatalogId: id);
+            });
+          } else {
+            await context.read<CatalogCubit>().updateCatalog(updated);
+            setState(() {
+              _catalog = updated;
+            });
+          }
+
           _onPressedNextPage();
         }
         break;
+
       case 1:
-        currentCatalog = currentCatalog.copyWith(
-          environment: getEnvironmentFromString(_plantCategoryController.text),
-        );
-        await _updateCatalogInFirebase(currentCatalog);
-        _onPressedNextPage();
+        if (_catalog != null) {
+          final updated = _catalog!.copyWith(
+            newEnvironment:
+                getEnvironmentFromString(_plantCategoryController.text),
+            newImages: _catalog!.images,
+          );
+
+          context.read<CatalogCubit>().updateCatalog(updated);
+          setState(() => _catalog = updated);
+          _onPressedNextPage();
+        }
         break;
+
       case 2:
-        currentCatalog = currentCatalog.copyWith(
-          family: selectedValues
+        final updated = _catalog!.copyWith(
+          newFamily: selectedValues
               .map(getFamilyFromString)
               .whereType<Family>()
               .toList(),
+          newImages: _catalog!.images,
         );
-        await _updateCatalogInFirebase(currentCatalog);
+
+        context.read<CatalogCubit>().updateCatalog(updated);
+        setState(() => _catalog = updated);
         _onPressedNextPage();
         break;
+
       case 3:
-        currentCatalog = currentCatalog.copyWith(
-          levelMaintenance:
-              getLevelMaintenanceFromString(_plantMaintenanceController.text),
+        final updated = _catalog!.copyWith(
+          newLevelMaintenance: getLevelMaintenanceFromString(
+            _plantMaintenanceController.text,
+          ),
+          newImages: _catalog!.images,
         );
-        await _updateCatalogInFirebase(currentCatalog);
+
+        context.read<CatalogCubit>().updateCatalog(updated);
+        setState(() => _catalog = updated);
         _onPressedNextPage();
         break;
+
       case 4:
-        currentCatalog = currentCatalog.copyWith(
-          watering: getWateringFromString(_plantWateringController.text),
+        final updated = _catalog!.copyWith(
+          newWatering: getWateringFromString(_plantWateringController.text),
+          newImages: _catalog!.images,
         );
-        await _updateCatalogInFirebase(currentCatalog);
+
+        context.read<CatalogCubit>().updateCatalog(updated);
+        setState(() => _catalog = updated);
         _onPressedNextPage();
         break;
+
       case 5:
-        currentCatalog = currentCatalog.copyWith(
-          lighting: getLightingFromString(_plantLightingController.text),
+        final updated = _catalog!.copyWith(
+          newLighting: getLightingFromString(_plantLightingController.text),
+          newImages: _catalog!.images,
         );
-        await _updateCatalogInFirebase(currentCatalog);
+
+        context.read<CatalogCubit>().updateCatalog(updated);
+        setState(() => _catalog = updated);
         _onPressedNextPage();
         break;
+
       case 6:
-        currentCatalog = currentCatalog.copyWith(
-          description: _plantDescriptionController.text,
+        final updated = _catalog!.copyWith(
+          newDescription: _plantDescriptionController.text,
+          newImages: _catalog!.images,
         );
-        await _updateCatalogInFirebase(currentCatalog);
+
+        context.read<CatalogCubit>().updateCatalog(updated);
+        setState(() => _catalog = updated);
         _onPressedNextPage();
         break;
+
       case 7:
         if (_formKeyPlantImage.currentState?.saveAndValidate() ?? false) {
-          // 🔄 Recharge le catalog depuis le Cubit après upload
-          await _updateCatalogInFirebase(currentCatalog);
+          final selectedFiles = (_formKeyPlantImage
+              .currentState?.value['plantImage'] as List<File>?);
+
+          final newImages = selectedFiles?.map((file) => file.path).toList();
+
+          final updated = _catalog!.copyWith(
+            newImages: (newImages != null && newImages.isNotEmpty)
+                ? newImages
+                : _catalog!
+                    .images, // ✅ Ne remplace pas les images si aucune sélection
+          );
+
+          context.read<CatalogCubit>().updateCatalog(updated);
+
+          setState(() {
+            _catalog = updated;
+          });
 
           _onPressedNextPage();
         }
@@ -191,10 +245,10 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
     setState(() => _currentPage++);
   }
 
-  Future<void> _updateCatalogInFirebase(Catalog updatedCatalog) async {
+/*  Future<void> _updateCatalogInFirebase(Catalog updatedCatalog) async {
     final catalogCubit = context.read<CatalogCubit>();
     await catalogCubit.updateCatalog(updatedCatalog);
-  }
+  }*/
 
   void onSelect(String value) {
     setState(() {
@@ -528,9 +582,16 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                     name: 'plantImage',
                     builder: (FormFieldState<List<File>> field) {
                       return CatalogUploadImage(
-                        userId: widget.userId,
-                        catalogId: widget.catalog.uid,
+                        userId: _catalog!.userId,
+                        catalogId: _catalog!.catalogId!,
+                        catalog: _catalog!,
                         field: field,
+                        onCatalogUpdated: (updatedCatalog) {
+                          setState(() {
+                            _catalog =
+                                updatedCatalog; // Mise à jour de _catalog dans le parent
+                          });
+                        },
                       );
                     },
                     autovalidateMode: AutovalidateMode.onUserInteraction,
