@@ -110,4 +110,33 @@ class CatalogCubit extends Cubit<CatalogState> {
       return null;
     }
   }
+
+  Future<void> deleteImageCatalog({
+    required Catalog catalog,
+    required String imageUrl,
+  }) async {
+    emit(CatalogLoading());
+
+    try {
+      // Supprime l'image du storage via le StorageRepository
+      await storageRepository.deleteImage(imageUrl: imageUrl);
+
+      // Met à jour la liste des images du catalog
+      final updatedImages =
+          catalog.images.where((img) => img != imageUrl).toList();
+
+      final updatedCatalog = catalog.copyWith(newImages: updatedImages);
+
+      // Met à jour Firestore via CatalogRepository
+      await catalogRepository.updateCatalog(updatedCatalog);
+
+      // Recharge les catalogues à jour
+      final catalogs =
+          await catalogRepository.getCatalogsByUserId(catalog.userId);
+
+      emit(CatalogLoaded(catalogs, updatedCatalog));
+    } catch (e) {
+      emit(CatalogError("Erreur suppression d’image : $e"));
+    }
+  }
 }
