@@ -36,6 +36,10 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
   final int _totalPages = 8;
   final PageController _pageController = PageController();
 
+  int _charCount = 0;
+
+  final int _maxChar = 150;
+
   final TextEditingController _plantNameController = TextEditingController();
   final TextEditingController _plantCategoryController =
       TextEditingController();
@@ -70,6 +74,19 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
   @override
   void initState() {
     super.initState();
+    _plantDescriptionController.addListener(() {
+      final currentText = _plantDescriptionController.text;
+      if (currentText.length > _maxChar) {
+        // Si dépassement, tronquer le texte
+        _plantDescriptionController.text = currentText.substring(0, _maxChar);
+        _plantDescriptionController.selection = TextSelection.fromPosition(
+          TextPosition(offset: _maxChar),
+        );
+      }
+      setState(() {
+        _charCount = _plantDescriptionController.text.length;
+      });
+    });
   }
 
   @override
@@ -662,6 +679,7 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                       const SizedBox(height: 20),
                       FormBuilderTextField(
                         maxLines: 4,
+                        maxLength: _maxChar,
                         name: 'description',
                         decoration: DecorationInput.inputDecoration(
                           hintText: 'Description de la plante',
@@ -673,6 +691,8 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                         validator: FormBuilderValidators.compose([
                           FormBuilderValidators.required(
                               errorText: 'Ce champ est requis'),
+                          FormBuilderValidators.maxLength(_maxChar,
+                              errorText: 'Maximum $_maxChar caractères'),
                         ]),
                       ),
                     ],
