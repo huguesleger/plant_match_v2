@@ -11,7 +11,6 @@ import 'package:plant_match_v2/core/theme/inter_text_style.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
 import 'package:plant_match_v2/presentation/catolog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/presentation/catolog/presentation/cubit/catalog_cubit.dart';
-import 'package:plant_match_v2/presentation/catolog/presentation/cubit/catalog_state.dart';
 
 class CatalogUploadImage extends StatefulWidget {
   final String userId;
@@ -37,19 +36,24 @@ class _CatalogUploadImageState extends State<CatalogUploadImage> {
   final ImagePicker _picker = ImagePicker();
   static const int maxImages = 3;
   List<String> catalogImages = [];
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
 
-    // ✅ On garde uniquement les URLs Firebase existantes
     catalogImages =
         widget.catalog.images.where((img) => img.startsWith('http')).toList();
 
-    // ✅ Déclenche didChange après le premier build
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      widget.field?.didChange(catalogImages.map((_) => File('')).toList());
+      _notifyFieldChangedErrorMessage(catalogImages);
     });
+  }
+
+  void _notifyFieldChangedErrorMessage(List<String> urls) {
+    if (widget.field != null && urls.isNotEmpty) {
+      widget.field!.didChange(urls.map((_) => File('')).toList());
+    }
   }
 
   Future<void> _pickImages() async {
@@ -61,9 +65,12 @@ class _CatalogUploadImageState extends State<CatalogUploadImage> {
       final localPaths =
           pickedFiles.take(availableSlots).map((x) => x.path).toList();
 
-      if (localPaths.isEmpty) return;
+      if (localPaths.isEmpty) {
+        setState(() => _isLoading = false);
+        return;
+      }
+      setState(() => _isLoading = true);
 
-      // ✅ Upload des images et récupération du catalog mis à jour
       final updatedCatalog =
           await context.read<CatalogCubit>().uploadCatalogImages(
                 catalog: widget.catalog,
@@ -73,58 +80,46 @@ class _CatalogUploadImageState extends State<CatalogUploadImage> {
 
       if (!mounted || updatedCatalog == null) return;
 
-      // ✅ On garde uniquement les URLs Firebase
       final firebaseUrls =
           updatedCatalog.images.where((url) => url.startsWith('http')).toList();
-
       setState(() {
         catalogImages = firebaseUrls;
+        _isLoading = false;
       });
 
-      widget.field?.didChange(firebaseUrls.map((_) => File('')).toList());
-
+      _notifyFieldChanged(firebaseUrls);
       widget.onCatalogUpdated?.call(updatedCatalog);
-      print("📷 Images Firebase: $catalogImages");
     } catch (e, st) {
-      print("🛑 Erreur _pickImages(): $e\n$st");
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Erreur lors de la sélection d’image.')),
         );
       }
+      setState(() => _isLoading = false);
     }
   }
 
   void _deleteImage(int index) async {
-    await context.read<CatalogCubit>().deleteImageCatalog(
-          catalog: widget.catalog,
-          imageUrl: catalogImages[index],
-        );
+    final imageUrlToDelete = catalogImages[index];
 
-    final state = context.read<CatalogCubit>().state;
-    if (state is CatalogLoaded) {
-      final updatedCatalog = state.catalog;
+    final updatedCatalog =
+        await context.read<CatalogCubit>().deleteImageCatalog(
+              catalog: widget.catalog,
+              imageUrl: imageUrlToDelete,
+            );
 
-      setState(() {
-        catalogImages = updatedCatalog.images;
-      });
+    if (updatedCatalog == null || !mounted) return;
 
-      widget.field?.didChange(
-        catalogImages.map((_) => File('')).toList(),
-      );
-
-      // 🔁 Met à jour le catalog dans le widget parent
-      widget.onCatalogUpdated?.call(updatedCatalog);
-    }
-
-    // Met à jour l'état local après suppression réussie
     setState(() {
-      catalogImages.removeAt(index);
+      catalogImages = updatedCatalog.images;
     });
 
-/*    widget.field?.didChange(
-      catalogImages.map((path) => File(path)).toList(),
-    );*/
+    _notifyFieldChanged(catalogImages);
+    widget.onCatalogUpdated?.call(updatedCatalog);
+  }
+
+  void _notifyFieldChanged(List<String> urls) {
+    widget.field?.didChange(urls.map((_) => File('')).toList());
   }
 
   @override
@@ -165,55 +160,47 @@ class _CatalogUploadImageState extends State<CatalogUploadImage> {
             ),
           ),
         ),
-        const SizedBox(height: 10),
-        if (widget.field?.errorText != null)
-          Padding(
-            padding: const EdgeInsets.only(top: 5),
-            child: Text(
-              widget.field!.errorText!,
-              style: const TextStyle(color: Colors.red, fontSize: 12),
-            ),
-          ),
-        const SizedBox(height: 10),
-        if (catalogImages.isNotEmpty)
-          SizedBox(
-            height: 200,
-            child: ListView.builder(
-              itemCount: catalogImages.length,
-              itemBuilder: (_, index) {
-                final imagePath = catalogImages[index];
-                return Column(
-                  key: ValueKey(imagePath),
-                  children: [
-                    ListTile(
-                      tileColor: AppColors.white,
-                      contentPadding: EdgeInsets.zero,
-                      leading: Image.network(
+        if (_isLoading || catalogImages.isNotEmpty) ...[
+          const SizedBox(height: 20),
+          if (_isLoading)
+            const Center(child: CircularProgressIndicator())
+          else
+            SizedBox(
+              height: 216,
+              child: ListView.separated(
+                physics: const NeverScrollableScrollPhysics(),
+                separatorBuilder: (_, __) => const Divider(),
+                itemCount: catalogImages.length,
+                itemBuilder: (_, index) {
+                  final imagePath = catalogImages[index];
+                  return ListTile(
+                    tileColor: AppColors.white,
+                    contentPadding: EdgeInsets.zero,
+                    leading: ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: Image.network(
                         imagePath,
                         width: 56,
                         height: 56,
                         fit: BoxFit.cover,
                       ),
-                      title: Text(
-                        "Image ${index + 1}",
-                        style: InterTextStyle.inter(
-                          AppTypo.textS,
-                          color: AppColors.greyDark,
-                        ),
-                      ),
-                      trailing: IconButton(
-                        onPressed: () => _deleteImage(index),
-                        icon: const Icon(LucideIcons.x, size: AppTypo.text),
+                    ),
+                    title: Text(
+                      "Image ${index + 1}",
+                      style: InterTextStyle.inter(
+                        AppTypo.textS,
+                        color: AppColors.greyDark,
                       ),
                     ),
-                    const Divider(),
-                  ],
-                );
-              },
+                    trailing: IconButton(
+                      onPressed: () => _deleteImage(index),
+                      icon: const Icon(LucideIcons.x, size: AppTypo.text),
+                    ),
+                  );
+                },
+              ),
             ),
-          )
-        else
-          const Center(child: Text("Aucune image sélectionnée")),
+        ]
       ],
     );
   }

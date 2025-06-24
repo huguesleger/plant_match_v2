@@ -22,6 +22,21 @@ class CatalogCardItem extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(catalog.description),
+            if (catalog.images.isNotEmpty &&
+                catalog.images.first.startsWith('http'))
+              Image.network(
+                catalog.images.first,
+                height: 100,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              )
+            else
+              const Image(
+                image: AssetImage('assets/images/avatar.png'),
+                height: 100,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
           ],
         ),
       ),

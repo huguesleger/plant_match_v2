@@ -15,6 +15,9 @@ class DecorationInput {
       helperText: helperText,
       suffixIcon: suffixIcon,
       alignLabelWithHint: alignLabelWithHint,
+      errorStyle: const TextStyle(
+        color: AppColors.error,
+      ),
       isDense: true,
       border: const OutlineInputBorder(
         borderRadius: BorderRadius.all(
@@ -28,6 +31,16 @@ class DecorationInput {
         borderSide: BorderSide(
           color: AppColors.blueGreen,
         ),
+      ),
+      errorBorder: const OutlineInputBorder(
+        borderRadius: BorderRadius.all(Radius.circular(8)),
+        borderSide: BorderSide(
+          color: AppColors.error,
+        ),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderSide: const BorderSide(color: AppColors.error),
+        borderRadius: BorderRadius.circular(8),
       ),
     );
   }

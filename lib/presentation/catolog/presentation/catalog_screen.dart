@@ -58,9 +58,9 @@ class CatalogScreen extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: catalogs.isEmpty
-            ? Column(
+            ? const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Padding(
                     padding: EdgeInsets.only(top: 20),
                     child: TitlePage(

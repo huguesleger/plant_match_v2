@@ -66,6 +66,16 @@ class AppTheme {
         dragHandleColor: AppColors.greyLight,
         dragHandleSize: Size(45, 4),
       ),
+      inputDecorationTheme: const InputDecorationTheme(
+        labelStyle: TextStyle(
+          color: AppColors.greyDark,
+        ),
+        errorBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: AppColors.error,
+          ),
+        ),
+      ),
     );
   }
 }

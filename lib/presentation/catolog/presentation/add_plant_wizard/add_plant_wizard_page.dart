@@ -65,28 +65,12 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
   String? _selectedMaintenance;
   String? _selectedWatering;
   String? _selectedLighting;
-
-  //late Catalog currentCatalog;
   Catalog? _catalog;
 
   @override
   void initState() {
     super.initState();
-    //urrentCatalog = widget.catalog;
-    //_initializeControllers();
   }
-
-/*  void _initializeControllers() {
-    _plantNameController.text = currentCatalog.name;
-    _plantCategoryController.text = currentCatalog.environment.name;
-    _plantMaintenanceController.text = currentCatalog.levelMaintenance.name;
-    _plantWateringController.text = currentCatalog.watering.name;
-    _plantLightingController.text = currentCatalog.lighting.name;
-    _plantDescriptionController.text = currentCatalog.description;
-    _plantImageController.text = currentCatalog.image;
-    selectedValues =
-        currentCatalog.family.map((family) => family.name).toList() ?? [];
-  }*/
 
   @override
   void dispose() {
@@ -134,11 +118,13 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
           }
 
           _onPressedNextPage();
+        } else {
+          _formKeyPlantName.currentState?.validate();
         }
         break;
 
       case 1:
-        if (_catalog != null) {
+        if (_formKeyPlantCategory.currentState?.saveAndValidate() ?? false) {
           final updated = _catalog!.copyWith(
             newEnvironment:
                 getEnvironmentFromString(_plantCategoryController.text),
@@ -148,90 +134,95 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
           context.read<CatalogCubit>().updateCatalog(updated);
           setState(() => _catalog = updated);
           _onPressedNextPage();
+        } else {
+          _formKeyPlantCategory.currentState?.validate();
         }
         break;
 
       case 2:
-        final updated = _catalog!.copyWith(
-          newFamily: selectedValues
-              .map(getFamilyFromString)
-              .whereType<Family>()
-              .toList(),
-          newImages: _catalog!.images,
-        );
-
-        context.read<CatalogCubit>().updateCatalog(updated);
-        setState(() => _catalog = updated);
-        _onPressedNextPage();
+        if (_formKeyPlantFamily.currentState?.saveAndValidate() ?? false) {
+          final updated = _catalog!.copyWith(
+            newFamily: selectedValues
+                .map(getFamilyFromString)
+                .whereType<Family>()
+                .toList(),
+            newImages: _catalog!.images,
+          );
+          context.read<CatalogCubit>().updateCatalog(updated);
+          setState(() => _catalog = updated);
+          _onPressedNextPage();
+        } else {
+          _formKeyPlantFamily.currentState?.validate();
+        }
         break;
 
       case 3:
-        final updated = _catalog!.copyWith(
-          newLevelMaintenance: getLevelMaintenanceFromString(
-            _plantMaintenanceController.text,
-          ),
-          newImages: _catalog!.images,
-        );
+        if (_formKeyPlantMaintenance.currentState?.saveAndValidate() ?? false) {
+          final updated = _catalog!.copyWith(
+            newLevelMaintenance: getLevelMaintenanceFromString(
+              _plantMaintenanceController.text,
+            ),
+            newImages: _catalog!.images,
+          );
 
-        context.read<CatalogCubit>().updateCatalog(updated);
-        setState(() => _catalog = updated);
-        _onPressedNextPage();
+          context.read<CatalogCubit>().updateCatalog(updated);
+          setState(() => _catalog = updated);
+          _onPressedNextPage();
+        } else {
+          _formKeyPlantMaintenance.currentState?.validate();
+        }
         break;
 
       case 4:
-        final updated = _catalog!.copyWith(
-          newWatering: getWateringFromString(_plantWateringController.text),
-          newImages: _catalog!.images,
-        );
+        if (_formKeyPlantWatering.currentState?.saveAndValidate() ?? false) {
+          final updated = _catalog!.copyWith(
+            newWatering: getWateringFromString(_plantWateringController.text),
+            newImages: _catalog!.images,
+          );
 
-        context.read<CatalogCubit>().updateCatalog(updated);
-        setState(() => _catalog = updated);
-        _onPressedNextPage();
+          context.read<CatalogCubit>().updateCatalog(updated);
+          setState(() => _catalog = updated);
+          _onPressedNextPage();
+        } else {
+          _formKeyPlantWatering.currentState?.validate();
+        }
         break;
 
       case 5:
-        final updated = _catalog!.copyWith(
-          newLighting: getLightingFromString(_plantLightingController.text),
-          newImages: _catalog!.images,
-        );
+        if (_formKeyPlantLighting.currentState?.saveAndValidate() ?? false) {
+          final updated = _catalog!.copyWith(
+            newLighting: getLightingFromString(_plantLightingController.text),
+            newImages: _catalog!.images,
+          );
 
-        context.read<CatalogCubit>().updateCatalog(updated);
-        setState(() => _catalog = updated);
-        _onPressedNextPage();
+          context.read<CatalogCubit>().updateCatalog(updated);
+          setState(() => _catalog = updated);
+          _onPressedNextPage();
+        } else {
+          _formKeyPlantLighting.currentState?.validate();
+        }
         break;
 
       case 6:
-        final updated = _catalog!.copyWith(
-          newDescription: _plantDescriptionController.text,
-          newImages: _catalog!.images,
-        );
+        if (_formKeyPlantDescription.currentState?.saveAndValidate() ?? false) {
+          final updated = _catalog!.copyWith(
+            newDescription: _plantDescriptionController.text,
+            newImages: _catalog!.images,
+          );
 
-        context.read<CatalogCubit>().updateCatalog(updated);
-        setState(() => _catalog = updated);
-        _onPressedNextPage();
+          context.read<CatalogCubit>().updateCatalog(updated);
+          setState(() => _catalog = updated);
+          _onPressedNextPage();
+        } else {
+          _formKeyPlantDescription.currentState?.validate();
+        }
         break;
 
       case 7:
         if (_formKeyPlantImage.currentState?.saveAndValidate() ?? false) {
-          final selectedFiles = (_formKeyPlantImage
-              .currentState?.value['plantImage'] as List<File>?);
-
-          final newImages = selectedFiles?.map((file) => file.path).toList();
-
-          final updated = _catalog!.copyWith(
-            newImages: (newImages != null && newImages.isNotEmpty)
-                ? newImages
-                : _catalog!
-                    .images, // ✅ Ne remplace pas les images si aucune sélection
-          );
-
-          context.read<CatalogCubit>().updateCatalog(updated);
-
-          setState(() {
-            _catalog = updated;
-          });
-
-          _onPressedNextPage();
+          Navigator.pop(context);
+        } else {
+          _formKeyPlantImage.currentState?.validate();
         }
         break;
     }
@@ -244,11 +235,6 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
     );
     setState(() => _currentPage++);
   }
-
-/*  Future<void> _updateCatalogInFirebase(Catalog updatedCatalog) async {
-    final catalogCubit = context.read<CatalogCubit>();
-    await catalogCubit.updateCatalog(updatedCatalog);
-  }*/
 
   void onSelect(String value) {
     setState(() {
@@ -321,10 +307,12 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                   ),
                 ),
                 AddPlantWizardItem(
+                  formKey: _formKeyPlantCategory,
                   title: 'Quel environnement ?',
                   description: 'Sélectionner une catégorie pour votre plante',
                   child: FormBuilderField(
                     name: 'category',
+                    initialValue: _plantCategoryController.text,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     validator: FormBuilderValidators.compose([
                       FormBuilderValidators.required(
@@ -332,59 +320,108 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                     ]),
                     onSaved: (value) =>
                         _plantCategoryController.text = value.toString(),
-                    builder: (FormFieldState<dynamic> field) {
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
+                    builder: (FormFieldState<dynamic> fieldCategory) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Expanded(
-                            child: SelectableItem(
-                              icon: LucideIcons.house,
-                              label: "Intérieur",
-                              value: "indoor",
-                              isSelected:
-                                  _plantCategoryController.text == "indoor",
-                              onTap: (value) {
-                                onSelect(value);
-                                field.didChange(value);
-                              },
-                            ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: SelectableItem(
+                                  icon: LucideIcons.house,
+                                  label: "Intérieur",
+                                  value: "indoor",
+                                  isSelected:
+                                      _plantCategoryController.text == "indoor",
+                                  onTap: (value) {
+                                    onSelect(value);
+                                    fieldCategory.didChange(value);
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: SelectableItem(
+                                  icon: LucideIcons.fence,
+                                  label: "Extérieur",
+                                  value: "outdoor",
+                                  isSelected: _plantCategoryController.text ==
+                                      "outdoor",
+                                  onTap: (value) {
+                                    onSelect(value);
+                                    fieldCategory.didChange(value);
+                                  },
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: SelectableItem(
-                              icon: LucideIcons.fence,
-                              label: "Extérieur",
-                              value: "outdoor",
-                              isSelected:
-                                  _plantCategoryController.text == "outdoor",
-                              onTap: (value) {
-                                onSelect(value);
-                                field.didChange(value);
-                              },
+                          if (fieldCategory.hasError)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8),
+                              child: Text(
+                                fieldCategory.errorText ?? '',
+                                style: const TextStyle(
+                                    color: AppColors.error, fontSize: 12),
+                              ),
                             ),
-                          ),
                         ],
                       );
                     },
                   ),
                 ),
                 AddPlantWizardItem(
+                  formKey: _formKeyPlantFamily,
                   title: 'Choisir une famille',
                   description: 'Sélectionner une ou des catégorie(s)',
                   child: FormBuilderField(
                     name: 'family',
-                    builder: (FormFieldState<dynamic> field) {
-                      return GridSelectableItem(
-                        selectedValues: selectedValues,
-                        onSelect: onSelectMultiple,
+                    initialValue: selectedValues
+                        .map(getFamilyFromString)
+                        .whereType<Family>()
+                        .toList(),
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    builder: (FormFieldState<dynamic> fieldFamily) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          GridSelectableItem(
+                              selectedValues: selectedValues,
+                              onSelect: (value) {
+                                onSelectMultiple(value);
+                                fieldFamily.didChange(
+                                  selectedValues
+                                      .map(getFamilyFromString)
+                                      .whereType<Family>()
+                                      .toList(),
+                                );
+                              }),
+                          if (fieldFamily.hasError)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8),
+                              child: Text(
+                                fieldFamily.errorText ?? '',
+                                style: const TextStyle(
+                                    color: AppColors.error, fontSize: 12),
+                              ),
+                            ),
+                        ],
                       );
                     },
+                    validator: FormBuilderValidators.compose(
+                      [
+                        FormBuilderValidators.required(
+                            errorText: 'Ce champ est requis'),
+                      ],
+                    ),
                   ),
                 ),
                 AddPlantWizardItem(
+                  formKey: _formKeyPlantMaintenance,
                   title: 'Entretien',
                   description: 'Sélectionner un niveau de difficulté',
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const TitleWithIcon(
                         icon: LucideIcons.shield,
@@ -395,7 +432,9 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                       const SizedBox(height: 20),
                       FormBuilderField(
                         name: 'maintenance',
-                        builder: (FormFieldState<dynamic> field) {
+                        initialValue: _plantMaintenanceController.text,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        builder: (FormFieldState<dynamic> fieldMaintenance) {
                           return Column(
                             children: [
                               ItemRadio(
@@ -407,6 +446,7 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                                   setState(() {
                                     _selectedMaintenance = value;
                                     _plantMaintenanceController.text = value;
+                                    fieldMaintenance.didChange(value);
                                   });
                                 },
                               ),
@@ -420,6 +460,7 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                                   setState(() {
                                     _selectedMaintenance = value;
                                     _plantMaintenanceController.text = value;
+                                    fieldMaintenance.didChange(value);
                                   });
                                 },
                               ),
@@ -434,20 +475,36 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                                   setState(() {
                                     _selectedMaintenance = value;
                                     _plantMaintenanceController.text = value;
+                                    fieldMaintenance.didChange(value);
                                   });
                                 },
                               ),
+                              if (fieldMaintenance.hasError)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 8),
+                                  child: Text(
+                                    fieldMaintenance.errorText ?? '',
+                                    style: const TextStyle(
+                                        color: AppColors.error, fontSize: 12),
+                                  ),
+                                ),
                             ],
                           );
                         },
+                        validator: FormBuilderValidators.compose([
+                          FormBuilderValidators.required(
+                              errorText: 'Ce champ est requis'),
+                        ]),
                       ),
                     ],
                   ),
                 ),
                 AddPlantWizardItem(
+                  formKey: _formKeyPlantWatering,
                   title: 'Arrosage',
                   description: 'Sélectionner le besoin en eau',
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const TitleWithIcon(
                         icon: LucideIcons.droplet,
@@ -458,8 +515,11 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                       const SizedBox(height: 20),
                       FormBuilderField(
                         name: 'watering',
-                        builder: (FormFieldState<dynamic> field) {
+                        initialValue: _plantWateringController.text,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        builder: (FormFieldState<dynamic> fieldWatering) {
                           return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               ItemRadio(
                                 title: 'Peu d\'eau',
@@ -469,6 +529,7 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                                   setState(() {
                                     _selectedWatering = value;
                                     _plantWateringController.text = value;
+                                    fieldWatering.didChange(value);
                                   });
                                 },
                               ),
@@ -481,20 +542,38 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                                   setState(() {
                                     _selectedWatering = value;
                                     _plantWateringController.text = value;
+                                    fieldWatering.didChange(value);
                                   });
                                 },
                               ),
+                              if (fieldWatering.hasError)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 8),
+                                  child: Text(
+                                    fieldWatering.errorText ?? '',
+                                    style: const TextStyle(
+                                      color: AppColors.error,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
                             ],
                           );
                         },
+                        validator: FormBuilderValidators.compose([
+                          FormBuilderValidators.required(
+                              errorText: 'Ce champ est requis'),
+                        ]),
                       ),
                     ],
                   ),
                 ),
                 AddPlantWizardItem(
+                  formKey: _formKeyPlantLighting,
                   title: 'Lumière',
                   description: 'Sélectionner le besoin en lumière',
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const TitleWithIcon(
                         icon: LucideIcons.sun_medium,
@@ -505,7 +584,9 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                       const SizedBox(height: 20),
                       FormBuilderField(
                         name: 'lighting',
-                        builder: (FormFieldState<dynamic> field) {
+                        initialValue: _plantLightingController.text,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        builder: (FormFieldState<dynamic> fieldLighting) {
                           return Column(
                             children: [
                               ItemRadio(
@@ -516,6 +597,7 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                                   setState(() {
                                     _selectedLighting = value;
                                     _plantLightingController.text = value;
+                                    fieldLighting.didChange(value);
                                   });
                                 },
                               ),
@@ -528,6 +610,7 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                                   setState(() {
                                     _selectedLighting = value;
                                     _plantLightingController.text = value;
+                                    fieldLighting.didChange(value);
                                   });
                                 },
                               ),
@@ -540,17 +623,32 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                                   setState(() {
                                     _selectedLighting = value;
                                     _plantLightingController.text = value;
+                                    fieldLighting.didChange(value);
                                   });
                                 },
                               ),
+                              if (fieldLighting.hasError)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 8),
+                                  child: Text(
+                                    fieldLighting.errorText ?? '',
+                                    style: const TextStyle(
+                                        color: AppColors.error, fontSize: 12),
+                                  ),
+                                ),
                             ],
                           );
                         },
+                        validator: FormBuilderValidators.compose([
+                          FormBuilderValidators.required(
+                              errorText: 'Ce champ est requis'),
+                        ]),
                       ),
                     ],
                   ),
                 ),
                 AddPlantWizardItem(
+                  formKey: _formKeyPlantDescription,
                   title: 'Description',
                   description: 'Ajouter une brève description',
                   child: Column(
@@ -563,12 +661,19 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                       ),
                       const SizedBox(height: 20),
                       FormBuilderTextField(
+                        maxLines: 4,
                         name: 'description',
                         decoration: DecorationInput.inputDecoration(
                           hintText: 'Description de la plante',
                           labelText: 'Description',
+                          alignLabelWithHint: true,
                         ),
+                        autovalidateMode: AutovalidateMode.disabled,
                         controller: _plantDescriptionController,
+                        validator: FormBuilderValidators.compose([
+                          FormBuilderValidators.required(
+                              errorText: 'Ce champ est requis'),
+                        ]),
                       ),
                     ],
                   ),
@@ -577,21 +682,34 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                   formKey: _formKeyPlantImage,
                   title: 'Ajouter une photo',
                   description:
-                      'Sélectionner ou ajouter une photo de votre plante',
+                      'Sélectionner une à trois photos de votre plante',
                   child: FormBuilderField<List<File>>(
                     name: 'plantImage',
-                    builder: (FormFieldState<List<File>> field) {
-                      return CatalogUploadImage(
-                        userId: _catalog!.userId,
-                        catalogId: _catalog!.catalogId!,
-                        catalog: _catalog!,
-                        field: field,
-                        onCatalogUpdated: (updatedCatalog) {
-                          setState(() {
-                            _catalog =
-                                updatedCatalog; // Mise à jour de _catalog dans le parent
-                          });
-                        },
+                    builder: (FormFieldState<List<File>> fieldImage) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CatalogUploadImage(
+                            userId: _catalog!.userId,
+                            catalogId: _catalog!.catalogId!,
+                            catalog: _catalog!,
+                            field: fieldImage,
+                            onCatalogUpdated: (updatedCatalog) {
+                              setState(() {
+                                _catalog = updatedCatalog;
+                              });
+                            },
+                          ),
+                          if (fieldImage.hasError)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8),
+                              child: Text(
+                                fieldImage.errorText ?? '',
+                                style: const TextStyle(
+                                    color: AppColors.error, fontSize: 12),
+                              ),
+                            ),
+                        ],
                       );
                     },
                     autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -612,7 +730,6 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
           onPressed: () {
             if (_currentPage == _totalPages - 1) {
               _handlePageAction(_currentPage);
-              Navigator.pop(context);
             } else {
               _onPressedNext();
             }

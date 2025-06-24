@@ -72,11 +72,8 @@ class CatalogCubit extends Cubit<CatalogState> {
     try {
       final List<String> uploadedUrls = [];
 
-      // On vérifie si les images sont déjà présentes dans catalog.images
       for (final imagePath in imagePaths) {
         final fileName = "${catalogId}_${imagePath.split('/').last}";
-
-        // Si l'image est déjà dans le catalogue, on ne l'upload pas à nouveau
         if (!catalog.images.contains(imagePath)) {
           final imageUrl = await storageRepository.uploadImageFromUrl(
             path: imagePath,
@@ -88,14 +85,9 @@ class CatalogCubit extends Cubit<CatalogState> {
           }
         }
       }
-
-      // Mettre à jour le catalogue avec les nouvelles images
       final updatedCatalog = catalog.copyWith(
         newCatalogId: catalogId,
-        newImages: [
-          ...catalog.images,
-          ...uploadedUrls
-        ], // N'ajoute que les nouvelles images
+        newImages: [...catalog.images, ...uploadedUrls],
       );
 
       await catalogRepository.updateCatalog(updatedCatalog);
@@ -111,32 +103,27 @@ class CatalogCubit extends Cubit<CatalogState> {
     }
   }
 
-  Future<void> deleteImageCatalog({
+  Future<Catalog?> deleteImageCatalog({
     required Catalog catalog,
     required String imageUrl,
   }) async {
     emit(CatalogLoading());
 
     try {
-      // Supprime l'image du storage via le StorageRepository
       await storageRepository.deleteImage(imageUrl: imageUrl);
-
-      // Met à jour la liste des images du catalog
       final updatedImages =
           catalog.images.where((img) => img != imageUrl).toList();
-
       final updatedCatalog = catalog.copyWith(newImages: updatedImages);
-
-      // Met à jour Firestore via CatalogRepository
       await catalogRepository.updateCatalog(updatedCatalog);
-
-      // Recharge les catalogues à jour
       final catalogs =
           await catalogRepository.getCatalogsByUserId(catalog.userId);
 
       emit(CatalogLoaded(catalogs, updatedCatalog));
+
+      return updatedCatalog;
     } catch (e) {
       emit(CatalogError("Erreur suppression d’image : $e"));
+      return null;
     }
   }
 }
