@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_header_image.dart';
@@ -6,6 +7,8 @@ import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
 import 'package:plant_match_v2/presentation/catolog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/presentation/catolog/presentation/add_plant_wizard/add_plant_wizard_page.dart';
 import 'package:plant_match_v2/presentation/catolog/presentation/catalog_card_item.dart';
+import 'package:plant_match_v2/presentation/catolog/presentation/cubit/catalog_cubit.dart';
+import 'package:plant_match_v2/presentation/catolog/presentation/cubit/catalog_state.dart';
 import 'package:plant_match_v2/presentation/catolog/widget/catalog_card_is_empty.dart';
 
 class CatalogScreen extends StatelessWidget {
@@ -38,15 +41,20 @@ class CatalogScreen extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
+        onPressed: () async {
+          final result = await Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => AddPlantWizardPage(
+              builder: (_) => AddPlantWizardPage(
                 catalog: catalog,
               ),
             ),
           );
+
+          if (result == true && context.mounted) {
+            final userId = catalog.userId;
+            context.read<CatalogCubit>().getCatalogsByUserId(userId);
+          }
         },
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(50),
@@ -92,19 +100,35 @@ class CatalogScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   Expanded(
-                    child: GridView.builder(
-                      padding: const EdgeInsets.only(top: 20, bottom: 100),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        mainAxisSpacing: 20,
-                        crossAxisSpacing: 20,
-                        childAspectRatio: 0.75,
-                      ),
-                      itemCount: catalogs.length,
-                      itemBuilder: (context, index) {
-                        final catalog = catalogs[index];
-                        return CatalogCardItem(catalog: catalog);
+                    child: BlocBuilder<CatalogCubit, CatalogState>(
+                      builder: (context, state) {
+                        return switch (state) {
+                          CatalogInitial() || CatalogLoading() => const Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          CatalogError() => Center(
+                              child: Text(
+                                'Erreur de chargement du catalogue',
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
+                            ),
+                          CatalogLoaded() => GridView.builder(
+                              padding:
+                                  const EdgeInsets.only(top: 20, bottom: 100),
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                mainAxisSpacing: 20,
+                                crossAxisSpacing: 20,
+                                childAspectRatio: 0.75,
+                              ),
+                              itemCount: catalogs.length,
+                              itemBuilder: (context, index) {
+                                final catalog = catalogs[index];
+                                return CatalogCardItem(catalog: catalog);
+                              },
+                            ),
+                        };
                       },
                     ),
                   ),

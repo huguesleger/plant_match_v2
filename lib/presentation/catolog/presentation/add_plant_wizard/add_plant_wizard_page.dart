@@ -220,7 +220,7 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
 
       case 7:
         if (_formKeyPlantImage.currentState?.saveAndValidate() ?? false) {
-          Navigator.pop(context);
+          Navigator.pop(context, true);
         } else {
           _formKeyPlantImage.currentState?.validate();
         }
