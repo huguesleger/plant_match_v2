@@ -4,6 +4,7 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_header_image.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
+import 'package:plant_match_v2/presentation/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/presentation/catolog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/presentation/catolog/presentation/add_plant_wizard/add_plant_wizard_page.dart';
 import 'package:plant_match_v2/presentation/catolog/presentation/catalog_card_item.dart';
@@ -14,12 +15,10 @@ import 'package:plant_match_v2/presentation/catolog/widget/catalog_card_is_empty
 class CatalogScreen extends StatelessWidget {
   const CatalogScreen({
     super.key,
-    required this.userId,
     required this.catalogs,
     required this.catalog,
   });
 
-  final String userId;
   final List<Catalog> catalogs;
   final Catalog catalog;
 
@@ -52,8 +51,10 @@ class CatalogScreen extends StatelessWidget {
           );
 
           if (result == true && context.mounted) {
-            final userId = catalog.userId;
-            context.read<CatalogCubit>().getCatalogsByUserId(userId);
+            final userId = context.read<AuthCubit>().userId;
+            if (userId != null) {
+              context.read<CatalogCubit>().getCatalogsByUserId(userId);
+            }
           }
         },
         shape: RoundedRectangleBorder(

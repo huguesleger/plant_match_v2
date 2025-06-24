@@ -6,9 +6,7 @@ import 'package:plant_match_v2/presentation/catolog/presentation/catalog_page.da
 import 'package:plant_match_v2/presentation/profil/presentation/profil_badge/presentation/profil_badge_page.dart';
 
 class ProfilCard extends StatelessWidget {
-  const ProfilCard({super.key, required this.userId});
-
-  final String userId;
+  const ProfilCard({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +23,7 @@ class ProfilCard extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => CatalogPage(
-                  userId: userId,
-                ),
+                builder: (context) => CatalogPage(),
               ),
             );
           },
@@ -43,7 +39,7 @@ class ProfilCard extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ProfilBadgePage(userId: userId),
+                builder: (context) => ProfilBadgePage(),
               ),
             );
           },

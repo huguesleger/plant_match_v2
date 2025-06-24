@@ -18,6 +18,8 @@ class AuthCubit extends Cubit<AuthState> {
 
   UserAuth? get currentUser => _currentUser;
 
+  String? get userId => _currentUser?.uid;
+
   void checkCurrentUser() async {
     final UserAuth? user = await authRepository.getCurrentUser();
 
