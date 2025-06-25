@@ -32,10 +32,9 @@ class CatalogCardItem extends StatelessWidget {
               )
             else
               const Image(
-                image: AssetImage('assets/images/avatar.png'),
+                image: AssetImage('assets/images/empty_picture.png'),
                 height: 100,
                 width: double.infinity,
-                fit: BoxFit.cover,
               ),
           ],
         ),

@@ -149,14 +149,30 @@ class _CatalogScreenState extends State<CatalogScreen> {
           }).toList();
 
     if (filteredCatalogs.isEmpty) {
-      return Center(
-        child: Text(
-          'Aucune plantes trouvées.',
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.grey.shade600,
-            fontWeight: FontWeight.w500,
-          ),
+      return Padding(
+        padding: const EdgeInsets.only(top: 20),
+        child: Column(
+          children: [
+            const Image(
+              image: AssetImage('assets/images/empty_catalog_filter.png'),
+              height: 250,
+              width: double.infinity,
+              //fit: BoxFit.cover,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 20),
+              child: Center(
+                child: Text(
+                  'Aucune plante(s) trouvée(s) ici.',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey.shade600,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       );
     }
