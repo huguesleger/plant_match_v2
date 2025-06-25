@@ -16,29 +16,10 @@ Environment? getEnvironmentFromString(String value) {
   return stringToEnum<Environment>(value, Environment.values);
 }
 
-/*Environment? getEnvironmentFromString(String value) {
-  switch (value.toLowerCase()) {
-    case 'intérieur':
-      return Environment.indoor;
-    case 'extérieur':
-      return Environment.outdoor;
-    default:
-      return null;
-  }
-}*/
-
-/*Family? getFamilyFromString(String value) {
-  return stringToEnum<Family>(value, Family.values);
-}*/
-
-/*Family? getFamilyFromString(String value) {
-  return Family.values.firstWhere((e) => e.name == value);
-}*/
 Family getFamilyFromString(String value) {
   return Family.values.firstWhere(
     (f) => f.name == value,
-    orElse: () =>
-        Family.aquatic, // Remplace par une valeur par défaut si nécessaire
+    orElse: () => Family.aquatic,
   );
 }
 

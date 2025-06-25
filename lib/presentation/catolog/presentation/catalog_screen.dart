@@ -10,9 +10,11 @@ import 'package:plant_match_v2/presentation/catolog/presentation/add_plant_wizar
 import 'package:plant_match_v2/presentation/catolog/presentation/catalog_card_item.dart';
 import 'package:plant_match_v2/presentation/catolog/presentation/cubit/catalog_cubit.dart';
 import 'package:plant_match_v2/presentation/catolog/presentation/cubit/catalog_state.dart';
+import 'package:plant_match_v2/presentation/catolog/presentation/util/environment_name.dart';
+import 'package:plant_match_v2/presentation/catolog/presentation/util/family_name.dart';
 import 'package:plant_match_v2/presentation/catolog/widget/catalog_card_is_empty.dart';
 
-class CatalogScreen extends StatelessWidget {
+class CatalogScreen extends StatefulWidget {
   const CatalogScreen({
     super.key,
     required this.catalogs,
@@ -21,6 +23,13 @@ class CatalogScreen extends StatelessWidget {
 
   final List<Catalog> catalogs;
   final Catalog catalog;
+
+  @override
+  State<CatalogScreen> createState() => _CatalogScreenState();
+}
+
+class _CatalogScreenState extends State<CatalogScreen> {
+  Object? _selectedFilter;
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +54,7 @@ class CatalogScreen extends StatelessWidget {
             context,
             MaterialPageRoute(
               builder: (_) => AddPlantWizardPage(
-                catalog: catalog,
+                catalog: widget.catalog,
               ),
             ),
           );
@@ -66,7 +75,7 @@ class CatalogScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: catalogs.isEmpty
+        child: widget.catalogs.isEmpty
             ? const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -99,7 +108,10 @@ class CatalogScreen extends StatelessWidget {
                       subtitle: 'Mon catalogue de plantes à partager',
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: buildFamilyFilterTabs(),
+                  ),
                   Expanded(
                     child: BlocBuilder<CatalogCubit, CatalogState>(
                       builder: (context, state) {
@@ -113,28 +125,115 @@ class CatalogScreen extends StatelessWidget {
                                 style: Theme.of(context).textTheme.bodyLarge,
                               ),
                             ),
-                          CatalogLoaded() => GridView.builder(
-                              padding:
-                                  const EdgeInsets.only(top: 20, bottom: 100),
-                              gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                mainAxisSpacing: 20,
-                                crossAxisSpacing: 20,
-                                childAspectRatio: 0.75,
-                              ),
-                              itemCount: catalogs.length,
-                              itemBuilder: (context, index) {
-                                final catalog = catalogs[index];
-                                return CatalogCardItem(catalog: catalog);
-                              },
-                            ),
+                          CatalogLoaded() => catalogGridView(state.catalogs),
                         };
                       },
                     ),
                   ),
                 ],
               ),
+      ),
+    );
+  }
+
+  Widget catalogGridView(List<Catalog> catalogs) {
+    final filteredCatalogs = _selectedFilter == null
+        ? catalogs
+        : catalogs.where((catalog) {
+            if (_selectedFilter is Family) {
+              return catalog.family.contains(_selectedFilter as Family);
+            } else if (_selectedFilter is Environment) {
+              return catalog.environment == _selectedFilter;
+            }
+            return true;
+          }).toList();
+
+    if (filteredCatalogs.isEmpty) {
+      return Center(
+        child: Text(
+          'Aucune plantes trouvées.',
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.grey.shade600,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      );
+    }
+
+    return GridView.builder(
+      padding: const EdgeInsets.only(top: 10, bottom: 100),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 20,
+        crossAxisSpacing: 20,
+        childAspectRatio: 0.75,
+      ),
+      itemCount: filteredCatalogs.length,
+      itemBuilder: (context, index) {
+        final catalog = filteredCatalogs[index];
+        return CatalogCardItem(catalog: catalog);
+      },
+    );
+  }
+
+  Widget buildFamilyFilterTabs() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.only(left: 0, top: 10, bottom: 10),
+      child: Row(
+        children: [
+          _buildFilterTab(null, label: 'Toutes'),
+          ...Environment.values.map((env) => _buildFilterTab(env)),
+          ...Family.values.map((family) => _buildFilterTab(family)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFilterTab(Object? filter, {String? label}) {
+    final isSelected = _selectedFilter == filter;
+
+    final textLabel = label ??
+        switch (filter) {
+          Family family => family.familyName,
+          Environment env => env.envName,
+          _ => 'unknown',
+        };
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedFilter = filter;
+        });
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(right: 12),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              textLabel,
+              style: TextStyle(
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                color: isSelected ? AppColors.greenDark : AppColors.greyMedium,
+                fontSize: 14,
+              ),
+            ),
+            const SizedBox(height: 4),
+            if (isSelected)
+              Container(
+                width: 6,
+                height: 6,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.green,
+                ),
+              )
+            else
+              const SizedBox(height: 6),
+          ],
+        ),
       ),
     );
   }

@@ -94,7 +94,6 @@ class Catalog {
 enum Environment {
   indoor,
   outdoor,
-  uknown,
 }
 
 enum Family {
