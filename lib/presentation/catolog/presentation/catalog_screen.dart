@@ -73,66 +73,74 @@ class _CatalogScreenState extends State<CatalogScreen> {
         backgroundColor: AppColors.greenLight,
         child: const Icon(LucideIcons.plus, color: AppColors.blueGreen),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: widget.catalogs.isEmpty
-            ? const Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(top: 20),
-                    child: TitlePage(
-                      title: 'Mes plantes',
-                      subtitle: 'Mon catalogue de plantes à partager',
-                    ),
+      body: widget.catalogs.isEmpty
+          ? const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(top: 20, left: 20, right: 20),
+                  child: TitlePage(
+                    title: 'Mes plantes',
+                    subtitle: 'Mon catalogue de plantes à partager',
                   ),
-                  SizedBox(height: 90),
-                  Row(
-                    children: [
-                      Expanded(child: CatalogCardIsEmpty()),
-                    ],
+                ),
+                SizedBox(height: 90),
+                Row(
+                  children: [
+                    Expanded(
+                        child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: CatalogCardIsEmpty(),
+                    )),
+                  ],
+                ),
+                SizedBox(height: 30),
+                Text(
+                  'Ton catalogue est vide. Ajoute ta première plante pour commencer.',
+                ),
+              ],
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.only(top: 20, left: 20, right: 20),
+                  child: TitlePage(
+                    title: 'Mes plantes',
+                    subtitle: 'Mon catalogue de plantes à partager',
                   ),
-                  SizedBox(height: 30),
-                  Text(
-                    'Ton catalogue est vide. Ajoute ta première plante pour commencer.',
-                  ),
-                ],
-              )
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.only(top: 20),
-                    child: TitlePage(
-                      title: 'Mes plantes',
-                      subtitle: 'Mon catalogue de plantes à partager',
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: buildFamilyFilterTabs(),
-                  ),
-                  Expanded(
-                    child: BlocBuilder<CatalogCubit, CatalogState>(
-                      builder: (context, state) {
-                        return switch (state) {
-                          CatalogInitial() || CatalogLoading() => const Center(
-                              child: CircularProgressIndicator(),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
+                  child: buildFamilyFilterTabs(),
+                ),
+                Expanded(
+                  child: BlocBuilder<CatalogCubit, CatalogState>(
+                    builder: (context, state) {
+                      return switch (state) {
+                        CatalogInitial() || CatalogLoading() => const Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        CatalogError() => Center(
+                            child: Text(
+                              'Erreur de chargement du catalogue',
+                              style: Theme.of(context).textTheme.bodyLarge,
                             ),
-                          CatalogError() => Center(
-                              child: Text(
-                                'Erreur de chargement du catalogue',
-                                style: Theme.of(context).textTheme.bodyLarge,
-                              ),
+                          ),
+                        CatalogLoaded() => Container(
+                            color: AppColors.greyUltraLight,
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              child: catalogGridView(state.catalogs),
                             ),
-                          CatalogLoaded() => catalogGridView(state.catalogs),
-                        };
-                      },
-                    ),
+                          ),
+                      };
+                    },
                   ),
-                ],
-              ),
-      ),
+                ),
+              ],
+            ),
     );
   }
 
@@ -149,47 +157,28 @@ class _CatalogScreenState extends State<CatalogScreen> {
           }).toList();
 
     if (filteredCatalogs.isEmpty) {
-      return Padding(
-        padding: const EdgeInsets.only(top: 20),
-        child: Column(
-          children: [
-            const Image(
-              image: AssetImage('assets/images/empty_catalog_filter.png'),
-              height: 250,
-              width: double.infinity,
-              //fit: BoxFit.cover,
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 50),
+          child: Text(
+            'Aucun résultat',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey.shade600,
+              fontWeight: FontWeight.w500,
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 20),
-              child: Center(
-                child: Text(
-                  'Aucune plante(s) trouvée(s) ici.',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey.shade600,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ),
-          ],
+          ),
         ),
       );
     }
 
-    return GridView.builder(
+    return Padding(
       padding: const EdgeInsets.only(top: 10, bottom: 100),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 20,
-        crossAxisSpacing: 20,
-        childAspectRatio: 0.75,
+      child: ListView(
+        children: filteredCatalogs
+            .map((catalog) => CatalogCardItem(catalog: catalog))
+            .toList(),
       ),
-      itemCount: filteredCatalogs.length,
-      itemBuilder: (context, index) {
-        final catalog = filteredCatalogs[index];
-        return CatalogCardItem(catalog: catalog);
-      },
     );
   }
 
@@ -243,7 +232,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
                 height: 6,
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.green,
+                  color: AppColors.greenDark,
                 ),
               )
             else
