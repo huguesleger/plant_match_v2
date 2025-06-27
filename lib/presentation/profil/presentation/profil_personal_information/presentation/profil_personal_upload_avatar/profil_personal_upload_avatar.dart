@@ -23,7 +23,11 @@ class _ProfilPersonalUploadAvatarState
   final ImagePicker _picker = ImagePicker();
 
   Future<void> _pickImage(ImageSource source) async {
-    final XFile? image = await _picker.pickImage(source: source);
+    final XFile? image = await _picker.pickImage(
+      source: source,
+      imageQuality: 50,
+      maxWidth: 300,
+    );
 
     if (mounted) {
       if (image != null) {

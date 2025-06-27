@@ -3,6 +3,7 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/badge/badge_pill.dart';
 import 'package:plant_match_v2/presentation/catolog/domain/entity/catalog.dart';
+import 'package:plant_match_v2/presentation/catolog/presentation/catalog_detail_page.dart';
 import 'package:plant_match_v2/presentation/catolog/presentation/util/environment_name.dart';
 import 'package:plant_match_v2/presentation/catolog/presentation/util/family_name.dart';
 
@@ -22,7 +23,14 @@ class CatalogCardItem extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         color: AppColors.white,
         child: InkWell(
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => CatalogDetailPage(catalog: catalog),
+                ),
+              );
+            },
             child: SizedBox(
               height: 120,
               child: Padding(
@@ -84,7 +92,9 @@ class CatalogCardItem extends StatelessWidget {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
-                                    fontSize: 12, color: Colors.grey),
+                                  fontSize: 12,
+                                  color: Colors.grey,
+                                ),
                               ),
                             ],
                           ),
@@ -99,7 +109,8 @@ class CatalogCardItem extends StatelessWidget {
                                         fontSize: 12,
                                         color: AppColors.greenDark),
                                   ),
-                                  badgeColor: AppColors.greenLight,
+                                  badgeColor: AppColors.greenLight
+                                      .withValues(alpha: 0.2),
                                 ),
                                 const SizedBox(width: 8),
                                 Wrap(
@@ -113,7 +124,8 @@ class CatalogCardItem extends StatelessWidget {
                                             fontSize: 12,
                                             color: AppColors.greenDark),
                                       ),
-                                      badgeColor: AppColors.greenLight,
+                                      badgeColor: AppColors.greenLight
+                                          .withValues(alpha: 0.2),
                                     );
                                   }).toList(),
                                 )

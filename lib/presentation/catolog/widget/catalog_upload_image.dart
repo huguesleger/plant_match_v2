@@ -58,7 +58,11 @@ class _CatalogUploadImageState extends State<CatalogUploadImage> {
 
   Future<void> _pickImages() async {
     try {
-      final pickedFiles = await _picker.pickMultiImage(imageQuality: 80);
+      final pickedFiles = await _picker.pickMultiImage(
+        imageQuality: 50,
+        maxHeight: 500,
+        limit: maxImages,
+      );
       if (pickedFiles.isEmpty) return;
 
       final availableSlots = maxImages - catalogImages.length;
