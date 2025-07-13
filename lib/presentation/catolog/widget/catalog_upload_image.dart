@@ -69,23 +69,41 @@ class _CatalogUploadImageState extends State<CatalogUploadImage> {
       final localPaths =
           pickedFiles.take(availableSlots).map((x) => x.path).toList();
 
-      if (localPaths.isEmpty) {
-        setState(() => _isLoading = false);
-        return;
-      }
-      setState(() => _isLoading = true);
+      if (localPaths.isEmpty) return;
 
-      final updatedCatalog =
-          await context.read<CatalogCubit>().uploadCatalogImages(
-                catalog: widget.catalog,
-                catalogId: widget.catalog.catalogId ?? widget.catalogId,
-                imagePaths: localPaths,
-              );
+      await _uploadImages(localPaths);
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Erreur lors de la sélection d’image.')),
+      );
+    }
+  }
+
+  Future<void> _uploadImages(List<String> localPaths) async {
+    if (!mounted) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final catalogCubit = context.read<CatalogCubit>();
+
+      final updatedCatalog = await catalogCubit.uploadCatalogImages(
+        catalog: widget.catalog,
+        catalogId: widget.catalog.catalogId ?? widget.catalogId,
+        imagePaths: localPaths,
+        existingImages: catalogImages,
+      );
 
       if (!mounted || updatedCatalog == null) return;
 
       final firebaseUrls =
           updatedCatalog.images.where((url) => url.startsWith('http')).toList();
+
       setState(() {
         catalogImages = firebaseUrls;
         _isLoading = false;
@@ -93,13 +111,16 @@ class _CatalogUploadImageState extends State<CatalogUploadImage> {
 
       _notifyFieldChanged(firebaseUrls);
       widget.onCatalogUpdated?.call(updatedCatalog);
-    } catch (e, st) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Erreur lors de la sélection d’image.')),
-        );
-      }
+    } catch (e) {
+      if (!mounted) return;
+
       setState(() => _isLoading = false);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Une erreur est survenue lors de l’upload.'),
+        ),
+      );
     }
   }
 
@@ -119,7 +140,8 @@ class _CatalogUploadImageState extends State<CatalogUploadImage> {
     });
 
     _notifyFieldChanged(catalogImages);
-    widget.onCatalogUpdated?.call(updatedCatalog);
+    widget.onCatalogUpdated
+        ?.call(widget.catalog.copyWith(newImages: catalogImages));
   }
 
   void _notifyFieldChanged(List<String> urls) {

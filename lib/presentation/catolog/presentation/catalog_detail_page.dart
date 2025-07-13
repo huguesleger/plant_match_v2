@@ -1,9 +1,15 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_header_slider.dart';
 import 'package:plant_match_v2/core/widgets/badge/badge_pill.dart';
 import 'package:plant_match_v2/presentation/catolog/domain/entity/catalog.dart';
+import 'package:plant_match_v2/presentation/catolog/presentation/cubit/catalog_cubit.dart';
+import 'package:plant_match_v2/presentation/catolog/presentation/edit_catalog_page.dart';
+import 'package:plant_match_v2/presentation/catolog/presentation/util/environment_name.dart';
 
 class CatalogDetailPage extends StatefulWidget {
   const CatalogDetailPage({super.key, required this.catalog});
@@ -16,20 +22,28 @@ class CatalogDetailPage extends StatefulWidget {
 
 class _CatalogDetailPageState extends State<CatalogDetailPage> {
   int _currentIndex = 0;
+  late Catalog _catalog;
+
+  @override
+  void initState() {
+    super.initState();
+    _catalog = widget.catalog;
+  }
 
   @override
   Widget build(BuildContext context) {
-    final images = widget.catalog.images;
+    final images = _catalog.images;
 
     return Scaffold(
       appBar: AppBarHeaderSlider(
+        headerHeight: 325,
         content: Stack(
           children: [
             images.isNotEmpty
                 ? CarouselSlider.builder(
                     itemCount: images.length,
                     options: CarouselOptions(
-                      height: 215,
+                      height: 325,
                       viewportFraction: 1.0,
                       enableInfiniteScroll: false,
                       onPageChanged: (index, reason) {
@@ -64,7 +78,7 @@ class _CatalogDetailPageState extends State<CatalogDetailPage> {
                   ),
             images.length > 1
                 ? Positioned(
-                    bottom: 10,
+                    bottom: 100,
                     right: 10,
                     child: BadgePill(
                       text: SizedBox(
@@ -80,6 +94,65 @@ class _CatalogDetailPageState extends State<CatalogDetailPage> {
                     ),
                   )
                 : const SizedBox.shrink(),
+            Positioned(
+              top: 240,
+              right: 0,
+              left: 0,
+              child: Container(
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                  color: AppColors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(30),
+                    topRight: Radius.circular(30),
+                  ),
+                ),
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _catalog.name,
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                          Text(
+                            'plante ${_catalog.environment.envName}',
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                      ClipOval(
+                        child: Container(
+                          color: AppColors.greenLight.withValues(alpha: 0.5),
+                          width: 50,
+                          height: 50,
+                          child: Icon(
+                            _catalog.environment == Environment.outdoor
+                                ? LucideIcons.fence
+                                : LucideIcons.house,
+                            color: AppColors.blueGreen,
+                            size: AppTypo.textXl,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
         onPressed: () {
@@ -91,15 +164,178 @@ class _CatalogDetailPageState extends State<CatalogDetailPage> {
           backgroundColor: AppColors.white,
         ),
       ),
-      body: SafeArea(
-        child: Text(
-          widget.catalog.name,
-          style: const TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 20),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+              decoration: BoxDecoration(
+                color: AppColors.greenLight.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(50),
+                border: Border.all(
+                  color: AppColors.greenDark.withValues(alpha: 0.2),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ClipOval(
+                        child: Container(
+                          color: AppColors.greenLight.withValues(alpha: 0.5),
+                          width: 35,
+                          height: 35,
+                          child: const Icon(
+                            LucideIcons.sun,
+                            color: AppColors.blueGreen,
+                            size: AppTypo.text,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _catalog.lighting.name,
+                            style: const TextStyle(
+                                fontSize: AppTypo.textXs,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          const Text(
+                            'lumieres',
+                            style: TextStyle(
+                                fontSize: AppTypo.textXs, color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ClipOval(
+                        child: Container(
+                          color: AppColors.greenLight.withValues(alpha: 0.5),
+                          width: 35,
+                          height: 35,
+                          child: const Icon(
+                            LucideIcons.droplet,
+                            color: AppColors.blueGreen,
+                            size: AppTypo.text,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(_catalog.watering.name,
+                              style: const TextStyle(
+                                fontSize: AppTypo.textXs,
+                                fontWeight: FontWeight.bold,
+                              )),
+                          const Text(
+                            'arrosage',
+                            style: TextStyle(
+                              fontSize: AppTypo.textXs,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ClipOval(
+                        child: Container(
+                          color: AppColors.greenLight.withValues(alpha: 0.5),
+                          width: 35,
+                          height: 35,
+                          child: const Icon(
+                            LucideIcons.shovel,
+                            color: AppColors.blueGreen,
+                            size: AppTypo.text,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _catalog.levelMaintenance.name,
+                            style: const TextStyle(
+                              fontSize: AppTypo.textXs,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const Text('entretien',
+                              style: TextStyle(
+                                fontSize: AppTypo.textXs,
+                                color: Colors.grey,
+                              )),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 40),
+            const Text(
+              'Description',
+              style: TextStyle(
+                fontSize: AppTypo.textXl,
+                fontWeight: FontWeight.bold,
+                color: AppColors.greyDark,
+              ),
+            ),
+            const SizedBox(height: 15),
+            Text(
+              _catalog.description,
+              style: const TextStyle(
+                fontSize: 16,
+                color: Colors.black87,
+              ),
+            ),
+          ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () async {
+          final result = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => EditCatalogPage(catalog: _catalog),
+            ),
+          );
+          if (result == true && context.mounted) {
+            final updatedCatalog = await context
+                .read<CatalogCubit>()
+                .getCatalogById(_catalog.catalogId!);
+
+            if (mounted) {
+              setState(() {
+                _catalog = updatedCatalog!;
+              });
+            }
+          }
+        },
+        label: const Text('Modifier'),
+        icon: const Icon(LucideIcons.pencil),
+        backgroundColor: AppColors.greenDark,
       ),
     );
   }

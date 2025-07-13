@@ -49,7 +49,7 @@ class Catalog {
     );
   }
 
-  factory Catalog.fromJson(Map<String, dynamic> json, {String? id}) {
+  factory Catalog.fromJson(Map<String, dynamic> json, String id) {
     return Catalog(
       userId: json['userId'] ?? '',
       catalogId: id,

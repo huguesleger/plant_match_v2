@@ -63,10 +63,24 @@ class CatalogCubit extends Cubit<CatalogState> {
     }
   }
 
+  Future<void> editCatalog(Catalog catalog) async {
+    emit(CatalogLoading());
+    try {
+      await catalogRepository.updateCatalog(catalog);
+
+      final catalogs =
+          await catalogRepository.getCatalogsByUserId(catalog.userId);
+      emit(CatalogLoaded(catalogs, catalog));
+    } catch (e) {
+      emit(CatalogError("Erreur lors de la modification : $e"));
+    }
+  }
+
   Future<Catalog?> uploadCatalogImages({
     required Catalog catalog,
     required List<String> imagePaths,
     required String catalogId,
+    required List<String> existingImages,
   }) async {
     emit(CatalogLoading());
     try {
@@ -74,6 +88,8 @@ class CatalogCubit extends Cubit<CatalogState> {
 
       for (final imagePath in imagePaths) {
         final fileName = "${catalogId}_${imagePath.split('/').last}";
+
+        //!imagePath.startsWith('http')
         if (!catalog.images.contains(imagePath)) {
           final imageUrl = await storageRepository.uploadImageFromUrl(
             path: imagePath,
@@ -85,9 +101,12 @@ class CatalogCubit extends Cubit<CatalogState> {
           }
         }
       }
+
+      final newImageList = [...existingImages, ...uploadedUrls];
+
       final updatedCatalog = catalog.copyWith(
         newCatalogId: catalogId,
-        newImages: [...catalog.images, ...uploadedUrls],
+        newImages: newImageList,
       );
 
       await catalogRepository.updateCatalog(updatedCatalog);
@@ -123,6 +142,22 @@ class CatalogCubit extends Cubit<CatalogState> {
       return updatedCatalog;
     } catch (e) {
       emit(CatalogError("Erreur suppression d’image : $e"));
+      return null;
+    }
+  }
+
+  Future<Catalog?> getCatalogById(String catalogId) async {
+    emit(CatalogLoading());
+    try {
+      final catalog = await catalogRepository.getCatalogById(catalogId);
+      if (catalog == null) {
+        emit(CatalogError("Catalogue non trouvé"));
+        return null;
+      }
+      emit(CatalogLoaded([catalog], catalog));
+      return catalog;
+    } catch (e) {
+      emit(CatalogError("Erreur chargement du catalogue : $e"));
       return null;
     }
   }

@@ -35,7 +35,7 @@ class FirebaseCatalogRepository implements CatalogRepository {
           .get();
 
       return querySnapshot.docs
-          .map((doc) => Catalog.fromJson(doc.data()))
+          .map((doc) => Catalog.fromJson(doc.data(), doc.id))
           .toList();
     } catch (e) {
       throw Exception('Failed to fetch catalogs: $e');
@@ -49,7 +49,7 @@ class FirebaseCatalogRepository implements CatalogRepository {
       if (doc.exists) {
         final data = doc.data();
         if (data != null) {
-          return Catalog.fromJson(data);
+          return Catalog.fromJson(data, doc.id);
         }
       }
     } catch (e) {
