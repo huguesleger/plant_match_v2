@@ -32,6 +32,7 @@ class _EditCatalogPageState extends State<EditCatalogPage> {
   String? _watering;
   String? _lighting;
   late List<String> _updatedImages;
+  bool? _isPublish;
 
   List<Family> getAllFamilies() {
     return [
@@ -61,6 +62,7 @@ class _EditCatalogPageState extends State<EditCatalogPage> {
     _watering = widget.catalog.watering.name;
     _lighting = widget.catalog.lighting.name;
     _updatedImages = List.from(widget.catalog.images);
+    _isPublish = widget.catalog.isPublish;
   }
 
   void _save() async {
@@ -79,6 +81,7 @@ class _EditCatalogPageState extends State<EditCatalogPage> {
         newWatering: getWateringFromString(_watering ?? 'little'),
         newLighting: getLightingFromString(_lighting ?? 'sun'),
         newImages: _updatedImages,
+        newIsPublish: _isPublish ?? false,
       );
 
       await context.read<CatalogCubit>().updateCatalog(updatedCatalog);
@@ -242,6 +245,17 @@ class _EditCatalogPageState extends State<EditCatalogPage> {
                   FormBuilderValidators.required(),
                   FormBuilderValidators.maxLength(150),
                 ]),
+              ),
+              const SizedBox(height: 16),
+              FormBuilderSwitch(
+                name: 'isPublish',
+                title: const Text('Publier la plante'),
+                initialValue: _isPublish,
+                onChanged: (val) {
+                  setState(() {
+                    _isPublish = val ?? false;
+                  });
+                },
               ),
               const SizedBox(height: 24),
 

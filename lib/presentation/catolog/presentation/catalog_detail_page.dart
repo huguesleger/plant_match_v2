@@ -2,10 +2,13 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_header_slider.dart';
 import 'package:plant_match_v2/core/widgets/badge/badge_pill.dart';
+import 'package:plant_match_v2/core/widgets/bottom_bar/bottom_bar.dart';
+import 'package:plant_match_v2/core/widgets/buttons/button_rounded_with_icon.dart';
 import 'package:plant_match_v2/presentation/catolog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/presentation/catolog/presentation/cubit/catalog_cubit.dart';
 import 'package:plant_match_v2/presentation/catolog/presentation/edit_catalog_page.dart';
@@ -118,35 +121,55 @@ class _CatalogDetailPageState extends State<CatalogDetailPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            _catalog.name,
+                            _catalog.name.toCapitalize(),
                             style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
                               color: Colors.black,
                             ),
                           ),
-                          Text(
-                            'plante ${_catalog.environment.envName}',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey,
-                            ),
+                          Row(
+                            children: [
+                              Text(
+                                'plante ${_catalog.environment.envName}',
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                              const SizedBox(width: 5),
+                              ClipOval(
+                                child: Container(
+                                  color: AppColors.greenLight
+                                      .withValues(alpha: 0.5),
+                                  width: 25,
+                                  height: 25,
+                                  child: Icon(
+                                    _catalog.environment == Environment.outdoor
+                                        ? LucideIcons.fence
+                                        : LucideIcons.house,
+                                    color: AppColors.blueGreen,
+                                    size: AppTypo.textS,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                      ClipOval(
-                        child: Container(
-                          color: AppColors.greenLight.withValues(alpha: 0.5),
-                          width: 50,
-                          height: 50,
-                          child: Icon(
-                            _catalog.environment == Environment.outdoor
-                                ? LucideIcons.fence
-                                : LucideIcons.house,
-                            color: AppColors.blueGreen,
-                            size: AppTypo.textXl,
+                      BadgePill(
+                        text: Text(
+                          _catalog.isPublish ? 'Publié' : 'Brouillon',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: _catalog.isPublish
+                                ? AppColors.white
+                                : AppColors.greyMedium,
                           ),
                         ),
+                        badgeColor: _catalog.isPublish
+                            ? AppColors.greenDark
+                            : AppColors.greyLight,
                       ),
                     ],
                   ),
@@ -313,29 +336,40 @@ class _CatalogDetailPageState extends State<CatalogDetailPage> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () async {
-          final result = await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => EditCatalogPage(catalog: _catalog),
-            ),
-          );
-          if (result == true && context.mounted) {
-            final updatedCatalog = await context
-                .read<CatalogCubit>()
-                .getCatalogById(_catalog.catalogId!);
+      bottomNavigationBar: BottomBar(
+        child: Row(
+          children: [
+            Expanded(
+              child: ButtonRoundedWithIcon(
+                text: 'Modifier',
+                onPressed: () async {
+                  final result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => EditCatalogPage(catalog: _catalog),
+                    ),
+                  );
+                  if (result == true && context.mounted) {
+                    final updatedCatalog = await context
+                        .read<CatalogCubit>()
+                        .getCatalogById(_catalog.catalogId!);
 
-            if (mounted) {
-              setState(() {
-                _catalog = updatedCatalog!;
-              });
-            }
-          }
-        },
-        label: const Text('Modifier'),
-        icon: const Icon(LucideIcons.pencil),
-        backgroundColor: AppColors.greenDark,
+                    if (mounted) {
+                      setState(() {
+                        _catalog = updatedCatalog!;
+                      });
+                    }
+                  }
+                },
+                bgColor: AppColors.greenLight,
+                textColor: AppColors.blueGreen,
+                iconAlignment: IconAlignment.start,
+                icon:
+                    const Icon(LucideIcons.pencil, color: AppColors.blueGreen),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

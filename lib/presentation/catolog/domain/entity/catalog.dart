@@ -9,6 +9,7 @@ class Catalog {
   final LevelMaintenance levelMaintenance;
   final Watering watering;
   final Lighting lighting;
+  final bool isPublish;
 
   Catalog({
     required this.userId,
@@ -21,6 +22,7 @@ class Catalog {
     required this.levelMaintenance,
     required this.watering,
     required this.lighting,
+    required this.isPublish,
   });
 
   Catalog copyWith({
@@ -34,6 +36,7 @@ class Catalog {
     LevelMaintenance? newLevelMaintenance,
     Watering? newWatering,
     Lighting? newLighting,
+    bool? newIsPublish,
   }) {
     return Catalog(
       userId: newUserId ?? userId,
@@ -46,6 +49,23 @@ class Catalog {
       levelMaintenance: newLevelMaintenance ?? levelMaintenance,
       watering: newWatering ?? watering,
       lighting: newLighting ?? lighting,
+      isPublish: newIsPublish ?? this.isPublish,
+    );
+  }
+
+  factory Catalog.empty(String userId) {
+    return Catalog(
+      userId: userId,
+      catalogId: null,
+      name: '',
+      description: '',
+      images: [],
+      environment: Environment.indoor,
+      family: [Family.flower],
+      levelMaintenance: LevelMaintenance.low,
+      watering: Watering.little,
+      lighting: Lighting.sun,
+      isPublish: false,
     );
   }
 
@@ -73,6 +93,7 @@ class Catalog {
       lighting: json['lighting'] != null
           ? Lighting.values.byName(json['lighting'])
           : Lighting.indirectLight,
+      isPublish: json['isPublish'] ?? false,
     );
   }
 
@@ -87,6 +108,7 @@ class Catalog {
       'levelMaintenance': levelMaintenance.name,
       'watering': watering.name,
       'lighting': lighting.name,
+      'isPublish': isPublish,
     };
   }
 }
@@ -124,3 +146,76 @@ enum Lighting {
   indirectLight,
   shade,
 }
+
+/*extension EnvironmentExtension on Environment {
+  String get envName {
+    switch (this) {
+      case Environment.indoor:
+        return 'Intérieur';
+      case Environment.outdoor:
+        return 'Extérieur';
+    }
+  }
+}*/
+
+/*extension FamilyExtension on Family {
+  String get familyName {
+    switch (this) {
+      case Family.tropical:
+        return 'Tropicale';
+      case Family.succulent:
+        return 'Succulente';
+      case Family.aquatic:
+        return 'Aquatique';
+      case Family.climbing:
+        return 'Grimpante';
+      case Family.bonsai:
+        return 'Bonsaï';
+      case Family.flower:
+        return 'Fleurie';
+      case Family.aromatic:
+        return 'Aromatique';
+      case Family.medical:
+        return 'Médicinale';
+      case Family.carnivorous:
+        return 'Carnivore';
+    }
+  }
+}*/
+
+/*extension LevelMaintenanceExtension on LevelMaintenance {
+  String get levelName {
+    switch (this) {
+      case LevelMaintenance.low:
+        return 'Entretien faible';
+      case LevelMaintenance.medium:
+        return 'Entretien moyen';
+      case LevelMaintenance.high:
+        return 'Entretien élevé';
+    }
+  }
+}*/
+
+/*extension WateringExtension on Watering {
+  String get wateringName {
+    switch (this) {
+      case Watering.little:
+        return 'Peu d\'eau';
+      case Watering.regularly:
+        return 'Régulièrement';
+    }
+  }
+}*/
+
+/*extension LightingExtension on Lighting {
+  String get lightingName {
+    switch (this) {
+      case Lighting.sun:
+        return 'Ensoleillé';
+      case Lighting.indirectLight:
+        return 'Lumière indirecte';
+      case Lighting.shade:
+        return 'Ombre';
+    }
+  }
+}*/

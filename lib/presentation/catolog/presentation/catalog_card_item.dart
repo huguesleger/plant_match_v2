@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/badge/badge_pill.dart';
 import 'package:plant_match_v2/presentation/catolog/domain/entity/catalog.dart';
@@ -70,7 +70,7 @@ class CatalogCardItem extends StatelessWidget {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      catalog.name,
+                                      catalog.name.toCapitalize(),
                                       style: const TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold,
@@ -79,23 +79,44 @@ class CatalogCardItem extends StatelessWidget {
                                     ),
                                   ),
                                   const SizedBox(width: 8),
-                                  const Icon(
-                                    LucideIcons.bookmark_x,
-                                    color: AppColors.greyMedium,
-                                    size: 22,
+                                  BadgePill(
+                                    text: Text(
+                                      catalog.isPublish
+                                          ? 'Publié'
+                                          : 'Brouillon',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: catalog.isPublish
+                                            ? AppColors.white
+                                            : AppColors.greyMedium,
+                                      ),
+                                    ),
+                                    badgeColor: catalog.isPublish
+                                        ? AppColors.greenDark
+                                        : AppColors.greyLight,
                                   ),
                                 ],
                               ),
                               const SizedBox(height: 6),
-                              Text(
-                                catalog.description,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey,
-                                ),
-                              ),
+                              catalog.description.isNotEmpty
+                                  ? Text(
+                                      catalog.description,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey,
+                                      ),
+                                    )
+                                  : const Text(
+                                      'Aucune description',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
                             ],
                           ),
                           SingleChildScrollView(

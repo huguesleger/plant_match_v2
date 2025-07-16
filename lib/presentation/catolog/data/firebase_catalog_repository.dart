@@ -68,4 +68,25 @@ class FirebaseCatalogRepository implements CatalogRepository {
       throw Exception('Failed to create catalog: $e');
     }
   }
+
+  @override
+  Future<void> deleteCatalog(String catalogId) {
+    return firestore.collection('catalogs').doc(catalogId).delete().catchError(
+      (error) {
+        throw Exception('Failed to delete catalog: $error');
+      },
+    );
+  }
+
+  @override
+  Future<void> publishCatalog(String catalogId, bool isPublish) {
+    return firestore
+        .collection('catalogs')
+        .doc(catalogId)
+        .update({'isPublish': isPublish}).catchError(
+      (error) {
+        throw Exception('Failed to publish catalog: $error');
+      },
+    );
+  }
 }

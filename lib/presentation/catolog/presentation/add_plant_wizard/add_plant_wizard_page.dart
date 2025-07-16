@@ -33,7 +33,7 @@ class AddPlantWizardPage extends StatefulWidget {
 
 class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
   int _currentPage = 0;
-  final int _totalPages = 8;
+  final int _totalPages = 9;
   final PageController _pageController = PageController();
 
   int _charCount = 0;
@@ -53,6 +53,8 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
   final TextEditingController _plantDescriptionController =
       TextEditingController();
   final TextEditingController _plantImageController = TextEditingController();
+  final TextEditingController _plantIsPublishController =
+      TextEditingController();
 
   final _formKeyPlantName = GlobalKey<FormBuilderState>();
   final _formKeyPlantCategory = GlobalKey<FormBuilderState>();
@@ -61,8 +63,8 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
   final _formKeyPlantWatering = GlobalKey<FormBuilderState>();
   final _formKeyPlantLighting = GlobalKey<FormBuilderState>();
   final _formKeyPlantDescription = GlobalKey<FormBuilderState>();
-
   final _formKeyPlantImage = GlobalKey<FormBuilderState>();
+  final _formKeyPlantIsPublish = GlobalKey<FormBuilderState>();
 
   List<String> selectedValues = [];
   String? selectedValue;
@@ -99,6 +101,8 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
     _plantLightingController.dispose();
     _plantDescriptionController.dispose();
     _pageController.dispose();
+    //_plantImageController.dispose();
+    _plantIsPublishController.dispose();
     super.dispose();
   }
 
@@ -237,9 +241,31 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
 
       case 7:
         if (_formKeyPlantImage.currentState?.saveAndValidate() ?? false) {
-          Navigator.pop(context, true);
+          final updated = _catalog!.copyWith(
+            newImages: _catalog!.images,
+          );
+
+          context.read<CatalogCubit>().updateCatalog(updated);
+          setState(() => _catalog = updated);
+          _onPressedNextPage();
         } else {
           _formKeyPlantImage.currentState?.validate();
+        }
+        break;
+
+      case 8:
+        if (_formKeyPlantIsPublish.currentState?.saveAndValidate() ?? false) {
+          print('isPublish: ${_plantIsPublishController.text}');
+          final updated = _catalog!.copyWith(
+            newIsPublish: _plantIsPublishController.text == 'true',
+            newImages: _catalog!.images,
+          );
+
+          context.read<CatalogCubit>().updateCatalog(updated);
+          setState(() => _catalog = updated);
+          Navigator.pop(context, true);
+        } else {
+          _formKeyPlantIsPublish.currentState?.validate();
         }
         break;
     }
@@ -670,13 +696,6 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                   description: 'Ajouter une brève description',
                   child: Column(
                     children: [
-                      const TitleWithIcon(
-                        icon: LucideIcons.pen,
-                        title: 'Description',
-                        bgColor: AppColors.greenDark,
-                        iconColor: AppColors.greenLight,
-                      ),
-                      const SizedBox(height: 20),
                       FormBuilderTextField(
                         maxLines: 4,
                         maxLength: _maxChar,
@@ -731,6 +750,28 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                             ),
                         ],
                       );
+                    },
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: FormBuilderValidators.compose([
+                      FormBuilderValidators.required(
+                          errorText: 'Ce champ est requis'),
+                    ]),
+                  ),
+                ),
+                AddPlantWizardItem(
+                  formKey: _formKeyPlantIsPublish,
+                  title: 'Publication',
+                  description: 'Souhaitez-vous publier votre plante ?',
+                  child: FormBuilderSwitch(
+                    name: 'isPublish',
+                    inactiveTrackColor: AppColors.white,
+                    title: const Text('Publier la plante'),
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                    ),
+                    initialValue: _catalog?.isPublish ?? false,
+                    onChanged: (value) {
+                      _plantIsPublishController.text = value.toString();
                     },
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     validator: FormBuilderValidators.compose([
@@ -877,7 +918,7 @@ class ItemRadio extends StatelessWidget {
       ),
       child: ListTile(
         tileColor: isSelected
-            ? AppColors.greenDark.withOpacity(0.1)
+            ? AppColors.greenDark.withValues(alpha: 0.1)
             : AppColors.greyUltraLight,
         title: Text(title,
             style: const TextStyle(

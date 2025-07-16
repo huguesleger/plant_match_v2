@@ -8,4 +8,6 @@ abstract class CatalogRepository {
   Future<Catalog?> getCatalogById(String catalogId);
 
   Future<String> createCatalog(Catalog catalog);
+
+  Future<void> deleteCatalog(String catalogId);
 }

@@ -28,6 +28,7 @@ class CatalogCubit extends Cubit<CatalogState> {
           levelMaintenance: LevelMaintenance.low,
           watering: Watering.little,
           lighting: Lighting.sun,
+          isPublish: false,
         );
         return emit(CatalogLoaded(catalogs, catalogEmpty));
       }
@@ -159,6 +160,17 @@ class CatalogCubit extends Cubit<CatalogState> {
     } catch (e) {
       emit(CatalogError("Erreur chargement du catalogue : $e"));
       return null;
+    }
+  }
+
+  Future<void> deleteCatalog(String catalogId, String userId) async {
+    emit(CatalogLoading());
+    try {
+      await catalogRepository.deleteCatalog(catalogId);
+      final catalogs = await catalogRepository.getCatalogsByUserId(userId);
+      emit(CatalogLoaded(catalogs, Catalog.empty(userId)));
+    } catch (e) {
+      emit(CatalogError("Erreur suppression : $e"));
     }
   }
 }
