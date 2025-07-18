@@ -13,20 +13,22 @@ class GetStartedPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Scaffold(
       backgroundColor: AppColors.blueGreen,
-      body: Stack(
-        children: [
-          _BgImage(),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _Logo(),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: _Content(),
-              ),
-            ],
-          ),
-        ],
+      body: SafeArea(
+        child: Stack(
+          children: [
+            _BgImage(),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _Logo(),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: _Content(),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

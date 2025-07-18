@@ -61,6 +61,7 @@ class _AppBarDynamicHeaderState extends State<AppBarDynamicHeader> {
           shadowColor: AppColors.black.withOpacity(0.6),
           flexibleSpace: FlexibleSpaceBar(
             expandedTitleScale: 1.2,
+            centerTitle: true,
             titlePadding: _isShrink ? null : widget.titlePadding,
             title: _isShrink
                 ? SvgPicture.asset(

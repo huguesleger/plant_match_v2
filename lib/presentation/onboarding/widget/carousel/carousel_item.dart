@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
-import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
 
 class CarouselItem extends StatelessWidget {
   const CarouselItem({
@@ -30,10 +30,15 @@ class CarouselItem extends StatelessWidget {
           padding: EdgeInsets.only(
             top: MediaQuery.of(context).size.height > 700 ? 50 : 30,
           ),
-          child: TitlePage(
-            title: title,
-            fontSize: AppTypo.textXl,
+          child: Text(
+            title,
             textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: AppTypo.textXl,
+              fontWeight: FontWeight.w600,
+              fontFamily: 'Chillax',
+              color: AppColors.blueGreen,
+            ),
           ),
         ),
         Padding(

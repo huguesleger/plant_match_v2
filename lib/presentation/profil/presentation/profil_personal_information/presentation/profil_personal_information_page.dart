@@ -85,9 +85,12 @@ class ProfilPersonalInformationPage extends StatelessWidget {
                                 width: double.infinity,
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
-                                      vertical: 20, horizontal: 20),
-                                  child: ProfilPersonalDetailPage(
-                                      profilUser: state.profilUser),
+                                    horizontal: 20,
+                                  ),
+                                  child: SingleChildScrollView(
+                                    child: ProfilPersonalDetailPage(
+                                        profilUser: state.profilUser),
+                                  ),
                                 ),
                               ),
                             ),
