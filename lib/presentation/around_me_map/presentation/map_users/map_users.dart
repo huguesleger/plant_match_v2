@@ -100,6 +100,7 @@ class _MapUsersState extends State<MapUsers> {
                 ),
                 children: [
                   TileLayer(
+                    userAgentPackageName: "com.plantmatch.app",
                     urlTemplate:
                         "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                   ),
