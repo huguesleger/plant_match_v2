@@ -8,6 +8,7 @@ class ButtonOutlinedRounded extends StatelessWidget {
     required this.borderColor,
     required this.textColor,
     this.fontSize = 14,
+    this.padding = const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
   });
 
   final String text;
@@ -15,6 +16,7 @@ class ButtonOutlinedRounded extends StatelessWidget {
   final Color borderColor;
   final Color textColor;
   final double? fontSize;
+  final EdgeInsets? padding;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +24,7 @@ class ButtonOutlinedRounded extends StatelessWidget {
       onPressed: onPressed,
       style: OutlinedButton.styleFrom(
         side: BorderSide(color: borderColor),
-        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
+        padding: padding,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(50),
         ),

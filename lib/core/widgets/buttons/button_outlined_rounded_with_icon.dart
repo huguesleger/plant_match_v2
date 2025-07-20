@@ -10,6 +10,7 @@ class ButtonOutlinedRoundedWithIcon extends StatelessWidget {
     this.fontSize = 14,
     required this.icon,
     this.iconAlignment = IconAlignment.end,
+    this.padding = const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
   });
 
   final String text;
@@ -19,6 +20,7 @@ class ButtonOutlinedRoundedWithIcon extends StatelessWidget {
   final double? fontSize;
   final Widget icon;
   final IconAlignment iconAlignment;
+  final EdgeInsets? padding;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +28,7 @@ class ButtonOutlinedRoundedWithIcon extends StatelessWidget {
       onPressed: onPressed,
       style: OutlinedButton.styleFrom(
         side: BorderSide(color: borderColor),
-        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
+        padding: padding,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(50),
         ),

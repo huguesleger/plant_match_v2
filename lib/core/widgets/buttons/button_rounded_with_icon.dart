@@ -10,6 +10,7 @@ class ButtonRoundedWithIcon extends StatelessWidget {
     this.fontSize = 14,
     required this.icon,
     this.iconAlignment = IconAlignment.end,
+    this.padding = const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
   });
 
   final String text;
@@ -20,13 +21,15 @@ class ButtonRoundedWithIcon extends StatelessWidget {
   final Widget icon;
   final IconAlignment iconAlignment;
 
+  final EdgeInsets? padding;
+
   @override
   Widget build(BuildContext context) {
     return FilledButton.icon(
       onPressed: onPressed,
       style: FilledButton.styleFrom(
         backgroundColor: bgColor,
-        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
+        padding: padding,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(50),
         ),
