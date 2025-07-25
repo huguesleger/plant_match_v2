@@ -29,6 +29,7 @@ class CatalogCubit extends Cubit<CatalogState> {
           watering: Watering.little,
           lighting: Lighting.sun,
           isPublish: false,
+          createdAt: DateTime.now(),
         );
         return emit(CatalogLoaded(catalogs, catalogEmpty));
       }
@@ -90,16 +91,14 @@ class CatalogCubit extends Cubit<CatalogState> {
       for (final imagePath in imagePaths) {
         final fileName = "${catalogId}_${imagePath.split('/').last}";
 
-        //!imagePath.startsWith('http')
-        if (!catalog.images.contains(imagePath)) {
-          final imageUrl = await storageRepository.uploadImageFromUrl(
-            path: imagePath,
-            fileName: fileName,
-            folder: 'catalog_images',
-          );
-          if (imageUrl != null) {
-            uploadedUrls.add(imageUrl);
-          }
+        final imageUrl = await storageRepository.uploadImageFromUrl(
+          path: imagePath,
+          fileName: fileName,
+          folder: 'catalog_images',
+        );
+
+        if (imageUrl != null) {
+          uploadedUrls.add(imageUrl);
         }
       }
 

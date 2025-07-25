@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/badge/badge_pill.dart';
+import 'package:plant_match_v2/presentation/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/presentation/catolog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/presentation/catolog/presentation/catalog_detail_page.dart';
+import 'package:plant_match_v2/presentation/catolog/presentation/cubit/catalog_cubit.dart';
 import 'package:plant_match_v2/presentation/catolog/presentation/util/environment_name.dart';
 import 'package:plant_match_v2/presentation/catolog/presentation/util/family_name.dart';
 
@@ -23,13 +26,19 @@ class CatalogCardItem extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         color: AppColors.white,
         child: InkWell(
-            onTap: () {
-              Navigator.push(
+            onTap: () async {
+              final result = await Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (_) => CatalogDetailPage(catalog: catalog),
                 ),
               );
+              if (result == true && context.mounted) {
+                final userId = context.read<AuthCubit>().userId;
+                if (userId != null) {
+                  context.read<CatalogCubit>().getCatalogsByUserId(userId);
+                }
+              }
             },
             child: SizedBox(
               height: 120,

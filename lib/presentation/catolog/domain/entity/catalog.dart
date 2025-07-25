@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Catalog {
   final String userId;
   final String? catalogId;
@@ -10,6 +12,7 @@ class Catalog {
   final Watering watering;
   final Lighting lighting;
   final bool isPublish;
+  final DateTime createdAt;
 
   Catalog({
     required this.userId,
@@ -23,6 +26,7 @@ class Catalog {
     required this.watering,
     required this.lighting,
     required this.isPublish,
+    required this.createdAt,
   });
 
   Catalog copyWith({
@@ -37,6 +41,7 @@ class Catalog {
     Watering? newWatering,
     Lighting? newLighting,
     bool? newIsPublish,
+    DateTime? newCreatedAt,
   }) {
     return Catalog(
       userId: newUserId ?? userId,
@@ -49,7 +54,8 @@ class Catalog {
       levelMaintenance: newLevelMaintenance ?? levelMaintenance,
       watering: newWatering ?? watering,
       lighting: newLighting ?? lighting,
-      isPublish: newIsPublish ?? this.isPublish,
+      isPublish: newIsPublish ?? isPublish,
+      createdAt: newCreatedAt ?? createdAt,
     );
   }
 
@@ -66,6 +72,7 @@ class Catalog {
       watering: Watering.little,
       lighting: Lighting.sun,
       isPublish: false,
+      createdAt: DateTime.now(),
     );
   }
 
@@ -94,6 +101,9 @@ class Catalog {
           ? Lighting.values.byName(json['lighting'])
           : Lighting.indirectLight,
       isPublish: json['isPublish'] ?? false,
+      createdAt: json['createdAt'] != null
+          ? (json['createdAt'] as Timestamp).toDate()
+          : DateTime.now(),
     );
   }
 
@@ -109,6 +119,7 @@ class Catalog {
       'watering': watering.name,
       'lighting': lighting.name,
       'isPublish': isPublish,
+      'createdAt': createdAt.toIso8601String(),
     };
   }
 }

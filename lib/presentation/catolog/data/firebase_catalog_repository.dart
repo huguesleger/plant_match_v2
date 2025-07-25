@@ -15,12 +15,16 @@ class FirebaseCatalogRepository implements CatalogRepository {
     }
 
     try {
+      final data = catalog.toJson();
+
+      data.remove('createdAt');
+
       print(
           "🔥 updateCatalog → ${catalog.catalogId} with data: ${catalog.toJson()}");
       await firestore
           .collection('catalogs')
           .doc(catalog.catalogId)
-          .update(catalog.toJson());
+          .update(data);
     } catch (e) {
       throw Exception('Failed to update catalog: $e');
     }
@@ -32,12 +36,14 @@ class FirebaseCatalogRepository implements CatalogRepository {
       final querySnapshot = await firestore
           .collection('catalogs')
           .where('userId', isEqualTo: userId)
+          .orderBy('createdAt', descending: true)
           .get();
 
       return querySnapshot.docs
           .map((doc) => Catalog.fromJson(doc.data(), doc.id))
           .toList();
     } catch (e) {
+      print("🔥 Error fetching catalogs for user $userId: $e");
       throw Exception('Failed to fetch catalogs: $e');
     }
   }
@@ -61,8 +67,9 @@ class FirebaseCatalogRepository implements CatalogRepository {
   @override
   Future<String> createCatalog(Catalog catalog) async {
     try {
-      final docRef =
-          await firestore.collection('catalogs').add(catalog.toJson());
+      final data = catalog.toJson();
+      data['createdAt'] = FieldValue.serverTimestamp();
+      final docRef = await firestore.collection('catalogs').add(data);
       return docRef.id;
     } catch (e) {
       throw Exception('Failed to create catalog: $e');
@@ -74,18 +81,6 @@ class FirebaseCatalogRepository implements CatalogRepository {
     return firestore.collection('catalogs').doc(catalogId).delete().catchError(
       (error) {
         throw Exception('Failed to delete catalog: $error');
-      },
-    );
-  }
-
-  @override
-  Future<void> publishCatalog(String catalogId, bool isPublish) {
-    return firestore
-        .collection('catalogs')
-        .doc(catalogId)
-        .update({'isPublish': isPublish}).catchError(
-      (error) {
-        throw Exception('Failed to publish catalog: $error');
       },
     );
   }

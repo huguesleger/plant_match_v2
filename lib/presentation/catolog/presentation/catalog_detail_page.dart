@@ -114,7 +114,7 @@ class _CatalogDetailPageState extends State<CatalogDetailPage> {
                   padding:
                       const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                   child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Column(
@@ -179,7 +179,7 @@ class _CatalogDetailPageState extends State<CatalogDetailPage> {
           ],
         ),
         onPressed: () {
-          Navigator.pop(context);
+          Navigator.pop(context, true);
         },
         styleIconButton: IconButton.styleFrom(
           shape:

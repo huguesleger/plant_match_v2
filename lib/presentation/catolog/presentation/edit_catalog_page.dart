@@ -34,6 +34,8 @@ class _EditCatalogPageState extends State<EditCatalogPage> {
   late List<String> _updatedImages;
   bool? _isPublish;
 
+  bool _isSaving = false;
+
   List<Family> getAllFamilies() {
     return [
       Family.flower,
@@ -67,8 +69,46 @@ class _EditCatalogPageState extends State<EditCatalogPage> {
 
   void _save() async {
     if (_formKey.currentState?.saveAndValidate() ?? false) {
-      final updatedCatalog = widget.catalog.copyWith(
-        newCatalogId: widget.catalog.catalogId,
+      setState(() {
+        _isSaving = true;
+      });
+
+      final catalogCubit = context.read<CatalogCubit>();
+      final catalog = widget.catalog;
+      final localImages =
+          _updatedImages.where((img) => !img.startsWith('http')).toList();
+      final existingImages =
+          _updatedImages.where((img) => img.startsWith('http')).toList();
+
+      Catalog updatedCatalog = catalog;
+
+      if (localImages.isNotEmpty) {
+        final result = await catalogCubit.uploadCatalogImages(
+          catalog: catalog,
+          imagePaths: localImages,
+          catalogId: catalog.catalogId ?? '',
+          existingImages: existingImages,
+        );
+
+        if (result == null) {
+          setState(() {
+            _isSaving = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Erreur lors de l’upload des images"),
+            ),
+          );
+          return;
+        }
+
+        updatedCatalog = result;
+      } else {
+        updatedCatalog = catalog.copyWith(newImages: _updatedImages);
+      }
+
+      final fullyUpdated = updatedCatalog.copyWith(
+        newCatalogId: catalog.catalogId,
         newName: _nameController.text,
         newDescription: _descriptionController.text,
         newEnvironment: getEnvironmentFromString(_environment ?? 'indoor'),
@@ -80,12 +120,17 @@ class _EditCatalogPageState extends State<EditCatalogPage> {
             getLevelMaintenanceFromString(_maintenance ?? 'low'),
         newWatering: getWateringFromString(_watering ?? 'little'),
         newLighting: getLightingFromString(_lighting ?? 'sun'),
-        newImages: _updatedImages,
         newIsPublish: _isPublish ?? false,
       );
 
-      await context.read<CatalogCubit>().updateCatalog(updatedCatalog);
-      if (mounted) Navigator.pop(context, true);
+      await catalogCubit.updateCatalog(fullyUpdated);
+
+      if (mounted) {
+        setState(() {
+          _isSaving = false;
+        });
+        Navigator.pop(context, true);
+      }
     }
   }
 
@@ -126,23 +171,25 @@ class _EditCatalogPageState extends State<EditCatalogPage> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: FormBuilder(
-          key: _formKey,
-          child: Column(
-            children: [
-              FormBuilderTextField(
-                key: _formKeyPlantName,
-                name: 'plantName',
-                controller: _nameController,
-                decoration: DecorationInput.inputDecoration(
-                  hintText: 'Nom de la plante',
-                  labelText: 'Nom',
-                ),
-                validator: FormBuilderValidators.required(),
-              ),
-              const SizedBox(height: 16),
+      body: _isSaving
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: FormBuilder(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    FormBuilderTextField(
+                      key: _formKeyPlantName,
+                      name: 'plantName',
+                      controller: _nameController,
+                      decoration: DecorationInput.inputDecoration(
+                        hintText: 'Nom de la plante',
+                        labelText: 'Nom',
+                      ),
+                      validator: FormBuilderValidators.required(),
+                    ),
+                    const SizedBox(height: 16),
 /*              _buildDropdown(
                 name: 'environment',
                 label: 'Environnement',
@@ -150,130 +197,159 @@ class _EditCatalogPageState extends State<EditCatalogPage> {
                 initialValue: _environment,
                 onChanged: (val) => setState(() => _environment = val),
               ),*/
-              FormBuilderField(
-                name: 'category',
-                initialValue: _environment,
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: FormBuilderValidators.compose([
-                  FormBuilderValidators.required(
-                      errorText: 'Ce champ est requis'),
-                ]),
-                onSaved: (val) => setState(() => _environment = val),
-                builder: (FormFieldState<dynamic> fieldCategory) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: SelectableItem(
-                              icon: LucideIcons.house,
-                              label: "Intérieur",
-                              value: "indoor",
-                              isSelected: _environment == "indoor",
-                              onTap: (value) {
-                                onSelect(value);
-                                fieldCategory.didChange(value);
-                              },
+                    FormBuilderField(
+                      name: 'category',
+                      initialValue: _environment,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(
+                            errorText: 'Ce champ est requis'),
+                      ]),
+                      onSaved: (val) => setState(() => _environment = val),
+                      builder: (FormFieldState<dynamic> fieldCategory) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: SelectableItem(
+                                    icon: LucideIcons.house,
+                                    label: "Intérieur",
+                                    value: "indoor",
+                                    isSelected: _environment == "indoor",
+                                    onTap: (value) {
+                                      onSelect(value);
+                                      fieldCategory.didChange(value);
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: SelectableItem(
+                                    icon: LucideIcons.fence,
+                                    label: "Extérieur",
+                                    value: "outdoor",
+                                    isSelected: _environment == "outdoor",
+                                    onTap: (value) {
+                                      onSelect(value);
+                                      fieldCategory.didChange(value);
+                                    },
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: SelectableItem(
-                              icon: LucideIcons.fence,
-                              label: "Extérieur",
-                              value: "outdoor",
-                              isSelected: _environment == "outdoor",
-                              onTap: (value) {
-                                onSelect(value);
-                                fieldCategory.didChange(value);
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  );
-                },
-              ),
-              const SizedBox(height: 16),
-              FormBuilderFilterChips<String>(
-                name: 'families',
-                initialValue: _selectedFamilies,
-                options: getAllFamilies()
-                    .map((f) => FormBuilderChipOption(
-                        value: f.name, child: Text(f.name)))
-                    .toList(),
-                decoration: const InputDecoration(labelText: 'Famille(s)'),
-                onChanged: (val) =>
-                    setState(() => _selectedFamilies = val ?? []),
-                validator: FormBuilderValidators.required(),
-              ),
-              const SizedBox(height: 16),
-              _buildDropdown(
-                name: 'maintenance',
-                label: 'Entretien',
-                options: ['low', 'medium', 'high'],
-                initialValue: _maintenance,
-                onChanged: (val) => setState(() => _maintenance = val),
-              ),
-              const SizedBox(height: 16),
-              _buildDropdown(
-                name: 'watering',
-                label: 'Arrosage',
-                options: ['little', 'regularly'],
-                initialValue: _watering,
-                onChanged: (val) => setState(() => _watering = val),
-              ),
-              const SizedBox(height: 16),
-              _buildDropdown(
-                name: 'lighting',
-                label: 'Lumière',
-                options: ['sun', 'indirectLight', 'shade'],
-                initialValue: _lighting,
-                onChanged: (val) => setState(() => _lighting = val),
-              ),
-              const SizedBox(height: 16),
-              FormBuilderTextField(
-                name: 'description',
-                controller: _descriptionController,
-                maxLines: 4,
-                maxLength: 150,
-                decoration: const InputDecoration(labelText: 'Description'),
-                validator: FormBuilderValidators.compose([
-                  FormBuilderValidators.required(),
-                  FormBuilderValidators.maxLength(150),
-                ]),
-              ),
-              const SizedBox(height: 16),
-              FormBuilderSwitch(
-                name: 'isPublish',
-                title: const Text('Publier la plante'),
-                initialValue: _isPublish,
-                onChanged: (val) {
-                  setState(() {
-                    _isPublish = val ?? false;
-                  });
-                },
-              ),
-              const SizedBox(height: 24),
+                          ],
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    FormBuilderFilterChips<String>(
+                      name: 'families',
+                      initialValue: _selectedFamilies,
+                      options: getAllFamilies()
+                          .map((f) => FormBuilderChipOption(
+                              value: f.name, child: Text(f.name)))
+                          .toList(),
+                      decoration:
+                          const InputDecoration(labelText: 'Famille(s)'),
+                      onChanged: (val) =>
+                          setState(() => _selectedFamilies = val ?? []),
+                      validator: FormBuilderValidators.required(),
+                    ),
+                    const SizedBox(height: 16),
+                    _buildDropdown(
+                      name: 'maintenance',
+                      label: 'Entretien',
+                      options: ['low', 'medium', 'high'],
+                      initialValue: _maintenance,
+                      onChanged: (val) => setState(() => _maintenance = val),
+                    ),
+                    const SizedBox(height: 16),
+                    _buildDropdown(
+                      name: 'watering',
+                      label: 'Arrosage',
+                      options: ['little', 'regularly'],
+                      initialValue: _watering,
+                      onChanged: (val) => setState(() => _watering = val),
+                    ),
+                    const SizedBox(height: 16),
+                    _buildDropdown(
+                      name: 'lighting',
+                      label: 'Lumière',
+                      options: ['sun', 'indirectLight', 'shade'],
+                      initialValue: _lighting,
+                      onChanged: (val) => setState(() => _lighting = val),
+                    ),
+                    const SizedBox(height: 16),
+                    FormBuilderTextField(
+                      name: 'description',
+                      controller: _descriptionController,
+                      maxLines: 4,
+                      maxLength: 150,
+                      decoration:
+                          const InputDecoration(labelText: 'Description'),
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(),
+                        FormBuilderValidators.maxLength(150),
+                      ]),
+                    ),
+                    const SizedBox(height: 16),
+                    FormBuilderSwitch(
+                      name: 'isPublish',
+                      title: const Text('Publier la plante'),
+                      initialValue: _isPublish,
+                      onChanged: (val) {
+                        setState(() {
+                          _isPublish = val ?? false;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 24),
 
-              // 📷 IMAGE MODIFIER
-              CatalogUploadImage(
-                userId: widget.catalog.userId,
-                catalogId: widget.catalog.catalogId!,
-                catalog: widget.catalog,
-                onCatalogUpdated: (updatedCatalog) {
-                  setState(() {
-                    _updatedImages = updatedCatalog.images;
-                  });
-                },
+                    // 📷 IMAGE MODIFIER
+                    FormBuilderField<List<String>>(
+                      name: 'images',
+                      initialValue: _updatedImages,
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.minLength(1,
+                            errorText:
+                                'Veuillez sélectionner au moins une image'),
+                      ]),
+                      builder: (FormFieldState<List<String>> fieldImage) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CatalogUploadImage(
+                              catalog: widget.catalog
+                                  .copyWith(newImages: fieldImage.value ?? []),
+                              field: fieldImage,
+                              onCatalogUpdated: (updatedCatalog) {
+                                setState(() {
+                                  _updatedImages = updatedCatalog.images;
+                                  fieldImage.didChange(_updatedImages);
+                                });
+                              },
+                            ),
+                            if (fieldImage.hasError)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: Text(
+                                  fieldImage.errorText ?? '',
+                                  style: TextStyle(
+                                      color:
+                                          Theme.of(context).colorScheme.error),
+                                ),
+                              ),
+                          ],
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 }

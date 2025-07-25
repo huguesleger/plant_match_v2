@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -10,6 +8,7 @@ import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_template.dart';
 import 'package:plant_match_v2/core/widgets/bottom_bar/bottom_bar.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
+import 'package:plant_match_v2/core/widgets/dialog/dialog_with_image.dart';
 import 'package:plant_match_v2/core/widgets/form/decoration_input.dart';
 import 'package:plant_match_v2/core/widgets/title_with_icon/title_with_icon.dart';
 import 'package:plant_match_v2/presentation/catolog/domain/entity/catalog.dart';
@@ -122,22 +121,11 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
     switch (page) {
       case 0:
         if (_formKeyPlantName.currentState?.saveAndValidate() ?? false) {
-          final updated = (_catalog ?? widget.catalog).copyWith(
-              newName: _plantNameController.text,
-              newImages: _catalog?.images ?? []);
-
-          if (updated.catalogId == null) {
-            final id = await context.read<CatalogCubit>().addCatalog(updated);
-            setState(() {
-              _catalog = updated.copyWith(newCatalogId: id);
-            });
-          } else {
-            await context.read<CatalogCubit>().updateCatalog(updated);
-            setState(() {
-              _catalog = updated;
-            });
-          }
-
+          final updated = (_catalog ??
+              widget.catalog.copyWith(
+                newName: _plantNameController.text,
+              ));
+          setState(() => _catalog = updated);
           _onPressedNextPage();
         } else {
           _formKeyPlantName.currentState?.validate();
@@ -149,10 +137,7 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
           final updated = _catalog!.copyWith(
             newEnvironment:
                 getEnvironmentFromString(_plantCategoryController.text),
-            newImages: _catalog!.images,
           );
-
-          context.read<CatalogCubit>().updateCatalog(updated);
           setState(() => _catalog = updated);
           _onPressedNextPage();
         } else {
@@ -167,9 +152,7 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                 .map(getFamilyFromString)
                 .whereType<Family>()
                 .toList(),
-            newImages: _catalog!.images,
           );
-          context.read<CatalogCubit>().updateCatalog(updated);
           setState(() => _catalog = updated);
           _onPressedNextPage();
         } else {
@@ -180,13 +163,9 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
       case 3:
         if (_formKeyPlantMaintenance.currentState?.saveAndValidate() ?? false) {
           final updated = _catalog!.copyWith(
-            newLevelMaintenance: getLevelMaintenanceFromString(
-              _plantMaintenanceController.text,
-            ),
-            newImages: _catalog!.images,
+            newLevelMaintenance:
+                getLevelMaintenanceFromString(_plantMaintenanceController.text),
           );
-
-          context.read<CatalogCubit>().updateCatalog(updated);
           setState(() => _catalog = updated);
           _onPressedNextPage();
         } else {
@@ -198,10 +177,7 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
         if (_formKeyPlantWatering.currentState?.saveAndValidate() ?? false) {
           final updated = _catalog!.copyWith(
             newWatering: getWateringFromString(_plantWateringController.text),
-            newImages: _catalog!.images,
           );
-
-          context.read<CatalogCubit>().updateCatalog(updated);
           setState(() => _catalog = updated);
           _onPressedNextPage();
         } else {
@@ -213,10 +189,7 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
         if (_formKeyPlantLighting.currentState?.saveAndValidate() ?? false) {
           final updated = _catalog!.copyWith(
             newLighting: getLightingFromString(_plantLightingController.text),
-            newImages: _catalog!.images,
           );
-
-          context.read<CatalogCubit>().updateCatalog(updated);
           setState(() => _catalog = updated);
           _onPressedNextPage();
         } else {
@@ -228,10 +201,7 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
         if (_formKeyPlantDescription.currentState?.saveAndValidate() ?? false) {
           final updated = _catalog!.copyWith(
             newDescription: _plantDescriptionController.text,
-            newImages: _catalog!.images,
           );
-
-          context.read<CatalogCubit>().updateCatalog(updated);
           setState(() => _catalog = updated);
           _onPressedNextPage();
         } else {
@@ -241,28 +211,42 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
 
       case 7:
         if (_formKeyPlantImage.currentState?.saveAndValidate() ?? false) {
-          final updated = _catalog!.copyWith(
-            newImages: _catalog!.images,
-          );
-
-          context.read<CatalogCubit>().updateCatalog(updated);
-          setState(() => _catalog = updated);
           _onPressedNextPage();
-        } else {
-          _formKeyPlantImage.currentState?.validate();
         }
         break;
 
       case 8:
         if (_formKeyPlantIsPublish.currentState?.saveAndValidate() ?? false) {
-          print('isPublish: ${_plantIsPublishController.text}');
           final updated = _catalog!.copyWith(
             newIsPublish: _plantIsPublishController.text == 'true',
-            newImages: _catalog!.images,
+          );
+          setState(() => _catalog = updated);
+
+          final catalogCubit = context.read<CatalogCubit>();
+
+          if (_catalog!.catalogId == null) {
+            final id = await catalogCubit.addCatalog(_catalog!);
+            _catalog = _catalog!.copyWith(newCatalogId: id);
+          } else {
+            await catalogCubit.updateCatalog(_catalog!);
+          }
+
+          final localImagePaths =
+              _catalog!.images.where((img) => !img.startsWith('http')).toList();
+          final existingUrls =
+              _catalog!.images.where((img) => img.startsWith('http')).toList();
+          final updatedWithImages = await catalogCubit.uploadCatalogImages(
+            catalog: _catalog!,
+            catalogId: _catalog!.catalogId!,
+            imagePaths: localImagePaths,
+            existingImages: existingUrls,
           );
 
-          context.read<CatalogCubit>().updateCatalog(updated);
-          setState(() => _catalog = updated);
+          if (updatedWithImages != null) {
+            setState(() {
+              _catalog = updatedWithImages;
+            });
+          }
           Navigator.pop(context, true);
         } else {
           _formKeyPlantIsPublish.currentState?.validate();
@@ -296,6 +280,23 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
     });
   }
 
+  Future<bool> _showExitConfirmationDialog() async {
+    final result = await showDialog<bool>(
+      context: context,
+      useRootNavigator: true,
+      builder: (context) {
+        return const DialogWithImage(
+          imagePath: 'assets/images/empty_catalog_filter.png',
+          title: 'Quitter sans enregistrer ?',
+          text:
+              'Les informations saisies seront perdues si tu quittes maintenant.',
+        );
+      },
+    );
+
+    return result == true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -314,7 +315,12 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
         onPressed: _onPressedBack,
         actions: [
           IconButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () async {
+              final shouldExit = await _showExitConfirmationDialog();
+              if (shouldExit && context.mounted) {
+                Navigator.pop(context);
+              }
+            },
             icon: const Icon(LucideIcons.x),
             color: AppColors.greyDark,
           ),
@@ -722,15 +728,13 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                   title: 'Ajouter une photo',
                   description:
                       'Sélectionner une à trois photos de votre plante',
-                  child: FormBuilderField<List<File>>(
+                  child: FormBuilderField<List<String>>(
                     name: 'plantImage',
-                    builder: (FormFieldState<List<File>> fieldImage) {
+                    builder: (FormFieldState<List<String>> fieldImage) {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           CatalogUploadImage(
-                            userId: _catalog!.userId,
-                            catalogId: _catalog!.catalogId!,
                             catalog: _catalog!,
                             field: fieldImage,
                             onCatalogUpdated: (updatedCatalog) {
@@ -751,7 +755,7 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                         ],
                       );
                     },
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    autovalidateMode: AutovalidateMode.disabled,
                     validator: FormBuilderValidators.compose([
                       FormBuilderValidators.required(
                           errorText: 'Ce champ est requis'),
