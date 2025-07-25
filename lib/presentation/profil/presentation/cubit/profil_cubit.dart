@@ -47,23 +47,19 @@ class ProfilCubit extends Cubit<ProfilState> {
         return;
       }
 
-      String? imageDownloadUrl;
+      String? imageDownloadUrl = currentUser.profilImg;
 
       if (imageUrl != null) {
         imageDownloadUrl = await storageRepository.uploadImageFromUrl(
-            path: imageUrl,
-            fileName: currentUser.uid,
-            folder: 'profile_images');
-      }
-
-      if (imageUrl == null && imageDownloadUrl == null) {
-        emit(ProfilError('Erreur lors de l\'upload de l\'image'));
-        return;
+          path: imageUrl,
+          fileName: uid,
+          folder: 'profile_images',
+        );
       }
 
       final updatedProfilUser = currentUser.copyWith(
         newBio: newBio ?? currentUser.bio,
-        newProfilImg: imageDownloadUrl ?? currentUser.profilImg,
+        newProfilImg: imageDownloadUrl,
         newUserName: newUserName ?? currentUser.userName,
         newLocalisation: newLocalisation ?? currentUser.localisation,
         newCountry: newCountry ?? currentUser.country,
@@ -73,10 +69,35 @@ class ProfilCubit extends Cubit<ProfilState> {
       );
 
       await profilRepository.updateProfilUser(updatedProfilUser);
-      await getProfilUser(uid);
       emit(ProfilLoaded(updatedProfilUser));
     } catch (e) {
       emit(ProfilError(e.toString()));
+    }
+  }
+
+  Future<void> updateProfilImage({
+    required String uid,
+    required String imagePath,
+  }) async {
+    try {
+      emit(ProfilImageUploading(uid: uid, imagePath: imagePath));
+
+      final imageDownloadUrl = await storageRepository.uploadImageFromUrl(
+        path: imagePath,
+        fileName: uid,
+        folder: 'profile_images',
+      );
+
+      await profilRepository.updateProfilField(
+        uid: uid,
+        field: 'profilImg',
+        value: imageDownloadUrl,
+      );
+
+      final updatedUser = await profilRepository.getProfilUser(uid);
+      emit(ProfilLoaded(updatedUser!));
+    } catch (e) {
+      emit(ProfilError('Erreur lors de la mise à jour de l\'image : $e'));
     }
   }
 
@@ -92,7 +113,6 @@ class ProfilCubit extends Cubit<ProfilState> {
         );
 
         await profilRepository.updateProfilUser(updatedProfilUser);
-
         emit(ProfilLoaded(updatedProfilUser));
       } else {
         emit(ProfilError(
@@ -143,7 +163,6 @@ class ProfilCubit extends Cubit<ProfilState> {
       );
 
       await profilRepository.updateProfilUser(updatedProfilUser);
-
       emit(ProfilLoaded(updatedProfilUser));
     } catch (e) {
       emit(ProfilError('Erreur lors de la réinitialisation du champ : $e'));

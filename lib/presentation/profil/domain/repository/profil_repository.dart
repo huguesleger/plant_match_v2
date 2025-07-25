@@ -6,4 +6,10 @@ abstract class ProfilRepository {
   Future<void> updateProfilUser(ProfilUser updateProfilUser);
 
   Future<void> createProfilUser(ProfilUser profilUser);
+
+  Future<void> updateProfilField({
+    required String uid,
+    required String field,
+    required dynamic value,
+  });
 }

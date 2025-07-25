@@ -32,6 +32,7 @@ class ProfilPage extends StatelessWidget {
                 userId: uid,
               ),
             ProfilError() => ErrorPage(errorMessage: state.message),
+            ProfilImageUploading() => const SizedBox.shrink(),
           };
         },
       ),

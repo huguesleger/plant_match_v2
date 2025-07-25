@@ -19,3 +19,10 @@ class ProfilError extends ProfilState {
 
   ProfilError(this.message);
 }
+
+class ProfilImageUploading extends ProfilState {
+  final String uid;
+  final String imagePath;
+
+  ProfilImageUploading({required this.uid, required this.imagePath});
+}

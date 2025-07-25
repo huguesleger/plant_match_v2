@@ -18,14 +18,14 @@ class ProfilPersonalNameAndEmail extends StatelessWidget {
           TitlePage(
             title: profilUser.fullName,
             fontSize: AppTypo.textL,
-            color: AppColors.greyDark,
+            color: AppColors.white,
             textAlign: TextAlign.center,
           ),
           Text(
             profilUser.email ?? '',
             style: const TextStyle(
               fontSize: AppTypo.textXs,
-              color: AppColors.greyDark,
+              color: AppColors.white,
             ),
             textAlign: TextAlign.center,
           ),

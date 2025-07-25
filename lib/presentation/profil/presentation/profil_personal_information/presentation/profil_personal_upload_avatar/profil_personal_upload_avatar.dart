@@ -25,18 +25,15 @@ class _ProfilPersonalUploadAvatarState
   Future<void> _pickImage(ImageSource source) async {
     final XFile? image = await _picker.pickImage(
       source: source,
-      imageQuality: 50,
       maxWidth: 300,
     );
 
-    if (mounted) {
-      if (image != null) {
-        final profilCubit = context.read<ProfilCubit>();
-        profilCubit.updateProfilUser(
-          uid: widget.profilUser.uid,
-          imageUrl: image.path,
-        );
-      }
+    if (mounted && image != null) {
+      final profilCubit = context.read<ProfilCubit>();
+      await profilCubit.updateProfilImage(
+        uid: widget.profilUser.uid,
+        imagePath: image.path,
+      );
     }
   }
 
@@ -68,27 +65,37 @@ class _ProfilPersonalUploadAvatarState
               },
               child: Stack(
                 children: [
-                  CircleAvatar(
-                    radius: 60,
-                    backgroundColor: AppColors.greyLight,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(60),
-                      child: profilImage is AssetImage
-                          ? Align(
-                              alignment: Alignment.bottomCenter,
-                              child: Image(
-                                image: profilImage,
+                  Container(
+                    width: 120,
+                    height: 120,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: AppColors.white,
+                        width: 2,
+                      ),
+                    ),
+                    child: CircleAvatar(
+                      radius: 60,
+                      backgroundColor: AppColors.white,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(60),
+                        child: profilImage is AssetImage
+                            ? Align(
+                                alignment: Alignment.bottomCenter,
+                                child: Image(
+                                  image: profilImage,
+                                  width: 120,
+                                  height: 100,
+                                ),
+                              )
+                            : Image(
+                                image: profilImage as ImageProvider,
                                 width: 120,
-                                height: 100,
-                                //fit: BoxFit.cover,
+                                height: 120,
+                                fit: BoxFit.cover,
                               ),
-                            )
-                          : Image(
-                              image: profilImage as ImageProvider,
-                              width: 120,
-                              height: 120,
-                              fit: BoxFit.cover,
-                            ),
+                      ),
                     ),
                   ),
                   Positioned(

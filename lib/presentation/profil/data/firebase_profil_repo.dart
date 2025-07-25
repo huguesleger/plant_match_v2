@@ -7,6 +7,10 @@ class FirebaseProfilRepo implements ProfilRepository {
 
   @override
   Future<ProfilUser?> getProfilUser(String uid) async {
+    if (uid.isEmpty) {
+      throw Exception('UID invalide');
+    }
+
     try {
       final userDoc =
           await _firebaseFirestore.collection('users').doc(uid).get();
@@ -37,13 +41,17 @@ class FirebaseProfilRepo implements ProfilRepository {
         }
       }
     } catch (e) {
-      return null;
+      throw Exception('Erreur lors de la récupération du profil : $e');
     }
     return null;
   }
 
   @override
   Future<void> updateProfilUser(ProfilUser updateProfilUser) async {
+    if (updateProfilUser.uid.isEmpty) {
+      throw Exception('UID invalide pour la mise à jour du profil');
+    }
+
     try {
       await _firebaseFirestore
           .collection('users')
@@ -65,12 +73,16 @@ class FirebaseProfilRepo implements ProfilRepository {
         'isOnline': updateProfilUser.isOnline,
       });
     } catch (e) {
-      throw Exception('Erreur lors de la mise à jour du profil');
+      throw Exception('Erreur lors de la mise à jour du profil : $e');
     }
   }
 
   @override
   Future<void> createProfilUser(ProfilUser profilUser) async {
+    if (profilUser.uid.isEmpty) {
+      throw Exception('UID invalide pour la création du profil');
+    }
+
     try {
       await _firebaseFirestore.collection('users').doc(profilUser.uid).set({
         'email': profilUser.email,
@@ -91,7 +103,26 @@ class FirebaseProfilRepo implements ProfilRepository {
         'isOnline': profilUser.isOnline,
       });
     } catch (e) {
-      throw Exception('Erreur lors de la création du profil');
+      throw Exception('Erreur lors de la création du profil : $e');
+    }
+  }
+
+  @override
+  Future<void> updateProfilField({
+    required String uid,
+    required String field,
+    required dynamic value,
+  }) async {
+    if (uid.isEmpty) {
+      throw Exception('UID invalide pour la mise à jour du champ');
+    }
+
+    try {
+      await _firebaseFirestore.collection('users').doc(uid).update({
+        field: value,
+      });
+    } catch (e) {
+      throw Exception('Erreur lors de la mise à jour du champ : $e');
     }
   }
 }
