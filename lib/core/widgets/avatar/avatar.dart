@@ -15,9 +15,9 @@ class Avatar extends StatelessWidget {
   });
 
   final ProfilUser profilUser;
-  final double? radius;
-  final double? imgSizeAvatar;
-  final double? defaultSizeAvatar;
+  final double radius;
+  final double imgSizeAvatar;
+  final double defaultSizeAvatar;
 
   @override
   Widget build(BuildContext context) {
@@ -31,36 +31,65 @@ class Avatar extends StatelessWidget {
               : 'assets/images/avatar.png';
         }
 
-        const imgAvatar = 'assets/images/avatar.png';
+        const String defaultAvatar = 'assets/images/avatar.png';
+        final bool isNetworkImage = imageUrl.contains('http');
+        final bool isDefaultAvatar = imageUrl == defaultAvatar;
+        final bool isSelectedAvatar = imageUrl.isNotEmpty &&
+            !isDefaultAvatar &&
+            imageUrl.contains('avatar');
+
+        if (isSelectedAvatar) {
+          return _buildSelectedAvatar(imageUrl);
+        }
 
         return CircleAvatar(
           backgroundColor: AppColors.greyLight,
           radius: radius,
           child: ClipOval(
-            child: imageUrl.isNotEmpty &&
-                    imageUrl != imgAvatar &&
-                    imageUrl.contains('http')
-                ? Image.network(
-                    imageUrl,
-                    fit: BoxFit.cover,
-                    width: imgSizeAvatar,
-                    height: imgSizeAvatar,
-                  )
-                : Stack(
-                    children: [
-                      Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Image(
-                          image: const AssetImage(imgAvatar),
-                          width: defaultSizeAvatar,
-                          height: defaultSizeAvatar,
-                        ),
-                      ),
-                    ],
-                  ),
+            child: isNetworkImage
+                ? _buildNetworkImage(imageUrl)
+                : _buildDefaultAvatar(defaultAvatar),
           ),
         );
       },
+    );
+  }
+
+  Widget _buildSelectedAvatar(String url) {
+    return Container(
+      width: imgSizeAvatar,
+      height: imgSizeAvatar,
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        color: AppColors.greyLight,
+      ),
+      child: ClipOval(
+        child: Transform.scale(
+          alignment: Alignment.center,
+          scale: 0.65,
+          child: Image.network(url),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNetworkImage(String url) {
+    return Image.network(
+      url,
+      fit: BoxFit.cover,
+      width: imgSizeAvatar,
+      height: imgSizeAvatar,
+    );
+  }
+
+  Widget _buildDefaultAvatar(String url) {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Image.asset(
+        url,
+        width: defaultSizeAvatar,
+        height: defaultSizeAvatar,
+      ),
     );
   }
 }

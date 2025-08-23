@@ -78,24 +78,47 @@ class ProfilCubit extends Cubit<ProfilState> {
   Future<void> updateProfilImage({
     required String uid,
     required String imagePath,
+    bool isAsset = false,
   }) async {
     try {
       emit(ProfilImageUploading(uid: uid, imagePath: imagePath));
 
-      final imageDownloadUrl = await storageRepository.uploadImageFromUrl(
-        path: imagePath,
-        fileName: uid,
-        folder: 'profile_images',
-      );
+      String? finalImageUrl;
+
+      if (isAsset) {
+        finalImageUrl = await storageRepository.uploadAssetImage(
+          assetPath: imagePath,
+          fileName: uid,
+          folder: 'profile_images/avatar',
+        );
+      } else {
+        finalImageUrl = await storageRepository.uploadImageFromUrl(
+          path: imagePath,
+          fileName: uid,
+          folder: 'profile_images',
+        );
+      }
+
+      if (finalImageUrl == null) {
+        emit(ProfilError("Erreur lors de l'upload de l'image"));
+        return;
+      }
+
+      if (state is ProfilLoaded) {
+        final currentUser = (state as ProfilLoaded).profilUser;
+        emit(ProfilLoaded(currentUser.copyWith(newProfilImg: finalImageUrl)));
+      }
 
       await profilRepository.updateProfilField(
         uid: uid,
         field: 'profilImg',
-        value: imageDownloadUrl,
+        value: finalImageUrl,
       );
 
-      final updatedUser = await profilRepository.getProfilUser(uid);
-      emit(ProfilLoaded(updatedUser!));
+      final updatedUserFromDb = await profilRepository.getProfilUser(uid);
+      if (updatedUserFromDb != null) {
+        emit(ProfilLoaded(updatedUserFromDb));
+      }
     } catch (e) {
       emit(ProfilError('Erreur lors de la mise à jour de l\'image : $e'));
     }

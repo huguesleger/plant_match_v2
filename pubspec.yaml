@@ -65,6 +65,7 @@ dependencies:
   mobkit_dashed_border: ^0.0.8
   carousel_slider: ^5.1.1
   skeletonizer: ^2.1.0+1
+  path_provider: ^2.1.5
 
 flutter_native_splash:
   color: "#12F4A9"
@@ -102,6 +103,7 @@ flutter:
     - assets/images/
     - assets/images/onboarding/
     - assets/images/auth/
+    - assets/images/avatar/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

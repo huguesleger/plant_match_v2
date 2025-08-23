@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
-import 'package:image_picker/image_picker.dart'; // Importez ce package
+import 'package:image_picker/image_picker.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/presentation/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/presentation/profil/presentation/cubit/profil_cubit.dart';
@@ -33,6 +33,7 @@ class _ProfilPersonalUploadAvatarState
       await profilCubit.updateProfilImage(
         uid: widget.profilUser.uid,
         imagePath: image.path,
+        isAsset: false,
       );
     }
   }
@@ -47,7 +48,8 @@ class _ProfilPersonalUploadAvatarState
           avatarUrl = state.profilUser.profilImg;
         }
 
-        final profilImage = avatarUrl.isNotEmpty && avatarUrl.contains('http')
+        final bool isAvatar = avatarUrl.contains("avatar");
+        final ImageProvider profilImage = avatarUrl.isNotEmpty
             ? NetworkImage(avatarUrl)
             : const AssetImage('assets/images/avatar.png');
 
@@ -64,39 +66,51 @@ class _ProfilPersonalUploadAvatarState
                 );
               },
               child: Stack(
+                alignment: Alignment.center,
                 children: [
                   Container(
                     width: 120,
                     height: 120,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
+                      color: AppColors.white,
                       border: Border.all(
                         color: AppColors.white,
                         width: 2,
                       ),
                     ),
-                    child: CircleAvatar(
-                      radius: 60,
-                      backgroundColor: AppColors.white,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(60),
-                        child: profilImage is AssetImage
-                            ? Align(
-                                alignment: Alignment.bottomCenter,
-                                child: Image(
-                                  image: profilImage,
-                                  width: 120,
-                                  height: 100,
-                                ),
-                              )
-                            : Image(
-                                image: profilImage as ImageProvider,
-                                width: 120,
-                                height: 120,
-                                fit: BoxFit.cover,
+                    child: isAvatar
+                        ? ClipOval(
+                            child: Transform.scale(
+                              alignment: Alignment.center,
+                              scale: 0.65,
+                              child: Image(
+                                image: profilImage,
                               ),
-                      ),
-                    ),
+                            ),
+                          )
+                        : CircleAvatar(
+                            backgroundColor: AppColors.white,
+                            radius: 60,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(60),
+                              child: profilImage is AssetImage
+                                  ? Align(
+                                      alignment: Alignment.bottomCenter,
+                                      child: Image(
+                                        image: profilImage,
+                                        width: 120,
+                                        height: 100,
+                                      ),
+                                    )
+                                  : Image(
+                                      image: profilImage,
+                                      width: 120,
+                                      height: 120,
+                                      fit: BoxFit.cover,
+                                    ),
+                            ),
+                          ),
                   ),
                   Positioned(
                     bottom: 0,

@@ -5,9 +5,11 @@ import 'package:image_picker/image_picker.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/app_bottom_sheet/app_bottom_sheet.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_outlined_rounded.dart';
+import 'package:plant_match_v2/core/widgets/dialog/app_dialog.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
 import 'package:plant_match_v2/presentation/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/presentation/profil/presentation/cubit/profil_cubit.dart';
+import 'package:plant_match_v2/presentation/profil/presentation/profil_personal_information/presentation/profil_avatar/widget/avatar_selection_dialog.dart';
 
 void showImageSourceBottomSheet({
   required BuildContext context,
@@ -17,7 +19,7 @@ void showImageSourceBottomSheet({
   AppBottomSheet.showBottomSheet(
     context,
     SizedBox(
-      height: 450,
+      height: 550,
       child: Column(
         children: [
           Container(
@@ -82,6 +84,44 @@ void showImageSourceBottomSheet({
             onTap: () async {
               Navigator.pop(context);
               await onPickImage(ImageSource.camera);
+            },
+          ),
+          const SizedBox(height: 10),
+          ListTile(
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+            leading: Container(
+              width: 53,
+              height: 53,
+              decoration: BoxDecoration(
+                color: AppColors.greenLight.withOpacity(0.3),
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: const Icon(LucideIcons.users, color: AppColors.blueGreen),
+            ),
+            title: const Text(
+              'Choisir un avatar',
+              style: TextStyle(color: AppColors.greyMedium),
+            ),
+            onTap: () {
+              Navigator.pop(context);
+              showDialog(
+                context: context,
+                builder: (dialogContext) => BlocProvider.value(
+                  value: context.read<ProfilCubit>(),
+                  child: AppDialog(
+                    title: 'Sélectionnez un avatar',
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: SingleChildScrollView(
+                        child: AvatarSelectionDialog(
+                          profilUser: profilUser,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
             },
           ),
           const SizedBox(height: 10),
