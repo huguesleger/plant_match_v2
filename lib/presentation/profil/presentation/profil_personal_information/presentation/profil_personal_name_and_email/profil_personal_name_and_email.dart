@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
@@ -16,7 +17,9 @@ class ProfilPersonalNameAndEmail extends StatelessWidget {
       child: Column(
         children: [
           TitlePage(
-            title: profilUser.fullName,
+            title: profilUser.userName.isNotEmpty
+                ? profilUser.userName.toCapitalize()
+                : profilUser.fullName,
             fontSize: AppTypo.textL,
             color: AppColors.white,
             textAlign: TextAlign.center,

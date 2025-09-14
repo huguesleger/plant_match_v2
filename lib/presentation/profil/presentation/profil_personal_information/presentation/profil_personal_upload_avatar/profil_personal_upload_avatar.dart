@@ -49,9 +49,10 @@ class _ProfilPersonalUploadAvatarState
         }
 
         final bool isAvatar = avatarUrl.contains("avatar");
-        final ImageProvider profilImage = avatarUrl.isNotEmpty
-            ? NetworkImage(avatarUrl)
-            : const AssetImage('assets/images/avatar.png');
+        final ImageProvider profilImage =
+            avatarUrl.isNotEmpty && avatarUrl.contains('http')
+                ? NetworkImage(avatarUrl)
+                : const AssetImage('assets/images/avatar.png');
 
         return Row(
           mainAxisAlignment: MainAxisAlignment.center,
