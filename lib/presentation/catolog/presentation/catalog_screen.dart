@@ -95,8 +95,22 @@ class _CatalogScreenState extends State<CatalogScreen> {
                   ],
                 ),
                 SizedBox(height: 30),
-                Text(
-                  'Ton catalogue est vide. Ajoute ta première plante pour commencer.',
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    children: [
+                      Image(
+                        image: AssetImage(
+                            'assets/images/empty_catalog_filter.png'),
+                        height: 200,
+                      ),
+                      SizedBox(height: 20),
+                      Text(
+                        'Ton catalogue est vide. Ajoute ta première plante pour commencer.',
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
                 ),
               ],
             )
