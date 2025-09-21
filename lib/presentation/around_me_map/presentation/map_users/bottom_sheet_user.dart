@@ -6,12 +6,16 @@ import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/theme/inter_text_style.dart';
 import 'package:plant_match_v2/core/widgets/app_bottom_sheet/app_bottom_sheet.dart';
+import 'package:plant_match_v2/core/widgets/app_card/app_card.dart';
 import 'package:plant_match_v2/core/widgets/avatar/avatar.dart';
+import 'package:plant_match_v2/presentation/around_me_map/presentation/catalog_users/catalog_users.dart';
+import 'package:plant_match_v2/presentation/catolog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/presentation/profil/domain/entity/profil_user.dart';
 
 void bottomSheetUser({
   required BuildContext context,
   required ProfilUser user,
+  required List<Catalog> catalogs,
   double? distance,
 }) {
   AppBottomSheet.showBottomSheet(
@@ -109,6 +113,32 @@ void bottomSheetUser({
                   ),
               ],
             ),
+          ),
+          const SizedBox(height: 20),
+          Container(
+            height: 255,
+            color: AppColors.greyUltraLight,
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            child: Row(
+              children: [
+                const SizedBox(width: 20),
+                AppCard(
+                  bgColor: AppColors.greenDark,
+                  textColor: AppColors.white,
+                  title: 'Plantes & Boutures',
+                  description: 'Mon catalogue de ce que j’ai à partager',
+                  icon: LucideIcons.flower_2,
+                  onPressed: () {},
+                ),
+                const SizedBox(width: 20),
+                CatalogUsers(catalogs: catalogs),
+              ],
+            ),
+          ),
+          const Row(
+            children: [
+              Text('Envoyer un message'),
+            ],
           ),
         ],
       ),

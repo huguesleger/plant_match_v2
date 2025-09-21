@@ -93,6 +93,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           create: (context) => AroundMeCubit(
             aroundMeRepository: aroundMeRepository,
             profilRepository: profilRepository,
+            catalogRepository: catalogRepository,
           ),
         ),
         BlocProvider(

@@ -21,6 +21,7 @@ class AroundMeMapScreen extends StatelessWidget {
               AroundMeLoaded() => CheckUserLocation(
                   currentUser: state.currentUser,
                   users: state.users,
+                  userCatalogs: state.userCatalogs,
                 ),
               AroundMeError() => ErrorPage(errorMessage: state.message),
             };

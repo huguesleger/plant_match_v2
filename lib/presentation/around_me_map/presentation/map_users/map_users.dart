@@ -5,6 +5,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/presentation/around_me_map/presentation/map_users/bottom_sheet_user.dart';
+import 'package:plant_match_v2/presentation/catolog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/presentation/profil/domain/entity/profil_user.dart';
 
 class MapUsers extends StatefulWidget {
@@ -12,10 +13,12 @@ class MapUsers extends StatefulWidget {
     super.key,
     required this.users,
     required this.currentUser,
+    required this.userCatalogs,
   });
 
   final List<ProfilUser> users;
   final ProfilUser currentUser;
+  final Map<String, List<Catalog>> userCatalogs;
 
   @override
   State<MapUsers> createState() => _MapUsersState();
@@ -195,6 +198,8 @@ class _MapUsersState extends State<MapUsers> {
       orElse: () => {'distance': 0.0},
     )['distance'];
 
+    final catalogs = widget.userCatalogs[user.uid] ?? [];
+
     return isCurrentUser
         ? Stack(
             alignment: Alignment.center,
@@ -223,7 +228,12 @@ class _MapUsersState extends State<MapUsers> {
           )
         : IconButton(
             onPressed: () {
-              bottomSheetUser(context: context, user: user, distance: distance);
+              bottomSheetUser(
+                context: context,
+                user: user,
+                distance: distance,
+                catalogs: catalogs,
+              );
             },
             style: ButtonStyle(
               shape: WidgetStateProperty.all(const CircleBorder()),

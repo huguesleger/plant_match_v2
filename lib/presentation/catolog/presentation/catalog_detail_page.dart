@@ -112,7 +112,7 @@ class _CatalogDetailPageState extends State<CatalogDetailPage> {
                 ),
                 child: Padding(
                   padding:
-                      const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                      const EdgeInsets.symmetric(vertical: 25, horizontal: 20),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -157,19 +157,22 @@ class _CatalogDetailPageState extends State<CatalogDetailPage> {
                           ),
                         ],
                       ),
-                      BadgePill(
-                        text: Text(
-                          _catalog.isPublish ? 'Publié' : 'Brouillon',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: _catalog.isPublish
-                                ? AppColors.white
-                                : AppColors.greyMedium,
+                      Padding(
+                        padding: const EdgeInsets.only(top: 6),
+                        child: BadgePill(
+                          text: Text(
+                            _catalog.isPublish ? 'Publié' : 'Brouillon',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: _catalog.isPublish
+                                  ? AppColors.white
+                                  : AppColors.greyMedium,
+                            ),
                           ),
+                          badgeColor: _catalog.isPublish
+                              ? AppColors.greenDark
+                              : AppColors.greyLight,
                         ),
-                        badgeColor: _catalog.isPublish
-                            ? AppColors.greenDark
-                            : AppColors.greyLight,
                       ),
                     ],
                   ),
@@ -192,7 +195,7 @@ class _CatalogDetailPageState extends State<CatalogDetailPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 20),
+            const SizedBox(height: 40),
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),

@@ -6,6 +6,7 @@ import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
 import 'package:plant_match_v2/presentation/around_me_map/presentation/cubit/around_me_cubit.dart';
 import 'package:plant_match_v2/presentation/around_me_map/presentation/map_users/map_users.dart';
+import 'package:plant_match_v2/presentation/catolog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/presentation/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/presentation/profil/presentation/profil_personal_information/widget/profil_personal_detail_location.dart';
 
@@ -14,10 +15,12 @@ class CheckUserLocation extends StatelessWidget {
     super.key,
     required this.currentUser,
     required this.users,
+    required this.userCatalogs,
   });
 
   final ProfilUser currentUser;
   final List<ProfilUser> users;
+  final Map<String, List<Catalog>> userCatalogs;
 
   @override
   Widget build(BuildContext context) {
@@ -27,16 +30,21 @@ class CheckUserLocation extends StatelessWidget {
         currentUser.longitude != 0;
 
     return hasValidLocation
-        ? _MapView(users: users, currentUser: currentUser)
+        ? _MapView(
+            users: users, currentUser: currentUser, userCatalogs: userCatalogs)
         : _NoLocation(currentUser);
   }
 }
 
 class _MapView extends StatelessWidget {
-  const _MapView({required this.users, required this.currentUser});
+  const _MapView(
+      {required this.users,
+      required this.currentUser,
+      required this.userCatalogs});
 
   final List<ProfilUser> users;
   final ProfilUser currentUser;
+  final Map<String, List<Catalog>> userCatalogs;
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +64,10 @@ class _MapView extends StatelessWidget {
               'Trouvez des utilisateurs autour de vous pour partager, échanger ...'),
         ),
         Expanded(
-          child: MapUsers(users: users, currentUser: currentUser),
+          child: MapUsers(
+              users: users,
+              currentUser: currentUser,
+              userCatalogs: userCatalogs),
         ),
       ],
     );

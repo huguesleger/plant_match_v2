@@ -28,7 +28,6 @@ class AppCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(25),
       ),
-      //margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 5),
       margin: const EdgeInsets.all(0),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
@@ -36,6 +35,7 @@ class AppCard extends StatelessWidget {
           width: 130,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Container(
                 width: 26,
@@ -66,7 +66,7 @@ class AppCard extends StatelessWidget {
                   color: textColor,
                 ),
               ),
-              const SizedBox(height: 10),
+              const Spacer(),
               SizedBox(
                 width: double.infinity,
                 child: ButtonRounded(
