@@ -7,14 +7,19 @@ class AppBarDynamicHeader extends StatefulWidget {
     super.key,
     required this.body,
     required this.backgroundAppBar,
-    required this.leading,
+    this.leading = true,
+    this.leadingButton,
+    this.leadingWidth = 80,
     required this.titlePadding,
     required this.height,
   });
 
   final Widget body;
   final Widget backgroundAppBar;
-  final Widget leading;
+  final bool leading;
+  final Widget? leadingButton;
+  final double leadingWidth;
+
   final EdgeInsets titlePadding;
   final double height;
 
@@ -51,7 +56,10 @@ class _AppBarDynamicHeaderState extends State<AppBarDynamicHeader> {
       controller: _scrollController,
       headerSliverBuilder: (context, innerBoxIsScrolled) => [
         SliverAppBar(
-          leading: widget.leading,
+          leading: widget.leading == true
+              ? widget.leadingButton
+              : const SizedBox.shrink(),
+          leadingWidth: widget.leadingWidth,
           pinned: true,
           floating: true,
           backgroundColor: AppColors.white,

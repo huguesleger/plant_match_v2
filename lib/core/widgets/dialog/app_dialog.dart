@@ -7,10 +7,14 @@ class AppDialog extends StatelessWidget {
     super.key,
     required this.child,
     required this.title,
+    this.textAlign = TextAlign.center,
+    this.titlePadding = const EdgeInsets.symmetric(horizontal: 20),
   });
 
   final Widget child;
   final String title;
+  final TextAlign textAlign;
+  final EdgeInsets titlePadding;
 
   @override
   Widget build(BuildContext context) {
@@ -20,18 +24,22 @@ class AppDialog extends StatelessWidget {
       ),
       backgroundColor: AppColors.white,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
           const SizedBox(height: 20),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: AppTypo.textL,
-              fontWeight: FontWeight.w600,
-              fontFamily: 'Chillax',
-              color: AppColors.blueGreen,
+          Padding(
+            padding: titlePadding,
+            child: Text(
+              title,
+              style: const TextStyle(
+                fontSize: AppTypo.textL,
+                fontWeight: FontWeight.w600,
+                fontFamily: 'Chillax',
+                color: AppColors.blueGreen,
+              ),
+              textAlign: textAlign,
             ),
-            textAlign: TextAlign.center,
           ),
           child,
         ],

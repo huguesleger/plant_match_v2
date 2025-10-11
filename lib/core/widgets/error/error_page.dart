@@ -6,9 +6,14 @@ import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
 
 class ErrorPage extends StatelessWidget {
-  const ErrorPage({super.key, required this.errorMessage});
+  const ErrorPage({
+    super.key,
+    required this.errorMessage,
+    this.onPressed,
+  });
 
   final String errorMessage;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -49,9 +54,7 @@ class ErrorPage extends StatelessWidget {
                   style: OutlinedButton.styleFrom(
                     side: const BorderSide(color: AppColors.greyLight),
                   ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
+                  onPressed: onPressed ?? () => Navigator.of(context).pop(),
                   icon: const Icon(
                     LucideIcons.arrow_left,
                     color: AppColors.blueGreen,
