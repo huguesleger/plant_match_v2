@@ -222,4 +222,75 @@ class FirebaseAuthService implements AuthRepository {
       throw Exception("Erreur lors de la déconnexion.");
     }
   }
+
+  @override
+  Future<void> sendPasswordResetEmail({required String email}) async {
+    try {
+      await _firebaseAuth.sendPasswordResetEmail(email: email);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        throw Exception('Aucun compte trouvé pour cet email.');
+      } else if (e.code == 'invalid-email') {
+        throw Exception('Email invalide.');
+      } else {
+        throw Exception(
+            'Une erreur inattendue est survenue. Veuillez réessayer.');
+      }
+    } catch (e) {
+      throw Exception('Une erreur inconnue est survenue. Veuillez réessayer.');
+    }
+  }
+
+  @override
+  Future<void> sendEmailVerification() async {
+    try {
+      User? user = _firebaseAuth.currentUser;
+
+      if (user == null) {
+        throw Exception(
+            "Aucun utilisateur connecté. Impossible d'envoyer le mail de vérification.");
+      }
+
+      // Recharge l'utilisateur depuis Firebase pour être sûr d'avoir l'état le plus récent
+      await user.reload();
+      user = _firebaseAuth.currentUser;
+
+      if (user == null) {
+        throw Exception("Aucun utilisateur après reload. Réessayez.");
+      }
+
+      if (user.emailVerified) {
+        // Pas d'erreur fatale : on indique simplement que l'email est déjà vérifié
+        throw Exception("Email déjà vérifié.");
+      }
+
+      // Debug log
+      print("DEBUG: Envoi email de vérification pour ${user.email}");
+
+      await user.sendEmailVerification();
+
+      // Debug log
+      print(
+          "DEBUG: Email de vérification envoyé avec succès pour ${user.email}");
+    } catch (e) {
+      print("ERROR sendEmailVerification: $e");
+      throw Exception(
+          "Erreur lors de l'envoi de l'email de vérification : ${e.toString()}");
+    }
+  }
+
+  @override
+  Future<bool> isEmailVerified() async {
+    try {
+      User? user = _firebaseAuth.currentUser;
+      if (user != null) {
+        await user.reload(); // recharge les infos utilisateur depuis Firebase
+        return user.emailVerified;
+      } else {
+        throw Exception("Aucun utilisateur connecté.");
+      }
+    } catch (e) {
+      throw Exception("Erreur lors de la vérification de l'email.");
+    }
+  }
 }

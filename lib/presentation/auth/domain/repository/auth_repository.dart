@@ -15,5 +15,11 @@ abstract class AuthRepository {
 
   Future<UserAuth?> signInWithFacebook();
 
+  Future<void> sendPasswordResetEmail({required String email});
+
   Future<void> logOut();
+
+  Future<void> sendEmailVerification();
+
+  Future<bool> isEmailVerified();
 }

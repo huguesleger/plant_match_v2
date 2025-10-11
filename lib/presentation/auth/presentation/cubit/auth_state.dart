@@ -10,12 +10,20 @@ class AuthLoading extends AuthState {}
 
 class Authenticated extends AuthState {
   final UserAuth user;
+
   Authenticated(this.user);
 }
 
 class Unauthenticated extends AuthState {}
 
+class AuthEmailVerificationSent extends AuthState {
+  final UserAuth user;
+
+  AuthEmailVerificationSent(this.user);
+}
+
 class AuthError extends AuthState {
   final String message;
+
   AuthError(this.message);
 }

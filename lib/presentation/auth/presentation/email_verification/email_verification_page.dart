@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/widgets/error/error_page.dart';
 import 'package:plant_match_v2/core/widgets/template/template_page.dart';
+import 'package:plant_match_v2/presentation/auth/domain/entities/user_auth.dart';
 import 'package:plant_match_v2/presentation/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/presentation/auth/presentation/cubit/auth_state.dart';
-import 'package:plant_match_v2/presentation/auth/presentation/email_verification/email_verification_page.dart';
+import 'package:plant_match_v2/presentation/auth/presentation/email_verification/email_verification_screen.dart';
 import 'package:plant_match_v2/presentation/auth/presentation/register/register_screen.dart';
 
-class RegisterPage extends StatelessWidget {
-  const RegisterPage({super.key});
+class EmailVerificationPage extends StatelessWidget {
+  final UserAuth user;
+  const EmailVerificationPage({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -18,16 +20,18 @@ class RegisterPage extends StatelessWidget {
           AuthInitial() || AuthLoading() => const Scaffold(
               body: SizedBox(
                 height: double.infinity,
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
+                child: Center(child: CircularProgressIndicator()),
               ),
             ),
           Authenticated() => const TemplatePage(),
-          AuthError() => ErrorPage(errorMessage: state.message),
+          AuthError() => ErrorPage(
+              errorMessage: state.message,
+              onPressed: () {
+                context.read<AuthCubit>().reset();
+              },
+            ),
           Unauthenticated() => const RegisterScreen(),
-          AuthEmailVerificationSent() =>
-            EmailVerificationPage(user: state.user),
+          AuthEmailVerificationSent() => EmailVerificationScreen(user: user),
         };
       },
     );

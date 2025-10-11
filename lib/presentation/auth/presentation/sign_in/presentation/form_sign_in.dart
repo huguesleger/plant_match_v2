@@ -7,6 +7,7 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/form/decoration_input.dart';
 import 'package:plant_match_v2/presentation/auth/presentation/cubit/auth_cubit.dart';
+import 'package:plant_match_v2/presentation/auth/presentation/forgot_password/forgot_password_page.dart';
 import 'package:plant_match_v2/presentation/auth/presentation/sign_in/presentation/sign_in_with_social.dart';
 
 class FormSignIn extends StatefulWidget {
@@ -108,11 +109,11 @@ class _FormSignInState extends State<FormSignIn> {
           const SizedBox(height: 10),
           GestureDetector(
             onTap: () {
-              /*              Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const ForgotPasswordPage(),
-              ),
-            );*/
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const ForgotPasswordPage(),
+                ),
+              );
             },
             child: Center(
               child: RichText(

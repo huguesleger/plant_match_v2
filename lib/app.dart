@@ -11,6 +11,7 @@ import 'package:plant_match_v2/presentation/around_me_map/presentation/cubit/aro
 import 'package:plant_match_v2/presentation/auth/data/firebase_auth_service.dart';
 import 'package:plant_match_v2/presentation/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/presentation/auth/presentation/cubit/auth_state.dart';
+import 'package:plant_match_v2/presentation/auth/presentation/email_verification/email_verification_page.dart';
 import 'package:plant_match_v2/presentation/catolog/presentation/cubit/catalog_cubit.dart';
 import 'package:plant_match_v2/presentation/get_started/presentation/get_started_page.dart';
 import 'package:plant_match_v2/presentation/profil/data/firebase_profil_repo.dart';
@@ -123,6 +124,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 Authenticated() => const TemplatePage(),
                 Unauthenticated() => const GetStartedPage(),
                 AuthError() => ErrorPage(errorMessage: authState.message),
+                AuthEmailVerificationSent() =>
+                  EmailVerificationPage(user: authState.user),
               },
             );
           },

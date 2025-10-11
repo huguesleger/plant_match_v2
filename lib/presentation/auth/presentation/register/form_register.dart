@@ -8,6 +8,7 @@ import 'package:plant_match_v2/core/widgets/form/decoration_input.dart';
 import 'package:plant_match_v2/presentation/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/presentation/auth/presentation/register/cgu_checkbox_field.dart';
 import 'package:plant_match_v2/presentation/auth/presentation/register/password_field.dart';
+import 'package:plant_match_v2/presentation/auth/presentation/sign_in_or_register.dart';
 
 class FormRegister extends StatefulWidget {
   const FormRegister({super.key});
@@ -208,7 +209,15 @@ class _FormRegisterState extends State<FormRegister> {
                 style: const TextStyle(color: AppColors.greyDark, fontSize: 11),
                 children: [
                   TextSpan(
-                    recognizer: TapGestureRecognizer()..onTap = () {},
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const SignInOrRegister(),
+                          ),
+                        );
+                      },
                     text: 'S\'identifier',
                     style: const TextStyle(
                         color: AppColors.blueGreen,
