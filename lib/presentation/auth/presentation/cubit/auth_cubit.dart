@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/presentation/auth/domain/entities/user_auth.dart';
 import 'package:plant_match_v2/presentation/auth/domain/repository/auth_repository.dart';
 import 'package:plant_match_v2/presentation/auth/presentation/cubit/auth_state.dart';
+import 'package:plant_match_v2/presentation/emailing/email_welcome.dart';
 import 'package:plant_match_v2/presentation/user_points/data/firebase_user_points.dart';
 
 class AuthCubit extends Cubit<AuthState> {
@@ -111,16 +113,20 @@ class AuthCubit extends Cubit<AuthState> {
   }) async {
     try {
       emit(AuthLoading());
+
       final UserAuth? user = await authRepository.registerWithEmailAndPassword(
         email: email,
         password: password,
         fullName: fullName,
       );
+
       if (user != null) {
         _currentUser = user;
-        await _addInitialPoints(user.uid);
+
+        // 🔹 Envoi de l’email de vérification
         await authRepository.sendEmailVerification();
-        //emit(Authenticated(user));
+
+        // 🔹 Ne pas créer de document Firestore tant que l’email n’est pas validé
         emit(AuthEmailVerificationSent(user));
       } else {
         emit(Unauthenticated());
@@ -128,7 +134,6 @@ class AuthCubit extends Cubit<AuthState> {
     } catch (e) {
       final errorMessage = e.toString().replaceFirst('Exception: ', '');
       emit(AuthError(errorMessage));
-      //emit(Unauthenticated());
     }
   }
 
@@ -152,29 +157,47 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   /// Vérifie si l'email est validé ; si oui -> Authenticated
-  Future<void> checkEmailVerified() async {
+  Future<void> checkEmailVerified({String? fullName}) async {
     try {
       final bool verified = await authRepository.isEmailVerified();
-      if (verified) {
-        final UserAuth? user = await authRepository.getCurrentUser();
-        if (user != null) {
-          _currentUser = user;
-          emit(Authenticated(user));
-        } else {
-          emit(Unauthenticated());
-/*          emit(
-            AuthError(
-                'Impossible de récupérer l\'utilisateur après vérification.'),
-          );*/
-        }
-      } else {
-        // Tant que non vérifié on renvoie le même état (pour rester sur la page)
+      if (!verified) {
         if (_currentUser != null) {
           emit(AuthEmailVerificationSent(_currentUser!));
         } else {
           emit(Unauthenticated());
         }
+        return;
       }
+
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        emit(AuthError("Utilisateur introuvable après vérification."));
+        return;
+      }
+
+      // 🔹 Une fois vérifié, on crée enfin le document Firestore
+      await authRepository.finalizeRegistration(
+        user,
+        fullName ?? _currentUser?.fullName ?? '',
+      );
+
+      try {
+        await welcomeEmail(
+            user.email!, fullName ?? _currentUser?.fullName ?? '');
+      } catch (e) {
+        print('⚠️ Erreur lors de l\'envoi de l\'email de bienvenue : $e');
+        // On ne bloque pas la suite du flux même si l'email échoue
+      }
+      await _addInitialPoints(user.uid);
+
+      final authenticatedUser = UserAuth(
+        uid: user.uid,
+        email: user.email!,
+        fullName: fullName ?? _currentUser?.fullName ?? '',
+      );
+
+      _currentUser = authenticatedUser;
+      emit(Authenticated(authenticatedUser));
     } catch (e) {
       final errorMessage = e.toString().replaceFirst('Exception: ', '');
       emit(AuthError(errorMessage));
@@ -243,6 +266,38 @@ class AuthCubit extends Cubit<AuthState> {
     } catch (e) {
       final errorMessage = e.toString().replaceFirst('Exception: ', '');
       emit(AuthError(errorMessage));
+    }
+  }
+
+  Future<void> deleteUnverifiedUser() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+
+      if (user != null && !user.emailVerified) {
+        await user.delete(); // Supprime le compte directement
+        emit(Unauthenticated());
+      }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'requires-recent-login') {
+        // On récupère à nouveau le user ici
+        final user = FirebaseAuth.instance.currentUser;
+        if (user != null && user.email != null) {
+          try {
+            // ⚠️ Il faut redemander les identifiants — ici, on ne les a pas
+            // Donc on ne peut pas reauthentifier automatiquement.
+            // La meilleure solution dans ce cas : simplement déconnecter l'utilisateur.
+            await user.reload();
+            await user.delete();
+            emit(Unauthenticated());
+          } catch (e) {
+            emit(AuthError('Impossible de supprimer le compte : $e'));
+          }
+        }
+      } else {
+        emit(AuthError('Erreur lors de la suppression du compte : ${e.code}'));
+      }
+    } catch (e) {
+      emit(AuthError('Erreur inconnue : $e'));
     }
   }
 }

@@ -90,30 +90,43 @@ class FirebaseAuthService implements AuthRepository {
   }
 
   @override
-  Future<UserAuth> registerWithEmailAndPassword({
+  Future<UserAuth?> registerWithEmailAndPassword({
     required String email,
     required String password,
     required String fullName,
   }) async {
     try {
+      // Création du compte Firebase (sans doc Firestore)
       UserCredential userCredential = await _firebaseAuth
           .createUserWithEmailAndPassword(email: email, password: password);
-      UserAuth userAuth = UserAuth(
+
+      final user = userCredential.user;
+      if (user == null) throw Exception("Impossible de créer l'utilisateur.");
+
+      return UserAuth(
         email: email,
-        uid: userCredential.user!.uid,
+        uid: user.uid,
         fullName: fullName,
       );
-
-      await _firebaseFirestore.collection('users').doc(userAuth.uid).set({
-        'email': userAuth.email,
-        'fullName': userAuth.fullName,
-        'isOnline': true,
-      });
-
-      return userAuth;
-    } on FirebaseException catch (e) {
+    } on FirebaseAuthException catch (e) {
       throw Exception(e.message);
     }
+  }
+
+  @override
+  Future<void> finalizeRegistration(User user, String fullName) async {
+    final docRef = _firebaseFirestore.collection('users').doc(user.uid);
+
+    final existingDoc = await docRef.get();
+    if (existingDoc.exists) return;
+
+    await docRef.set({
+      'email': user.email,
+      'fullName': fullName,
+      'isOnline': true,
+      'createdAt': FieldValue.serverTimestamp(),
+      'emailVerified': true,
+    });
   }
 
   @override

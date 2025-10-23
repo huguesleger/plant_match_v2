@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:plant_match_v2/presentation/auth/domain/entities/user_auth.dart';
 
 abstract class AuthRepository {
@@ -22,4 +23,6 @@ abstract class AuthRepository {
   Future<void> sendEmailVerification();
 
   Future<bool> isEmailVerified();
+
+  Future<void> finalizeRegistration(User user, String fullName);
 }

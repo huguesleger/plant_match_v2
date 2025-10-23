@@ -67,6 +67,9 @@ dependencies:
   skeletonizer: ^2.1.0+1
   path_provider: ^2.1.5
   toastification: ^3.0.3
+  flutter_dotenv: ^6.0.0
+  http: ^1.5.0
+  shared_preferences: ^2.5.3
 
 flutter_native_splash:
   color: "#12F4A9"
@@ -105,6 +108,7 @@ flutter:
     - assets/images/onboarding/
     - assets/images/auth/
     - assets/images/avatar/
+    - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
