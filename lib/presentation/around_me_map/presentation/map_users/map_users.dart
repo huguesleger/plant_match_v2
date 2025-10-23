@@ -237,11 +237,13 @@ class _MapUsersState extends State<MapUsers> {
             },
             style: ButtonStyle(
               shape: WidgetStateProperty.all(const CircleBorder()),
-              backgroundColor: WidgetStateProperty.all(AppColors.greenLight),
+              backgroundColor: WidgetStateProperty.all(
+                  catalogs.isNotEmpty ? AppColors.greenLight : AppColors.grey),
             ),
-            icon: const Icon(
+            icon: Icon(
               LucideIcons.heart_handshake,
-              color: AppColors.blueGreen,
+              color:
+                  catalogs.isNotEmpty ? AppColors.blueGreen : AppColors.white,
               size: 25.0,
             ),
           );

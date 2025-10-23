@@ -119,21 +119,32 @@ void bottomSheetUser({
             height: 255,
             color: AppColors.greyUltraLight,
             padding: const EdgeInsets.symmetric(vertical: 20),
-            child: Row(
-              children: [
-                const SizedBox(width: 20),
-                AppCard(
-                  bgColor: AppColors.greenDark,
-                  textColor: AppColors.white,
-                  title: 'Plantes & Boutures',
-                  description: 'Mon catalogue de ce que j’ai à partager',
-                  icon: LucideIcons.flower_2,
-                  onPressed: () {},
-                ),
-                const SizedBox(width: 20),
-                CatalogUsers(catalogs: catalogs),
-              ],
-            ),
+            child: catalogs.isNotEmpty
+                ? Row(
+                    children: [
+                      const SizedBox(width: 20),
+                      AppCard(
+                        bgColor: AppColors.greenDark,
+                        textColor: AppColors.white,
+                        title: 'Plantes & Boutures',
+                        description: 'Mon catalogue de ce que j’ai à partager',
+                        icon: LucideIcons.flower_2,
+                        onPressed: () {},
+                      ),
+                      const SizedBox(width: 20),
+                      CatalogUsers(catalogs: catalogs),
+                    ],
+                  )
+                : Center(
+                    child: Text(
+                      "${user.userName.isNotEmpty ? user.userName.toCapitalize() : user.fullName.getFirstWordBeforeSpace().toCapitalize()} n'a pas encore de catalogue.",
+                      style: InterTextStyle.inter(
+                        AppTypo.textM,
+                        color: AppColors.greyDark,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
           ),
           const Row(
             children: [
