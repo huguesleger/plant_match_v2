@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
-import 'package:plant_match_v2/presentation/profil/domain/entity/profil_user.dart';
-import 'package:plant_match_v2/presentation/profil/presentation/cubit/profil_cubit.dart';
-import 'package:plant_match_v2/presentation/profil/presentation/cubit/profil_state.dart';
+import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
+import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
+import 'package:plant_match_v2/features/profil/presentation/cubit/profil_state.dart';
 
 class Avatar extends StatelessWidget {
   const Avatar({

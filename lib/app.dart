@@ -6,21 +6,20 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:plant_match_v2/core/theme/app_theme.dart';
 import 'package:plant_match_v2/core/widgets/error/error_page.dart';
 import 'package:plant_match_v2/core/widgets/template/template_page.dart';
-import 'package:plant_match_v2/presentation/around_me_map/data/firebase_around_me.dart';
-import 'package:plant_match_v2/presentation/around_me_map/presentation/cubit/around_me_cubit.dart';
-import 'package:plant_match_v2/presentation/auth/data/firebase_auth_service.dart';
-import 'package:plant_match_v2/presentation/auth/presentation/cubit/auth_cubit.dart';
-import 'package:plant_match_v2/presentation/auth/presentation/cubit/auth_state.dart';
-import 'package:plant_match_v2/presentation/auth/presentation/email_verification/email_verification_page.dart';
-import 'package:plant_match_v2/presentation/catolog/presentation/cubit/catalog_cubit.dart';
-import 'package:plant_match_v2/presentation/get_started/presentation/get_started_page.dart';
-import 'package:plant_match_v2/presentation/profil/data/firebase_profil_repo.dart';
-import 'package:plant_match_v2/presentation/profil/presentation/cubit/profil_cubit.dart';
-import 'package:plant_match_v2/presentation/storage/data/firebase_storage_repository.dart';
-import 'package:plant_match_v2/presentation/user_points/data/firebase_user_points.dart';
-import 'package:plant_match_v2/presentation/user_points/presentation/cubit/user_points_cubit.dart';
-
-import 'presentation/catolog/data/firebase_catalog_repository.dart';
+import 'package:plant_match_v2/features/around_me_map/data/firebase_around_me.dart';
+import 'package:plant_match_v2/features/around_me_map/presentation/cubit/around_me_cubit.dart';
+import 'package:plant_match_v2/features/auth/data/firebase_auth_service.dart';
+import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:plant_match_v2/features/auth/presentation/cubit/auth_state.dart';
+import 'package:plant_match_v2/features/auth/presentation/email_verification/email_verification_page.dart';
+import 'package:plant_match_v2/features/catolog/presentation/cubit/catalog_cubit.dart';
+import 'package:plant_match_v2/features/get_started/presentation/get_started_page.dart';
+import 'package:plant_match_v2/features/profil/data/firebase_profil_repo.dart';
+import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
+import 'package:plant_match_v2/features/storage/data/firebase_storage_repository.dart';
+import 'package:plant_match_v2/features/user_points/data/firebase_user_points.dart';
+import 'package:plant_match_v2/features/user_points/presentation/cubit/user_points_cubit.dart';
+import 'package:plant_match_v2/features/catolog/data/firebase_catalog_repository.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});

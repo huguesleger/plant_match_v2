@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/widgets/navigation_bottom_bar/navigation_bottom_bar.dart';
-import 'package:plant_match_v2/presentation/around_me_map/presentation/around_me_page.dart';
-import 'package:plant_match_v2/presentation/auth/presentation/cubit/auth_cubit.dart';
-import 'package:plant_match_v2/presentation/home/presentation/home_page.dart';
-import 'package:plant_match_v2/presentation/profil/presentation/profil_page.dart';
+import 'package:plant_match_v2/features/around_me_map/presentation/around_me_page.dart';
+import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:plant_match_v2/features/home/presentation/home_page.dart';
+import 'package:plant_match_v2/features/profil/presentation/profil_page.dart';
 
 class TemplatePage extends StatefulWidget {
   final int initialIndex;
