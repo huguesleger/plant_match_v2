@@ -13,22 +13,20 @@ class GetStartedPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Scaffold(
       backgroundColor: AppColors.blueGreen,
-      body: SafeArea(
-        child: Stack(
-          children: [
-            _BgImage(),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _Logo(),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: _Content(),
-                ),
-              ],
-            ),
-          ],
-        ),
+      body: Stack(
+        children: [
+          _BgImage(),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _Logo(),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: _Content(),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -67,7 +65,7 @@ class _Content extends StatelessWidget {
           color: AppColors.greenLight,
         ),
         const Padding(
-          padding: EdgeInsets.only(bottom: 70),
+          padding: EdgeInsets.only(bottom: 20),
           child: Text(
             'Rejoignez la communauté des amoureux des plantes près de chez vous.',
             style: TextStyle(
@@ -76,8 +74,7 @@ class _Content extends StatelessWidget {
             ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 50),
+        SafeArea(
           child: Column(
             children: [
               SizedBox(
