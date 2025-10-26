@@ -16,11 +16,8 @@ class FirebaseCatalogRepository implements CatalogRepository {
 
     try {
       final data = catalog.toJson();
-
       data.remove('createdAt');
 
-      print(
-          "🔥 updateCatalog → ${catalog.catalogId} with data: ${catalog.toJson()}");
       await firestore
           .collection('catalogs')
           .doc(catalog.catalogId)
@@ -43,7 +40,6 @@ class FirebaseCatalogRepository implements CatalogRepository {
           .map((doc) => Catalog.fromJson(doc.data(), doc.id))
           .toList();
     } catch (e) {
-      print("🔥 Error fetching catalogs for user $userId: $e");
       throw Exception('Failed to fetch catalogs: $e');
     }
   }

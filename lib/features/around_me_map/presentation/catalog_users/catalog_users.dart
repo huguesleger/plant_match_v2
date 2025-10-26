@@ -37,7 +37,7 @@ class CatalogUsers extends StatelessWidget {
                   ),
                 );
               },
-              separatorBuilder: (context, index) => SizedBox(width: 20),
+              separatorBuilder: (context, index) => const SizedBox(width: 20),
             ),
           );
   }

@@ -34,11 +34,7 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
   int _currentPage = 0;
   final int _totalPages = 9;
   final PageController _pageController = PageController();
-
-  int _charCount = 0;
-
   final int _maxChar = 150;
-
   final TextEditingController _plantNameController = TextEditingController();
   final TextEditingController _plantCategoryController =
       TextEditingController();
@@ -51,7 +47,6 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
       TextEditingController();
   final TextEditingController _plantDescriptionController =
       TextEditingController();
-  final TextEditingController _plantImageController = TextEditingController();
   final TextEditingController _plantIsPublishController =
       TextEditingController();
 
@@ -84,9 +79,6 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
           TextPosition(offset: _maxChar),
         );
       }
-      setState(() {
-        _charCount = _plantDescriptionController.text.length;
-      });
     });
   }
 
@@ -247,7 +239,9 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
               _catalog = updatedWithImages;
             });
           }
-          Navigator.pop(context, true);
+          if (mounted) {
+            Navigator.pop(context, true);
+          }
         } else {
           _formKeyPlantIsPublish.currentState?.validate();
         }
@@ -720,6 +714,15 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                               errorText: 'Maximum $_maxChar caractères'),
                         ]),
                       ),
+/*                      const SizedBox(height: 8),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          '$_charCount / $_maxChar caractères',
+                          style: const TextStyle(
+                              fontSize: 12, color: AppColors.greyDark),
+                        ),
+                      ),*/
                     ],
                   ),
                 ),

@@ -185,8 +185,8 @@ class AuthCubit extends Cubit<AuthState> {
         await welcomeEmail(
             user.email!, fullName ?? _currentUser?.fullName ?? '');
       } catch (e) {
-        print('⚠️ Erreur lors de l\'envoi de l\'email de bienvenue : $e');
-        // On ne bloque pas la suite du flux même si l'email échoue
+        throw Exception(
+            'Erreur lors de l\'envoi de l\'email de bienvenue : $e');
       }
       await _addInitialPoints(user.uid);
 

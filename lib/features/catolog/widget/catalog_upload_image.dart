@@ -67,9 +67,11 @@ class _CatalogUploadImageState extends State<CatalogUploadImage> {
       _notifyFieldChanged(catalogImages);
       widget.onCatalogUpdated?.call(updatedCatalog);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Erreur lors de la sélection d’image.')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Erreur lors de la sélection d’image.')),
+        );
+      }
     }
   }
 
@@ -100,7 +102,7 @@ class _CatalogUploadImageState extends State<CatalogUploadImage> {
           borderRadius: BorderRadius.circular(20),
           child: Container(
             decoration: BoxDecoration(
-              color: AppColors.greenLight.withOpacity(0.1),
+              color: AppColors.greenLight.withValues(alpha: 0.1),
               border: const DashedBorder(
                 dashLength: 8,
                 left: BorderSide(color: AppColors.blueGreen, width: 2),

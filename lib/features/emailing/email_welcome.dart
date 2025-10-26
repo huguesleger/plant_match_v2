@@ -42,9 +42,6 @@ Future<void> welcomeEmail(String email, String fullName) async {
     body: body,
   );
 
-  print("📩 Brevo Response Code: ${response.statusCode}");
-  print("📩 Brevo Body: ${response.body}");
-
   if (response.statusCode != 201) {
     throw Exception(
         'Erreur lors de l\'envoi du mail de bienvenue : ${response.body}');

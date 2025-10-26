@@ -28,7 +28,7 @@ class ProfilBadgeLevelCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card.filled(
-      color: AppColors.greenLight.withOpacity(0.3),
+      color: AppColors.greenLight.withValues(alpha: 0.3),
       child: SizedBox(
         width: double.infinity,
         child: Padding(

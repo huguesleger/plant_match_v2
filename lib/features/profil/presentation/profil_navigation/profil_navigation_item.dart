@@ -22,7 +22,7 @@ class ProfilNavigationItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       elevation: 6,
-      shadowColor: AppColors.black.withOpacity(0.2),
+      shadowColor: AppColors.black.withValues(alpha: 0.2),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(
           Radius.circular(15),
@@ -35,7 +35,7 @@ class ProfilNavigationItem extends StatelessWidget {
           width: 53,
           height: 53,
           decoration: BoxDecoration(
-            color: colorBgIcon?.withOpacity(0.3),
+            color: colorBgIcon?.withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(15),
           ),
           child: Icon(icon, color: colorIcon),

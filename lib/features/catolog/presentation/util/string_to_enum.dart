@@ -12,7 +12,6 @@ T? stringToEnum<T>(String value, List<T> enumValues) {
 
 // Fonctions spécifiques pour chaque Enum
 Environment? getEnvironmentFromString(String value) {
-  print("getEnvironmentFromString: $value");
   return stringToEnum<Environment>(value, Environment.values);
 }
 

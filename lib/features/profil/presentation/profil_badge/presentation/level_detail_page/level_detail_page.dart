@@ -213,7 +213,7 @@ class _IconLevel extends StatelessWidget {
       height: 53,
       decoration: BoxDecoration(
         shape: BoxShape.rectangle,
-        color: AppColors.greenDark.withOpacity(0.3),
+        color: AppColors.greenDark.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(15),
       ),
       child: Icon(

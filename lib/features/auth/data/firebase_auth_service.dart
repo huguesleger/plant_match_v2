@@ -263,8 +263,6 @@ class FirebaseAuthService implements AuthRepository {
         throw Exception(
             "Aucun utilisateur connecté. Impossible d'envoyer le mail de vérification.");
       }
-
-      // Recharge l'utilisateur depuis Firebase pour être sûr d'avoir l'état le plus récent
       await user.reload();
       user = _firebaseAuth.currentUser;
 
@@ -273,20 +271,10 @@ class FirebaseAuthService implements AuthRepository {
       }
 
       if (user.emailVerified) {
-        // Pas d'erreur fatale : on indique simplement que l'email est déjà vérifié
         throw Exception("Email déjà vérifié.");
       }
-
-      // Debug log
-      print("DEBUG: Envoi email de vérification pour ${user.email}");
-
       await user.sendEmailVerification();
-
-      // Debug log
-      print(
-          "DEBUG: Email de vérification envoyé avec succès pour ${user.email}");
     } catch (e) {
-      print("ERROR sendEmailVerification: $e");
       throw Exception(
           "Erreur lors de l'envoi de l'email de vérification : ${e.toString()}");
     }
@@ -297,7 +285,7 @@ class FirebaseAuthService implements AuthRepository {
     try {
       User? user = _firebaseAuth.currentUser;
       if (user != null) {
-        await user.reload(); // recharge les infos utilisateur depuis Firebase
+        await user.reload();
         return user.emailVerified;
       } else {
         throw Exception("Aucun utilisateur connecté.");

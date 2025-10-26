@@ -66,7 +66,7 @@ class _AppBarDynamicHeaderState extends State<AppBarDynamicHeader> {
           surfaceTintColor: AppColors.white,
           expandedHeight: widget.height,
           collapsedHeight: 90,
-          shadowColor: AppColors.black.withOpacity(0.6),
+          shadowColor: AppColors.black.withValues(alpha: 0.6),
           flexibleSpace: FlexibleSpaceBar(
             expandedTitleScale: 1.2,
             centerTitle: true,

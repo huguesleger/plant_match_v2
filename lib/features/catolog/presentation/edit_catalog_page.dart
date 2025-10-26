@@ -94,11 +94,13 @@ class _EditCatalogPageState extends State<EditCatalogPage> {
           setState(() {
             _isSaving = false;
           });
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Erreur lors de l’upload des images"),
-            ),
-          );
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Erreur lors de l’upload des images"),
+              ),
+            );
+          }
           return;
         }
 

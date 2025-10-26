@@ -50,7 +50,7 @@ void showImageSourceBottomSheet({
               width: 53,
               height: 53,
               decoration: BoxDecoration(
-                color: AppColors.greenLight.withOpacity(0.3),
+                color: AppColors.greenLight.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(15),
               ),
               child: const Icon(LucideIcons.image, color: AppColors.blueGreen),
@@ -72,7 +72,7 @@ void showImageSourceBottomSheet({
               width: 53,
               height: 53,
               decoration: BoxDecoration(
-                color: AppColors.greenLight.withOpacity(0.3),
+                color: AppColors.greenLight.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(15),
               ),
               child: const Icon(LucideIcons.camera, color: AppColors.blueGreen),
@@ -94,7 +94,7 @@ void showImageSourceBottomSheet({
               width: 53,
               height: 53,
               decoration: BoxDecoration(
-                color: AppColors.greenLight.withOpacity(0.3),
+                color: AppColors.greenLight.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(15),
               ),
               child: const Icon(LucideIcons.users, color: AppColors.blueGreen),
@@ -132,7 +132,7 @@ void showImageSourceBottomSheet({
               width: 53,
               height: 53,
               decoration: BoxDecoration(
-                color: AppColors.greenLight.withOpacity(0.3),
+                color: AppColors.greenLight.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(15),
               ),
               child:

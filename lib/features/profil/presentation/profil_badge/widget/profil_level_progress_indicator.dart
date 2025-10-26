@@ -75,7 +75,7 @@ class ProfilLevelProgressIndicator extends StatelessWidget {
         const SizedBox(height: 8),
         LinearProgressIndicator(
           value: progress,
-          backgroundColor: AppColors.blueGreen.withOpacity(0.3),
+          backgroundColor: AppColors.blueGreen.withValues(alpha: 0.3),
           color: AppColors.greenMedium,
           minHeight: 2,
         ),

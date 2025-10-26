@@ -75,7 +75,7 @@ class ProfilNavigation extends StatelessWidget {
               ),
             );
           },
-          bgColor: AppColors.greenLight.withOpacity(0.3),
+          bgColor: AppColors.greenLight.withValues(alpha: 0.3),
           textColor: AppColors.blueGreen,
           icon: const Icon(LucideIcons.log_out, color: AppColors.blueGreen),
           iconAlignment: IconAlignment.start,

@@ -84,7 +84,6 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     } finally {
       for (var i = 60; i > 0; i--) {
         await Future.delayed(const Duration(seconds: 1));
-        if (!mounted) return;
         setState(() => _remainingSeconds = i - 1);
       }
       if (mounted) setState(() => _cooldown = false);
