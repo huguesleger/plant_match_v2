@@ -12,7 +12,6 @@ import 'package:plant_match_v2/core/widgets/buttons/button_rounded_with_icon.dar
 import 'package:plant_match_v2/features/catolog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catolog/presentation/cubit/catalog_cubit.dart';
 import 'package:plant_match_v2/features/catolog/presentation/edit_catalog_page.dart';
-import 'package:plant_match_v2/features/catolog/presentation/util/environment_name.dart';
 
 class CatalogDetailPage extends StatefulWidget {
   const CatalogDetailPage({super.key, required this.catalog});
@@ -39,14 +38,14 @@ class _CatalogDetailPageState extends State<CatalogDetailPage> {
 
     return Scaffold(
       appBar: AppBarHeaderSlider(
-        headerHeight: 325,
+        headerHeight: 450,
         content: Stack(
           children: [
             images.isNotEmpty
                 ? CarouselSlider.builder(
                     itemCount: images.length,
                     options: CarouselOptions(
-                      height: 325,
+                      height: 450,
                       viewportFraction: 1.0,
                       enableInfiniteScroll: false,
                       onPageChanged: (index, reason) {
@@ -98,7 +97,7 @@ class _CatalogDetailPageState extends State<CatalogDetailPage> {
                   )
                 : const SizedBox.shrink(),
             Positioned(
-              top: 240,
+              top: 365,
               right: 0,
               left: 0,
               child: Container(
@@ -230,13 +229,13 @@ class _CatalogDetailPageState extends State<CatalogDetailPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            _catalog.lighting.name,
+                            _catalog.lighting.lightingName,
                             style: const TextStyle(
                                 fontSize: AppTypo.textXs,
                                 fontWeight: FontWeight.bold),
                           ),
                           const Text(
-                            'lumieres',
+                            'lumière',
                             style: TextStyle(
                                 fontSize: AppTypo.textXs, color: Colors.grey),
                           ),
@@ -264,7 +263,7 @@ class _CatalogDetailPageState extends State<CatalogDetailPage> {
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(_catalog.watering.name,
+                          Text(_catalog.watering.wateringName,
                               style: const TextStyle(
                                 fontSize: AppTypo.textXs,
                                 fontWeight: FontWeight.bold,
@@ -301,7 +300,7 @@ class _CatalogDetailPageState extends State<CatalogDetailPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            _catalog.levelMaintenance.name,
+                            _catalog.levelMaintenance.levelName,
                             style: const TextStyle(
                               fontSize: AppTypo.textXs,
                               fontWeight: FontWeight.bold,

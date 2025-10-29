@@ -10,8 +10,6 @@ import 'package:plant_match_v2/features/catolog/presentation/add_plant_wizard/ad
 import 'package:plant_match_v2/features/catolog/presentation/catalog_card_item.dart';
 import 'package:plant_match_v2/features/catolog/presentation/cubit/catalog_cubit.dart';
 import 'package:plant_match_v2/features/catolog/presentation/cubit/catalog_state.dart';
-import 'package:plant_match_v2/features/catolog/presentation/util/environment_name.dart';
-import 'package:plant_match_v2/features/catolog/presentation/util/family_name.dart';
 import 'package:plant_match_v2/features/catolog/widget/catalog_card_is_empty.dart';
 
 class CatalogScreen extends StatefulWidget {

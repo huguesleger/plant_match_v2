@@ -50,7 +50,7 @@ class CguCheckboxField extends StatelessWidget {
                   TextSpan(
                     recognizer: TapGestureRecognizer()
                       ..onTap = () {
-                        print('Privacy policy');
+                        //TODO page privacy policy
                       },
                     text: 'Politique de confidentialité',
                     style: const TextStyle(

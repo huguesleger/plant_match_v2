@@ -7,8 +7,6 @@ import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart'
 import 'package:plant_match_v2/features/catolog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catolog/presentation/catalog_detail_page.dart';
 import 'package:plant_match_v2/features/catolog/presentation/cubit/catalog_cubit.dart';
-import 'package:plant_match_v2/features/catolog/presentation/util/environment_name.dart';
-import 'package:plant_match_v2/features/catolog/presentation/util/family_name.dart';
 
 class CatalogCardItem extends StatelessWidget {
   const CatalogCardItem({super.key, required this.catalog});

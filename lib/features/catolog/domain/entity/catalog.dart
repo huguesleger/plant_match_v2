@@ -158,75 +158,46 @@ enum Lighting {
   shade,
 }
 
-/*extension EnvironmentExtension on Environment {
-  String get envName {
-    switch (this) {
-      case Environment.indoor:
-        return 'Intérieur';
-      case Environment.outdoor:
-        return 'Extérieur';
-    }
-  }
-}*/
+extension LightingExtension on Lighting {
+  String get lightingName => switch (this) {
+        Lighting.sun => 'Soleil',
+        Lighting.indirectLight => 'Indirecte',
+        Lighting.shade => 'Ombre',
+      };
+}
 
-/*extension FamilyExtension on Family {
-  String get familyName {
-    switch (this) {
-      case Family.tropical:
-        return 'Tropicale';
-      case Family.succulent:
-        return 'Succulente';
-      case Family.aquatic:
-        return 'Aquatique';
-      case Family.climbing:
-        return 'Grimpante';
-      case Family.bonsai:
-        return 'Bonsaï';
-      case Family.flower:
-        return 'Fleurie';
-      case Family.aromatic:
-        return 'Aromatique';
-      case Family.medical:
-        return 'Médicinale';
-      case Family.carnivorous:
-        return 'Carnivore';
-    }
-  }
-}*/
+extension EnvironmentExtension on Environment {
+  String get envName => switch (this) {
+        Environment.indoor => 'Intérieur',
+        Environment.outdoor => 'Extérieur',
+      };
+}
 
-/*extension LevelMaintenanceExtension on LevelMaintenance {
-  String get levelName {
-    switch (this) {
-      case LevelMaintenance.low:
-        return 'Entretien faible';
-      case LevelMaintenance.medium:
-        return 'Entretien moyen';
-      case LevelMaintenance.high:
-        return 'Entretien élevé';
-    }
-  }
-}*/
+extension FamilyExtension on Family {
+  String get familyName => switch (this) {
+        Family.tropical => 'Tropicale',
+        Family.succulent => 'Succulente',
+        Family.aquatic => 'Aquatique',
+        Family.climbing => 'Grimpante',
+        Family.bonsai => 'Bonsaï',
+        Family.flower => 'Fleurie',
+        Family.aromatic => 'Aromatique',
+        Family.medical => 'Médicinale',
+        Family.carnivorous => 'Carnivore',
+      };
+}
 
-/*extension WateringExtension on Watering {
-  String get wateringName {
-    switch (this) {
-      case Watering.little:
-        return 'Peu d\'eau';
-      case Watering.regularly:
-        return 'Régulièrement';
-    }
-  }
-}*/
+extension LevelMaintenanceExtension on LevelMaintenance {
+  String get levelName => switch (this) {
+        LevelMaintenance.low => 'Faible',
+        LevelMaintenance.medium => 'Moyen',
+        LevelMaintenance.high => 'Elevé',
+      };
+}
 
-/*extension LightingExtension on Lighting {
-  String get lightingName {
-    switch (this) {
-      case Lighting.sun:
-        return 'Ensoleillé';
-      case Lighting.indirectLight:
-        return 'Lumière indirecte';
-      case Lighting.shade:
-        return 'Ombre';
-    }
-  }
-}*/
+extension WateringExtension on Watering {
+  String get wateringName => switch (this) {
+        Watering.little => 'Peu d\'eau',
+        Watering.regularly => 'Régulier',
+      };
+}
