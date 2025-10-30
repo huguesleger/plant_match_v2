@@ -32,7 +32,7 @@ class UserPointsUtils {
     6: LevelData(
       maxPoints: 3000,
       name: 'Maître du jardinage',
-      icon: LucideIcons.fence,
+      icon: LucideIcons.tree_pine,
     ),
     7: LevelData(
       maxPoints: 6000,

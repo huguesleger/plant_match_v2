@@ -386,7 +386,7 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                               const SizedBox(width: 10),
                               Expanded(
                                 child: SelectableItem(
-                                  icon: LucideIcons.fence,
+                                  icon: LucideIcons.trees,
                                   label: "Extérieur",
                                   value: "outdoor",
                                   isSelected: _plantCategoryController.text ==

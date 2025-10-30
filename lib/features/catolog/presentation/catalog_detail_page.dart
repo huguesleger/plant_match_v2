@@ -145,7 +145,7 @@ class _CatalogDetailPageState extends State<CatalogDetailPage> {
                                   height: 25,
                                   child: Icon(
                                     _catalog.environment == Environment.outdoor
-                                        ? LucideIcons.fence
+                                        ? LucideIcons.trees
                                         : LucideIcons.house,
                                     color: AppColors.blueGreen,
                                     size: AppTypo.textS,
