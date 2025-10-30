@@ -1,0 +1,65 @@
+import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/core/theme/app_typo.dart';
+
+class ItemRadio extends StatelessWidget {
+  const ItemRadio({
+    super.key,
+    this.subtitle,
+    required this.title,
+    required this.value,
+    required this.selectedItem,
+    required this.onItemSelected,
+  });
+
+  final String title;
+  final String? subtitle;
+  final String value;
+  final String? selectedItem;
+  final Function(String) onItemSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final bool isSelected = selectedItem == value;
+
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: isSelected ? AppColors.greenDark : Colors.transparent,
+          width: 1,
+        ),
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: ListTile(
+        tileColor: isSelected
+            ? AppColors.greenDark.withValues(alpha: 0.1)
+            : AppColors.greyUltraLight,
+        title: Text(
+          title,
+          style: const TextStyle(
+              color: AppColors.greyMedium, fontSize: AppTypo.textS),
+        ),
+        subtitle: subtitle == null
+            ? null
+            : Text(subtitle!,
+                style: const TextStyle(
+                  fontSize: AppTypo.textXs,
+                )),
+        trailing: Radio<String>(
+          value: value,
+          groupValue: selectedItem,
+          onChanged: (String? newValue) {
+            if (newValue != null) {
+              onItemSelected(newValue);
+            }
+          },
+          activeColor: AppColors.greenDark,
+        ),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(15))),
+      ),
+    );
+  }
+}

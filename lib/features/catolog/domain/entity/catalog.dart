@@ -189,9 +189,9 @@ extension FamilyExtension on Family {
 
 extension LevelMaintenanceExtension on LevelMaintenance {
   String get levelName => switch (this) {
-        LevelMaintenance.low => 'Faible',
+        LevelMaintenance.low => 'Facile',
         LevelMaintenance.medium => 'Moyen',
-        LevelMaintenance.high => 'Elevé',
+        LevelMaintenance.high => 'Difficile',
       };
 }
 

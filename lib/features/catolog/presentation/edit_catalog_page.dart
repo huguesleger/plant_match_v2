@@ -3,11 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/form/decoration_input.dart';
 import 'package:plant_match_v2/features/catolog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catolog/presentation/cubit/catalog_cubit.dart';
 import 'package:plant_match_v2/features/catolog/presentation/util/string_to_enum.dart';
 import 'package:plant_match_v2/features/catolog/widget/catalog_upload_image.dart';
+import 'package:plant_match_v2/features/catolog/widget/grid_selectable_item.dart';
+import 'package:plant_match_v2/features/catolog/widget/item_radio.dart';
 import 'package:plant_match_v2/features/catolog/widget/selectable_item.dart';
 
 class EditCatalogPage extends StatefulWidget {
@@ -36,19 +39,7 @@ class _EditCatalogPageState extends State<EditCatalogPage> {
 
   bool _isSaving = false;
 
-  List<Family> getAllFamilies() {
-    return [
-      Family.flower,
-      Family.aquatic,
-      Family.aromatic,
-      Family.bonsai,
-      Family.carnivorous,
-      Family.climbing,
-      Family.medical,
-      Family.succulent,
-      Family.tropical
-    ];
-  }
+  final int _maxChar = 150;
 
   @override
   void initState() {
@@ -136,23 +127,14 @@ class _EditCatalogPageState extends State<EditCatalogPage> {
     }
   }
 
-  Widget _buildDropdown({
-    required String name,
-    required String label,
-    required List<String> options,
-    required String? initialValue,
-    required void Function(String?) onChanged,
-  }) {
-    return FormBuilderDropdown<String>(
-      name: name,
-      initialValue: initialValue,
-      decoration: InputDecoration(labelText: label),
-      items: options
-          .map((val) => DropdownMenuItem(value: val, child: Text(val)))
-          .toList(),
-      onChanged: onChanged,
-      validator: FormBuilderValidators.required(),
-    );
+  void onSelectMultiple(String value) {
+    setState(() {
+      if (_selectedFamilies.contains(value)) {
+        _selectedFamilies.remove(value);
+      } else {
+        _selectedFamilies.add(value);
+      }
+    });
   }
 
   void onSelect(String value) {
@@ -165,7 +147,7 @@ class _EditCatalogPageState extends State<EditCatalogPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Modifier la plante'),
+        title: Text('Modifier ${widget.catalog.name}'),
         actions: [
           IconButton(
             icon: const Icon(Icons.save),
@@ -180,6 +162,7 @@ class _EditCatalogPageState extends State<EditCatalogPage> {
               child: FormBuilder(
                 key: _formKey,
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     FormBuilderTextField(
                       key: _formKeyPlantName,
@@ -192,13 +175,11 @@ class _EditCatalogPageState extends State<EditCatalogPage> {
                       validator: FormBuilderValidators.required(),
                     ),
                     const SizedBox(height: 16),
-/*              _buildDropdown(
-                name: 'environment',
-                label: 'Environnement',
-                options: ['indoor', 'outdoor'],
-                initialValue: _environment,
-                onChanged: (val) => setState(() => _environment = val),
-              ),*/
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      child:
+                          Text('Sélectionner une catégorie pour votre plante'),
+                    ),
                     FormBuilderField(
                       name: 'category',
                       initialValue: _environment,
@@ -230,7 +211,7 @@ class _EditCatalogPageState extends State<EditCatalogPage> {
                                 const SizedBox(width: 10),
                                 Expanded(
                                   child: SelectableItem(
-                                    icon: LucideIcons.fence,
+                                    icon: LucideIcons.trees,
                                     label: "Extérieur",
                                     value: "outdoor",
                                     isSelected: _environment == "outdoor",
@@ -246,71 +227,268 @@ class _EditCatalogPageState extends State<EditCatalogPage> {
                         );
                       },
                     ),
-                    const SizedBox(height: 16),
-                    FormBuilderFilterChips<String>(
-                      name: 'families',
-                      initialValue: _selectedFamilies,
-                      options: getAllFamilies()
-                          .map((f) => FormBuilderChipOption(
-                              value: f.name, child: Text(f.name)))
+                    const SizedBox(height: 25),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      child: Text('Sélectionner une ou des catégorie(s)'),
+                    ),
+                    FormBuilderField(
+                      name: 'family',
+                      initialValue: _selectedFamilies
+                          .map(getFamilyFromString)
+                          .whereType<Family>()
                           .toList(),
-                      decoration:
-                          const InputDecoration(labelText: 'Famille(s)'),
-                      onChanged: (val) =>
-                          setState(() => _selectedFamilies = val ?? []),
-                      validator: FormBuilderValidators.required(),
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      builder: (FormFieldState<dynamic> fieldFamily) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            GridSelectableItem(
+                                selectedValues: _selectedFamilies,
+                                onSelect: (value) {
+                                  onSelectMultiple(value);
+                                  fieldFamily.didChange(
+                                    _selectedFamilies
+                                        .map(getFamilyFromString)
+                                        .whereType<Family>()
+                                        .toList(),
+                                  );
+                                }),
+                            if (fieldFamily.hasError)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8),
+                                child: Text(
+                                  fieldFamily.errorText ?? '',
+                                  style: const TextStyle(
+                                      color: AppColors.error, fontSize: 12),
+                                ),
+                              ),
+                          ],
+                        );
+                      },
+                      validator: FormBuilderValidators.compose(
+                        [
+                          FormBuilderValidators.required(
+                              errorText: 'Ce champ est requis'),
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: 16),
-                    _buildDropdown(
+                    const SizedBox(height: 25),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      child: Text('Sélectionner un niveau de difficulté'),
+                    ),
+                    FormBuilderField(
                       name: 'maintenance',
-                      label: 'Entretien',
-                      options: ['low', 'medium', 'high'],
                       initialValue: _maintenance,
-                      onChanged: (val) => setState(() => _maintenance = val),
-                    ),
-                    const SizedBox(height: 16),
-                    _buildDropdown(
-                      name: 'watering',
-                      label: 'Arrosage',
-                      options: ['little', 'regularly'],
-                      initialValue: _watering,
-                      onChanged: (val) => setState(() => _watering = val),
-                    ),
-                    const SizedBox(height: 16),
-                    _buildDropdown(
-                      name: 'lighting',
-                      label: 'Lumière',
-                      options: ['sun', 'indirectLight', 'shade'],
-                      initialValue: _lighting,
-                      onChanged: (val) => setState(() => _lighting = val),
-                    ),
-                    const SizedBox(height: 16),
-                    FormBuilderTextField(
-                      name: 'description',
-                      controller: _descriptionController,
-                      maxLines: 4,
-                      maxLength: 150,
-                      decoration:
-                          const InputDecoration(labelText: 'Description'),
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      builder: (FormFieldState<dynamic> fieldMaintenance) {
+                        return Column(
+                          children: [
+                            ItemRadio(
+                              title: 'Facile',
+                              subtitle: 'Très résistante, peu d\'arrosage',
+                              value: 'low',
+                              selectedItem: _maintenance,
+                              onItemSelected: (value) {
+                                setState(() {
+                                  _maintenance = value;
+                                  fieldMaintenance.didChange(value);
+                                });
+                              },
+                            ),
+                            const SizedBox(height: 20),
+                            ItemRadio(
+                              title: 'Moyen',
+                              subtitle: 'Quelques soins réguliers',
+                              value: 'medium',
+                              selectedItem: _maintenance,
+                              onItemSelected: (value) {
+                                setState(() {
+                                  _maintenance = value;
+                                  fieldMaintenance.didChange(value);
+                                });
+                              },
+                            ),
+                            const SizedBox(height: 20),
+                            ItemRadio(
+                              title: 'Difficile',
+                              subtitle:
+                                  'Sensible, besoin de conditions spécifiques.',
+                              value: 'high',
+                              selectedItem: _maintenance,
+                              onItemSelected: (value) {
+                                setState(() {
+                                  _maintenance = value;
+                                  fieldMaintenance.didChange(value);
+                                });
+                              },
+                            ),
+                            if (fieldMaintenance.hasError)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8),
+                                child: Text(
+                                  fieldMaintenance.errorText ?? '',
+                                  style: const TextStyle(
+                                      color: AppColors.error, fontSize: 12),
+                                ),
+                              ),
+                          ],
+                        );
+                      },
                       validator: FormBuilderValidators.compose([
-                        FormBuilderValidators.required(),
-                        FormBuilderValidators.maxLength(150),
+                        FormBuilderValidators.required(
+                            errorText: 'Ce champ est requis'),
                       ]),
                     ),
-                    const SizedBox(height: 16),
-                    FormBuilderSwitch(
-                      name: 'isPublish',
-                      title: const Text('Publier la plante'),
-                      initialValue: _isPublish,
-                      onChanged: (val) {
-                        setState(() {
-                          _isPublish = val ?? false;
-                        });
-                      },
+                    const SizedBox(height: 25),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      child: Text('Sélectionner le besoin en eau'),
                     ),
-                    const SizedBox(height: 24),
-
-                    // 📷 IMAGE MODIFIER
+                    FormBuilderField(
+                      name: 'watering',
+                      initialValue: _watering,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      builder: (FormFieldState<dynamic> fieldWatering) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ItemRadio(
+                              title: 'Peu d\'eau',
+                              value: 'little',
+                              selectedItem: _watering,
+                              onItemSelected: (value) {
+                                setState(() {
+                                  _watering = value;
+                                  fieldWatering.didChange(value);
+                                });
+                              },
+                            ),
+                            const SizedBox(height: 20),
+                            ItemRadio(
+                              title: 'Arrosage régulier',
+                              value: 'regularly',
+                              selectedItem: _watering,
+                              onItemSelected: (value) {
+                                setState(() {
+                                  _watering = value;
+                                  fieldWatering.didChange(value);
+                                });
+                              },
+                            ),
+                            if (fieldWatering.hasError)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8),
+                                child: Text(
+                                  fieldWatering.errorText ?? '',
+                                  style: const TextStyle(
+                                    color: AppColors.error,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        );
+                      },
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(
+                            errorText: 'Ce champ est requis'),
+                      ]),
+                    ),
+                    const SizedBox(height: 25),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      child: Text('Sélectionner le besoin en lumière'),
+                    ),
+                    FormBuilderField(
+                      name: 'lighting',
+                      initialValue: _lighting,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      builder: (FormFieldState<dynamic> fieldLighting) {
+                        return Column(
+                          children: [
+                            ItemRadio(
+                              title: 'Soleil directe',
+                              value: 'sun',
+                              selectedItem: _lighting,
+                              onItemSelected: (value) {
+                                setState(() {
+                                  _lighting = value;
+                                  fieldLighting.didChange(value);
+                                });
+                              },
+                            ),
+                            const SizedBox(height: 20),
+                            ItemRadio(
+                              title: 'Lumière indirecte',
+                              value: 'indirectLight',
+                              selectedItem: _lighting,
+                              onItemSelected: (value) {
+                                setState(() {
+                                  _lighting = value;
+                                  fieldLighting.didChange(value);
+                                });
+                              },
+                            ),
+                            const SizedBox(height: 20),
+                            ItemRadio(
+                              title: 'Ombre',
+                              value: 'shade',
+                              selectedItem: _lighting,
+                              onItemSelected: (value) {
+                                setState(() {
+                                  _lighting = value;
+                                  fieldLighting.didChange(value);
+                                });
+                              },
+                            ),
+                            if (fieldLighting.hasError)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8),
+                                child: Text(
+                                  fieldLighting.errorText ?? '',
+                                  style: const TextStyle(
+                                      color: AppColors.error, fontSize: 12),
+                                ),
+                              ),
+                          ],
+                        );
+                      },
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(
+                            errorText: 'Ce champ est requis'),
+                      ]),
+                    ),
+                    const SizedBox(height: 25),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      child: Text('Ajouter une brève description'),
+                    ),
+                    FormBuilderTextField(
+                      maxLines: 4,
+                      maxLength: _maxChar,
+                      name: 'description',
+                      decoration: DecorationInput.inputDecoration(
+                        hintText: 'Description de la plante',
+                        labelText: 'Description',
+                        alignLabelWithHint: true,
+                      ),
+                      autovalidateMode: AutovalidateMode.disabled,
+                      controller: _descriptionController,
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(
+                            errorText: 'Ce champ est requis'),
+                        FormBuilderValidators.maxLength(_maxChar,
+                            errorText: 'Maximum $_maxChar caractères'),
+                      ]),
+                    ),
+                    const SizedBox(height: 25),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      child: Text(
+                          'Sélectionner une à trois photos de votre plante'),
+                    ),
                     FormBuilderField<List<String>>(
                       name: 'images',
                       initialValue: _updatedImages,
@@ -347,6 +525,30 @@ class _EditCatalogPageState extends State<EditCatalogPage> {
                           ],
                         );
                       },
+                    ),
+                    const SizedBox(height: 25),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      child: Text('Souhaitez-vous publier votre plante ?'),
+                    ),
+                    FormBuilderSwitch(
+                      name: 'isPublish',
+                      inactiveTrackColor: AppColors.white,
+                      title: const Text('Publier la plante'),
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                      ),
+                      initialValue: _isPublish,
+                      onChanged: (value) {
+                        setState(() {
+                          _isPublish = value ?? false;
+                        });
+                      },
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(
+                            errorText: 'Ce champ est requis'),
+                      ]),
                     ),
                   ],
                 ),

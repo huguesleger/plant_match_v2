@@ -4,7 +4,6 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
-import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_template.dart';
 import 'package:plant_match_v2/core/widgets/bottom_bar/bottom_bar.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
@@ -16,6 +15,8 @@ import 'package:plant_match_v2/features/catolog/presentation/add_plant_wizard/ad
 import 'package:plant_match_v2/features/catolog/presentation/cubit/catalog_cubit.dart';
 import 'package:plant_match_v2/features/catolog/presentation/util/string_to_enum.dart';
 import 'package:plant_match_v2/features/catolog/widget/catalog_upload_image.dart';
+import 'package:plant_match_v2/features/catolog/widget/grid_selectable_item.dart';
+import 'package:plant_match_v2/features/catolog/widget/item_radio.dart';
 import 'package:plant_match_v2/features/catolog/widget/selectable_item.dart';
 
 class AddPlantWizardPage extends StatefulWidget {
@@ -467,7 +468,7 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const TitleWithIcon(
-                        icon: LucideIcons.shield,
+                        icon: LucideIcons.shovel,
                         title: 'Niveau d\'entretien',
                         bgColor: AppColors.greenDark,
                         iconColor: AppColors.greenLight,
@@ -714,15 +715,6 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                               errorText: 'Maximum $_maxChar caractères'),
                         ]),
                       ),
-/*                      const SizedBox(height: 8),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: Text(
-                          '$_charCount / $_maxChar caractères',
-                          style: const TextStyle(
-                              fontSize: 12, color: AppColors.greyDark),
-                        ),
-                      ),*/
                     ],
                   ),
                 ),
@@ -835,119 +827,6 @@ class _ProgressWizard extends StatelessWidget {
           minHeight: 2,
         );
       },
-    );
-  }
-}
-
-class GridSelectableItem extends StatelessWidget {
-  final List<String> selectedValues;
-  final Function(String) onSelect;
-
-  const GridSelectableItem({
-    super.key,
-    required this.selectedValues,
-    required this.onSelect,
-  });
-
-  final List<Map<String, dynamic>> items = const [
-    {"label": "Tropicale", "value": "tropical", "icon": LucideIcons.tree_palm},
-    {
-      "label": "Succulente/Cactée",
-      "value": "succulent",
-      "icon": LucideIcons.clover
-    },
-    {"label": "Aquatique", "value": "aquatic", "icon": LucideIcons.waves},
-    {"label": "Grimpante", "value": "climbing", "icon": LucideIcons.flower_2},
-    {
-      "label": "Bonsaï et miniature",
-      "value": "bonsai",
-      "icon": LucideIcons.sprout
-    },
-    {"label": "Fleur", "value": "flower", "icon": LucideIcons.flower},
-    {"label": "Aromatique", "value": "aromatic", "icon": LucideIcons.leaf},
-    {"label": "Médicinale", "value": "medical", "icon": LucideIcons.pill},
-    {"label": "Carnivore", "value": "carnivorous", "icon": LucideIcons.ham},
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
-        childAspectRatio: 1,
-      ),
-      itemCount: items.length,
-      itemBuilder: (context, index) {
-        final item = items[index];
-        return SelectableItem(
-          icon: item["icon"] as IconData,
-          label: item["label"] as String,
-          value: item["value"] as String,
-          isSelected: selectedValues.contains(item["value"]),
-          onTap: onSelect,
-        );
-      },
-    );
-  }
-}
-
-class ItemRadio extends StatelessWidget {
-  const ItemRadio({
-    super.key,
-    required this.title,
-    this.subtitle,
-    required this.value,
-    required this.selectedItem,
-    required this.onItemSelected,
-  });
-
-  final String title;
-  final String? subtitle;
-  final String value;
-  final String? selectedItem;
-  final Function(String) onItemSelected;
-
-  @override
-  Widget build(BuildContext context) {
-    final bool isSelected = selectedItem == value;
-
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: isSelected ? AppColors.greenDark : Colors.transparent,
-          width: 1,
-        ),
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: ListTile(
-        tileColor: isSelected
-            ? AppColors.greenDark.withValues(alpha: 0.1)
-            : AppColors.greyUltraLight,
-        title: Text(title,
-            style: const TextStyle(
-                color: AppColors.greyMedium, fontSize: AppTypo.textS)),
-        subtitle: subtitle == null
-            ? null
-            : Text(subtitle!, style: const TextStyle(fontSize: AppTypo.textXs)),
-        trailing: Radio<String>(
-          value: value,
-          groupValue: selectedItem,
-          onChanged: (String? newValue) {
-            if (newValue != null) {
-              onItemSelected(newValue);
-            }
-          },
-          activeColor: AppColors.greenDark,
-        ),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(15))),
-      ),
     );
   }
 }
