@@ -4,6 +4,9 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/core/widgets/app_bar/app_bar_template.dart';
+import 'package:plant_match_v2/core/widgets/bottom_bar/bottom_bar.dart';
+import 'package:plant_match_v2/core/widgets/buttons/button_rounded_with_icon.dart';
 import 'package:plant_match_v2/core/widgets/form/decoration_input.dart';
 import 'package:plant_match_v2/features/catolog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catolog/presentation/cubit/catalog_cubit.dart';
@@ -146,409 +149,436 @@ class _EditCatalogPageState extends State<EditCatalogPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Modifier ${widget.catalog.name}'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.save),
-            onPressed: _save,
+      appBar: AppBarTemplate(
+        title: 'Modifier ${widget.catalog.name}',
+        centerTitle: true,
+        backgroundColor: AppColors.white,
+        surfaceTintColor: AppColors.white,
+        shadowColor: AppColors.greyLight,
+        styleIconButton: IconButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
           ),
-        ],
+          side: const BorderSide(color: AppColors.greyLight),
+        ),
+        onPressed: () {
+          Navigator.pop(context);
+        },
       ),
       body: _isSaving
           ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: FormBuilder(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    FormBuilderTextField(
-                      key: _formKeyPlantName,
-                      name: 'plantName',
-                      controller: _nameController,
-                      decoration: DecorationInput.inputDecoration(
-                        hintText: 'Nom de la plante',
-                        labelText: 'Nom',
+          : Scaffold(
+              body: SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: FormBuilder(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      FormBuilderTextField(
+                        key: _formKeyPlantName,
+                        name: 'plantName',
+                        controller: _nameController,
+                        decoration: DecorationInput.inputDecoration(
+                          hintText: 'Nom de la plante',
+                          labelText: 'Nom',
+                        ),
+                        validator: FormBuilderValidators.required(),
                       ),
-                      validator: FormBuilderValidators.required(),
-                    ),
-                    const SizedBox(height: 16),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 16),
-                      child:
-                          Text('Sélectionner une catégorie pour votre plante'),
-                    ),
-                    FormBuilderField(
-                      name: 'category',
-                      initialValue: _environment,
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      validator: FormBuilderValidators.compose([
-                        FormBuilderValidators.required(
-                            errorText: 'Ce champ est requis'),
-                      ]),
-                      onSaved: (val) => setState(() => _environment = val),
-                      builder: (FormFieldState<dynamic> fieldCategory) {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: SelectableItem(
-                                    icon: LucideIcons.house,
-                                    label: "Intérieur",
-                                    value: "indoor",
-                                    isSelected: _environment == "indoor",
-                                    onTap: (value) {
-                                      onSelect(value);
-                                      fieldCategory.didChange(value);
-                                    },
-                                  ),
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: SelectableItem(
-                                    icon: LucideIcons.trees,
-                                    label: "Extérieur",
-                                    value: "outdoor",
-                                    isSelected: _environment == "outdoor",
-                                    onTap: (value) {
-                                      onSelect(value);
-                                      fieldCategory.didChange(value);
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 25),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 16),
-                      child: Text('Sélectionner une ou des catégorie(s)'),
-                    ),
-                    FormBuilderField(
-                      name: 'family',
-                      initialValue: _selectedFamilies
-                          .map(getFamilyFromString)
-                          .whereType<Family>()
-                          .toList(),
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      builder: (FormFieldState<dynamic> fieldFamily) {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            GridSelectableItem(
-                                selectedValues: _selectedFamilies,
-                                onSelect: (value) {
-                                  onSelectMultiple(value);
-                                  fieldFamily.didChange(
-                                    _selectedFamilies
-                                        .map(getFamilyFromString)
-                                        .whereType<Family>()
-                                        .toList(),
-                                  );
-                                }),
-                            if (fieldFamily.hasError)
-                              Padding(
-                                padding: const EdgeInsets.only(top: 8),
-                                child: Text(
-                                  fieldFamily.errorText ?? '',
-                                  style: const TextStyle(
-                                      color: AppColors.error, fontSize: 12),
-                                ),
-                              ),
-                          ],
-                        );
-                      },
-                      validator: FormBuilderValidators.compose(
-                        [
+                      const SizedBox(height: 16),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        child: Text(
+                            'Sélectionner une catégorie pour votre plante'),
+                      ),
+                      FormBuilderField(
+                        name: 'category',
+                        initialValue: _environment,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: FormBuilderValidators.compose([
                           FormBuilderValidators.required(
                               errorText: 'Ce champ est requis'),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 25),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 16),
-                      child: Text('Sélectionner un niveau de difficulté'),
-                    ),
-                    FormBuilderField(
-                      name: 'maintenance',
-                      initialValue: _maintenance,
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      builder: (FormFieldState<dynamic> fieldMaintenance) {
-                        return Column(
-                          children: [
-                            ItemRadio(
-                              title: 'Facile',
-                              subtitle: 'Très résistante, peu d\'arrosage',
-                              value: 'low',
-                              selectedItem: _maintenance,
-                              onItemSelected: (value) {
-                                setState(() {
-                                  _maintenance = value;
-                                  fieldMaintenance.didChange(value);
-                                });
-                              },
-                            ),
-                            const SizedBox(height: 20),
-                            ItemRadio(
-                              title: 'Moyen',
-                              subtitle: 'Quelques soins réguliers',
-                              value: 'medium',
-                              selectedItem: _maintenance,
-                              onItemSelected: (value) {
-                                setState(() {
-                                  _maintenance = value;
-                                  fieldMaintenance.didChange(value);
-                                });
-                              },
-                            ),
-                            const SizedBox(height: 20),
-                            ItemRadio(
-                              title: 'Difficile',
-                              subtitle:
-                                  'Sensible, besoin de conditions spécifiques.',
-                              value: 'high',
-                              selectedItem: _maintenance,
-                              onItemSelected: (value) {
-                                setState(() {
-                                  _maintenance = value;
-                                  fieldMaintenance.didChange(value);
-                                });
-                              },
-                            ),
-                            if (fieldMaintenance.hasError)
-                              Padding(
-                                padding: const EdgeInsets.only(top: 8),
-                                child: Text(
-                                  fieldMaintenance.errorText ?? '',
-                                  style: const TextStyle(
-                                      color: AppColors.error, fontSize: 12),
-                                ),
+                        ]),
+                        onSaved: (val) => setState(() => _environment = val),
+                        builder: (FormFieldState<dynamic> fieldCategory) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: SelectableItem(
+                                      icon: LucideIcons.house,
+                                      label: "Intérieur",
+                                      value: "indoor",
+                                      isSelected: _environment == "indoor",
+                                      onTap: (value) {
+                                        onSelect(value);
+                                        fieldCategory.didChange(value);
+                                      },
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: SelectableItem(
+                                      icon: LucideIcons.trees,
+                                      label: "Extérieur",
+                                      value: "outdoor",
+                                      isSelected: _environment == "outdoor",
+                                      onTap: (value) {
+                                        onSelect(value);
+                                        fieldCategory.didChange(value);
+                                      },
+                                    ),
+                                  ),
+                                ],
                               ),
-                          ],
-                        );
-                      },
-                      validator: FormBuilderValidators.compose([
-                        FormBuilderValidators.required(
-                            errorText: 'Ce champ est requis'),
-                      ]),
-                    ),
-                    const SizedBox(height: 25),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 16),
-                      child: Text('Sélectionner le besoin en eau'),
-                    ),
-                    FormBuilderField(
-                      name: 'watering',
-                      initialValue: _watering,
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      builder: (FormFieldState<dynamic> fieldWatering) {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ItemRadio(
-                              title: 'Peu d\'eau',
-                              value: 'little',
-                              selectedItem: _watering,
-                              onItemSelected: (value) {
-                                setState(() {
-                                  _watering = value;
-                                  fieldWatering.didChange(value);
-                                });
-                              },
-                            ),
-                            const SizedBox(height: 20),
-                            ItemRadio(
-                              title: 'Arrosage régulier',
-                              value: 'regularly',
-                              selectedItem: _watering,
-                              onItemSelected: (value) {
-                                setState(() {
-                                  _watering = value;
-                                  fieldWatering.didChange(value);
-                                });
-                              },
-                            ),
-                            if (fieldWatering.hasError)
-                              Padding(
-                                padding: const EdgeInsets.only(top: 8),
-                                child: Text(
-                                  fieldWatering.errorText ?? '',
-                                  style: const TextStyle(
-                                    color: AppColors.error,
-                                    fontSize: 12,
+                            ],
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 25),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        child: Text('Sélectionner une ou des catégorie(s)'),
+                      ),
+                      FormBuilderField(
+                        name: 'family',
+                        initialValue: _selectedFamilies
+                            .map(getFamilyFromString)
+                            .whereType<Family>()
+                            .toList(),
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        builder: (FormFieldState<dynamic> fieldFamily) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              GridSelectableItem(
+                                  selectedValues: _selectedFamilies,
+                                  onSelect: (value) {
+                                    onSelectMultiple(value);
+                                    fieldFamily.didChange(
+                                      _selectedFamilies
+                                          .map(getFamilyFromString)
+                                          .whereType<Family>()
+                                          .toList(),
+                                    );
+                                  }),
+                              if (fieldFamily.hasError)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 8),
+                                  child: Text(
+                                    fieldFamily.errorText ?? '',
+                                    style: const TextStyle(
+                                        color: AppColors.error, fontSize: 12),
                                   ),
                                 ),
-                              ),
+                            ],
+                          );
+                        },
+                        validator: FormBuilderValidators.compose(
+                          [
+                            FormBuilderValidators.required(
+                                errorText: 'Ce champ est requis'),
                           ],
-                        );
-                      },
-                      validator: FormBuilderValidators.compose([
-                        FormBuilderValidators.required(
-                            errorText: 'Ce champ est requis'),
-                      ]),
-                    ),
-                    const SizedBox(height: 25),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 16),
-                      child: Text('Sélectionner le besoin en lumière'),
-                    ),
-                    FormBuilderField(
-                      name: 'lighting',
-                      initialValue: _lighting,
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      builder: (FormFieldState<dynamic> fieldLighting) {
-                        return Column(
-                          children: [
-                            ItemRadio(
-                              title: 'Soleil directe',
-                              value: 'sun',
-                              selectedItem: _lighting,
-                              onItemSelected: (value) {
-                                setState(() {
-                                  _lighting = value;
-                                  fieldLighting.didChange(value);
-                                });
-                              },
-                            ),
-                            const SizedBox(height: 20),
-                            ItemRadio(
-                              title: 'Lumière indirecte',
-                              value: 'indirectLight',
-                              selectedItem: _lighting,
-                              onItemSelected: (value) {
-                                setState(() {
-                                  _lighting = value;
-                                  fieldLighting.didChange(value);
-                                });
-                              },
-                            ),
-                            const SizedBox(height: 20),
-                            ItemRadio(
-                              title: 'Ombre',
-                              value: 'shade',
-                              selectedItem: _lighting,
-                              onItemSelected: (value) {
-                                setState(() {
-                                  _lighting = value;
-                                  fieldLighting.didChange(value);
-                                });
-                              },
-                            ),
-                            if (fieldLighting.hasError)
-                              Padding(
-                                padding: const EdgeInsets.only(top: 8),
-                                child: Text(
-                                  fieldLighting.errorText ?? '',
-                                  style: const TextStyle(
-                                      color: AppColors.error, fontSize: 12),
-                                ),
-                              ),
-                          ],
-                        );
-                      },
-                      validator: FormBuilderValidators.compose([
-                        FormBuilderValidators.required(
-                            errorText: 'Ce champ est requis'),
-                      ]),
-                    ),
-                    const SizedBox(height: 25),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 16),
-                      child: Text('Ajouter une brève description'),
-                    ),
-                    FormBuilderTextField(
-                      maxLines: 4,
-                      maxLength: _maxChar,
-                      name: 'description',
-                      decoration: DecorationInput.inputDecoration(
-                        hintText: 'Description de la plante',
-                        labelText: 'Description',
-                        alignLabelWithHint: true,
+                        ),
                       ),
-                      autovalidateMode: AutovalidateMode.disabled,
-                      controller: _descriptionController,
-                      validator: FormBuilderValidators.compose([
-                        FormBuilderValidators.required(
-                            errorText: 'Ce champ est requis'),
-                        FormBuilderValidators.maxLength(_maxChar,
-                            errorText: 'Maximum $_maxChar caractères'),
-                      ]),
-                    ),
-                    const SizedBox(height: 25),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 16),
-                      child: Text(
-                          'Sélectionner une à trois photos de votre plante'),
-                    ),
-                    FormBuilderField<List<String>>(
-                      name: 'images',
-                      initialValue: _updatedImages,
-                      validator: FormBuilderValidators.compose([
-                        FormBuilderValidators.minLength(1,
-                            errorText:
-                                'Veuillez sélectionner au moins une image'),
-                      ]),
-                      builder: (FormFieldState<List<String>> fieldImage) {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            CatalogUploadImage(
-                              catalog: widget.catalog
-                                  .copyWith(newImages: fieldImage.value ?? []),
-                              field: fieldImage,
-                              onCatalogUpdated: (updatedCatalog) {
-                                setState(() {
-                                  _updatedImages = updatedCatalog.images;
-                                  fieldImage.didChange(_updatedImages);
-                                });
-                              },
-                            ),
-                            if (fieldImage.hasError)
-                              Padding(
-                                padding: const EdgeInsets.only(top: 8.0),
-                                child: Text(
-                                  fieldImage.errorText ?? '',
-                                  style: TextStyle(
-                                      color:
-                                          Theme.of(context).colorScheme.error),
-                                ),
-                              ),
-                          ],
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 25),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 16),
-                      child: Text('Souhaitez-vous publier votre plante ?'),
-                    ),
-                    FormBuilderSwitch(
-                      name: 'isPublish',
-                      inactiveTrackColor: AppColors.white,
-                      title: const Text('Publier la plante'),
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
+                      const SizedBox(height: 25),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        child: Text('Sélectionner un niveau de difficulté'),
                       ),
-                      initialValue: _isPublish,
-                      onChanged: (value) {
-                        setState(() {
-                          _isPublish = value ?? false;
-                        });
-                      },
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      validator: FormBuilderValidators.compose([
-                        FormBuilderValidators.required(
-                            errorText: 'Ce champ est requis'),
-                      ]),
+                      FormBuilderField(
+                        name: 'maintenance',
+                        initialValue: _maintenance,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        builder: (FormFieldState<dynamic> fieldMaintenance) {
+                          return Column(
+                            children: [
+                              ItemRadio(
+                                title: 'Facile',
+                                subtitle: 'Très résistante, peu d\'arrosage',
+                                value: 'low',
+                                selectedItem: _maintenance,
+                                onItemSelected: (value) {
+                                  setState(() {
+                                    _maintenance = value;
+                                    fieldMaintenance.didChange(value);
+                                  });
+                                },
+                              ),
+                              const SizedBox(height: 20),
+                              ItemRadio(
+                                title: 'Moyen',
+                                subtitle: 'Quelques soins réguliers',
+                                value: 'medium',
+                                selectedItem: _maintenance,
+                                onItemSelected: (value) {
+                                  setState(() {
+                                    _maintenance = value;
+                                    fieldMaintenance.didChange(value);
+                                  });
+                                },
+                              ),
+                              const SizedBox(height: 20),
+                              ItemRadio(
+                                title: 'Difficile',
+                                subtitle:
+                                    'Sensible, besoin de conditions spécifiques.',
+                                value: 'high',
+                                selectedItem: _maintenance,
+                                onItemSelected: (value) {
+                                  setState(() {
+                                    _maintenance = value;
+                                    fieldMaintenance.didChange(value);
+                                  });
+                                },
+                              ),
+                              if (fieldMaintenance.hasError)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 8),
+                                  child: Text(
+                                    fieldMaintenance.errorText ?? '',
+                                    style: const TextStyle(
+                                        color: AppColors.error, fontSize: 12),
+                                  ),
+                                ),
+                            ],
+                          );
+                        },
+                        validator: FormBuilderValidators.compose([
+                          FormBuilderValidators.required(
+                              errorText: 'Ce champ est requis'),
+                        ]),
+                      ),
+                      const SizedBox(height: 25),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        child: Text('Sélectionner le besoin en eau'),
+                      ),
+                      FormBuilderField(
+                        name: 'watering',
+                        initialValue: _watering,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        builder: (FormFieldState<dynamic> fieldWatering) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ItemRadio(
+                                title: 'Peu d\'eau',
+                                value: 'little',
+                                selectedItem: _watering,
+                                onItemSelected: (value) {
+                                  setState(() {
+                                    _watering = value;
+                                    fieldWatering.didChange(value);
+                                  });
+                                },
+                              ),
+                              const SizedBox(height: 20),
+                              ItemRadio(
+                                title: 'Arrosage régulier',
+                                value: 'regularly',
+                                selectedItem: _watering,
+                                onItemSelected: (value) {
+                                  setState(() {
+                                    _watering = value;
+                                    fieldWatering.didChange(value);
+                                  });
+                                },
+                              ),
+                              if (fieldWatering.hasError)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 8),
+                                  child: Text(
+                                    fieldWatering.errorText ?? '',
+                                    style: const TextStyle(
+                                      color: AppColors.error,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          );
+                        },
+                        validator: FormBuilderValidators.compose([
+                          FormBuilderValidators.required(
+                              errorText: 'Ce champ est requis'),
+                        ]),
+                      ),
+                      const SizedBox(height: 25),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        child: Text('Sélectionner le besoin en lumière'),
+                      ),
+                      FormBuilderField(
+                        name: 'lighting',
+                        initialValue: _lighting,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        builder: (FormFieldState<dynamic> fieldLighting) {
+                          return Column(
+                            children: [
+                              ItemRadio(
+                                title: 'Soleil directe',
+                                value: 'sun',
+                                selectedItem: _lighting,
+                                onItemSelected: (value) {
+                                  setState(() {
+                                    _lighting = value;
+                                    fieldLighting.didChange(value);
+                                  });
+                                },
+                              ),
+                              const SizedBox(height: 20),
+                              ItemRadio(
+                                title: 'Lumière indirecte',
+                                value: 'indirectLight',
+                                selectedItem: _lighting,
+                                onItemSelected: (value) {
+                                  setState(() {
+                                    _lighting = value;
+                                    fieldLighting.didChange(value);
+                                  });
+                                },
+                              ),
+                              const SizedBox(height: 20),
+                              ItemRadio(
+                                title: 'Ombre',
+                                value: 'shade',
+                                selectedItem: _lighting,
+                                onItemSelected: (value) {
+                                  setState(() {
+                                    _lighting = value;
+                                    fieldLighting.didChange(value);
+                                  });
+                                },
+                              ),
+                              if (fieldLighting.hasError)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 8),
+                                  child: Text(
+                                    fieldLighting.errorText ?? '',
+                                    style: const TextStyle(
+                                        color: AppColors.error, fontSize: 12),
+                                  ),
+                                ),
+                            ],
+                          );
+                        },
+                        validator: FormBuilderValidators.compose([
+                          FormBuilderValidators.required(
+                              errorText: 'Ce champ est requis'),
+                        ]),
+                      ),
+                      const SizedBox(height: 25),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        child: Text('Ajouter une brève description'),
+                      ),
+                      FormBuilderTextField(
+                        maxLines: 4,
+                        maxLength: _maxChar,
+                        name: 'description',
+                        decoration: DecorationInput.inputDecoration(
+                          hintText: 'Description de la plante',
+                          labelText: 'Description',
+                          alignLabelWithHint: true,
+                        ),
+                        autovalidateMode: AutovalidateMode.disabled,
+                        controller: _descriptionController,
+                        validator: FormBuilderValidators.compose([
+                          FormBuilderValidators.required(
+                              errorText: 'Ce champ est requis'),
+                          FormBuilderValidators.maxLength(_maxChar,
+                              errorText: 'Maximum $_maxChar caractères'),
+                        ]),
+                      ),
+                      const SizedBox(height: 25),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        child: Text(
+                            'Sélectionner une à trois photos de votre plante'),
+                      ),
+                      FormBuilderField<List<String>>(
+                        name: 'images',
+                        initialValue: _updatedImages,
+                        validator: FormBuilderValidators.compose([
+                          FormBuilderValidators.minLength(1,
+                              errorText:
+                                  'Veuillez sélectionner au moins une image'),
+                        ]),
+                        builder: (FormFieldState<List<String>> fieldImage) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CatalogUploadImage(
+                                catalog: widget.catalog.copyWith(
+                                    newImages: fieldImage.value ?? []),
+                                field: fieldImage,
+                                onCatalogUpdated: (updatedCatalog) {
+                                  setState(() {
+                                    _updatedImages = updatedCatalog.images;
+                                    fieldImage.didChange(_updatedImages);
+                                  });
+                                },
+                              ),
+                              if (fieldImage.hasError)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 8.0),
+                                  child: Text(
+                                    fieldImage.errorText ?? '',
+                                    style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .error),
+                                  ),
+                                ),
+                            ],
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 25),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        child: Text('Souhaitez-vous publier votre plante ?'),
+                      ),
+                      FormBuilderSwitch(
+                        name: 'isPublish',
+                        inactiveTrackColor: AppColors.white,
+                        title: const Text('Publier la plante'),
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                        ),
+                        initialValue: _isPublish,
+                        onChanged: (value) {
+                          setState(() {
+                            _isPublish = value ?? false;
+                          });
+                        },
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: FormBuilderValidators.compose([
+                          FormBuilderValidators.required(
+                              errorText: 'Ce champ est requis'),
+                        ]),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              bottomNavigationBar: BottomBar(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: ButtonRoundedWithIcon(
+                        text: 'Enregistrer',
+                        onPressed: _save,
+                        bgColor: AppColors.greenLight,
+                        textColor: AppColors.blueGreen,
+                        iconAlignment: IconAlignment.start,
+                        icon: const Icon(LucideIcons.upload,
+                            color: AppColors.blueGreen),
+                      ),
                     ),
                   ],
                 ),
