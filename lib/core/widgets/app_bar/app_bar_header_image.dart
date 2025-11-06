@@ -11,7 +11,7 @@ class AppBarHeaderImage extends StatelessWidget implements PreferredSizeWidget {
     this.leading = true,
     required this.onPressed,
     this.styleIconButton,
-    this.leadingWith = 80,
+    this.leadingWith = 76,
     this.headerHeight = 215,
     this.fit = BoxFit.cover,
   });

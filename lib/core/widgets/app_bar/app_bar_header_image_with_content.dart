@@ -13,7 +13,7 @@ class AppBarHeaderImageWithContent extends StatelessWidget
     this.titleColor = AppColors.greyDark,
     this.leading = true,
     this.styleIconButton,
-    this.leadingWith = 80,
+    this.leadingWith = 76,
     this.headerHeight = 215,
     this.fit = BoxFit.cover,
   });

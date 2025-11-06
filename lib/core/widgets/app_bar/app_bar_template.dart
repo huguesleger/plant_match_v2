@@ -5,7 +5,7 @@ import 'package:plant_match_v2/core/theme/app_colors.dart';
 class AppBarTemplate extends StatelessWidget implements PreferredSizeWidget {
   const AppBarTemplate({
     super.key,
-    this.leadingWith = 80,
+    this.leadingWith = 76,
     this.title,
     this.centerTitle = false,
     required this.backgroundColor,

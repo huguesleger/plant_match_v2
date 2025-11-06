@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
@@ -52,15 +53,16 @@ class _MapView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20),
+          padding: AppSpacing.paddingHorizontal,
           child: TitlePage(
             title: 'A proximité',
             fontSize: AppTypo.textXl,
           ),
         ),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          child: Text(
+        Padding(
+          padding: AppSpacing.paddingHorizontal +
+              const EdgeInsets.symmetric(vertical: 10),
+          child: const Text(
               'Trouvez des utilisateurs autour de vous pour partager, échanger ...'),
         ),
         Expanded(

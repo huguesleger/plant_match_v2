@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_dynamic_header.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
 import 'package:plant_match_v2/features/auth/presentation/sign_in/presentation/form_sign_in.dart';
@@ -21,7 +22,7 @@ class SignInScreen extends StatelessWidget {
             bottom: MediaQuery.of(context).size.height > 700 ? 140 : 70,
             top: 50),
         body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: AppSpacing.paddingHorizontal,
           child: IntrinsicHeight(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

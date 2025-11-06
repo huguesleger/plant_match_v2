@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/widgets/badge/badge_pill.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
@@ -33,7 +34,8 @@ class ProfilBadgeScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: 30, left: 20, right: 20),
+              padding:
+                  AppSpacing.paddingHorizontal + const EdgeInsets.only(top: 30),
               child: ProfilBadgeCardHeader(
                 currentPoints: currentPoints,
                 level: level,
@@ -44,17 +46,17 @@ class ProfilBadgeScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-                      child: ProfilBadgeCard(),
+                    Padding(
+                      padding: AppSpacing.paddingHorizontal +
+                          const EdgeInsets.symmetric(vertical: 30),
+                      child: const ProfilBadgeCard(),
                     ),
                     Container(
                       color: AppColors.greyUltraLight,
                       width: double.infinity,
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 20, horizontal: 20),
+                        padding: AppSpacing.paddingHorizontal +
+                            const EdgeInsets.symmetric(vertical: 20),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.max,
@@ -75,7 +77,7 @@ class ProfilBadgeScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      padding: AppSpacing.paddingHorizontal,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -100,7 +102,7 @@ class ProfilBadgeScreen extends StatelessWidget {
                     SizedBox(
                       height: 150,
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        padding: AppSpacing.paddingHorizontal,
                         child: ProfilBadgeLevelItems(currentLevel: level),
                       ),
                     ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/features/profil/presentation/profil_card/profil_card.dart';
 import 'package:plant_match_v2/features/profil/presentation/profil_header/profil_header.dart';
@@ -23,7 +24,7 @@ class ProfilScreen extends StatelessWidget {
           mainAxisSize: MainAxisSize.max,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: AppSpacing.paddingHorizontal,
               child: ProfilHeader(profilUser: profilUser),
             ),
             const SizedBox(
@@ -32,7 +33,7 @@ class ProfilScreen extends StatelessWidget {
             const SizedBox(
               height: 216,
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
+                padding: AppSpacing.paddingHorizontal,
                 child: ProfilCard(),
               ),
             ),
@@ -45,8 +46,8 @@ class ProfilScreen extends StatelessWidget {
                   color: AppColors.greyUltraLight,
                 ),
                 child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+                  padding: AppSpacing.paddingHorizontal +
+                      const EdgeInsets.symmetric(vertical: 30),
                   child: ProfilNavigation(profilUser: profilUser),
                 ),
               ),

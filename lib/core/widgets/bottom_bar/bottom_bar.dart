@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/core/theme/app_spacing.dart';
 
 class BottomBar extends StatelessWidget {
   const BottomBar({super.key, required this.child});
@@ -9,7 +10,7 @@ class BottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20) +
+      padding: AppSpacing.paddingHorizontal +
           const EdgeInsets.only(top: 16, bottom: 8),
       decoration: BoxDecoration(
         color: AppColors.white,

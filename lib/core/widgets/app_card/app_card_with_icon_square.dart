@@ -63,7 +63,7 @@ class AppCardWithIconSquare extends StatelessWidget {
             TitlePage(
               title: title,
               color: titleColor,
-              fontSize: AppTypo.textL,
+              fontSize: AppTypo.textM,
             ),
             const SizedBox(height: 10),
             Text(

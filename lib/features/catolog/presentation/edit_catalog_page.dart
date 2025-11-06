@@ -4,6 +4,7 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_template.dart';
 import 'package:plant_match_v2/core/widgets/bottom_bar/bottom_bar.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_rounded_with_icon.dart';
@@ -169,7 +170,7 @@ class _EditCatalogPageState extends State<EditCatalogPage> {
           ? const Center(child: CircularProgressIndicator())
           : Scaffold(
               body: SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
+                padding: AppSpacing.paddingAll,
                 child: FormBuilder(
                   key: _formKey,
                   child: Column(
@@ -187,7 +188,7 @@ class _EditCatalogPageState extends State<EditCatalogPage> {
                       ),
                       const SizedBox(height: 16),
                       const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 16),
+                        padding: AppSpacing.paddingVertical,
                         child: Text(
                             'Sélectionner une catégorie pour votre plante'),
                       ),

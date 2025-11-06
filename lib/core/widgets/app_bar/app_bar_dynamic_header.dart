@@ -9,7 +9,7 @@ class AppBarDynamicHeader extends StatefulWidget {
     required this.backgroundAppBar,
     this.leading = true,
     this.leadingButton,
-    this.leadingWidth = 80,
+    this.leadingWidth = 76,
     required this.titlePadding,
     required this.height,
   });

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_header_image.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
@@ -72,29 +73,30 @@ class _CatalogScreenState extends State<CatalogScreen> {
         child: const Icon(LucideIcons.plus, color: AppColors.blueGreen),
       ),
       body: widget.catalogs.isEmpty
-          ? const Column(
+          ? Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: EdgeInsets.only(top: 20, left: 20, right: 20),
-                  child: TitlePage(
+                  padding: AppSpacing.paddingHorizontal +
+                      const EdgeInsets.only(top: 16),
+                  child: const TitlePage(
                     title: 'Mes plantes',
                     subtitle: 'Mon catalogue de plantes à partager',
                   ),
                 ),
-                SizedBox(height: 90),
-                Row(
+                const SizedBox(height: 90),
+                const Row(
                   children: [
                     Expanded(
                         child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      padding: AppSpacing.paddingHorizontal,
                       child: CatalogCardIsEmpty(),
                     )),
                   ],
                 ),
-                SizedBox(height: 30),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
+                const SizedBox(height: 30),
+                const Padding(
+                  padding: AppSpacing.paddingHorizontal,
                   child: Column(
                     children: [
                       Image(
@@ -115,15 +117,17 @@ class _CatalogScreenState extends State<CatalogScreen> {
           : Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Padding(
-                  padding: EdgeInsets.only(top: 20, left: 20, right: 20),
-                  child: TitlePage(
+                Padding(
+                  padding: AppSpacing.paddingHorizontal +
+                      const EdgeInsets.only(top: 16),
+                  child: const TitlePage(
                     title: 'Mes plantes',
                     subtitle: 'Mon catalogue de plantes à partager',
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
+                  padding: AppSpacing.paddingHorizontal +
+                      const EdgeInsets.only(top: 10),
                   child: buildFamilyFilterTabs(),
                 ),
                 Expanded(
@@ -142,8 +146,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
                         CatalogLoaded() => Container(
                             color: AppColors.greyUltraLight,
                             child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
+                              padding: AppSpacing.paddingHorizontal,
                               child: catalogGridView(state.catalogs),
                             ),
                           ),

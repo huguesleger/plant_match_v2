@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
@@ -21,7 +22,7 @@ class GetStartedPage extends StatelessWidget {
             children: [
               _Logo(),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
+                padding: AppSpacing.paddingHorizontal,
                 child: _Content(),
               ),
             ],

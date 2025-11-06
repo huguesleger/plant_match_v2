@@ -3,6 +3,7 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/map_users/bottom_sheet_user.dart';
 import 'package:plant_match_v2/features/catolog/domain/entity/catalog.dart';
@@ -88,7 +89,7 @@ class _MapUsersState extends State<MapUsers> {
     return Stack(
       children: [
         Padding(
-          padding: const EdgeInsets.all(20),
+          padding: AppSpacing.paddingAll,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: Container(

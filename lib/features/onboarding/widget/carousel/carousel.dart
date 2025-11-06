@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/features/auth/presentation/register/register_page.dart';
 import 'package:plant_match_v2/features/auth/presentation/sign_in_or_register.dart';
 import 'package:plant_match_v2/features/onboarding/widget/carousel/carousel_item.dart';
@@ -19,7 +20,7 @@ class _CarouselState extends State<Carousel> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: AppSpacing.paddingHorizontal,
       child: Stack(
         children: [
           Dots(controller: _controller),
