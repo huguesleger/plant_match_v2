@@ -32,10 +32,7 @@ class ProfilScreen extends StatelessWidget {
             ),
             const SizedBox(
               height: 216,
-              child: Padding(
-                padding: AppSpacing.paddingHorizontal,
-                child: ProfilCard(),
-              ),
+              child: ProfilCard(),
             ),
             const SizedBox(
               height: 25,
