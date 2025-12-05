@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
 import 'package:plant_match_v2/core/extension/first_word_before_space/first_word_after_space.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/theme/inter_text_style.dart';
 import 'package:plant_match_v2/core/widgets/app_bottom_sheet/app_bottom_sheet.dart';
 import 'package:plant_match_v2/core/widgets/app_card/app_card.dart';
 import 'package:plant_match_v2/core/widgets/avatar/avatar.dart';
+import 'package:plant_match_v2/core/widgets/buttons/button_outlined_rounded_with_icon.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/catalog_users/catalog_users.dart';
 import 'package:plant_match_v2/features/catolog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
+import 'package:plant_match_v2/features/user/presentation/cubit/user_cubit.dart';
+import 'package:plant_match_v2/features/user/presentation/user_page.dart';
 
 void bottomSheetUser({
   required BuildContext context,
@@ -21,12 +26,12 @@ void bottomSheetUser({
   AppBottomSheet.showBottomSheet(
     context,
     SizedBox(
-      height: 450,
+      height: 550,
       width: double.infinity,
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: AppSpacing.paddingHorizontal,
             child: Row(
               children: [
                 Avatar(
@@ -116,13 +121,13 @@ void bottomSheetUser({
           ),
           const SizedBox(height: 20),
           Container(
-            height: 255,
+            height: 270,
             color: AppColors.greyUltraLight,
             padding: const EdgeInsets.symmetric(vertical: 20),
             child: catalogs.isNotEmpty
                 ? Row(
                     children: [
-                      const SizedBox(width: 20),
+                      const SizedBox(width: 16),
                       AppCard(
                         bgColor: AppColors.greenDark,
                         textColor: AppColors.white,
@@ -132,7 +137,7 @@ void bottomSheetUser({
                         onPressed: () {},
                       ),
                       const SizedBox(width: 20),
-                      CatalogUsers(catalogs: catalogs),
+                      Expanded(child: CatalogUsers(catalogs: catalogs)),
                     ],
                   )
                 : Center(
@@ -146,9 +151,35 @@ void bottomSheetUser({
                     ),
                   ),
           ),
-          const Row(
+          const SizedBox(height: 8),
+          Row(
             children: [
-              Text('Envoyer un message'),
+              Expanded(
+                child: Padding(
+                  padding: AppSpacing.paddingAll,
+                  child: ButtonOutlinedRoundedWithIcon(
+                    text: 'Voir le profil',
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BlocProvider.value(
+                            value: context.read<UserCubit>(),
+                            child: UserPage(uid: user.uid),
+                          ),
+                        ),
+                      );
+                    },
+                    borderColor: AppColors.blueGreen,
+                    textColor: AppColors.blueGreen,
+                    iconAlignment: IconAlignment.start,
+                    icon: const Icon(
+                      LucideIcons.user_round,
+                      color: AppColors.blueGreen,
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ],
