@@ -34,6 +34,7 @@ class _EditCatalogPageState extends State<EditCatalogPage> {
   late TextEditingController _descriptionController;
 
   String? _environment;
+  String? _offerType;
   List<String> _selectedFamilies = [];
   String? _maintenance;
   String? _watering;
@@ -59,6 +60,7 @@ class _EditCatalogPageState extends State<EditCatalogPage> {
     _watering = widget.catalog.watering.name;
     _lighting = widget.catalog.lighting.name;
     _updatedImages = List.from(widget.catalog.images);
+    _offerType = widget.catalog.offerType.name;
     _isPublish = widget.catalog.isPublish;
   }
 
@@ -117,6 +119,7 @@ class _EditCatalogPageState extends State<EditCatalogPage> {
             getLevelMaintenanceFromString(_maintenance ?? 'low'),
         newWatering: getWateringFromString(_watering ?? 'little'),
         newLighting: getLightingFromString(_lighting ?? 'sun'),
+        newOfferType: getOfferTypeFromString(_offerType ?? 'exchange'),
         newIsPublish: _isPublish ?? false,
       );
 
@@ -144,6 +147,7 @@ class _EditCatalogPageState extends State<EditCatalogPage> {
   void onSelect(String value) {
     setState(() {
       _environment = value;
+      _offerType = value;
     });
   }
 
@@ -533,6 +537,68 @@ class _EditCatalogPageState extends State<EditCatalogPage> {
                                         color: Theme.of(context)
                                             .colorScheme
                                             .error),
+                                  ),
+                                ),
+                            ],
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 25),
+                      const Padding(
+                        padding: AppSpacing.paddingVertical,
+                        child:
+                            Text('Que souhaitez-vous faire de votre plante ?'),
+                      ),
+                      FormBuilderField(
+                        name: 'offerType',
+                        initialValue: _offerType,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: FormBuilderValidators.compose([
+                          FormBuilderValidators.required(
+                              errorText: 'Ce champ est requis'),
+                        ]),
+                        onSaved: (value) => setState(() => _offerType = value),
+                        builder: (FormFieldState<dynamic> fieldCategory) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: SelectableItem(
+                                      icon: LucideIcons.gift,
+                                      label: "Donation",
+                                      value: "donation",
+                                      isSelected: _offerType == "donation",
+                                      onTap: (value) {
+                                        onSelect(value);
+                                        fieldCategory.didChange(value);
+                                      },
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: SelectableItem(
+                                      icon: LucideIcons.heart_handshake,
+                                      label: "Echange",
+                                      value: "exchange",
+                                      isSelected: _offerType == "exchange",
+                                      onTap: (value) {
+                                        onSelect(value);
+                                        fieldCategory.didChange(value);
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              if (fieldCategory.hasError)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 8),
+                                  child: Text(
+                                    fieldCategory.errorText ?? '',
+                                    style: const TextStyle(
+                                        color: AppColors.error, fontSize: 12),
                                   ),
                                 ),
                             ],

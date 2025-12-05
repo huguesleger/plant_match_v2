@@ -73,3 +73,16 @@ String lightingToString(Lighting lighting) {
       return "shade";
   }
 }
+
+OfferType? getOfferTypeFromString(String value) {
+  return stringToEnum<OfferType>(value, OfferType.values);
+}
+
+String offerTypeToString(OfferType offerType) {
+  switch (offerType) {
+    case OfferType.exchange:
+      return "exchange";
+    case OfferType.donation:
+      return "donation";
+  }
+}

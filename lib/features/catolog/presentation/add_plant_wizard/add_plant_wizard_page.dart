@@ -33,7 +33,7 @@ class AddPlantWizardPage extends StatefulWidget {
 
 class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
   int _currentPage = 0;
-  final int _totalPages = 9;
+  final int _totalPages = 10;
   final PageController _pageController = PageController();
   final int _maxChar = 150;
   final TextEditingController _plantNameController = TextEditingController();
@@ -48,6 +48,9 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
       TextEditingController();
   final TextEditingController _plantDescriptionController =
       TextEditingController();
+
+  final TextEditingController _plantOfferTypeController =
+      TextEditingController();
   final TextEditingController _plantIsPublishController =
       TextEditingController();
 
@@ -59,6 +62,7 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
   final _formKeyPlantLighting = GlobalKey<FormBuilderState>();
   final _formKeyPlantDescription = GlobalKey<FormBuilderState>();
   final _formKeyPlantImage = GlobalKey<FormBuilderState>();
+  final _formKeyPlantOfferType = GlobalKey<FormBuilderState>();
   final _formKeyPlantIsPublish = GlobalKey<FormBuilderState>();
 
   List<String> selectedValues = [];
@@ -94,6 +98,7 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
     _plantDescriptionController.dispose();
     _pageController.dispose();
     //_plantImageController.dispose();
+    _plantOfferTypeController.dispose();
     _plantIsPublishController.dispose();
     super.dispose();
   }
@@ -209,6 +214,19 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
         break;
 
       case 8:
+        if (_formKeyPlantOfferType.currentState?.saveAndValidate() ?? false) {
+          final updated = _catalog!.copyWith(
+            newOfferType:
+                getOfferTypeFromString(_plantOfferTypeController.text),
+          );
+          setState(() => _catalog = updated);
+          _onPressedNextPage();
+        } else {
+          _formKeyPlantOfferType.currentState?.validate();
+        }
+        break;
+
+      case 9:
         if (_formKeyPlantIsPublish.currentState?.saveAndValidate() ?? false) {
           final updated = _catalog!.copyWith(
             newIsPublish: _plantIsPublishController.text == 'true',
@@ -262,6 +280,7 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
     setState(() {
       selectedValue = value;
       _plantCategoryController.text = value;
+      _plantOfferTypeController.text = value;
     });
   }
 
@@ -755,6 +774,70 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                       FormBuilderValidators.required(
                           errorText: 'Ce champ est requis'),
                     ]),
+                  ),
+                ),
+                AddPlantWizardItem(
+                  formKey: _formKeyPlantOfferType,
+                  title: 'Que souhaitez-vous en faire ?',
+                  description: 'Sélectionner une offre pour votre plante',
+                  child: FormBuilderField(
+                    name: 'offerType',
+                    initialValue: _plantOfferTypeController.text,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: FormBuilderValidators.compose([
+                      FormBuilderValidators.required(
+                          errorText: 'Ce champ est requis'),
+                    ]),
+                    onSaved: (value) =>
+                        _plantOfferTypeController.text = value.toString(),
+                    builder: (FormFieldState<dynamic> fieldCategory) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: SelectableItem(
+                                  icon: LucideIcons.gift,
+                                  label: "Donation",
+                                  value: "donation",
+                                  isSelected: _plantOfferTypeController.text ==
+                                      "donation",
+                                  onTap: (value) {
+                                    onSelect(value);
+                                    fieldCategory.didChange(value);
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: SelectableItem(
+                                  icon: LucideIcons.heart_handshake,
+                                  label: "Echange",
+                                  value: "exchange",
+                                  isSelected: _plantOfferTypeController.text ==
+                                      "exchange",
+                                  onTap: (value) {
+                                    onSelect(value);
+                                    fieldCategory.didChange(value);
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                          if (fieldCategory.hasError)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8),
+                              child: Text(
+                                fieldCategory.errorText ?? '',
+                                style: const TextStyle(
+                                    color: AppColors.error, fontSize: 12),
+                              ),
+                            ),
+                        ],
+                      );
+                    },
                   ),
                 ),
                 AddPlantWizardItem(

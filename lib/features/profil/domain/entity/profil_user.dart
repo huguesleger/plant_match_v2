@@ -7,6 +7,7 @@ class ProfilUser extends UserAuth {
   final String userName;
   final String localisation;
   final String country;
+  final String zipCode;
   final DateTime? birthdayDate;
   final double? latitude;
   final double? longitude;
@@ -22,6 +23,7 @@ class ProfilUser extends UserAuth {
     required this.userName,
     required this.localisation,
     required this.country,
+    required this.zipCode,
     this.latitude,
     this.longitude,
     required this.position,
@@ -34,6 +36,7 @@ class ProfilUser extends UserAuth {
     String? newProfilImg,
     String? newUserName,
     String? newLocalisation,
+    String? newZipCode,
     String? newCountry,
     DateTime? newBirthdayDate,
     double? newLatitude,
@@ -50,6 +53,7 @@ class ProfilUser extends UserAuth {
       userName: newUserName ?? userName,
       localisation: newLocalisation ?? localisation,
       country: newCountry ?? country,
+      zipCode: newZipCode ?? zipCode,
       birthdayDate: newBirthdayDate ?? birthdayDate,
       latitude: newLatitude ?? latitude,
       longitude: newLongitude ?? longitude,
@@ -69,6 +73,7 @@ class ProfilUser extends UserAuth {
       'userName': userName,
       'localisation': localisation,
       'country': country,
+      'zipCode': zipCode,
       'birthdayDate': birthdayDate?.toIso8601String(),
       'latitude': latitude,
       'longitude': longitude,
@@ -89,6 +94,7 @@ class ProfilUser extends UserAuth {
       userName: json['userName'] ?? '',
       localisation: json['localisation'] ?? '',
       country: json['country'] ?? '',
+      zipCode: json['zipCode'] ?? '',
       birthdayDate: json['birthdayDate'] != null
           ? (json['birthdayDate'] is Timestamp
               ? (json['birthdayDate'] as Timestamp).toDate()

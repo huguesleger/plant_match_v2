@@ -60,7 +60,7 @@ class ProfilPersonalDetailPage extends StatelessWidget {
               title: 'Localisation',
               subtitle: profilUser.localisation.isEmpty
                   ? 'A renseigner'
-                  : '${profilUser.localisation} - ${profilUser.country}',
+                  : '${profilUser.localisation} ${(profilUser.zipCode)} - ${profilUser.country}',
               onTap: () async {
                 final profilCubit = context.read<ProfilCubit>();
                 await profilCubit.clearField(
@@ -70,6 +70,10 @@ class ProfilPersonalDetailPage extends StatelessWidget {
                 await profilCubit.clearField(
                   uid: profilUser.uid,
                   fieldName: 'country',
+                );
+                await profilCubit.clearField(
+                  uid: profilUser.uid,
+                  fieldName: 'zipCode',
                 );
                 await profilCubit.clearField(
                   uid: profilUser.uid,

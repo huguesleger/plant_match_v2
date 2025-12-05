@@ -33,6 +33,7 @@ class ProfilCubit extends Cubit<ProfilState> {
     String? imageUrl,
     String? newUserName,
     String? newLocalisation,
+    String? newZipCode,
     String? newCountry,
     DateTime? newBirthdayDate,
     double? newLatitude,
@@ -63,6 +64,7 @@ class ProfilCubit extends Cubit<ProfilState> {
         newUserName: newUserName ?? currentUser.userName,
         newLocalisation: newLocalisation ?? currentUser.localisation,
         newCountry: newCountry ?? currentUser.country,
+        newZipCode: newZipCode ?? currentUser.zipCode,
         newBirthdayDate: newBirthdayDate ?? currentUser.birthdayDate,
         newLatitude: newLatitude ?? currentUser.latitude,
         newLongitude: newLongitude ?? currentUser.longitude,
@@ -181,6 +183,7 @@ class ProfilCubit extends Cubit<ProfilState> {
         newBio: fieldName == 'bio' ? '' : null,
         newLocalisation: fieldName == 'localisation' ? '' : null,
         newCountry: fieldName == 'country' ? '' : null,
+        newZipCode: fieldName == 'zipCode' ? '' : null,
         newLatitude: fieldName == 'latitude' ? 0 : null,
         newLongitude: fieldName == 'longitude' ? 0 : null,
       );

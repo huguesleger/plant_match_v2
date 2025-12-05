@@ -27,6 +27,7 @@ class FirebaseProfilRepo implements ProfilRepository {
             userName: userData['userName'] ?? '',
             localisation: userData['localisation'] ?? '',
             country: userData['country'] ?? '',
+            zipCode: userData['zipCode'] ?? '',
             birthdayDate: userData['birthdayDate'] != null
                 ? (userData['birthdayDate'] as Timestamp).toDate()
                 : null,
@@ -62,6 +63,7 @@ class FirebaseProfilRepo implements ProfilRepository {
         'userName': updateProfilUser.userName,
         'localisation': updateProfilUser.localisation,
         'country': updateProfilUser.country,
+        'zipCode': updateProfilUser.zipCode,
         'birthdayDate': updateProfilUser.birthdayDate != null
             ? Timestamp.fromDate(updateProfilUser.birthdayDate!)
             : null,
@@ -92,6 +94,7 @@ class FirebaseProfilRepo implements ProfilRepository {
         'userName': profilUser.userName,
         'localisation': profilUser.localisation,
         'country': profilUser.country,
+        'zipCode': profilUser.zipCode,
         'birthdayDate': profilUser.birthdayDate != null
             ? Timestamp.fromDate(profilUser.birthdayDate!)
             : null,

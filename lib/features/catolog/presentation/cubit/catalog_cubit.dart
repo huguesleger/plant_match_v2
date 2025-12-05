@@ -30,6 +30,7 @@ class CatalogCubit extends Cubit<CatalogState> {
           lighting: Lighting.sun,
           isPublish: false,
           createdAt: DateTime.now(),
+          offerType: OfferType.exchange,
         );
         return emit(CatalogLoaded(catalogs, catalogEmpty));
       }

@@ -13,6 +13,7 @@ class Catalog {
   final Lighting lighting;
   final bool isPublish;
   final DateTime createdAt;
+  final OfferType offerType;
 
   Catalog({
     required this.userId,
@@ -27,6 +28,7 @@ class Catalog {
     required this.lighting,
     required this.isPublish,
     required this.createdAt,
+    required this.offerType,
   });
 
   Catalog copyWith({
@@ -42,6 +44,7 @@ class Catalog {
     Lighting? newLighting,
     bool? newIsPublish,
     DateTime? newCreatedAt,
+    OfferType? newOfferType,
   }) {
     return Catalog(
       userId: newUserId ?? userId,
@@ -56,6 +59,7 @@ class Catalog {
       lighting: newLighting ?? lighting,
       isPublish: newIsPublish ?? isPublish,
       createdAt: newCreatedAt ?? createdAt,
+      offerType: newOfferType ?? offerType,
     );
   }
 
@@ -73,6 +77,7 @@ class Catalog {
       lighting: Lighting.sun,
       isPublish: false,
       createdAt: DateTime.now(),
+      offerType: OfferType.exchange,
     );
   }
 
@@ -104,6 +109,9 @@ class Catalog {
       createdAt: json['createdAt'] != null
           ? (json['createdAt'] as Timestamp).toDate()
           : DateTime.now(),
+      offerType: json['offerType'] != null
+          ? OfferType.values.byName(json['offerType'])
+          : OfferType.exchange,
     );
   }
 
@@ -120,6 +128,7 @@ class Catalog {
       'lighting': lighting.name,
       'isPublish': isPublish,
       'createdAt': createdAt.toIso8601String(),
+      'offerType': offerType.name,
     };
   }
 }
@@ -156,6 +165,11 @@ enum Lighting {
   sun,
   indirectLight,
   shade,
+}
+
+enum OfferType {
+  exchange,
+  donation,
 }
 
 extension LightingExtension on Lighting {
@@ -199,5 +213,12 @@ extension WateringExtension on Watering {
   String get wateringName => switch (this) {
         Watering.little => 'Peu d\'eau',
         Watering.regularly => 'Régulier',
+      };
+}
+
+extension OfferTypeExtension on OfferType {
+  String get offerTypeName => switch (this) {
+        OfferType.exchange => 'Échange',
+        OfferType.donation => 'Donation',
       };
 }

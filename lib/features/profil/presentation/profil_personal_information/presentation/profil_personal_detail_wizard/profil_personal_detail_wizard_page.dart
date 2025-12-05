@@ -83,6 +83,7 @@ class _ProfilPersonalDetailWizardPageState
               newBio: _bioController.text,
               newLocalisation: currentAddress,
               newCountry: currentCountry,
+              newZipCode: currentZipCode,
               newLatitude: currentLatitude,
               newLongitude: currentLongitude,
               newPosition: GeoPoint(currentLatitude, currentLongitude),
@@ -253,6 +254,7 @@ class _ProfilPersonalDetailWizardPageState
                     maxLines: 5,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     controller: _bioController,
+                    maxLength: 150,
                   ),
                 ),
                 ProfilPersonalDetailWizardItem(
@@ -272,6 +274,7 @@ class _ProfilPersonalDetailWizardPageState
                       ),
                       Text(widget.profilUser.localisation),
                       Text(widget.profilUser.country),
+                      Text(widget.profilUser.zipCode),
                     ],
                   ),
                 ),
