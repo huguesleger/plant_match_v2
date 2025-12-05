@@ -9,12 +9,20 @@ class TitleWithIcon extends StatelessWidget {
     required this.title,
     required this.bgColor,
     required this.iconColor,
+    this.fontSize = AppTypo.textS,
+    this.fontFamily,
+    this.fontColor = AppColors.greyDark,
+    this.fontWeight = FontWeight.w400,
   });
 
   final IconData icon;
   final String title;
   final Color bgColor;
   final Color iconColor;
+  final double fontSize;
+  final String? fontFamily;
+  final Color fontColor;
+  final FontWeight fontWeight;
 
   @override
   Widget build(BuildContext context) {
@@ -31,8 +39,12 @@ class TitleWithIcon extends StatelessWidget {
         const SizedBox(width: 8),
         Text(
           title,
-          style: const TextStyle(
-              color: AppColors.greyDark, fontSize: AppTypo.textS),
+          style: TextStyle(
+            color: fontColor,
+            fontSize: fontSize,
+            fontFamily: fontFamily,
+            fontWeight: fontWeight,
+          ),
         ),
       ],
     );
