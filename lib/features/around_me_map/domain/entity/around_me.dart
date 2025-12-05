@@ -12,6 +12,7 @@ class AroundMe extends ProfilUser {
     required super.profilImg,
     required super.localisation,
     required super.country,
+    required super.zipCode,
     required super.position,
     required super.isOnline,
   });
@@ -28,6 +29,7 @@ class AroundMe extends ProfilUser {
       'profilImg': profilImg,
       'localisation': localisation,
       'country': country,
+      'zipCode': zipCode,
       'position': {
         'geopoint': position,
       },
@@ -46,6 +48,7 @@ class AroundMe extends ProfilUser {
       profilImg: json['profilImg'],
       localisation: json['localisation'],
       country: json['country'],
+      zipCode: json['zipCode'],
       position: json['position'] != null && json['position']['geopoint'] != null
           ? json['position']['geopoint'] as GeoPoint
           : const GeoPoint(0, 0),
