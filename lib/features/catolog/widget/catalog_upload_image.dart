@@ -95,48 +95,47 @@ class _CatalogUploadImageState extends State<CatalogUploadImage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child: Container(
-            decoration: BoxDecoration(
-              color: AppColors.greenLight.withValues(alpha: 0.1),
-              border: const DashedBorder(
-                dashLength: 8,
-                left: BorderSide(color: AppColors.blueGreen, width: 2),
-                top: BorderSide(color: AppColors.blueGreen, width: 2),
-                right: BorderSide(color: AppColors.blueGreen, width: 2),
-                bottom: BorderSide(color: AppColors.blueGreen, width: 2),
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Container(
+              decoration: BoxDecoration(
+                color: AppColors.greenLight.withValues(alpha: 0.1),
+                border: const DashedBorder(
+                  dashLength: 8,
+                  left: BorderSide(color: AppColors.blueGreen, width: 2),
+                  top: BorderSide(color: AppColors.blueGreen, width: 2),
+                  right: BorderSide(color: AppColors.blueGreen, width: 2),
+                  bottom: BorderSide(color: AppColors.blueGreen, width: 2),
+                ),
+                borderRadius: const BorderRadius.all(Radius.circular(20)),
               ),
-              borderRadius: const BorderRadius.all(Radius.circular(20)),
-            ),
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                const Image(
-                  image: AssetImage('assets/images/upload_images.png'),
-                  height: 130,
-                ),
-                const SizedBox(height: 10),
-                ButtonRounded(
-                  text: 'Sélectionner des images',
-                  onPressed:
-                      catalogImages.length < maxImages ? _pickImages : null,
-                  bgColor: AppColors.blueGreen,
-                  textColor: AppColors.white,
-                ),
-              ],
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  const Image(
+                    image: AssetImage('assets/images/upload_images.png'),
+                    height: 130,
+                  ),
+                  const SizedBox(height: 10),
+                  ButtonRounded(
+                    text: 'Sélectionner des images',
+                    onPressed:
+                        catalogImages.length < maxImages ? _pickImages : null,
+                    bgColor: AppColors.blueGreen,
+                    textColor: AppColors.white,
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-        if (catalogImages.isNotEmpty) ...[
-          const SizedBox(height: 20),
-          SizedBox(
-            height: 216,
-            child: ListView.separated(
-              physics: const NeverScrollableScrollPhysics(),
+          if (catalogImages.isNotEmpty) ...[
+            const SizedBox(height: 20),
+            ListView.separated(
+              shrinkWrap: true,
               separatorBuilder: (_, __) => const Divider(),
               itemCount: catalogImages.length,
               itemBuilder: (_, index) {
@@ -162,9 +161,9 @@ class _CatalogUploadImageState extends State<CatalogUploadImage> {
                 );
               },
             ),
-          ),
+          ],
         ],
-      ],
+      ),
     );
   }
 }
