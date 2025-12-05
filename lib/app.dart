@@ -12,14 +12,16 @@ import 'package:plant_match_v2/features/auth/data/firebase_auth_service.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_state.dart';
 import 'package:plant_match_v2/features/auth/presentation/email_verification/email_verification_page.dart';
+import 'package:plant_match_v2/features/catolog/data/firebase_catalog_repository.dart';
 import 'package:plant_match_v2/features/catolog/presentation/cubit/catalog_cubit.dart';
 import 'package:plant_match_v2/features/get_started/presentation/get_started_page.dart';
 import 'package:plant_match_v2/features/profil/data/firebase_profil_repo.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
 import 'package:plant_match_v2/features/storage/data/firebase_storage_repository.dart';
+import 'package:plant_match_v2/features/user/data/firebase_user.dart';
+import 'package:plant_match_v2/features/user/presentation/cubit/user_cubit.dart';
 import 'package:plant_match_v2/features/user_points/data/firebase_user_points.dart';
 import 'package:plant_match_v2/features/user_points/presentation/cubit/user_points_cubit.dart';
-import 'package:plant_match_v2/features/catolog/data/firebase_catalog_repository.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -35,6 +37,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   final userPointsRepository = FirebaseUserPoints();
   final aroundMeRepository = FirebaseAroundMe();
   final catalogRepository = FirebaseCatalogRepository();
+  final userRepository = FirebaseUser();
 
   @override
   void initState() {
@@ -94,6 +97,13 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             aroundMeRepository: aroundMeRepository,
             profilRepository: profilRepository,
             catalogRepository: catalogRepository,
+          ),
+        ),
+        BlocProvider(
+          create: (context) => UserCubit(
+            userRepository: userRepository,
+            catalogRepository: catalogRepository,
+            userPointsRepository: userPointsRepository,
           ),
         ),
         BlocProvider(
