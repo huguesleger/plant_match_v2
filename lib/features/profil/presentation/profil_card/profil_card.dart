@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/widgets/app_card/app_card.dart';
 import 'package:plant_match_v2/features/catolog/presentation/catalog_page.dart';
 import 'package:plant_match_v2/features/profil/presentation/profil_badge/presentation/profil_badge_page.dart';
@@ -12,6 +13,7 @@ class ProfilCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView(
       scrollDirection: Axis.horizontal,
+      padding: AppSpacing.paddingHorizontal,
       children: [
         AppCard(
           bgColor: AppColors.greenDark,

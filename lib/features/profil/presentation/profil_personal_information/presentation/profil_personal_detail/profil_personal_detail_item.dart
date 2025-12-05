@@ -30,12 +30,14 @@ class ProfilPersonalDetailItem extends StatelessWidget {
       subtitle: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            subtitle,
-            style: const TextStyle(
-                color: AppColors.greyMedium, fontSize: AppTypo.textXs),
-            overflow: TextOverflow.ellipsis,
-            maxLines: 1,
+          Expanded(
+            child: Text(
+              subtitle,
+              style: const TextStyle(
+                  color: AppColors.greyMedium, fontSize: AppTypo.textXs),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+            ),
           ),
           if (onTap != null)
             Container(

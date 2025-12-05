@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_header_slider.dart';
 import 'package:plant_match_v2/core/widgets/badge/badge_pill.dart';
@@ -38,14 +39,14 @@ class _CatalogDetailPageState extends State<CatalogDetailPage> {
 
     return Scaffold(
       appBar: AppBarHeaderSlider(
-        headerHeight: 450,
+        headerHeight: 420,
         content: Stack(
           children: [
             images.isNotEmpty
                 ? CarouselSlider.builder(
                     itemCount: images.length,
                     options: CarouselOptions(
-                      height: 450,
+                      height: 420,
                       viewportFraction: 1.0,
                       enableInfiniteScroll: false,
                       onPageChanged: (index, reason) {
@@ -97,7 +98,7 @@ class _CatalogDetailPageState extends State<CatalogDetailPage> {
                   )
                 : const SizedBox.shrink(),
             Positioned(
-              top: 365,
+              top: 320,
               right: 0,
               left: 0,
               child: Container(
@@ -110,8 +111,8 @@ class _CatalogDetailPageState extends State<CatalogDetailPage> {
                   ),
                 ),
                 child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 25, horizontal: 20),
+                  padding: AppSpacing.paddingHorizontal +
+                      const EdgeInsets.symmetric(vertical: 25),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -190,14 +191,14 @@ class _CatalogDetailPageState extends State<CatalogDetailPage> {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+        padding: AppSpacing.paddingHorizontal,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 40),
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+              padding: AppSpacing.paddingAll,
               decoration: BoxDecoration(
                 color: AppColors.greenLight.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(50),

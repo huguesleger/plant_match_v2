@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
+import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/widgets/avatar/avatar.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
@@ -16,6 +17,7 @@ class ProfilHeader extends StatelessWidget {
       children: [
         Expanded(
           child: TitlePage(
+            fontSize: AppTypo.textXl,
             title: profilUser.userName.isNotEmpty
                 ? profilUser.userName.toCapitalizeWords()
                 : profilUser.fullName.toCapitalizeWords(),
