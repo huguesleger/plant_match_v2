@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/core/theme/app_spacing.dart';
+import 'package:plant_match_v2/core/theme/app_typo.dart';
 
 class AppBarTemplate extends StatelessWidget implements PreferredSizeWidget {
   const AppBarTemplate({
@@ -15,6 +17,7 @@ class AppBarTemplate extends StatelessWidget implements PreferredSizeWidget {
     this.onPressed,
     this.actions,
     this.leading = true,
+    this.actionsPadding = AppSpacing.paddingHorizontal,
   });
 
   final double? leadingWith;
@@ -27,6 +30,7 @@ class AppBarTemplate extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onPressed;
   final List<Widget>? actions;
   final bool? leading;
+  final EdgeInsets actionsPadding;
 
   @override
   Size get preferredSize => const Size.fromHeight(56);
@@ -39,7 +43,7 @@ class AppBarTemplate extends StatelessWidget implements PreferredSizeWidget {
               title!,
               style: const TextStyle(
                 color: AppColors.greyDark,
-                fontSize: 18,
+                fontSize: AppTypo.textM,
                 fontWeight: FontWeight.w600,
                 fontFamily: 'Chillax',
               ),
@@ -64,6 +68,7 @@ class AppBarTemplate extends StatelessWidget implements PreferredSizeWidget {
             )
           : const SizedBox.shrink(),
       actions: actions,
+      actionsPadding: actions != null ? actionsPadding : null,
     );
   }
 }

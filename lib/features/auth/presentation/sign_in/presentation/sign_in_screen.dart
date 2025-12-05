@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_dynamic_header.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
@@ -21,6 +22,11 @@ class SignInScreen extends StatelessWidget {
         titlePadding: EdgeInsets.only(
             bottom: MediaQuery.of(context).size.height > 700 ? 140 : 70,
             top: 50),
+        visual: SvgPicture.asset('assets/logo/logo_white.svg'),
+        shrinkVisual: SvgPicture.asset(
+          'assets/logo/logo_color.svg',
+          width: 60,
+        ),
         body: Padding(
           padding: AppSpacing.paddingHorizontal,
           child: IntrinsicHeight(

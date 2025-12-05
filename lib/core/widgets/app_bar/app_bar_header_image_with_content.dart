@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/core/theme/app_typo.dart';
 
 class AppBarHeaderImageWithContent extends StatelessWidget
     implements PreferredSizeWidget {
@@ -54,7 +55,7 @@ class AppBarHeaderImageWithContent extends StatelessWidget
               title!,
               style: TextStyle(
                 color: titleColor,
-                fontSize: 18,
+                fontSize: AppTypo.textM,
                 fontWeight: FontWeight.w600,
                 fontFamily: 'Chillax',
               ),

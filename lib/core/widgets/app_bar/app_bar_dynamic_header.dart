@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/core/theme/app_spacing.dart';
 
 class AppBarDynamicHeader extends StatefulWidget {
   const AppBarDynamicHeader({
@@ -10,8 +10,13 @@ class AppBarDynamicHeader extends StatefulWidget {
     this.leading = true,
     this.leadingButton,
     this.leadingWidth = 76,
+    this.actions,
+    this.actionsPadding = AppSpacing.paddingHorizontal,
+    this.collapsedHeight = 90,
     required this.titlePadding,
     required this.height,
+    required this.visual,
+    required this.shrinkVisual,
   });
 
   final Widget body;
@@ -19,9 +24,13 @@ class AppBarDynamicHeader extends StatefulWidget {
   final bool leading;
   final Widget? leadingButton;
   final double leadingWidth;
-
   final EdgeInsets titlePadding;
   final double height;
+  final List<Widget>? actions;
+  final EdgeInsets actionsPadding;
+  final Widget visual;
+  final Widget shrinkVisual;
+  final double collapsedHeight;
 
   @override
   State<AppBarDynamicHeader> createState() => _AppBarDynamicHeaderState();
@@ -65,18 +74,15 @@ class _AppBarDynamicHeaderState extends State<AppBarDynamicHeader> {
           backgroundColor: AppColors.white,
           surfaceTintColor: AppColors.white,
           expandedHeight: widget.height,
-          collapsedHeight: 90,
+          collapsedHeight: widget.collapsedHeight,
+          actions: widget.actions,
+          actionsPadding: widget.actions != null ? widget.actionsPadding : null,
           shadowColor: AppColors.black.withValues(alpha: 0.6),
           flexibleSpace: FlexibleSpaceBar(
             expandedTitleScale: 1.2,
             centerTitle: true,
             titlePadding: _isShrink ? null : widget.titlePadding,
-            title: _isShrink
-                ? SvgPicture.asset(
-                    'assets/logo/logo_color.svg',
-                    width: 60,
-                  )
-                : SvgPicture.asset('assets/logo/logo_white.svg'),
+            title: _isShrink ? widget.shrinkVisual : widget.visual,
             background: widget.backgroundAppBar,
           ),
         )

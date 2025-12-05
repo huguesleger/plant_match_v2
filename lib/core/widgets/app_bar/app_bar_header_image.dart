@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/core/theme/app_spacing.dart';
+import 'package:plant_match_v2/core/theme/app_typo.dart';
 
 class AppBarHeaderImage extends StatelessWidget implements PreferredSizeWidget {
   const AppBarHeaderImage({
@@ -14,6 +16,8 @@ class AppBarHeaderImage extends StatelessWidget implements PreferredSizeWidget {
     this.leadingWith = 76,
     this.headerHeight = 215,
     this.fit = BoxFit.cover,
+    this.actions,
+    this.actionsPadding = AppSpacing.paddingHorizontal,
   });
 
   final Image image;
@@ -25,6 +29,8 @@ class AppBarHeaderImage extends StatelessWidget implements PreferredSizeWidget {
   final double? leadingWith;
   final double? headerHeight;
   final BoxFit? fit;
+  final List<Widget>? actions;
+  final EdgeInsets actionsPadding;
 
   @override
   Size get preferredSize => Size.fromHeight(headerHeight! - 59);
@@ -46,7 +52,7 @@ class AppBarHeaderImage extends StatelessWidget implements PreferredSizeWidget {
               title!,
               style: TextStyle(
                 color: titleColor,
-                fontSize: 18,
+                fontSize: AppTypo.textM,
                 fontWeight: FontWeight.w600,
                 fontFamily: 'Chillax',
               ),
@@ -62,6 +68,8 @@ class AppBarHeaderImage extends StatelessWidget implements PreferredSizeWidget {
               ),
             )
           : const SizedBox.shrink(),
+      actions: actions,
+      actionsPadding: actions != null ? actionsPadding : null,
       backgroundColor: Colors.transparent,
       elevation: 0,
     );
