@@ -25,7 +25,6 @@ class UserCubit extends Cubit<UserState> {
       final userCatalogs = <String, List<Catalog>>{};
       final catalogs = await catalogRepository.getCatalogsByUserId(user.uid);
       final userPoints = await userPointsRepository.getPoints(user.uid);
-      final level = userPoints.level;
       userCatalogs[user.uid] = catalogs;
 
       final data = User(
