@@ -14,6 +14,7 @@ class AppBarDynamicHeader extends StatefulWidget {
     this.actionsPadding = AppSpacing.paddingHorizontal,
     this.collapsedHeight = 90,
     required this.titlePadding,
+    this.titlePaddingShrink,
     required this.height,
     required this.visual,
     required this.shrinkVisual,
@@ -25,6 +26,7 @@ class AppBarDynamicHeader extends StatefulWidget {
   final Widget? leadingButton;
   final double leadingWidth;
   final EdgeInsets titlePadding;
+  final EdgeInsets? titlePaddingShrink;
   final double height;
   final List<Widget>? actions;
   final EdgeInsets actionsPadding;
@@ -81,7 +83,8 @@ class _AppBarDynamicHeaderState extends State<AppBarDynamicHeader> {
           flexibleSpace: FlexibleSpaceBar(
             expandedTitleScale: 1.2,
             centerTitle: true,
-            titlePadding: _isShrink ? null : widget.titlePadding,
+            titlePadding:
+                _isShrink ? widget.titlePaddingShrink : widget.titlePadding,
             title: _isShrink ? widget.shrinkVisual : widget.visual,
             background: widget.backgroundAppBar,
           ),

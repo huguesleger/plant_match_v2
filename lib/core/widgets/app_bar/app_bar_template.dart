@@ -18,10 +18,13 @@ class AppBarTemplate extends StatelessWidget implements PreferredSizeWidget {
     this.actions,
     this.leading = true,
     this.actionsPadding = AppSpacing.paddingHorizontal,
+    this.titleWidget,
+    this.preferredHeight = 56,
   });
 
   final double? leadingWith;
   final String? title;
+  final Widget? titleWidget;
   final bool? centerTitle;
   final Color backgroundColor;
   final Color? shadowColor;
@@ -31,24 +34,26 @@ class AppBarTemplate extends StatelessWidget implements PreferredSizeWidget {
   final List<Widget>? actions;
   final bool? leading;
   final EdgeInsets actionsPadding;
+  final double preferredHeight;
 
   @override
-  Size get preferredSize => const Size.fromHeight(56);
+  Size get preferredSize => Size.fromHeight(preferredHeight);
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: title != null
-          ? Text(
-              title!,
-              style: const TextStyle(
-                color: AppColors.greyDark,
-                fontSize: AppTypo.textM,
-                fontWeight: FontWeight.w600,
-                fontFamily: 'Chillax',
-              ),
-            )
-          : null,
+      title: titleWidget ??
+          (title != null
+              ? Text(
+                  title!,
+                  style: const TextStyle(
+                    color: AppColors.greyDark,
+                    fontSize: AppTypo.textM,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Chillax',
+                  ),
+                )
+              : null),
       centerTitle: centerTitle,
       titleSpacing: 0,
       leadingWidth: leadingWith,
