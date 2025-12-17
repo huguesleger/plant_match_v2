@@ -14,7 +14,9 @@ import 'package:plant_match_v2/features/auth/presentation/cubit/auth_state.dart'
 import 'package:plant_match_v2/features/auth/presentation/email_verification/email_verification_page.dart';
 import 'package:plant_match_v2/features/catolog/data/firebase_catalog_repository.dart';
 import 'package:plant_match_v2/features/catolog/presentation/cubit/catalog_cubit.dart';
+import 'package:plant_match_v2/features/chat/data/firebase_chat.dart';
 import 'package:plant_match_v2/features/get_started/presentation/get_started_page.dart';
+import 'package:plant_match_v2/features/message/presentation/cubit/unread_messages_cubit.dart';
 import 'package:plant_match_v2/features/profil/data/firebase_profil_repo.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
 import 'package:plant_match_v2/features/storage/data/firebase_storage_repository.dart';
@@ -38,6 +40,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   final aroundMeRepository = FirebaseAroundMe();
   final catalogRepository = FirebaseCatalogRepository();
   final userRepository = FirebaseUser();
+  final chatRepository = FirebaseChat();
 
   @override
   void initState() {
@@ -74,6 +77,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -111,6 +115,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             catalogRepository: catalogRepository,
             storageRepository: storageRepository,
           ),
+        ),
+        BlocProvider(
+          create: (_) => UnreadMessagesCubit(
+            repository: chatRepository,
+          )..listen(user!.uid),
         ),
       ],
       child: MaterialApp(
