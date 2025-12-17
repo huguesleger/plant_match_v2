@@ -20,9 +20,10 @@ class UserHeaderWithContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppBarDynamicHeader(
-      height: 240,
-      titlePadding: const EdgeInsets.only(bottom: 16),
-      collapsedHeight: 130,
+      height: MediaQuery.of(context).size.width <= 420 ? 240 : 260,
+      titlePadding: const EdgeInsets.only(bottom: 0),
+      titlePaddingShrink: const EdgeInsets.only(bottom: 0),
+      collapsedHeight: MediaQuery.of(context).size.width <= 420 ? 130 : 150,
       leadingButton: IconButton(
         style: IconButton.styleFrom(
           shape:
@@ -38,11 +39,35 @@ class UserHeaderWithContent extends StatelessWidget {
           Navigator.pop(context);
         },
       ),
-      visual: AvatarWithInfos(
-        user: user,
+      visual: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Container(
+            height: 95,
+            color: AppColors.white,
+          ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: AvatarWithInfos(user: user),
+            ),
+          ),
+        ],
       ),
-      shrinkVisual: AvatarWithInfos(
-        user: user,
+      shrinkVisual: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: AvatarWithInfos(user: user),
+            ),
+          ),
+        ],
       ),
       backgroundAppBar: const BgHeader(),
       actions: [

@@ -1,8 +1,13 @@
+import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
+import 'package:plant_match_v2/core/extension/first_word_before_space/first_word_after_space.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
+import 'package:plant_match_v2/features/chat/data/firebase_chat.dart';
+import 'package:plant_match_v2/features/chat/presentation/chat_page.dart';
 import 'package:plant_match_v2/features/user/domain/entities/user.dart';
 import 'package:plant_match_v2/features/user/domain/extension/user_extension.dart';
 import 'package:plant_match_v2/features/user/presentation/cubit/user_cubit.dart';
@@ -74,7 +79,31 @@ class UserScreen extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () async {
+          final currentUser = FirebaseAuth.instance.currentUser;
+          if (currentUser == null) return;
+          final chatRepository = FirebaseChat();
+          final chatId = await chatRepository.getOrCreateChat(
+            currentUser.uid,
+            data.user.uid,
+          );
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => ChatPage(
+                chatId: chatId,
+                otherUserId: data.user.uid,
+                otherUserName: data.user.userName.isNotEmpty
+                    ? data.user.userName.toCapitalize()
+                    : data.user.fullName
+                        .getFirstWordBeforeSpace()
+                        .toCapitalize(),
+                otherUserAvatar: data.user.profilImg,
+              ),
+            ),
+          );
+        },
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(50),
         ),

@@ -76,6 +76,7 @@ class AvatarWithInfos extends StatelessWidget {
             color: AppColors.greyDark,
           ),
         ),
+        const SizedBox(height: 16),
       ],
     );
   }
