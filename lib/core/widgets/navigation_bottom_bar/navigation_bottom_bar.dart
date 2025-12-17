@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
+import 'package:plant_match_v2/core/widgets/navigation_bottom_bar/messages_badge_icon.dart';
 
 class NavigationBottomBar extends StatelessWidget {
   final Widget body;
@@ -45,7 +46,7 @@ class NavigationBottomBar extends StatelessWidget {
               label: 'A promixité',
             ),
             BottomNavigationBarItem(
-              icon: Icon(LucideIcons.message_square_text),
+              icon: MessagesBadgeIcon(),
               label: 'Messages',
             ),
             BottomNavigationBarItem(

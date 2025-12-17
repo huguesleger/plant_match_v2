@@ -4,6 +4,7 @@ import 'package:plant_match_v2/core/widgets/navigation_bottom_bar/navigation_bot
 import 'package:plant_match_v2/features/around_me_map/presentation/around_me_page.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/features/home/presentation/home_page.dart';
+import 'package:plant_match_v2/features/message/presentation/message_page.dart';
 import 'package:plant_match_v2/features/profil/presentation/profil_page.dart';
 
 class TemplatePage extends StatefulWidget {
@@ -33,7 +34,7 @@ class TemplatePageState extends State<TemplatePage> {
       const HomePage(),
       const Center(child: Text('Search Page Content')),
       AroundMePage(uid: uid),
-      const Center(child: Text('Message Page Content')),
+      MessagesPage(),
       ProfilPage(uid: uid),
     ];
   }
