@@ -1,14 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
-import 'package:plant_match_v2/features/chat/domain/entities/chat_user.dart';
-import 'package:plant_match_v2/features/chat/presentation/chat_page.dart';
+import 'package:plant_match_v2/features/chat_plant/domain/entities/chat_plant.dart';
+import 'package:plant_match_v2/features/chat_plant/presentation/chat_plant_page.dart';
 import 'package:plant_match_v2/features/message/presentation/widgets/message_format_date.dart';
 
 class MessagesScreen extends StatelessWidget {
   const MessagesScreen({super.key, required this.chats});
 
-  final List<ChatUser> chats;
+  final List<ChatPlant> chats;
 
   @override
   Widget build(BuildContext context) {
@@ -27,28 +27,27 @@ class MessagesScreen extends StatelessWidget {
           final chat = chats[index];
           final currentUid = FirebaseAuth.instance.currentUser!.uid;
           return ListTile(
-            leading: CircleAvatar(
-              radius: 24,
-              backgroundColor: AppColors.greyLight,
-              backgroundImage: (chat.otherUserAvatar != null &&
-                      chat.otherUserAvatar!.isNotEmpty &&
-                      chat.otherUserAvatar != 'null')
-                  ? NetworkImage(chat.otherUserAvatar!)
-                  : null,
-              child: (chat.otherUserAvatar == null ||
-                      chat.otherUserAvatar!.isEmpty ||
-                      chat.otherUserAvatar == 'null')
-                  ? Text(
-                      chat.otherUserName[0].toUpperCase(),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
+            leading: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: chat.plantImage.isNotEmpty
+                  ? Image.network(
+                      chat.plantImage,
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
                     )
-                  : null,
+                  : Container(
+                      width: 50,
+                      height: 50,
+                      color: AppColors.greyLight,
+                      child: const Icon(
+                        Icons.local_florist,
+                        color: AppColors.greyDark,
+                      ),
+                    ),
             ),
             title: Text(
-              chat.otherUserName,
+              chat.plantName,
               style: const TextStyle(fontWeight: FontWeight.w600),
             ),
             subtitle: Text(
@@ -92,11 +91,16 @@ class MessagesScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => ChatPage(
+                  builder: (_) => ChatPlantPage(
                     chatId: chat.chatId,
-                    otherUserId: chat.otherUserId,
-                    otherUserName: chat.otherUserName,
-                    otherUserAvatar: chat.otherUserAvatar ?? '',
+                    plantId: chat.plantId,
+                    plantName: chat.plantName,
+                    plantDescription: chat.plantDescription,
+                    plantImage: chat.plantImage,
+                    plantExchangeType: chat.plantExchangeType,
+                    plantOwnerId: chat.plantOwnerId,
+                    plantOwnerName: chat.plantOwnerName,
+                    plantOwnerAvatar: chat.plantOwnerAvatar ?? '',
                   ),
                 ),
               );

@@ -1,45 +1,54 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
-import 'package:plant_match_v2/core/extension/first_word_before_space/first_word_after_space.dart';
-import 'package:plant_match_v2/features/chat/domain/entities/chat_user.dart';
-import 'package:plant_match_v2/features/chat/repository/chat_repository.dart';
+import 'package:plant_match_v2/features/chat_plant/domain/entities/chat_plant.dart';
+import 'package:plant_match_v2/features/chat_plant/domain/repository/chat_plant_repository.dart';
 import 'package:plant_match_v2/features/message/presentation/state/message_state.dart';
 import 'package:plant_match_v2/features/user/domain/repository/user_repository.dart';
 
 class MessagesCubit extends Cubit<MessagesState> {
-  final ChatRepository chatRepository;
+  final ChatPlantRepository chatPlantRepository;
   final UserRepository userRepository;
 
   StreamSubscription? _sub;
 
   MessagesCubit({
-    required this.chatRepository,
+    required this.chatPlantRepository,
     required this.userRepository,
   }) : super(MessagesInitial());
 
   void load(String uid) {
     emit(MessagesLoading());
 
-    _sub = chatRepository.chatsForUser(uid).listen(
+    _sub = chatPlantRepository.chatsForUser(uid).listen(
       (chats) async {
-        final List<ChatUser> result = [];
+        final List<ChatPlant> result = [];
 
         for (final chat in chats) {
+          // Récupérer le profil de l'autre utilisateur
           final otherUserId = chat.participants.firstWhere((id) => id != uid);
           final profil = await userRepository.getUserUid(otherUserId);
+
           final displayName = profil.userName.isNotEmpty
-              ? profil.userName.toCapitalize()
-              : profil.fullName.getFirstWordBeforeSpace().toCapitalize();
+              ? profil.userName
+              : profil.fullName.split(' ').first;
+
+          final displayAvatar = profil.profilImg?.trim().isNotEmpty == true
+              ? profil.profilImg
+              : '';
 
           result.add(
-            ChatUser(
+            ChatPlant(
               chatId: chat.chatId,
+              plantId: chat.plantId,
+              plantName: chat.plantName,
+              plantDescription: chat.plantDescription,
+              plantImage: chat.plantImage,
+              plantExchangeType: chat.plantExchangeType,
+              plantOwnerId: chat.plantOwnerId,
+              plantOwnerName: displayName,
+              plantOwnerAvatar: displayAvatar,
               participants: chat.participants,
-              otherUserId: otherUserId,
-              otherUserName: displayName,
-              otherUserAvatar: profil.profilImg,
               lastMessage: chat.lastMessage,
               lastMessageAt: chat.lastMessageAt,
               unreadCount: chat.unreadCount,

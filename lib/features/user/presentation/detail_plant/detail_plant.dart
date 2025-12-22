@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
@@ -10,6 +12,8 @@ import 'package:plant_match_v2/core/widgets/buttons/button_rounded_with_icon.dar
 import 'package:plant_match_v2/core/widgets/favorite_btn/favorite_btn.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
 import 'package:plant_match_v2/features/catolog/domain/entity/catalog.dart';
+import 'package:plant_match_v2/features/chat_plant/data/firebase_chat_plant.dart';
+import 'package:plant_match_v2/features/chat_plant/presentation/chat_plant_page.dart';
 import 'package:plant_match_v2/features/user/presentation/detail_plant/widgets/badge_family.dart';
 import 'package:plant_match_v2/features/user/presentation/detail_plant/widgets/badge_offer_type.dart';
 import 'package:plant_match_v2/features/user/presentation/detail_plant/widgets/content_header.dart';
@@ -20,6 +24,61 @@ class DetailPlant extends StatelessWidget {
   const DetailPlant({super.key, required this.catalog});
 
   final Catalog catalog;
+
+  Future<void> openPlantChat(BuildContext context) async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) return;
+
+    final userDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(catalog.userId)
+        .get();
+
+    final data = userDoc.data();
+    print('User data: $data');
+    final String ownerName = (data?['userName'] != null &&
+            (data!['userName'] as String).trim().isNotEmpty)
+        ? data['userName']
+        : (data?['fullName'] != null &&
+                (data!['fullName'] as String).trim().isNotEmpty)
+            ? (data['fullName'] as String).split(' ').first
+            : 'Propriétaire';
+
+    final String? ownerAvatar =
+        (data?['profilImg'] as String?)?.trim().isNotEmpty == true
+            ? data!['profilImg']
+            : null;
+
+    final chatRepository = FirebaseChatPlant();
+    final chatId = await chatRepository.getOrCreatePlantChat(
+      currentUserId: currentUser.uid,
+      plantOwnerId: catalog.userId,
+      plantId: catalog.catalogId ?? '',
+      plantName: catalog.name,
+      plantDescription: catalog.description,
+      plantImage: catalog.images.first,
+      plantExchangeType: catalog.offerType.offerTypeName,
+    );
+
+    if (!context.mounted) return;
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ChatPlantPage(
+          chatId: chatId,
+          plantOwnerId: catalog.userId,
+          plantId: catalog.catalogId ?? '',
+          plantName: catalog.name,
+          plantDescription: catalog.description,
+          plantImage: catalog.images.first,
+          plantExchangeType: catalog.offerType.offerTypeName,
+          plantOwnerName: ownerName,
+          plantOwnerAvatar: ownerAvatar ?? '',
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +153,6 @@ class DetailPlant extends StatelessWidget {
           width: double.infinity,
           child: ButtonRoundedWithIcon(
             text: 'Envoyer un message',
-            onPressed: () {},
             bgColor: AppColors.greenDark,
             textColor: AppColors.white,
             icon: const Icon(
@@ -102,6 +160,41 @@ class DetailPlant extends StatelessWidget {
               color: AppColors.white,
               size: AppTypo.text,
             ),
+            /* onPressed: () async {
+              final currentUser = FirebaseAuth.instance.currentUser;
+              if (currentUser == null) return;
+
+              final chatRepository = FirebaseChatPlant();
+
+              final chatId = await chatRepository.getOrCreatePlantChat(
+                currentUserId: currentUser.uid,
+                plantOwnerId: catalog.userId,
+                plantId: catalog.catalogId ?? '',
+                plantName: catalog.name,
+                plantDescription: catalog.description,
+                plantImage: catalog.images.first,
+                plantExchangeType: catalog.offerType.offerTypeName,
+                plantOwnerName: '',
+              );
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) =>
+                      ChatPlantPage(
+                        chatId: chatId,
+                        plantId: catalog.catalogId ?? '',
+                        plantName: catalog.name,
+                        plantDescription: catalog.description,
+                        plantImage: catalog.images.first,
+                        plantExchangeType: catalog.offerType.offerTypeName,
+                        plantOwnerId: catalog.userId,
+                        plantOwnerName: '',
+                      ),
+                ),
+              );
+            },*/
+            onPressed: () => openPlantChat(context),
           ),
         ),
       ),
