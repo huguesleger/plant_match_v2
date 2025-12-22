@@ -4,10 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/error/error_page.dart';
 import 'package:plant_match_v2/features/chat/data/firebase_chat.dart';
+import 'package:plant_match_v2/features/chat/domain/repository/chat_repository.dart';
 import 'package:plant_match_v2/features/chat/presentation/chat_screen.dart';
 import 'package:plant_match_v2/features/chat/presentation/cubit/chat_cubit.dart';
 import 'package:plant_match_v2/features/chat/presentation/state/chat_state.dart';
-import 'package:plant_match_v2/features/chat/repository/chat_repository.dart';
 
 class ChatPage extends StatelessWidget {
   ChatPage({

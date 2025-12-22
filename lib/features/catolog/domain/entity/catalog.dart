@@ -221,4 +221,16 @@ extension OfferTypeExtension on OfferType {
         OfferType.exchange => 'Échange',
         OfferType.donation => 'Donation',
       };
+
+  static OfferType fromString(String value) {
+    final normalized = value.toLowerCase().trim();
+
+    if (normalized == 'échange') {
+      return OfferType.exchange;
+    }
+    if (normalized == 'donation') {
+      return OfferType.donation;
+    }
+    return OfferType.donation;
+  }
 }

@@ -14,7 +14,7 @@ import 'package:plant_match_v2/features/auth/presentation/cubit/auth_state.dart'
 import 'package:plant_match_v2/features/auth/presentation/email_verification/email_verification_page.dart';
 import 'package:plant_match_v2/features/catolog/data/firebase_catalog_repository.dart';
 import 'package:plant_match_v2/features/catolog/presentation/cubit/catalog_cubit.dart';
-import 'package:plant_match_v2/features/chat/data/firebase_chat.dart';
+import 'package:plant_match_v2/features/chat_plant/data/firebase_chat_plant.dart';
 import 'package:plant_match_v2/features/get_started/presentation/get_started_page.dart';
 import 'package:plant_match_v2/features/message/presentation/cubit/unread_messages_cubit.dart';
 import 'package:plant_match_v2/features/profil/data/firebase_profil_repo.dart';
@@ -40,7 +40,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   final aroundMeRepository = FirebaseAroundMe();
   final catalogRepository = FirebaseCatalogRepository();
   final userRepository = FirebaseUser();
-  final chatRepository = FirebaseChat();
+  final chatPlantRepository = FirebaseChatPlant();
 
   @override
   void initState() {
@@ -118,7 +118,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         ),
         BlocProvider(
           create: (_) => UnreadMessagesCubit(
-            repository: chatRepository,
+            repository: chatPlantRepository,
           )..listen(user!.uid),
         ),
       ],
