@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:plant_match_v2/features/chat/domain/entities/chat_user.dart';
-import 'package:plant_match_v2/features/chat/repository/chat_repository.dart';
+import 'package:plant_match_v2/features/chat/domain/repository/chat_repository.dart';
 
 class FirebaseChat implements ChatRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
