@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:plant_match_v2/features/chat/domain/repository/chat_repository.dart';
 import 'package:plant_match_v2/features/chat/presentation/state/chat_state.dart';
-import 'package:plant_match_v2/features/chat/repository/chat_repository.dart';
 
 class ChatCubit extends Cubit<ChatState> {
   final ChatRepository repository;
