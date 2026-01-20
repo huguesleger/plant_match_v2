@@ -6,6 +6,12 @@ import 'package:plant_match_v2/features/chat_plant/domain/repository/chat_plant_
 class FirebaseChatPlant implements ChatPlantRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  CollectionReference<Map<String, dynamic>> get _chats =>
+      _firestore.collection('plant_chats');
+
+  CollectionReference<Map<String, dynamic>> _messages(String chatId) =>
+      _chats.doc(chatId).collection('messages');
+
   @override
   Future<String> getOrCreatePlantChat({
     required String currentUserId,
@@ -16,81 +22,92 @@ class FirebaseChatPlant implements ChatPlantRepository {
     required String plantImage,
     required String plantExchangeType,
   }) async {
-    // Récupérer le profil du propriétaire pour nom et avatar
-    final ownerDoc = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(plantOwnerId)
-        .get();
-    final ownerData = ownerDoc.data();
-    final plantOwnerName =
-        ownerData?['userName']?.toString().trim().isNotEmpty == true
-            ? ownerData!['userName']
-            : ownerData?['fullName']?.toString().split(' ').first ??
-                'Propriétaire';
-    final plantOwnerAvatar =
-        ownerData?['profilImg']?.toString().trim().isNotEmpty == true
-            ? ownerData!['profilImg']
-            : '';
-
-    final ids = [currentUserId, plantOwnerId]..sort();
-    final chatId = '${plantId}_${ids[0]}_${ids[1]}';
-
-    final ref = _firestore.collection('plant_chats').doc(chatId);
-    final doc = await ref.get();
-
-    final data = {
-      'participants': [currentUserId, plantOwnerId],
-      'plantId': plantId,
-      'plantName': plantName,
-      'plantDescription': plantDescription,
-      'plantImage': plantImage,
-      'plantExchangeType': plantExchangeType,
-      'plantOwnerId': plantOwnerId,
-      'plantOwnerName': plantOwnerName,
-      'plantOwnerAvatar': plantOwnerAvatar,
-    };
-
-    if (!doc.exists) {
-      await ref.set({
-        ...data,
-        'createdAt': FieldValue.serverTimestamp(),
-        'unreadCount': {currentUserId: 0, plantOwnerId: 0},
-      });
-    } else {
-      await ref.update({
-        'plantOwnerName': plantOwnerName,
-        'plantOwnerAvatar': plantOwnerAvatar,
-      });
+    if (currentUserId.isEmpty || plantOwnerId.isEmpty || plantId.isEmpty) {
+      throw Exception('Paramètres invalides pour la création du chat');
     }
 
-    return chatId;
+    try {
+      final ownerDoc =
+          await _firestore.collection('users').doc(plantOwnerId).get();
+
+      final ownerData = ownerDoc.data() ?? {};
+
+      final String plantOwnerName =
+          (ownerData['userName'] as String?)?.trim().isNotEmpty == true
+              ? ownerData['userName']
+              : (ownerData['fullName'] as String?)?.split(' ').first ??
+                  'Propriétaire';
+
+      final String plantOwnerAvatar =
+          (ownerData['profilImg'] as String?)?.trim().isNotEmpty == true
+              ? ownerData['profilImg']
+              : '';
+
+      final ids = [currentUserId, plantOwnerId]..sort();
+      final chatId = '${plantId}_${ids[0]}_${ids[1]}';
+
+      final chatRef = _chats.doc(chatId);
+      final chatDoc = await chatRef.get();
+
+      final chatData = {
+        'participants': [currentUserId, plantOwnerId],
+        'plantId': plantId,
+        'plantName': plantName,
+        'plantDescription': plantDescription,
+        'plantImage': plantImage,
+        'plantExchangeType': plantExchangeType,
+        'plantOwnerId': plantOwnerId,
+        'plantOwnerName': plantOwnerName,
+        'plantOwnerAvatar': plantOwnerAvatar,
+      };
+
+      if (!chatDoc.exists) {
+        await chatRef.set({
+          ...chatData,
+          'createdAt': FieldValue.serverTimestamp(),
+          'unreadCount': {
+            currentUserId: 0,
+            plantOwnerId: 0,
+          },
+        });
+      } else {
+        await chatRef.update({
+          'plantOwnerName': plantOwnerName,
+          'plantOwnerAvatar': plantOwnerAvatar,
+        });
+      }
+      return chatId;
+    } catch (e) {
+      throw Exception('Erreur lors de la création du chat plante : $e');
+    }
   }
 
   @override
   Stream<List<types.Message>> messagesStream(String chatId) {
-    return _firestore
-        .collection('plant_chats')
-        .doc(chatId)
-        .collection('messages')
+    if (chatId.isEmpty) {
+      throw Exception('chatId invalide');
+    }
+    return _messages(chatId)
         .orderBy('timestamp', descending: true)
         .snapshots()
-        .map((snapshot) {
-      return snapshot.docs
-          .where((d) => d.data()['timestamp'] != null)
-          .map((doc) {
-        final data = doc.data();
-        return types.TextMessage(
-          id: doc.id,
-          author: types.User(id: data['senderId']),
-          createdAt:
-              (data['timestamp'] as Timestamp).toDate().millisecondsSinceEpoch,
-          text: data['text'],
-          metadata: {
-            'readAt': data['readAt'],
-          },
+        .map(
+          (snapshot) => snapshot.docs
+              .where((doc) => doc.data()['timestamp'] != null)
+              .map(
+                (doc) => types.TextMessage(
+                  id: doc.id,
+                  author: types.User(id: doc['senderId']),
+                  createdAt: (doc['timestamp'] as Timestamp)
+                      .toDate()
+                      .millisecondsSinceEpoch,
+                  text: doc['text'],
+                  metadata: {
+                    'readAt': doc['readAt'],
+                  },
+                ),
+              )
+              .toList(),
         );
-      }).toList();
-    });
   }
 
   @override
@@ -100,33 +117,46 @@ class FirebaseChatPlant implements ChatPlantRepository {
     required String receiverId,
     required String text,
   }) async {
-    final ref = _firestore.collection('plant_chats').doc(chatId);
+    if (chatId.isEmpty || senderId.isEmpty || receiverId.isEmpty) {
+      throw Exception('Paramètres invalides pour l’envoi du message');
+    }
 
-    await ref.collection('messages').add({
-      'senderId': senderId,
-      'receiverId': receiverId,
-      'text': text,
-      'timestamp': FieldValue.serverTimestamp(),
-      'readAt': null,
-    });
+    try {
+      final chatRef = _chats.doc(chatId);
 
-    await ref.update({
-      'lastMessage': text,
-      'lastMessageAt': FieldValue.serverTimestamp(),
-      'unreadCount.$receiverId': FieldValue.increment(1),
-    });
+      await _messages(chatId).add({
+        'senderId': senderId,
+        'receiverId': receiverId,
+        'text': text,
+        'timestamp': FieldValue.serverTimestamp(),
+        'readAt': null,
+      });
+
+      await chatRef.update({
+        'lastMessage': text,
+        'lastMessageAt': FieldValue.serverTimestamp(),
+        'unreadCount.$receiverId': FieldValue.increment(1),
+        'deletedFor': FieldValue.arrayRemove([senderId, receiverId]),
+      });
+    } catch (e) {
+      throw Exception('Erreur lors de l’envoi du message : $e');
+    }
   }
 
   @override
   Stream<List<ChatPlant>> chatsForUser(String uid) {
-    return _firestore
-        .collection('plant_chats')
+    return _chats
         .where('participants', arrayContains: uid)
         .orderBy('lastMessageAt', descending: true)
         .snapshots()
         .map((snapshot) {
-      return snapshot.docs.map((doc) {
+      return snapshot.docs.where((doc) {
         final data = doc.data();
+        final deletedFor = List<String>.from(data['deletedFor'] ?? []);
+        return !deletedFor.contains(uid); 
+      }).map((doc) {
+        final data = doc.data();
+
         return ChatPlant(
           chatId: doc.id,
           plantId: data['plantId'],
@@ -141,23 +171,25 @@ class FirebaseChatPlant implements ChatPlantRepository {
           lastMessage: data['lastMessage'],
           lastMessageAt: (data['lastMessageAt'] as Timestamp?)?.toDate(),
           unreadCount: Map<String, int>.from(data['unreadCount'] ?? {}),
+          otherUserId: (List<String>.from(data['participants']))
+              .firstWhere((id) => id != uid),
         );
       }).toList();
     });
   }
 
   @override
-  Future<void> resetUnread(String chatId, String uid) {
-    return _firestore
-        .collection('plant_chats')
-        .doc(chatId)
-        .update({'unreadCount.$uid': 0});
+  Future<void> resetUnread(String chatId, String uid) async {
+    if (chatId.isEmpty || uid.isEmpty) return;
+    await _chats.doc(chatId).update({'unreadCount.$uid': 0});
   }
 
   @override
   Stream<int> unreadCount(String uid) {
-    return _firestore
-        .collection('plant_chats')
+    if (uid.isEmpty) {
+      throw Exception('UID invalide');
+    }
+    return _chats
         .where('participants', arrayContains: uid)
         .snapshots()
         .map((snapshot) {
@@ -165,10 +197,12 @@ class FirebaseChatPlant implements ChatPlantRepository {
 
       for (final doc in snapshot.docs) {
         final data = doc.data();
-        final unread = data['unreadCount']?[uid] ?? 0;
-        total += unread as int;
-      }
+        final deletedFor = List<String>.from(data['deletedFor'] ?? []);
 
+        if (!deletedFor.contains(uid)) {
+          total += (data['unreadCount']?[uid] ?? 0) as int;
+        }
+      }
       return total;
     });
   }
@@ -178,38 +212,64 @@ class FirebaseChatPlant implements ChatPlantRepository {
     required String chatId,
     required String currentUserId,
   }) async {
-    final ref = _firestore.collection('plant_chats').doc(chatId);
+    if (chatId.isEmpty || currentUserId.isEmpty) return;
 
-    final unreadMessages = await ref
-        .collection('messages')
-        .where('receiverId', isEqualTo: currentUserId)
-        .where('readAt', isNull: true)
-        .get();
+    try {
+      final chatRef = _chats.doc(chatId);
 
-    final batch = _firestore.batch();
+      final unreadMessages = await _messages(chatId)
+          .where('receiverId', isEqualTo: currentUserId)
+          .where('readAt', isNull: true)
+          .get();
 
-    for (final doc in unreadMessages.docs) {
-      batch.update(doc.reference, {
-        'readAt': FieldValue.serverTimestamp(),
+      final batch = _firestore.batch();
+
+      for (final doc in unreadMessages.docs) {
+        batch.update(doc.reference, {
+          'readAt': FieldValue.serverTimestamp(),
+        });
+      }
+
+      batch.update(chatRef, {
+        'unreadCount.$currentUserId': 0,
       });
+
+      await batch.commit();
+    } catch (e) {
+      throw Exception('Erreur lors du marquage des messages lus : $e');
     }
-
-    batch.update(ref, {
-      'unreadCount.$currentUserId': 0,
-    });
-
-    await batch.commit();
   }
 
   @override
   Future<List<String>> getParticipants(String chatId) async {
-    final doc = await _firestore.collection('plant_chats').doc(chatId).get();
-
-    final data = doc.data();
-    if (data == null) {
-      throw Exception('Chat introuvable');
+    if (chatId.isEmpty) {
+      throw Exception('chatId invalide');
     }
 
-    return List<String>.from(data['participants']);
+    try {
+      final doc = await _chats.doc(chatId).get();
+      final data = doc.data();
+
+      if (data == null) {
+        throw Exception('Chat introuvable');
+      }
+
+      return List<String>.from(data['participants']);
+    } catch (e) {
+      throw Exception('Erreur récupération participants : $e');
+    }
+  }
+
+  @override
+  Future<void> softDeleteChat({
+    required String chatId,
+    required String userId,
+  }) async {
+    final doc =
+        FirebaseFirestore.instance.collection('plant_chats').doc(chatId);
+
+    await doc.set({
+      'deletedFor': FieldValue.arrayUnion([userId])
+    }, SetOptions(merge: true));
   }
 }

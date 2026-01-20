@@ -3,39 +3,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/error/error_page.dart';
+import 'package:plant_match_v2/features/catolog/data/firebase_catalog_repository.dart';
+import 'package:plant_match_v2/features/catolog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/chat_plant/data/firebase_chat_plant.dart';
 import 'package:plant_match_v2/features/chat_plant/domain/repository/chat_plant_repository.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/chat_plant_screen.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/cubit/chat_plant_cubit.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/state/chat_plant_state.dart';
+import 'package:plant_match_v2/features/exchange/presentation/cubit/exchange_cubit.dart';
 
 class ChatPlantPage extends StatelessWidget {
   ChatPlantPage({
     super.key,
     required this.chatId,
     required this.plantId,
-    required this.plantName,
-    required this.plantDescription,
-    required this.plantImage,
-    required this.plantExchangeType,
-    required this.plantOwnerId,
     required this.plantOwnerName,
     required this.plantOwnerAvatar,
   });
 
   final String chatId;
-
   final String plantId;
-  final String plantName;
-  final String plantDescription;
-  final String plantImage;
-  final String plantExchangeType;
-
-  final String plantOwnerId;
   final String plantOwnerName;
   final String plantOwnerAvatar;
 
   final ChatPlantRepository chatRepository = FirebaseChatPlant();
+  final catalogRepo = FirebaseCatalogRepository();
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +39,8 @@ class ChatPlantPage extends StatelessWidget {
       );
     }
 
+    context.read<ExchangeCubit>().listen(chatId);
+
     return BlocProvider(
       create: (_) => ChatPlantCubit(repository: chatRepository)
         ..subscribe(
@@ -57,26 +51,41 @@ class ChatPlantPage extends StatelessWidget {
           chatId: chatId,
           currentUserId: currentUser.uid,
         ),
-      child: BlocBuilder<ChatPlantCubit, ChatPlantState>(
-        builder: (context, state) {
-          return switch (state) {
-            ChatPlantInitial() || ChatPlantLoading() => const Scaffold(
-                backgroundColor: AppColors.white,
-                body: Center(child: CircularProgressIndicator()),
-              ),
-            ChatPlantError() => ErrorPage(errorMessage: state.message),
-            ChatPlantLoaded() => ChatPlantScreen(
-                chatId: chatId,
-                plantId: plantId,
-                plantName: plantName,
-                plantDescription: plantDescription,
-                plantImage: plantImage,
-                plantExchangeType: plantExchangeType,
-                plantOwnerId: plantOwnerId,
-                plantOwnerName: plantOwnerName,
-                plantOwnerAvatar: plantOwnerAvatar,
-              ),
-          };
+      child: FutureBuilder<Catalog?>(
+        future: catalogRepo.getCatalogById(plantId),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
+
+          final plant = snapshot.data!;
+
+          return BlocBuilder<ChatPlantCubit, ChatPlantState>(
+            builder: (context, state) {
+              return switch (state) {
+                ChatPlantInitial() || ChatPlantLoading() => const Scaffold(
+                    backgroundColor: AppColors.white,
+                    body: Center(child: CircularProgressIndicator()),
+                  ),
+                ChatPlantError() => ErrorPage(errorMessage: state.message),
+                ChatPlantLoaded() => ChatPlantScreen(
+                    chatId: chatId,
+                    plantId: plant.catalogId!,
+                    plantName: plant.name,
+                    plantDescription: plant.description,
+                    plantImage:
+                        plant.images.isNotEmpty ? plant.images.first : '',
+                    plantOfferType: plant.offerType,
+                    plantOwnerId: plant.userId,
+                    plantOwnerName: plantOwnerName,
+                    plantOwnerAvatar: plantOwnerAvatar,
+                    messages: state.messages,
+                  ),
+              };
+            },
+          );
         },
       ),
     );

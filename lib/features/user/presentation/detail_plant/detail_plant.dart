@@ -35,7 +35,6 @@ class DetailPlant extends StatelessWidget {
         .get();
 
     final data = userDoc.data();
-    print('User data: $data');
     final String ownerName = (data?['userName'] != null &&
             (data!['userName'] as String).trim().isNotEmpty)
         ? data['userName']
@@ -67,12 +66,7 @@ class DetailPlant extends StatelessWidget {
       MaterialPageRoute(
         builder: (_) => ChatPlantPage(
           chatId: chatId,
-          plantOwnerId: catalog.userId,
           plantId: catalog.catalogId ?? '',
-          plantName: catalog.name,
-          plantDescription: catalog.description,
-          plantImage: catalog.images.first,
-          plantExchangeType: catalog.offerType.offerTypeName,
           plantOwnerName: ownerName,
           plantOwnerAvatar: ownerAvatar ?? '',
         ),
@@ -160,40 +154,6 @@ class DetailPlant extends StatelessWidget {
               color: AppColors.white,
               size: AppTypo.text,
             ),
-            /* onPressed: () async {
-              final currentUser = FirebaseAuth.instance.currentUser;
-              if (currentUser == null) return;
-
-              final chatRepository = FirebaseChatPlant();
-
-              final chatId = await chatRepository.getOrCreatePlantChat(
-                currentUserId: currentUser.uid,
-                plantOwnerId: catalog.userId,
-                plantId: catalog.catalogId ?? '',
-                plantName: catalog.name,
-                plantDescription: catalog.description,
-                plantImage: catalog.images.first,
-                plantExchangeType: catalog.offerType.offerTypeName,
-                plantOwnerName: '',
-              );
-
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) =>
-                      ChatPlantPage(
-                        chatId: chatId,
-                        plantId: catalog.catalogId ?? '',
-                        plantName: catalog.name,
-                        plantDescription: catalog.description,
-                        plantImage: catalog.images.first,
-                        plantExchangeType: catalog.offerType.offerTypeName,
-                        plantOwnerId: catalog.userId,
-                        plantOwnerName: '',
-                      ),
-                ),
-              );
-            },*/
             onPressed: () => openPlantChat(context),
           ),
         ),

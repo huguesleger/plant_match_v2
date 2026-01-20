@@ -80,4 +80,31 @@ class FirebaseCatalogRepository implements CatalogRepository {
       },
     );
   }
+
+  @override
+  Stream<Catalog?> watchCatalog(String catalogId) {
+    return firestore
+        .collection('catalogs')
+        .doc(catalogId)
+        .snapshots()
+        .map((doc) {
+      if (!doc.exists) return null;
+      final data = doc.data();
+      if (data == null) return null;
+
+      return Catalog.fromJson(data, doc.id);
+    });
+  }
+
+  @override
+  Stream<List<Catalog>> watchCatalogsByUserId(String userId) {
+    return firestore
+        .collection('catalogs')
+        .where('userId', isEqualTo: userId)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((query) => query.docs
+            .map((doc) => Catalog.fromJson(doc.data(), doc.id))
+            .toList());
+  }
 }

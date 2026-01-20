@@ -33,4 +33,9 @@ abstract class ChatPlantRepository {
   });
 
   Future<List<String>> getParticipants(String chatId);
+
+  Future<void> softDeleteChat({
+    required String chatId,
+    required String userId,
+  });
 }

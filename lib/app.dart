@@ -15,6 +15,9 @@ import 'package:plant_match_v2/features/auth/presentation/email_verification/ema
 import 'package:plant_match_v2/features/catolog/data/firebase_catalog_repository.dart';
 import 'package:plant_match_v2/features/catolog/presentation/cubit/catalog_cubit.dart';
 import 'package:plant_match_v2/features/chat_plant/data/firebase_chat_plant.dart';
+import 'package:plant_match_v2/features/exchange/data/firebase_exchange.dart';
+import 'package:plant_match_v2/features/exchange/presentation/cubit/exchange_cubit.dart';
+import 'package:plant_match_v2/features/exchange/presentation/cubit/unread_exhange_cubit.dart';
 import 'package:plant_match_v2/features/get_started/presentation/get_started_page.dart';
 import 'package:plant_match_v2/features/message/presentation/cubit/unread_messages_cubit.dart';
 import 'package:plant_match_v2/features/profil/data/firebase_profil_repo.dart';
@@ -41,6 +44,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   final catalogRepository = FirebaseCatalogRepository();
   final userRepository = FirebaseUser();
   final chatPlantRepository = FirebaseChatPlant();
+  final exchangeRepository = FirebaseExchange();
 
   @override
   void initState() {
@@ -77,7 +81,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -119,7 +122,17 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         BlocProvider(
           create: (_) => UnreadMessagesCubit(
             repository: chatPlantRepository,
-          )..listen(user!.uid),
+          ),
+        ),
+        BlocProvider(
+          create: (_) => ExchangeCubit(
+            repository: exchangeRepository,
+          ),
+        ),
+        BlocProvider(
+          create: (_) => UnreadExchangesCubit(
+            repository: exchangeRepository,
+          ),
         ),
       ],
       child: MaterialApp(

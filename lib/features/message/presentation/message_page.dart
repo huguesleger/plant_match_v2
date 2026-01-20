@@ -5,6 +5,8 @@ import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/error/error_page.dart';
 import 'package:plant_match_v2/features/chat_plant/data/firebase_chat_plant.dart';
 import 'package:plant_match_v2/features/chat_plant/domain/repository/chat_plant_repository.dart';
+import 'package:plant_match_v2/features/exchange/data/firebase_exchange.dart';
+import 'package:plant_match_v2/features/exchange/domain/repository/exchange_repository.dart';
 import 'package:plant_match_v2/features/message/presentation/cubit/message_cubit.dart';
 import 'package:plant_match_v2/features/message/presentation/message_screen.dart';
 import 'package:plant_match_v2/features/message/presentation/state/message_state.dart';
@@ -16,6 +18,7 @@ class MessagesPage extends StatelessWidget {
 
   final ChatPlantRepository chatPlantRepository = FirebaseChatPlant();
   final UserRepository userRepository = FirebaseUser();
+  final ExchangeRepository exchangeRepository = FirebaseExchange();
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +34,7 @@ class MessagesPage extends StatelessWidget {
       create: (_) => MessagesCubit(
         chatPlantRepository: chatPlantRepository,
         userRepository: userRepository,
+        exchangeRepository: exchangeRepository,
       )..load(currentUser.uid),
       child: BlocBuilder<MessagesCubit, MessagesState>(
         builder: (context, state) {

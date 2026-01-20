@@ -17,7 +17,6 @@ class MessagesScreen extends StatelessWidget {
         body: Center(child: Text('Aucune conversation')),
       );
     }
-
     return Scaffold(
       appBar: AppBar(title: const Text('Messages')),
       body: ListView.separated(
@@ -26,6 +25,10 @@ class MessagesScreen extends StatelessWidget {
         itemBuilder: (context, index) {
           final chat = chats[index];
           final currentUid = FirebaseAuth.instance.currentUser!.uid;
+          final unreadMessagesCount = chat.unreadCount[currentUid] ?? 0;
+          final totalUnread =
+              unreadMessagesCount + (chat.hasUnreadExchange ? 1 : 0);
+
           return ListTile(
             leading: ClipRRect(
               borderRadius: BorderRadius.circular(8),
@@ -56,7 +59,6 @@ class MessagesScreen extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
             trailing: Column(
-              //mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 10),
@@ -70,21 +72,21 @@ class MessagesScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 4),
-                if ((chat.unreadCount[currentUid] ?? 0) > 0)
+                if (totalUnread > 0)
                   CircleAvatar(
                     radius: 12,
                     backgroundColor: AppColors.greenDark,
                     child: Text(
-                      chat.unreadCount[currentUid]! > 9
-                          ? '9+'
-                          : chat.unreadCount[currentUid]!.toString(),
+                      totalUnread > 9 ? '9+' : totalUnread.toString(),
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ),
+                  )
+                else
+                  const SizedBox.shrink(),
               ],
             ),
             onTap: () {
@@ -94,11 +96,6 @@ class MessagesScreen extends StatelessWidget {
                   builder: (_) => ChatPlantPage(
                     chatId: chat.chatId,
                     plantId: chat.plantId,
-                    plantName: chat.plantName,
-                    plantDescription: chat.plantDescription,
-                    plantImage: chat.plantImage,
-                    plantExchangeType: chat.plantExchangeType,
-                    plantOwnerId: chat.plantOwnerId,
                     plantOwnerName: chat.plantOwnerName,
                     plantOwnerAvatar: chat.plantOwnerAvatar ?? '',
                   ),

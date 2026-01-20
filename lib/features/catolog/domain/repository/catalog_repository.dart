@@ -10,4 +10,8 @@ abstract class CatalogRepository {
   Future<String> createCatalog(Catalog catalog);
 
   Future<void> deleteCatalog(String catalogId);
+
+  Stream<Catalog?> watchCatalog(String catalogId);
+
+  Stream<List<Catalog>> watchCatalogsByUserId(String userId);
 }

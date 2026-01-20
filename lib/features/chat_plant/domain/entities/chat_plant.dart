@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class ChatPlant {
   final String chatId;
   final String plantId;
@@ -14,6 +16,8 @@ class ChatPlant {
   final String? lastMessage;
   final DateTime? lastMessageAt;
   final Map<String, int> unreadCount;
+  final String otherUserId;
+  final bool hasUnreadExchange;
 
   ChatPlant({
     required this.chatId,
@@ -29,12 +33,15 @@ class ChatPlant {
     this.lastMessage,
     this.lastMessageAt,
     required this.unreadCount,
+    required this.otherUserId,
+    this.hasUnreadExchange = false,
   });
 
   ChatPlant copyWith({
     String? lastMessage,
     DateTime? lastMessageAt,
     Map<String, int>? unreadCount,
+    bool? hasUnreadExchange,
   }) {
     return ChatPlant(
       chatId: chatId,
@@ -50,6 +57,48 @@ class ChatPlant {
       lastMessage: lastMessage ?? this.lastMessage,
       lastMessageAt: lastMessageAt ?? this.lastMessageAt,
       unreadCount: unreadCount ?? this.unreadCount,
+      otherUserId: otherUserId,
+      hasUnreadExchange: hasUnreadExchange ?? this.hasUnreadExchange,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'plantId': plantId,
+      'plantName': plantName,
+      'plantDescription': plantDescription,
+      'plantImage': plantImage,
+      'plantExchangeType': plantExchangeType,
+      'plantOwnerId': plantOwnerId,
+      'plantOwnerName': plantOwnerName,
+      'plantOwnerAvatar': plantOwnerAvatar,
+      'participants': participants,
+      'lastMessage': lastMessage,
+      'lastMessageAt': lastMessageAt,
+      'unreadCount': unreadCount,
+      'otherUserId': otherUserId,
+    };
+  }
+
+  factory ChatPlant.fromJson(String id, Map<String, dynamic> json) {
+    return ChatPlant(
+      chatId: id,
+      plantId: json['plantId'] ?? '',
+      plantName: json['plantName'] ?? '',
+      plantDescription: json['plantDescription'] ?? '',
+      plantImage: json['plantImage'] ?? '',
+      plantExchangeType: json['plantExchangeType'] ?? '',
+      plantOwnerId: json['plantOwnerId'] ?? '',
+      plantOwnerName: json['plantOwnerName'] ?? 'Propriétaire',
+      plantOwnerAvatar: json['plantOwnerAvatar'] ?? '',
+      participants: List<String>.from(json['participants'] ?? []),
+      lastMessage: json['lastMessage'],
+      lastMessageAt: json['lastMessageAt'] != null
+          ? (json['lastMessageAt'] as Timestamp).toDate()
+          : null,
+      unreadCount: Map<String, int>.from(json['unreadCount'] ?? {}),
+      otherUserId: json['otherUserId'] ?? '',
+      hasUnreadExchange: false,
     );
   }
 }

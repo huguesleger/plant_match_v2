@@ -12,6 +12,7 @@ class UnreadMessagesCubit extends Cubit<UnreadMessagesState> {
       : super(UnreadMessagesInitial());
 
   void listen(String uid) {
+    _sub?.cancel();
     _sub = repository.unreadCount(uid).listen((count) {
       emit(UnreadMessagesLoaded(count));
     });

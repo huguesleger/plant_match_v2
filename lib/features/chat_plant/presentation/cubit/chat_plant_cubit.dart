@@ -22,10 +22,8 @@ class ChatPlantCubit extends Cubit<ChatPlantState> {
     emit(ChatPlantLoading());
 
     try {
-      // 🔹 Récupération des participants
       final participants = await repository.getParticipants(chatId);
 
-      // 🔹 Sécurisation
       _otherUserId = participants.firstWhere(
         (id) => id != currentUserId,
         orElse: () => '',
@@ -84,6 +82,14 @@ class ChatPlantCubit extends Cubit<ChatPlantState> {
       );
     } catch (_) {
       // volontairement silencieux
+    }
+  }
+
+  Future<void> softDeleteChat(String chatId, String userId) async {
+    try {
+      await repository.softDeleteChat(chatId: chatId, userId: userId);
+    } catch (_) {
+      emit(ChatPlantError('Impossible de supprimer la conversation'));
     }
   }
 
