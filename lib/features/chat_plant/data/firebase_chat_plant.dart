@@ -91,22 +91,42 @@ class FirebaseChatPlant implements ChatPlantRepository {
         .orderBy('timestamp', descending: true)
         .snapshots()
         .map(
-          (snapshot) => snapshot.docs
-              .where((doc) => doc.data()['timestamp'] != null)
-              .map(
-                (doc) => types.TextMessage(
+          (snapshot) =>
+              snapshot.docs.where((doc) => doc.data()['timestamp'] != null).map(
+            (doc) {
+              final data = doc.data();
+              final messageType = data['messageType'] as String?;
+
+              if (messageType == 'plant_exchange') {
+                return types.CustomMessage(
                   id: doc.id,
                   author: types.User(id: doc['senderId']),
                   createdAt: (doc['timestamp'] as Timestamp)
                       .toDate()
                       .millisecondsSinceEpoch,
-                  text: doc['text'],
                   metadata: {
                     'readAt': doc['readAt'],
+                    'messageType': 'plant_exchange',
+                    'plantId': data['plantId'],
+                    'plantName': data['plantName'],
+                    'plantImage': data['plantImage'],
                   },
-                ),
-              )
-              .toList(),
+                );
+              }
+
+              return types.TextMessage(
+                id: doc.id,
+                author: types.User(id: doc['senderId']),
+                createdAt: (doc['timestamp'] as Timestamp)
+                    .toDate()
+                    .millisecondsSinceEpoch,
+                text: doc['text'],
+                metadata: {
+                  'readAt': doc['readAt'],
+                },
+              );
+            },
+          ).toList(),
         );
   }
 
@@ -153,7 +173,7 @@ class FirebaseChatPlant implements ChatPlantRepository {
       return snapshot.docs.where((doc) {
         final data = doc.data();
         final deletedFor = List<String>.from(data['deletedFor'] ?? []);
-        return !deletedFor.contains(uid); 
+        return !deletedFor.contains(uid);
       }).map((doc) {
         final data = doc.data();
 
@@ -271,5 +291,43 @@ class FirebaseChatPlant implements ChatPlantRepository {
     await doc.set({
       'deletedFor': FieldValue.arrayUnion([userId])
     }, SetOptions(merge: true));
+  }
+
+  @override
+  Future<void> sendPlantExchangeMessage({
+    required String chatId,
+    required String senderId,
+    required String receiverId,
+    required String plantId,
+    required String plantName,
+    required String plantImage,
+  }) async {
+    if (chatId.isEmpty || senderId.isEmpty || receiverId.isEmpty) {
+      throw Exception('Paramètres invalides pour l\'envoi du message');
+    }
+
+    try {
+      final chatRef = _chats.doc(chatId);
+
+      await _messages(chatId).add({
+        'senderId': senderId,
+        'receiverId': receiverId,
+        'messageType': 'plant_exchange',
+        'plantId': plantId,
+        'plantName': plantName,
+        'plantImage': plantImage,
+        'text': 'Proposition d\'échange',
+        'timestamp': FieldValue.serverTimestamp(),
+        'readAt': null,
+      });
+
+      await chatRef.update({
+        'lastMessage': 'Proposition d\'échange',
+        'lastMessageAt': FieldValue.serverTimestamp(),
+        'deletedFor': FieldValue.arrayRemove([senderId, receiverId]),
+      });
+    } catch (e) {
+      throw Exception('Erreur lors de l\'envoi du message d\'échange : $e');
+    }
   }
 }

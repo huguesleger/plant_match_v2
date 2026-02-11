@@ -127,6 +127,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         BlocProvider(
           create: (_) => ExchangeCubit(
             repository: exchangeRepository,
+            chatRepository: chatPlantRepository,
           ),
         ),
         BlocProvider(

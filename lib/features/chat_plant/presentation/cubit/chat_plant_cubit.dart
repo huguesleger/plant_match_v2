@@ -93,6 +93,29 @@ class ChatPlantCubit extends Cubit<ChatPlantState> {
     }
   }
 
+  Future<void> sendPlantExchange({
+    required String chatId,
+    required String senderId,
+    required String plantId,
+    required String plantName,
+    required String plantImage,
+  }) async {
+    if (_otherUserId == null || _otherUserId!.isEmpty) return;
+
+    try {
+      await repository.sendPlantExchangeMessage(
+        chatId: chatId,
+        senderId: senderId,
+        receiverId: _otherUserId!,
+        plantId: plantId,
+        plantName: plantName,
+        plantImage: plantImage,
+      );
+    } catch (e) {
+      emit(ChatPlantError(e.toString()));
+    }
+  }
+
   @override
   Future<void> close() {
     _messagesSub?.cancel();

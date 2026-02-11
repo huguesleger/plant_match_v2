@@ -9,15 +9,17 @@ import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_template.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_outlined_rounded.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
+import 'package:plant_match_v2/features/catolog/data/firebase_catalog_repository.dart';
 import 'package:plant_match_v2/features/catolog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/chat/presentation/widget/chat_theme.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/cubit/chat_plant_cubit.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/state/chat_plant_state.dart';
+import 'package:plant_match_v2/features/chat_plant/presentation/widgets/plant_message_card.dart';
 import 'package:plant_match_v2/features/exchange/domain/entities/exchange.dart';
 import 'package:plant_match_v2/features/exchange/presentation/cubit/exchange_cubit.dart';
-
 import 'package:plant_match_v2/features/exchange/presentation/exchange_page.dart';
 import 'package:plant_match_v2/features/exchange/presentation/state/exchange_state.dart';
+import 'package:plant_match_v2/features/user/presentation/detail_plant/detail_plant.dart';
 
 class ChatPlantScreen extends StatelessWidget {
   const ChatPlantScreen({
@@ -199,6 +201,48 @@ class ChatPlantScreen extends StatelessWidget {
                 user: types.User(id: currentUser.uid),
                 messages: messages,
                 theme: ChatThemes.light,
+                customMessageBuilder: (types.CustomMessage message,
+                    {required int messageWidth}) {
+                  final metadata = message.metadata;
+                  if (metadata?['messageType'] == 'plant_exchange') {
+                    final plantId = metadata?['plantId'] as String? ?? '';
+                    final plantName = metadata?['plantName'] as String? ?? '';
+                    final plantImage = metadata?['plantImage'] as String? ?? '';
+                    final isSender = message.author.id == currentUser.uid;
+
+                    return PlantMessageCard(
+                      plantId: plantId,
+                      plantName: plantName,
+                      plantImage: plantImage,
+                      isSender: isSender,
+                      onTap: () async {
+                        final catalogRepo = FirebaseCatalogRepository();
+                        try {
+                          final catalog =
+                              await catalogRepo.getCatalogById(plantId);
+                          if (catalog != null && context.mounted) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => DetailPlant(catalog: catalog),
+                              ),
+                            );
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                    'Impossible de charger les détails de la plante'),
+                              ),
+                            );
+                          }
+                        }
+                      },
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
                 customBottomWidget: Column(
                   children: [
                     if (exchangeState is ExchangePending &&
@@ -250,50 +294,6 @@ class ChatPlantScreen extends StatelessWidget {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _DonationActionBar extends StatelessWidget {
-  const _DonationActionBar({
-    required this.onDonatePressed,
-  });
-
-  final VoidCallback onDonatePressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(12),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(
-          top: BorderSide(color: AppColors.greyLight),
-        ),
-      ),
-      child: ElevatedButton.icon(
-        onPressed: onDonatePressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.greenDark,
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        icon: const Icon(
-          LucideIcons.gift,
-          color: Colors.white,
-        ),
-        label: const Text(
-          'Proposer un don',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: AppTypo.text,
-            fontWeight: FontWeight.w600,
-          ),
         ),
       ),
     );
@@ -413,7 +413,7 @@ class _ExchangeInfoBar extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(12),
-      color: color.withOpacity(.1),
+      color: color.withValues(alpha: 0.1),
       child: Text(
         text,
         textAlign: TextAlign.center,

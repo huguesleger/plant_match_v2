@@ -1,15 +1,20 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:plant_match_v2/features/chat_plant/domain/repository/chat_plant_repository.dart';
 import 'package:plant_match_v2/features/exchange/domain/entities/exchange.dart';
 import 'package:plant_match_v2/features/exchange/domain/repository/exchange_repository.dart';
 import 'package:plant_match_v2/features/exchange/presentation/state/exchange_state.dart';
 
 class ExchangeCubit extends Cubit<ExchangeState> {
   final ExchangeRepository repository;
+  final ChatPlantRepository chatRepository;
   StreamSubscription<Exchange?>? _sub;
 
-  ExchangeCubit({required this.repository}) : super(ExchangeInitial());
+  ExchangeCubit({
+    required this.repository,
+    required this.chatRepository,
+  }) : super(ExchangeInitial());
 
   void listen(String chatId) {
     _sub?.cancel();
@@ -40,6 +45,16 @@ class ExchangeCubit extends Cubit<ExchangeState> {
   Future<void> propose(Exchange exchange) async {
     try {
       await repository.createExchange(exchange);
+
+      // Envoyer un message de chat avec les détails de la plante proposée
+      await chatRepository.sendPlantExchangeMessage(
+        chatId: exchange.chatId,
+        senderId: exchange.requestedBy,
+        receiverId: exchange.ownerId,
+        plantId: exchange.offeredPlantId,
+        plantName: exchange.offeredPlantName,
+        plantImage: exchange.offeredPlantImage,
+      );
     } catch (e) {
       emit(ExchangeError(e.toString()));
     }

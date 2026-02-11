@@ -9,13 +9,15 @@ class FirebaseExchange implements ExchangeRepository {
   Stream<Exchange?> watchExchange(String chatId) {
     return _col
         .where('chatId', isEqualTo: chatId)
+        .where('status', whereIn: ['pending', 'accepted', 'rejected'])
+        .orderBy('createdAt', descending: true)
         .limit(1)
         .snapshots()
         .map((snap) {
-      if (snap.docs.isEmpty) return null;
-      final d = snap.docs.first;
-      return Exchange.fromJson(d.id, d.data());
-    });
+          if (snap.docs.isEmpty) return null;
+          final d = snap.docs.first;
+          return Exchange.fromJson(d.id, d.data());
+        });
   }
 
   @override

@@ -38,4 +38,13 @@ abstract class ChatPlantRepository {
     required String chatId,
     required String userId,
   });
+
+  Future<void> sendPlantExchangeMessage({
+    required String chatId,
+    required String senderId,
+    required String receiverId,
+    required String plantId,
+    required String plantName,
+    required String plantImage,
+  });
 }
