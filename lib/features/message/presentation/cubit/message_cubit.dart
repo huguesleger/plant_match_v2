@@ -63,7 +63,13 @@ class MessagesCubit extends Cubit<MessagesState> {
 
         if (otherUserId.isEmpty) continue;
 
-        final user = await userRepository.getUserUid(otherUserId);
+        final userResult = await userRepository.getUserUid(otherUserId).run();
+
+        // Si l'utilisateur n'est pas trouvé, on skip ce chat
+        final userOption = userResult.toOption();
+        if (userOption.isNone()) continue;
+
+        final user = userOption.toNullable()!;
 
         final displayName = user.userName.isNotEmpty
             ? user.userName

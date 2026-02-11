@@ -9,35 +9,52 @@ class UserPointsCubit extends Cubit<UserPointsState> {
 
   Future<void> fetchUserPoints(String userId) async {
     emit(UserPointsLoading());
-    try {
-      final userPoints = await repository.getPoints(userId);
-      emit(UserPointsLoaded(
-          userPoints.currentPoints, userPoints.level, userPoints));
-    } catch (e) {
-      emit(UserPointsError('Erreur: $e'));
-    }
+
+    await repository
+        .getPoints(userId)
+        .map((userPoints) => emit(UserPointsLoaded(
+              userPoints.currentPoints,
+              userPoints.level,
+              userPoints,
+            )))
+        .run()
+        .then((result) => result.match(
+              (failure) => emit(UserPointsError(failure.message)),
+              (_) => null,
+            ));
   }
 
   Future<void> addUserPoints(
-      String userId, int initialPoints, int level) async {
+    String userId,
+    int initialPoints,
+    int level,
+  ) async {
     emit(UserPointsLoading());
-    try {
-      final userPoints =
-          await repository.addPoints(userId, initialPoints, level);
-      emit(UserPointsLoaded(
-          userPoints.currentPoints, userPoints.level, userPoints));
-    } catch (e) {
-      emit(UserPointsError('Erreur: $e'));
-    }
+
+    await repository
+        .addPoints(userId, initialPoints, level)
+        .map((userPoints) => emit(UserPointsLoaded(
+              userPoints.currentPoints,
+              userPoints.level,
+              userPoints,
+            )))
+        .run()
+        .then((result) => result.match(
+              (failure) => emit(UserPointsError(failure.message)),
+              (_) => null,
+            ));
   }
 
   Future<void> updateUserPoints(String userId, int pointsToAdd) async {
     emit(UserPointsLoading());
-    try {
-      await repository.updatePoints(userId, pointsToAdd);
-      await fetchUserPoints(userId);
-    } catch (e) {
-      emit(UserPointsError('Erreur: $e'));
-    }
+
+    await repository
+        .updatePoints(userId, pointsToAdd)
+        .map((_) => fetchUserPoints(userId))
+        .run()
+        .then((result) => result.match(
+              (failure) => emit(UserPointsError(failure.message)),
+              (fetchFuture) => fetchFuture,
+            ));
   }
 }

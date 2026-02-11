@@ -38,7 +38,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   flutter_native_splash: ^2.4.3
-  google_fonts: ^6.2.1
+  google_fonts: ^8.0.1
   flutter_svg: ^2.0.16
   smooth_page_indicator: ^1.2.0+3
   flutter_lucide: ^1.4.0
@@ -73,6 +73,7 @@ dependencies:
   date_format: ^2.0.9
   flutter_chat_ui: ^1.6.12
   flutter_chat_types: ^3.6.2
+  fpdart: ^1.1.0
 
 flutter_native_splash:
   color: "#12F4A9"
