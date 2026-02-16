@@ -28,7 +28,7 @@ class CatalogCubit extends Cubit<CatalogState> {
           levelMaintenance: LevelMaintenance.low,
           watering: Watering.little,
           lighting: Lighting.sun,
-          isPublish: false,
+          status: CatalogStatus.draft,
           createdAt: DateTime.now(),
           offerType: OfferType.exchange,
         );

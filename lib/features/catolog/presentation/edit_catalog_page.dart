@@ -61,7 +61,7 @@ class _EditCatalogPageState extends State<EditCatalogPage> {
     _lighting = widget.catalog.lighting.name;
     _updatedImages = List.from(widget.catalog.images);
     _offerType = widget.catalog.offerType.name;
-    _isPublish = widget.catalog.isPublish;
+    _isPublish = widget.catalog.status == CatalogStatus.published;
   }
 
   void _save() async {
@@ -120,7 +120,8 @@ class _EditCatalogPageState extends State<EditCatalogPage> {
         newWatering: getWateringFromString(_watering ?? 'little'),
         newLighting: getLightingFromString(_lighting ?? 'sun'),
         newOfferType: getOfferTypeFromString(_offerType ?? 'exchange'),
-        newIsPublish: _isPublish ?? false,
+        newStatus:
+            _isPublish == true ? CatalogStatus.published : CatalogStatus.draft,
       );
 
       await catalogCubit.updateCatalog(fullyUpdated);

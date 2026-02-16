@@ -6,7 +6,7 @@ extension UserExtension on User {
   List<Catalog> publishedCatalogs(String userId) {
     final list = userCatalogs[userId] ?? [];
 
-    return list.where((c) => c.isPublish).toList()
+    return list.where((c) => c.status == CatalogStatus.published).toList()
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
   }
 

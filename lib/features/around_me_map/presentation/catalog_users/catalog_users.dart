@@ -14,8 +14,9 @@ class CatalogUsers extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final publishedCatalogs =
-        catalogs.where((catalog) => catalog.isPublish == true).toList();
+    final publishedCatalogs = catalogs
+        .where((catalog) => catalog.status == CatalogStatus.published)
+        .toList();
     return publishedCatalogs.isEmpty
         ? const Center(
             child: Text(

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/error/error_page.dart';
 import 'package:plant_match_v2/features/catolog/data/firebase_catalog_repository.dart';
+import 'package:plant_match_v2/features/exchange/data/firebase_exchange.dart';
 import 'package:plant_match_v2/features/user/data/firebase_user.dart';
 import 'package:plant_match_v2/features/user/presentation/cubit/user_cubit.dart';
 import 'package:plant_match_v2/features/user/presentation/cubit/user_state.dart';
@@ -16,6 +17,7 @@ class UserPage extends StatelessWidget {
   final userRepository = FirebaseUser();
   final catalogRepository = FirebaseCatalogRepository();
   final userPointsRepository = FirebaseUserPoints();
+  final exchangeRepository = FirebaseExchange();
   final String uid;
 
   @override
@@ -25,6 +27,7 @@ class UserPage extends StatelessWidget {
         userRepository: userRepository,
         catalogRepository: catalogRepository,
         userPointsRepository: userPointsRepository,
+        exchangeRepository: exchangeRepository,
       )..fetchUser(uid),
       child: BlocBuilder<UserCubit, UserState>(
         builder: (context, state) {

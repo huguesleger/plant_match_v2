@@ -196,6 +196,11 @@ class ChatPlantScreen extends StatelessWidget {
                 text: "Échange refusé",
                 color: Colors.red,
               ),
+            if (exchangeState is ExchangeCompleted)
+              const _ExchangeInfoBar(
+                text: "Échange terminé ✅",
+                color: Colors.blue,
+              ),
             Expanded(
               child: Chat(
                 user: types.User(id: currentUser.uid),
@@ -256,9 +261,47 @@ class ChatPlantScreen extends StatelessWidget {
                           context.read<ExchangeCubit>().reject(exchange.id);
                         },
                       ),
+                    if (exchangeState is ExchangeAccepted &&
+                        currentUser.uid == plantOwnerId &&
+                        exchange != null)
+                      _CompleteExchangeButton(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (ctx) => AlertDialog(
+                              title: const Text('Clôturer l\'échange'),
+                              content: const Text(
+                                'Avez-vous effectué l\'échange physique ?\n\n'
+                                'Cette action marquera la conversation comme terminée '
+                                'et elle sera déplacée dans votre historique d\'échanges.',
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(ctx),
+                                  child: const Text('Annuler'),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.pop(ctx);
+                                    context
+                                        .read<ExchangeCubit>()
+                                        .complete(exchange.id, currentUser.uid);
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.green,
+                                    foregroundColor: Colors.white,
+                                  ),
+                                  child: const Text('Confirmer'),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
                     if (showExchangeAction &&
                         exchangeState is! ExchangePending &&
-                        exchangeState is! ExchangeAccepted)
+                        exchangeState is! ExchangeAccepted &&
+                        exchangeState is! ExchangeCompleted)
                       _ExchangeActionBar(
                         onExchangePressed: () {
                           Navigator.push(
@@ -477,6 +520,34 @@ class _ChatTextInputState extends State<_ChatTextInput> {
               onPressed: _handleSend,
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _CompleteExchangeButton extends StatelessWidget {
+  const _CompleteExchangeButton({required this.onPressed});
+
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        border: Border(top: BorderSide(color: AppColors.greyLight)),
+      ),
+      child: OutlinedButton.icon(
+        onPressed: onPressed,
+        icon: const Icon(Icons.check_circle_outline, size: 20),
+        label: const Text('Marquer l\'échange comme terminé'),
+        style: OutlinedButton.styleFrom(
+          foregroundColor: Colors.green.shade700,
+          side: BorderSide(color: Colors.green.shade300),
+          padding: const EdgeInsets.symmetric(vertical: 14),
         ),
       ),
     );

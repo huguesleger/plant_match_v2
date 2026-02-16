@@ -27,8 +27,21 @@ class CatalogScreen extends StatefulWidget {
   State<CatalogScreen> createState() => _CatalogScreenState();
 }
 
-class _CatalogScreenState extends State<CatalogScreen> {
-  Object? _selectedFilter;
+class _CatalogScreenState extends State<CatalogScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -128,30 +141,32 @@ class _CatalogScreenState extends State<CatalogScreen> {
                 Padding(
                   padding: AppSpacing.paddingHorizontal +
                       const EdgeInsets.only(top: 10),
-                  child: buildFamilyFilterTabs(),
+                  child: TabBar.secondary(
+                    controller: _tabController,
+                    tabs: [
+                      Tab(
+                        text:
+                            'Publié (${widget.catalogs.where((c) => c.status == CatalogStatus.published).length})',
+                      ),
+                      Tab(
+                        text:
+                            'Brouillon (${widget.catalogs.where((c) => c.status == CatalogStatus.draft).length})',
+                      ),
+                      Tab(
+                        text:
+                            'Archivé (${widget.catalogs.where((c) => c.status == CatalogStatus.archived).length})',
+                      ),
+                    ],
+                  ),
                 ),
                 Expanded(
-                  child: BlocBuilder<CatalogCubit, CatalogState>(
-                    builder: (context, state) {
-                      return switch (state) {
-                        CatalogInitial() || CatalogLoading() => const Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        CatalogError() => Center(
-                            child: Text(
-                              'Erreur de chargement du catalogue',
-                              style: Theme.of(context).textTheme.bodyLarge,
-                            ),
-                          ),
-                        CatalogLoaded() => Container(
-                            color: AppColors.greyUltraLight,
-                            child: Padding(
-                              padding: AppSpacing.paddingHorizontal,
-                              child: catalogGridView(state.catalogs),
-                            ),
-                          ),
-                      };
-                    },
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      _buildTabContent(CatalogStatus.published),
+                      _buildTabContent(CatalogStatus.draft),
+                      _buildTabContent(CatalogStatus.archived),
+                    ],
                   ),
                 ),
               ],
@@ -159,24 +174,39 @@ class _CatalogScreenState extends State<CatalogScreen> {
     );
   }
 
-  Widget catalogGridView(List<Catalog> catalogs) {
-    final filteredCatalogs = _selectedFilter == null
-        ? catalogs
-        : catalogs.where((catalog) {
-            if (_selectedFilter is Family) {
-              return catalog.family.contains(_selectedFilter as Family);
-            } else if (_selectedFilter is Environment) {
-              return catalog.environment == _selectedFilter;
-            }
-            return true;
-          }).toList();
+  Widget _buildTabContent(CatalogStatus status) {
+    return BlocBuilder<CatalogCubit, CatalogState>(
+      builder: (context, state) {
+        return switch (state) {
+          CatalogInitial() || CatalogLoading() => const Center(
+              child: CircularProgressIndicator(),
+            ),
+          CatalogError() => Center(
+              child: Text(
+                'Erreur de chargement du catalogue',
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+            ),
+          CatalogLoaded() => _buildCatalogList(
+              state.catalogs.where((c) => c.status == status).toList(),
+              status,
+            ),
+        };
+      },
+    );
+  }
 
-    if (filteredCatalogs.isEmpty) {
+  Widget _buildCatalogList(List<Catalog> catalogs, CatalogStatus status) {
+    if (catalogs.isEmpty) {
       return Center(
         child: Padding(
           padding: const EdgeInsets.only(top: 50),
           child: Text(
-            'Aucun résultat',
+            status == CatalogStatus.archived
+                ? 'Aucune plante archivée'
+                : status == CatalogStatus.draft
+                    ? 'Aucun brouillon'
+                    : 'Aucune plante publiée',
             style: TextStyle(
               fontSize: 16,
               color: Colors.grey.shade600,
@@ -187,72 +217,17 @@ class _CatalogScreenState extends State<CatalogScreen> {
       );
     }
 
-    return Padding(
-      padding: const EdgeInsets.only(top: 10, bottom: 100),
-      child: ListView(
-        children: filteredCatalogs
-            .map((catalog) => CatalogCardItem(catalog: catalog))
-            .toList(),
-      ),
-    );
-  }
-
-  Widget buildFamilyFilterTabs() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.only(left: 0, top: 10, bottom: 10),
-      child: Row(
-        children: [
-          _buildFilterTab(null, label: 'Toutes'),
-          ...Environment.values.map((env) => _buildFilterTab(env)),
-          ...Family.values.map((family) => _buildFilterTab(family)),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFilterTab(Object? filter, {String? label}) {
-    final isSelected = _selectedFilter == filter;
-
-    final textLabel = label ??
-        switch (filter) {
-          Family family => family.familyName,
-          Environment env => env.envName,
-          _ => 'unknown',
-        };
-
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _selectedFilter = filter;
-        });
-      },
+    return Container(
+      color: AppColors.greyUltraLight,
       child: Padding(
-        padding: const EdgeInsets.only(right: 12),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              textLabel,
-              style: TextStyle(
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                color: isSelected ? AppColors.greenDark : AppColors.greyMedium,
-                fontSize: 14,
-              ),
-            ),
-            const SizedBox(height: 4),
-            if (isSelected)
-              Container(
-                width: 6,
-                height: 6,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColors.greenDark,
-                ),
-              )
-            else
-              const SizedBox(height: 6),
-          ],
+        padding: AppSpacing.paddingHorizontal,
+        child: Padding(
+          padding: const EdgeInsets.only(top: 10, bottom: 100),
+          child: ListView(
+            children: catalogs
+                .map((catalog) => CatalogCardItem(catalog: catalog))
+                .toList(),
+          ),
         ),
       ),
     );

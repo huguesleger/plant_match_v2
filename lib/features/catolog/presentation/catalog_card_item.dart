@@ -88,19 +88,13 @@ class CatalogCardItem extends StatelessWidget {
                                   const SizedBox(width: 8),
                                   BadgePill(
                                     text: Text(
-                                      catalog.isPublish
-                                          ? 'Publié'
-                                          : 'Brouillon',
+                                      catalog.status.label,
                                       style: TextStyle(
                                         fontSize: 12,
-                                        color: catalog.isPublish
-                                            ? AppColors.white
-                                            : AppColors.greyMedium,
+                                        color: catalog.status.textColor,
                                       ),
                                     ),
-                                    badgeColor: catalog.isPublish
-                                        ? AppColors.greenDark
-                                        : AppColors.greyLight,
+                                    badgeColor: catalog.status.badgeColor,
                                   ),
                                 ],
                               ),

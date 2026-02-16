@@ -27,6 +27,11 @@ class ExchangeRejected extends ExchangeState {
   ExchangeRejected(this.exchange);
 }
 
+class ExchangeCompleted extends ExchangeState {
+  final Exchange exchange;
+  ExchangeCompleted(this.exchange);
+}
+
 class ExchangeError extends ExchangeState {
   final String message;
 

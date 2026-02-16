@@ -5,10 +5,16 @@ import 'package:plant_match_v2/features/catolog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/user/presentation/items_count/item_count.dart';
 
 class ItemsCount extends StatelessWidget {
-  const ItemsCount({super.key, required this.catalog, required this.level});
+  const ItemsCount({
+    super.key,
+    required this.catalog,
+    required this.level,
+    required this.exchangeCount,
+  });
 
   final List<Catalog> catalog;
   final int level;
+  final int exchangeCount;
 
   @override
   Widget build(BuildContext context) {
@@ -22,9 +28,8 @@ class ItemsCount extends StatelessWidget {
             icon: LucideIcons.flower_2,
           ),
           const SizedBox(width: 10),
-          const ItemCount(
-            //TODO: Update this count when the feature is implemented
-            count: '5',
+          ItemCount(
+            count: exchangeCount.toString(),
             text: 'plantMatch',
             icon: LucideIcons.heart_handshake,
           ),

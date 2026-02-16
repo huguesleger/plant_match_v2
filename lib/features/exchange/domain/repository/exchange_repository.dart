@@ -12,4 +12,7 @@ abstract class ExchangeRepository {
 
   Future<void> markSeenByOwner(String exchangeId);
   Future<void> markSeenByRequester(String exchangeId);
+
+  Future<void> markAsCompleted(String exchangeId, String completedBy);
+  Stream<List<Exchange>> getCompletedExchanges(String uid);
 }

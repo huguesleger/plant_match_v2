@@ -47,6 +47,7 @@ class UserScreen extends StatelessWidget {
             ItemsCount(
               catalog: published,
               level: data.level,
+              exchangeCount: data.exchangeCount,
             ),
             if (recent.isNotEmpty) ...[
               RecentPlants(

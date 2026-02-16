@@ -36,6 +36,9 @@ class ExchangeCubit extends Cubit<ExchangeState> {
           case ExchangeStatus.rejected:
             emit(ExchangeRejected(request));
             break;
+          case ExchangeStatus.completed:
+            emit(ExchangeCompleted(request));
+            break;
         }
       },
       onError: (_) => emit(ExchangeError('Erreur échange')),
@@ -74,6 +77,10 @@ class ExchangeCubit extends Cubit<ExchangeState> {
 
   Future<void> markSeenByRequester(String exchangeId) {
     return repository.markSeenByRequester(exchangeId);
+  }
+
+  Future<void> complete(String exchangeId, String completedBy) async {
+    await repository.markAsCompleted(exchangeId, completedBy);
   }
 
   @override

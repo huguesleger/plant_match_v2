@@ -111,6 +111,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             userRepository: userRepository,
             catalogRepository: catalogRepository,
             userPointsRepository: userPointsRepository,
+            exchangeRepository: exchangeRepository,
           ),
         ),
         BlocProvider(

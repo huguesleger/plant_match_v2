@@ -18,6 +18,8 @@ class ChatPlant {
   final Map<String, int> unreadCount;
   final String otherUserId;
   final bool hasUnreadExchange;
+  final String? acceptedExchangeId;
+  final bool isExchangeCompleted;
 
   ChatPlant({
     required this.chatId,
@@ -35,6 +37,8 @@ class ChatPlant {
     required this.unreadCount,
     required this.otherUserId,
     this.hasUnreadExchange = false,
+    this.acceptedExchangeId,
+    this.isExchangeCompleted = false,
   });
 
   ChatPlant copyWith({
@@ -42,6 +46,8 @@ class ChatPlant {
     DateTime? lastMessageAt,
     Map<String, int>? unreadCount,
     bool? hasUnreadExchange,
+    String? acceptedExchangeId,
+    bool? isExchangeCompleted,
   }) {
     return ChatPlant(
       chatId: chatId,
@@ -59,6 +65,8 @@ class ChatPlant {
       unreadCount: unreadCount ?? this.unreadCount,
       otherUserId: otherUserId,
       hasUnreadExchange: hasUnreadExchange ?? this.hasUnreadExchange,
+      acceptedExchangeId: acceptedExchangeId ?? this.acceptedExchangeId,
+      isExchangeCompleted: isExchangeCompleted ?? this.isExchangeCompleted,
     );
   }
 
@@ -99,6 +107,8 @@ class ChatPlant {
       unreadCount: Map<String, int>.from(json['unreadCount'] ?? {}),
       otherUserId: json['otherUserId'] ?? '',
       hasUnreadExchange: false,
+      acceptedExchangeId: json['acceptedExchangeId'],
+      isExchangeCompleted: json['isExchangeCompleted'] ?? false,
     );
   }
 }

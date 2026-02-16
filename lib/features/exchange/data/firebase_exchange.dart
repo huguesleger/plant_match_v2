@@ -9,7 +9,8 @@ class FirebaseExchange implements ExchangeRepository {
   Stream<Exchange?> watchExchange(String chatId) {
     return _col
         .where('chatId', isEqualTo: chatId)
-        .where('status', whereIn: ['pending', 'accepted', 'rejected'])
+        .where('status',
+            whereIn: ['pending', 'accepted', 'rejected', 'completed'])
         .orderBy('createdAt', descending: true)
         .limit(1)
         .snapshots()
@@ -87,5 +88,63 @@ class FirebaseExchange implements ExchangeRepository {
         .collection('plant_exchanges')
         .doc(exchangeId)
         .update({'seenByRequester': true});
+  }
+
+  @override
+  Future<void> markAsCompleted(String exchangeId, String completedBy) async {
+    // Récupérer l'échange pour obtenir le chatId et les IDs des plantes
+    final exchangeDoc = await _col.doc(exchangeId).get();
+    final exchangeData = exchangeDoc.data();
+
+    if (exchangeData == null) return;
+
+    final chatId = exchangeData['chatId'] as String;
+    final targetPlantId = exchangeData['targetPlantId'] as String;
+    final offeredPlantId = exchangeData['offeredPlantId'] as String;
+
+    // Marquer l'échange comme terminé
+    await _col.doc(exchangeId).update({
+      'status': ExchangeStatus.completed.name,
+      'completedAt': FieldValue.serverTimestamp(),
+      'completedBy': completedBy,
+    });
+
+    // Marquer le chat comme clôturé
+    await FirebaseFirestore.instance
+        .collection('plant_chats')
+        .doc(chatId)
+        .update({'isExchangeCompleted': true});
+
+    // Marquer les deux plantes comme archivées (retirées du catalogue public)
+    await FirebaseFirestore.instance
+        .collection('catalogs')
+        .doc(targetPlantId)
+        .update({'status': 'archived'});
+
+    await FirebaseFirestore.instance
+        .collection('catalogs')
+        .doc(offeredPlantId)
+        .update({'status': 'archived'});
+  }
+
+  @override
+  Stream<List<Exchange>> getCompletedExchanges(String uid) {
+    return _col
+        .where(Filter.or(
+          Filter('ownerId', isEqualTo: uid),
+          Filter('requestedBy', isEqualTo: uid),
+        ))
+        .where(Filter.or(
+          Filter('status', isEqualTo: 'accepted'),
+          Filter('status', isEqualTo: 'completed'),
+          Filter('status', isEqualTo: 'rejected'),
+        ))
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs
+          .map((doc) => Exchange.fromJson(doc.id, doc.data()))
+          .toList();
+    });
   }
 }

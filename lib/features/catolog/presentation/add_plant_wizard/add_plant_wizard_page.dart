@@ -229,7 +229,9 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
       case 9:
         if (_formKeyPlantIsPublish.currentState?.saveAndValidate() ?? false) {
           final updated = _catalog!.copyWith(
-            newIsPublish: _plantIsPublishController.text == 'true',
+            newStatus: _plantIsPublishController.text == 'true'
+                ? CatalogStatus.published
+                : CatalogStatus.draft,
           );
           setState(() => _catalog = updated);
 
@@ -851,7 +853,7 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                     decoration: const InputDecoration(
                       border: InputBorder.none,
                     ),
-                    initialValue: _catalog?.isPublish ?? false,
+                    initialValue: _catalog?.status == CatalogStatus.published,
                     onChanged: (value) {
                       _plantIsPublishController.text = value.toString();
                     },

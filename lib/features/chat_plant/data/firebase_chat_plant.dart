@@ -193,6 +193,8 @@ class FirebaseChatPlant implements ChatPlantRepository {
           unreadCount: Map<String, int>.from(data['unreadCount'] ?? {}),
           otherUserId: (List<String>.from(data['participants']))
               .firstWhere((id) => id != uid),
+          isExchangeCompleted: data['isExchangeCompleted'] ?? false,
+          acceptedExchangeId: data['acceptedExchangeId'],
         );
       }).toList();
     });

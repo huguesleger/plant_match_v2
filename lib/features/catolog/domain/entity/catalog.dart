@@ -1,4 +1,32 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/theme/app_colors.dart';
+
+enum CatalogStatus {
+  draft,
+  published,
+  archived,
+}
+
+extension CatalogStatusExtension on CatalogStatus {
+  String get label => switch (this) {
+        CatalogStatus.draft => 'Brouillon',
+        CatalogStatus.published => 'Publié',
+        CatalogStatus.archived => 'Archivé',
+      };
+
+  Color get badgeColor => switch (this) {
+        CatalogStatus.draft => AppColors.greyLight,
+        CatalogStatus.published => AppColors.greenDark,
+        CatalogStatus.archived => AppColors.greyMedium,
+      };
+
+  Color get textColor => switch (this) {
+        CatalogStatus.draft => AppColors.greyMedium,
+        CatalogStatus.published => AppColors.white,
+        CatalogStatus.archived => AppColors.white,
+      };
+}
 
 class Catalog {
   final String userId;
@@ -11,7 +39,7 @@ class Catalog {
   final LevelMaintenance levelMaintenance;
   final Watering watering;
   final Lighting lighting;
-  final bool isPublish;
+  final CatalogStatus status;
   final DateTime createdAt;
   final OfferType offerType;
 
@@ -26,7 +54,7 @@ class Catalog {
     required this.levelMaintenance,
     required this.watering,
     required this.lighting,
-    required this.isPublish,
+    required this.status,
     required this.createdAt,
     required this.offerType,
   });
@@ -42,7 +70,7 @@ class Catalog {
     LevelMaintenance? newLevelMaintenance,
     Watering? newWatering,
     Lighting? newLighting,
-    bool? newIsPublish,
+    CatalogStatus? newStatus,
     DateTime? newCreatedAt,
     OfferType? newOfferType,
   }) {
@@ -57,7 +85,7 @@ class Catalog {
       levelMaintenance: newLevelMaintenance ?? levelMaintenance,
       watering: newWatering ?? watering,
       lighting: newLighting ?? lighting,
-      isPublish: newIsPublish ?? isPublish,
+      status: newStatus ?? status,
       createdAt: newCreatedAt ?? createdAt,
       offerType: newOfferType ?? offerType,
     );
@@ -75,13 +103,23 @@ class Catalog {
       levelMaintenance: LevelMaintenance.low,
       watering: Watering.little,
       lighting: Lighting.sun,
-      isPublish: false,
+      status: CatalogStatus.draft,
       createdAt: DateTime.now(),
       offerType: OfferType.exchange,
     );
   }
 
   factory Catalog.fromJson(Map<String, dynamic> json, String id) {
+    // Rétrocompatibilité : migration depuis isPublish vers status
+    CatalogStatus status;
+    if (json['status'] != null) {
+      status = CatalogStatus.values.byName(json['status']);
+    } else {
+      // Migration automatique depuis isPublish
+      final isPublish = json['isPublish'] ?? false;
+      status = isPublish ? CatalogStatus.published : CatalogStatus.draft;
+    }
+
     return Catalog(
       userId: json['userId'] ?? '',
       catalogId: id,
@@ -105,7 +143,7 @@ class Catalog {
       lighting: json['lighting'] != null
           ? Lighting.values.byName(json['lighting'])
           : Lighting.indirectLight,
-      isPublish: json['isPublish'] ?? false,
+      status: status,
       createdAt: json['createdAt'] != null
           ? (json['createdAt'] as Timestamp).toDate()
           : DateTime.now(),
@@ -126,7 +164,7 @@ class Catalog {
       'levelMaintenance': levelMaintenance.name,
       'watering': watering.name,
       'lighting': lighting.name,
-      'isPublish': isPublish,
+      'status': status.name,
       'createdAt': createdAt.toIso8601String(),
       'offerType': offerType.name,
     };

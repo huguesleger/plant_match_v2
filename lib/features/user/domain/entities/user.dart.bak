@@ -6,14 +6,12 @@ class User {
   final ProfilUser user;
   final Map<String, List<Catalog>> userCatalogs;
   final int level;
-  final int exchangeCount;
   final CatalogFilter selectedFilter;
 
   const User({
     required this.user,
     required this.userCatalogs,
     required this.level,
-    this.exchangeCount = 0,
     this.selectedFilter = CatalogFilter.all,
   });
 
@@ -21,14 +19,12 @@ class User {
     ProfilUser? user,
     Map<String, List<Catalog>>? userCatalogs,
     int? level,
-    int? exchangeCount,
     CatalogFilter? selectedFilter,
   }) {
     return User(
       user: user ?? this.user,
       userCatalogs: userCatalogs ?? this.userCatalogs,
       level: level ?? this.level,
-      exchangeCount: exchangeCount ?? this.exchangeCount,
       selectedFilter: selectedFilter ?? this.selectedFilter,
     );
   }

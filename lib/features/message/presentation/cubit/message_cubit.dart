@@ -81,6 +81,29 @@ class MessagesCubit extends Cubit<MessagesState> {
         final bool hasUnreadExchange =
             _lastExchanges.any((e) => e.chatId == chat.chatId);
 
+        // Trouver l'échange accepté pour ce chat
+        final acceptedExchange = _lastExchanges.firstWhere(
+          (e) => e.chatId == chat.chatId && e.status == ExchangeStatus.accepted,
+          orElse: () => Exchange(
+            chatId: '',
+            requestedBy: '',
+            ownerId: '',
+            targetPlantId: '',
+            targetPlantName: '',
+            targetPlantImage: '',
+            offeredPlantId: '',
+            offeredPlantName: '',
+            offeredPlantImage: '',
+            status: ExchangeStatus.pending,
+            createdAt: DateTime.now(),
+            seenByOwner: false,
+            seenByRequester: false,
+          ),
+        );
+
+        final acceptedExchangeId =
+            acceptedExchange.chatId.isNotEmpty ? acceptedExchange.id : null;
+
         result.add(
           ChatPlant(
             chatId: chat.chatId,
@@ -98,11 +121,17 @@ class MessagesCubit extends Cubit<MessagesState> {
             lastMessageAt: chat.lastMessageAt,
             unreadCount: chat.unreadCount,
             hasUnreadExchange: hasUnreadExchange,
+            acceptedExchangeId: acceptedExchangeId,
+            isExchangeCompleted: chat.isExchangeCompleted,
           ),
         );
       }
 
-      emit(MessagesLoaded(chats: result));
+      // Filtrer les conversations clôturées
+      final filteredResult =
+          result.where((chat) => !chat.isExchangeCompleted).toList();
+
+      emit(MessagesLoaded(chats: filteredResult));
     } catch (e) {
       emit(MessagesError(e.toString()));
     }

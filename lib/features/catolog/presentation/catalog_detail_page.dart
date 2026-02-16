@@ -10,6 +10,7 @@ import 'package:plant_match_v2/core/widgets/app_bar/app_bar_header_slider.dart';
 import 'package:plant_match_v2/core/widgets/badge/badge_pill.dart';
 import 'package:plant_match_v2/core/widgets/bottom_bar/bottom_bar.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_rounded_with_icon.dart';
+import 'package:plant_match_v2/core/widgets/buttons/button_outlined_rounded_with_icon.dart';
 import 'package:plant_match_v2/features/catolog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catolog/presentation/cubit/catalog_cubit.dart';
 import 'package:plant_match_v2/features/catolog/presentation/edit_catalog_page.dart';
@@ -161,17 +162,13 @@ class _CatalogDetailPageState extends State<CatalogDetailPage> {
                         padding: const EdgeInsets.only(top: 6),
                         child: BadgePill(
                           text: Text(
-                            _catalog.isPublish ? 'Publié' : 'Brouillon',
+                            _catalog.status.label,
                             style: TextStyle(
                               fontSize: 12,
-                              color: _catalog.isPublish
-                                  ? AppColors.white
-                                  : AppColors.greyMedium,
+                              color: _catalog.status.textColor,
                             ),
                           ),
-                          badgeColor: _catalog.isPublish
-                              ? AppColors.greenDark
-                              : AppColors.greyLight,
+                          badgeColor: _catalog.status.badgeColor,
                         ),
                       ),
                     ],
@@ -343,34 +340,82 @@ class _CatalogDetailPageState extends State<CatalogDetailPage> {
         child: Row(
           children: [
             Expanded(
-              child: ButtonRoundedWithIcon(
-                text: 'Modifier',
-                onPressed: () async {
-                  final result = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => EditCatalogPage(catalog: _catalog),
+              child: ButtonOutlinedRoundedWithIcon(
+                text: 'Supprimer',
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (ctx) => AlertDialog(
+                      title: const Text('Supprimer la plante'),
+                      content: Text(
+                        'Êtes-vous sûr de vouloir supprimer "${_catalog.name}" ?\n\n'
+                        'Cette action est irréversible.',
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(ctx),
+                          child: const Text('Annuler'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () async {
+                            Navigator.pop(ctx);
+                            final userId = _catalog.userId;
+                            await context
+                                .read<CatalogCubit>()
+                                .deleteCatalog(_catalog.catalogId!, userId);
+                            if (context.mounted) {
+                              Navigator.pop(context, true);
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            foregroundColor: Colors.white,
+                          ),
+                          child: const Text('Supprimer'),
+                        ),
+                      ],
                     ),
                   );
-                  if (result == true && context.mounted) {
-                    final updatedCatalog = await context
-                        .read<CatalogCubit>()
-                        .getCatalogById(_catalog.catalogId!);
-
-                    if (mounted) {
-                      setState(() {
-                        _catalog = updatedCatalog!;
-                      });
-                    }
-                  }
                 },
-                bgColor: AppColors.greenLight,
+                borderColor: AppColors.blueGreen,
                 textColor: AppColors.blueGreen,
                 iconAlignment: IconAlignment.start,
                 icon:
-                    const Icon(LucideIcons.pencil, color: AppColors.blueGreen),
+                    const Icon(LucideIcons.trash_2, color: AppColors.blueGreen),
               ),
             ),
+            if (_catalog.status != CatalogStatus.archived) ...[
+              const SizedBox(width: 12),
+              Expanded(
+                child: ButtonRoundedWithIcon(
+                  text: 'Modifier',
+                  onPressed: () async {
+                    final result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => EditCatalogPage(catalog: _catalog),
+                      ),
+                    );
+                    if (result == true && context.mounted) {
+                      final updatedCatalog = await context
+                          .read<CatalogCubit>()
+                          .getCatalogById(_catalog.catalogId!);
+
+                      if (mounted) {
+                        setState(() {
+                          _catalog = updatedCatalog!;
+                        });
+                      }
+                    }
+                  },
+                  bgColor: AppColors.greenLight,
+                  textColor: AppColors.blueGreen,
+                  iconAlignment: IconAlignment.start,
+                  icon: const Icon(LucideIcons.pencil,
+                      color: AppColors.blueGreen),
+                ),
+              ),
+            ],
           ],
         ),
       ),
