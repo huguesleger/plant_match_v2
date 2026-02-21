@@ -23,7 +23,7 @@ class SelectableItem extends StatelessWidget {
     return GestureDetector(
       onTap: () => onTap(value),
       child: Container(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
         //height: 124,
         decoration: BoxDecoration(
           color: isSelected

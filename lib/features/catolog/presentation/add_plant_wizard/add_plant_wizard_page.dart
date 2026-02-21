@@ -235,33 +235,98 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
           );
           setState(() => _catalog = updated);
 
-          final catalogCubit = context.read<CatalogCubit>();
-
-          if (_catalog!.catalogId == null) {
-            final id = await catalogCubit.addCatalog(_catalog!);
-            _catalog = _catalog!.copyWith(newCatalogId: id);
-          } else {
-            await catalogCubit.updateCatalog(_catalog!);
-          }
-
-          final localImagePaths =
-              _catalog!.images.where((img) => !img.startsWith('http')).toList();
-          final existingUrls =
-              _catalog!.images.where((img) => img.startsWith('http')).toList();
-          final updatedWithImages = await catalogCubit.uploadCatalogImages(
-            catalog: _catalog!,
-            catalogId: _catalog!.catalogId!,
-            imagePaths: localImagePaths,
-            existingImages: existingUrls,
-          );
-
-          if (updatedWithImages != null) {
-            setState(() {
-              _catalog = updatedWithImages;
-            });
-          }
+          // Afficher le dialog de chargement
           if (mounted) {
-            Navigator.pop(context, true);
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (BuildContext context) {
+                return PopScope(
+                  canPop: false,
+                  child: Dialog(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: const Padding(
+                      padding: EdgeInsets.all(24),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          CircularProgressIndicator(
+                            color: AppColors.greenLight,
+                          ),
+                          SizedBox(height: 24),
+                          Text(
+                            'Création de votre plante...',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.greyDark,
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            'Veuillez patienter',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: AppColors.greyMedium,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            );
+          }
+
+          try {
+            final catalogCubit = context.read<CatalogCubit>();
+
+            if (_catalog!.catalogId == null) {
+              final id = await catalogCubit.addCatalog(_catalog!);
+              _catalog = _catalog!.copyWith(newCatalogId: id);
+            } else {
+              await catalogCubit.updateCatalog(_catalog!);
+            }
+
+            final localImagePaths = _catalog!.images
+                .where((img) => !img.startsWith('http'))
+                .toList();
+            final existingUrls = _catalog!.images
+                .where((img) => img.startsWith('http'))
+                .toList();
+            final updatedWithImages = await catalogCubit.uploadCatalogImages(
+              catalog: _catalog!,
+              catalogId: _catalog!.catalogId!,
+              imagePaths: localImagePaths,
+              existingImages: existingUrls,
+            );
+
+            if (updatedWithImages != null) {
+              setState(() {
+                _catalog = updatedWithImages;
+              });
+            }
+
+            // Fermer le dialog de chargement
+            if (mounted) {
+              Navigator.of(context).pop(); // Ferme le dialog
+              Navigator.pop(context, true); // Retour à la page précédente
+            }
+          } catch (e) {
+            // Fermer le dialog en cas d'erreur
+            if (mounted) {
+              Navigator.of(context).pop(); // Ferme le dialog
+              // Afficher un message d'erreur
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Erreur lors de la création: $e'),
+                  backgroundColor: AppColors.error,
+                ),
+              );
+            }
           }
         } else {
           _formKeyPlantIsPublish.currentState?.validate();
@@ -271,6 +336,7 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
   }
 
   void _onPressedNextPage() {
+    FocusScope.of(context).unfocus();
     _pageController.nextPage(
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeIn,
@@ -282,6 +348,11 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
     setState(() {
       selectedValue = value;
       _plantCategoryController.text = value;
+    });
+  }
+
+  void onSelectOfferType(String value) {
+    setState(() {
       _plantOfferTypeController.text = value;
     });
   }
@@ -807,7 +878,7 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                                   isSelected: _plantOfferTypeController.text ==
                                       "donation",
                                   onTap: (value) {
-                                    onSelect(value);
+                                    onSelectOfferType(value);
                                     fieldCategory.didChange(value);
                                   },
                                 ),
@@ -821,7 +892,7 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
                                   isSelected: _plantOfferTypeController.text ==
                                       "exchange",
                                   onTap: (value) {
-                                    onSelect(value);
+                                    onSelectOfferType(value);
                                     fieldCategory.didChange(value);
                                   },
                                 ),
