@@ -19,11 +19,12 @@ class UserHeaderWithContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final topPadding = MediaQuery.of(context).padding.top + 40;
     return AppBarDynamicHeader(
-      height: MediaQuery.of(context).size.width <= 420 ? 240 : 260,
+      height: 160 + topPadding,
       titlePadding: const EdgeInsets.only(bottom: 0),
       titlePaddingShrink: const EdgeInsets.only(bottom: 0),
-      collapsedHeight: MediaQuery.of(context).size.width <= 420 ? 130 : 150,
+      collapsedHeight: kToolbarHeight + topPadding,
       leadingButton: IconButton(
         style: IconButton.styleFrom(
           shape:
