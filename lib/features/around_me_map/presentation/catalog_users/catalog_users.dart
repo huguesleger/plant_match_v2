@@ -31,11 +31,7 @@ class CatalogUsers extends StatelessWidget {
             itemBuilder: (context, index) {
               final catalog = publishedCatalogs[index];
               return CardPlant(
-                imageUrl: catalog.images.first,
-                name: catalog.name,
-                description: catalog.description,
-                environment: catalog.environment,
-                offerType: catalog.offerType,
+                catalog: catalog,
                 onPressed: () {
                   Navigator.push(
                     context,

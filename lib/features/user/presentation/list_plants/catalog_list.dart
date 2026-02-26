@@ -47,6 +47,7 @@ class CatalogList extends StatelessWidget {
                   offerType: item.offerType,
                   environment: item.environment,
                   createdDate: item.createdAt,
+                  catalog: item,
                   onPressed: () {
                     Navigator.push(
                       context,

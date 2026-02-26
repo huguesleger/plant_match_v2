@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_dynamic_header.dart';
 import 'package:plant_match_v2/core/widgets/favorite_btn/favorite_btn.dart';
+import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/features/user/presentation/header/avatar_with_infos.dart';
 import 'package:plant_match_v2/features/user/presentation/header/bg_header.dart';
@@ -20,6 +22,7 @@ class UserHeaderWithContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final topPadding = MediaQuery.of(context).padding.top + 40;
+    final currentUserId = context.read<AuthCubit>().userId;
     return AppBarDynamicHeader(
       height: 160 + topPadding,
       titlePadding: const EdgeInsets.only(bottom: 0),
@@ -81,7 +84,10 @@ class UserHeaderWithContent extends StatelessWidget {
             ),
           ),
           padding: const EdgeInsets.all(6),
-          child: const FavoriteBtn(),
+          child: FavoriteBtn(
+            targetUser: user,
+            currentUserId: currentUserId,
+          ),
         ),
       ],
       body: child,

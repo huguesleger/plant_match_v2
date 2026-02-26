@@ -4,10 +4,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:intl/intl.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/features/donation/data/firebase_donation.dart';
+import 'package:plant_match_v2/features/donation/domain/entities/donation.dart';
 import 'package:plant_match_v2/features/exchange/data/firebase_exchange.dart';
 import 'package:plant_match_v2/features/exchange/domain/entities/exchange.dart';
 import 'package:plant_match_v2/features/profil/presentation/exchange_history/exchange_history_cubit.dart';
 import 'package:plant_match_v2/features/profil/presentation/exchange_history/exchange_history_state.dart';
+import 'package:plant_match_v2/features/profil/presentation/exchange_history/history_item.dart';
 
 class ExchangeHistoryPage extends StatelessWidget {
   const ExchangeHistoryPage({super.key});
@@ -18,22 +21,23 @@ class ExchangeHistoryPage extends StatelessWidget {
 
     return BlocProvider(
       create: (context) => ExchangeHistoryCubit(
-        repository: FirebaseExchange(),
+        exchangeRepository: FirebaseExchange(),
+        donationRepository: FirebaseDonation(),
         userId: currentUserId,
       )..load(),
-      child: const _ExchangeHistoryView(),
+      child: const _HistoryView(),
     );
   }
 }
 
-class _ExchangeHistoryView extends StatelessWidget {
-  const _ExchangeHistoryView();
+class _HistoryView extends StatelessWidget {
+  const _HistoryView();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Historique d\'échanges'),
+        title: const Text('Historique'),
       ),
       body: Column(
         children: [
@@ -55,7 +59,7 @@ class _ExchangeHistoryView extends StatelessWidget {
                 }
 
                 if (state is ExchangeHistoryLoaded) {
-                  if (state.exchanges.isEmpty) {
+                  if (state.items.isEmpty) {
                     return const Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -67,11 +71,12 @@ class _ExchangeHistoryView extends StatelessWidget {
                           ),
                           SizedBox(height: 16),
                           Text(
-                            'Aucun échange dans l\'historique',
+                            'Aucun échange ni donation dans l\'historique',
                             style: TextStyle(
                               fontSize: 16,
                               color: AppColors.greyDark,
                             ),
+                            textAlign: TextAlign.center,
                           ),
                         ],
                       ),
@@ -80,12 +85,13 @@ class _ExchangeHistoryView extends StatelessWidget {
 
                   return ListView.separated(
                     padding: const EdgeInsets.all(16),
-                    itemCount: state.exchanges.length,
+                    itemCount: state.items.length,
                     separatorBuilder: (_, __) => const SizedBox(height: 12),
                     itemBuilder: (context, index) {
-                      return _ExchangeHistoryCard(
-                        exchange: state.exchanges[index],
-                      );
+                      final item = state.items[index];
+                      return item.type == HistoryItemType.exchange
+                          ? _ExchangeHistoryCard(exchange: item.exchange!)
+                          : _DonationHistoryCard(donation: item.donation!);
                     },
                   );
                 }
@@ -100,6 +106,10 @@ class _ExchangeHistoryView extends StatelessWidget {
   }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Filtres
+// ─────────────────────────────────────────────────────────────────────────────
+
 class _FilterChips extends StatelessWidget {
   const _FilterChips();
 
@@ -109,7 +119,7 @@ class _FilterChips extends StatelessWidget {
       builder: (context, state) {
         final currentFilter = state is ExchangeHistoryLoaded
             ? state.currentFilter
-            : ExchangeStatusFilter.all;
+            : HistoryStatusFilter.all;
 
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -117,44 +127,36 @@ class _FilterChips extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             child: Row(
               children: [
-                _FilterChip(
+                _Chip(
                   label: 'Tous',
-                  isSelected: currentFilter == ExchangeStatusFilter.all,
-                  onTap: () {
-                    context
-                        .read<ExchangeHistoryCubit>()
-                        .load(filter: ExchangeStatusFilter.all);
-                  },
+                  isSelected: currentFilter == HistoryStatusFilter.all,
+                  onTap: () => context
+                      .read<ExchangeHistoryCubit>()
+                      .load(filter: HistoryStatusFilter.all),
                 ),
                 const SizedBox(width: 8),
-                _FilterChip(
+                _Chip(
                   label: 'Acceptés',
-                  isSelected: currentFilter == ExchangeStatusFilter.accepted,
-                  onTap: () {
-                    context
-                        .read<ExchangeHistoryCubit>()
-                        .load(filter: ExchangeStatusFilter.accepted);
-                  },
+                  isSelected: currentFilter == HistoryStatusFilter.accepted,
+                  onTap: () => context
+                      .read<ExchangeHistoryCubit>()
+                      .load(filter: HistoryStatusFilter.accepted),
                 ),
                 const SizedBox(width: 8),
-                _FilterChip(
+                _Chip(
                   label: 'Terminés',
-                  isSelected: currentFilter == ExchangeStatusFilter.completed,
-                  onTap: () {
-                    context
-                        .read<ExchangeHistoryCubit>()
-                        .load(filter: ExchangeStatusFilter.completed);
-                  },
+                  isSelected: currentFilter == HistoryStatusFilter.completed,
+                  onTap: () => context
+                      .read<ExchangeHistoryCubit>()
+                      .load(filter: HistoryStatusFilter.completed),
                 ),
                 const SizedBox(width: 8),
-                _FilterChip(
+                _Chip(
                   label: 'Refusés',
-                  isSelected: currentFilter == ExchangeStatusFilter.rejected,
-                  onTap: () {
-                    context
-                        .read<ExchangeHistoryCubit>()
-                        .load(filter: ExchangeStatusFilter.rejected);
-                  },
+                  isSelected: currentFilter == HistoryStatusFilter.rejected,
+                  onTap: () => context
+                      .read<ExchangeHistoryCubit>()
+                      .load(filter: HistoryStatusFilter.rejected),
                 ),
               ],
             ),
@@ -165,8 +167,8 @@ class _FilterChips extends StatelessWidget {
   }
 }
 
-class _FilterChip extends StatelessWidget {
-  const _FilterChip({
+class _Chip extends StatelessWidget {
+  const _Chip({
     required this.label,
     required this.isSelected,
     required this.onTap,
@@ -198,6 +200,83 @@ class _FilterChip extends StatelessWidget {
   }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Helpers statut
+// ─────────────────────────────────────────────────────────────────────────────
+
+({Color color, String text, IconData icon}) _statusStyle(String rawStatus) {
+  return switch (rawStatus) {
+    'accepted' => (
+        color: Colors.green,
+        text: 'Accepté',
+        icon: Icons.check_circle,
+      ),
+    'completed' => (
+        color: Colors.blue,
+        text: 'Terminé',
+        icon: Icons.done_all,
+      ),
+    'rejected' => (
+        color: Colors.red,
+        text: 'Refusé',
+        icon: Icons.cancel,
+      ),
+    _ => (
+        color: Colors.orange,
+        text: 'En attente',
+        icon: Icons.hourglass_empty,
+      ),
+  };
+}
+
+Widget _statusBadge(String rawStatus) {
+  final s = _statusStyle(rawStatus);
+  return Container(
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+    decoration: BoxDecoration(
+      color: s.color.withValues(alpha: 0.1),
+      borderRadius: BorderRadius.circular(20),
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(s.icon, size: 16, color: s.color),
+        const SizedBox(width: 6),
+        Text(
+          s.text,
+          style: TextStyle(
+            color: s.color,
+            fontWeight: FontWeight.w600,
+            fontSize: 13,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _plantThumb(String url) {
+  return ClipRRect(
+    borderRadius: BorderRadius.circular(8),
+    child: Image.network(
+      url,
+      width: 60,
+      height: 60,
+      fit: BoxFit.cover,
+      errorBuilder: (_, __, ___) => Container(
+        width: 60,
+        height: 60,
+        color: AppColors.greyLight,
+        child: const Icon(Icons.local_florist),
+      ),
+    ),
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Card Échange
+// ─────────────────────────────────────────────────────────────────────────────
+
 class _ExchangeHistoryCard extends StatelessWidget {
   const _ExchangeHistoryCard({required this.exchange});
 
@@ -208,33 +287,154 @@ class _ExchangeHistoryCard extends StatelessWidget {
     final currentUserId = FirebaseAuth.instance.currentUser!.uid;
     final isRequester = exchange.requestedBy == currentUserId;
 
-    Color statusColor;
-    String statusText;
-    IconData statusIcon;
+    return _HistoryCardShell(
+      rawStatus: exchange.status.name,
+      date: exchange.createdAt,
+      completedAt: exchange.completedAt,
+      typeLabel: 'Échange',
+      typeIcon: LucideIcons.arrow_left_right,
+      typeColor: AppColors.greenDark,
+      roleText: isRequester
+          ? 'Vous avez proposé cet échange'
+          : 'Échange proposé par un utilisateur',
+      content: Row(
+        children: [
+          Expanded(
+            child: Column(
+              children: [
+                _plantThumb(exchange.offeredPlantImage),
+                const SizedBox(height: 8),
+                Text(
+                  exchange.offeredPlantName,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 4),
+                const Text(
+                  'Proposée',
+                  style: TextStyle(fontSize: 12, color: AppColors.greyDark),
+                ),
+              ],
+            ),
+          ),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 12),
+            child: Icon(
+              LucideIcons.arrow_left_right,
+              color: AppColors.greenMedium,
+              size: 24,
+            ),
+          ),
+          Expanded(
+            child: Column(
+              children: [
+                _plantThumb(exchange.targetPlantImage),
+                const SizedBox(height: 8),
+                Text(
+                  exchange.targetPlantName,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 4),
+                const Text(
+                  'Demandée',
+                  style: TextStyle(fontSize: 12, color: AppColors.greyDark),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
-    switch (exchange.status) {
-      case ExchangeStatus.accepted:
-        statusColor = Colors.green;
-        statusText = 'Accepté';
-        statusIcon = Icons.check_circle;
-        break;
-      case ExchangeStatus.completed:
-        statusColor = Colors.blue;
-        statusText = 'Terminé';
-        statusIcon = Icons.done_all;
-        break;
-      case ExchangeStatus.rejected:
-        statusColor = Colors.red;
-        statusText = 'Refusé';
-        statusIcon = Icons.cancel;
-        break;
-      case ExchangeStatus.pending:
-        statusColor = Colors.orange;
-        statusText = 'En attente';
-        statusIcon = Icons.hourglass_empty;
-        break;
-    }
+// ─────────────────────────────────────────────────────────────────────────────
+// Card Donation
+// ─────────────────────────────────────────────────────────────────────────────
 
+class _DonationHistoryCard extends StatelessWidget {
+  const _DonationHistoryCard({required this.donation});
+
+  final Donation donation;
+
+  @override
+  Widget build(BuildContext context) {
+    final currentUserId = FirebaseAuth.instance.currentUser!.uid;
+    final isRequester = donation.requestedBy == currentUserId;
+
+    return _HistoryCardShell(
+      rawStatus: donation.status.name,
+      date: donation.createdAt,
+      completedAt: donation.completedAt,
+      typeLabel: 'Donation',
+      typeIcon: Icons.volunteer_activism_rounded,
+      typeColor: AppColors.blueGreen,
+      roleText: isRequester
+          ? 'Vous avez demandé cette donation'
+          : 'Demande de donation reçue',
+      content: Column(
+        children: [
+          _plantThumb(donation.plantImage),
+          const SizedBox(height: 8),
+          Text(
+            donation.plantName,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 4),
+          const Text(
+            'Plante donnée',
+            style: TextStyle(fontSize: 12, color: AppColors.greyDark),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Shell commun aux deux cards
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _HistoryCardShell extends StatelessWidget {
+  const _HistoryCardShell({
+    required this.rawStatus,
+    required this.date,
+    required this.completedAt,
+    required this.typeLabel,
+    required this.typeIcon,
+    required this.typeColor,
+    required this.roleText,
+    required this.content,
+  });
+
+  final String rawStatus;
+  final DateTime date;
+  final DateTime? completedAt;
+  final String typeLabel;
+  final IconData typeIcon;
+  final Color typeColor;
+  final String roleText;
+  final Widget content;
+
+  @override
+  Widget build(BuildContext context) {
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -243,36 +443,38 @@ class _ExchangeHistoryCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Ligne type + statut + date
             Row(
               children: [
+                // Badge type (Échange / Donation)
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
-                    color: statusColor.withValues(alpha: 0.1),
+                    color: typeColor.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(statusIcon, size: 16, color: statusColor),
-                      const SizedBox(width: 6),
+                      Icon(typeIcon, size: 14, color: typeColor),
+                      const SizedBox(width: 5),
                       Text(
-                        statusText,
+                        typeLabel,
                         style: TextStyle(
-                          color: statusColor,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 13,
+                          color: typeColor,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 12,
                         ),
                       ),
                     ],
                   ),
                 ),
+                const SizedBox(width: 8),
+                _statusBadge(rawStatus),
                 const Spacer(),
                 Text(
-                  DateFormat('dd/MM/yyyy').format(exchange.createdAt),
+                  DateFormat('dd/MM/yyyy').format(date),
                   style: const TextStyle(
                     fontSize: 12,
                     color: AppColors.greyDark,
@@ -280,11 +482,9 @@ class _ExchangeHistoryCard extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
             Text(
-              isRequester
-                  ? 'Vous avez proposé cet échange'
-                  : 'Échange proposé par un utilisateur',
+              roleText,
               style: const TextStyle(
                 fontSize: 13,
                 color: AppColors.greyDark,
@@ -292,108 +492,12 @@ class _ExchangeHistoryCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
-            // Affichage des deux plantes
-            Row(
-              children: [
-                // Plante proposée (offeredPlant)
-                Expanded(
-                  child: Column(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.network(
-                          exchange.offeredPlantImage,
-                          width: 60,
-                          height: 60,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => Container(
-                            width: 60,
-                            height: 60,
-                            color: AppColors.greyLight,
-                            child: const Icon(Icons.local_florist),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        exchange.offeredPlantName,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                        ),
-                        textAlign: TextAlign.center,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 4),
-                      const Text(
-                        'Proposée',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: AppColors.greyDark,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                // Icône d'échange
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 12),
-                  child: Icon(
-                    LucideIcons.arrow_left_right,
-                    color: AppColors.greenMedium,
-                    size: 24,
-                  ),
-                ),
-                // Plante demandée (targetPlant)
-                Expanded(
-                  child: Column(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.network(
-                          exchange.targetPlantImage,
-                          width: 60,
-                          height: 60,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => Container(
-                            width: 60,
-                            height: 60,
-                            color: AppColors.greyLight,
-                            child: const Icon(Icons.local_florist),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        exchange.targetPlantName,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                        ),
-                        textAlign: TextAlign.center,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 4),
-                      const Text(
-                        'Demandée',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: AppColors.greyDark,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            if (exchange.status == ExchangeStatus.completed &&
-                exchange.completedAt != null)
+            content,
+            if (rawStatus == 'completed' && completedAt != null)
               Padding(
                 padding: const EdgeInsets.only(top: 12),
                 child: Text(
-                  'Terminé le ${DateFormat('dd/MM/yyyy').format(exchange.completedAt!)}',
+                  'Terminé le ${DateFormat('dd/MM/yyyy').format(completedAt!)}',
                   style: const TextStyle(
                     fontSize: 12,
                     color: AppColors.greyDark,

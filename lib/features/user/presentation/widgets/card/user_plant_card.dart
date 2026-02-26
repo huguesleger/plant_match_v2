@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:intl/intl.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -7,6 +8,7 @@ import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/theme/inter_text_style.dart';
 import 'package:plant_match_v2/core/widgets/badge/badge_pill.dart';
 import 'package:plant_match_v2/core/widgets/favorite_btn/favorite_btn.dart';
+import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/features/catolog/domain/entity/catalog.dart';
 
 class UserPlantCard extends StatelessWidget {
@@ -19,6 +21,7 @@ class UserPlantCard extends StatelessWidget {
     required this.offerType,
     required this.environment,
     required this.createdDate,
+    this.catalog,
   });
 
   final String title;
@@ -28,10 +31,12 @@ class UserPlantCard extends StatelessWidget {
   final VoidCallback onPressed;
   final Environment environment;
   final DateTime createdDate;
+  final Catalog? catalog;
 
   @override
   Widget build(BuildContext context) {
     final date = DateFormat('d/MM/y', 'fr_FR');
+    final currentUserId = context.read<AuthCubit>().userId;
     return Material(
       elevation: 6,
       shadowColor: AppColors.black.withValues(alpha: 0.2),
@@ -78,7 +83,10 @@ class UserPlantCard extends StatelessWidget {
                         )
                       ],
                     ),
-                    child: const FavoriteBtn(),
+                    child: FavoriteBtn(
+                      catalog: catalog,
+                      currentUserId: currentUserId,
+                    ),
                   ),
                 ),
               ],

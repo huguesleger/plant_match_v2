@@ -6,6 +6,7 @@ import 'package:flutter_chat_ui/flutter_chat_ui.dart' hide ChatState;
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
+import 'package:plant_match_v2/core/theme/inter_text_style.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_template.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_outlined_rounded.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
@@ -15,6 +16,9 @@ import 'package:plant_match_v2/features/chat/presentation/widget/chat_theme.dart
 import 'package:plant_match_v2/features/chat_plant/presentation/cubit/chat_plant_cubit.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/state/chat_plant_state.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/plant_message_card.dart';
+import 'package:plant_match_v2/features/donation/domain/entities/donation.dart';
+import 'package:plant_match_v2/features/donation/presentation/cubit/donation_cubit.dart';
+import 'package:plant_match_v2/features/donation/presentation/state/donation_state.dart';
 import 'package:plant_match_v2/features/exchange/domain/entities/exchange.dart';
 import 'package:plant_match_v2/features/exchange/presentation/cubit/exchange_cubit.dart';
 import 'package:plant_match_v2/features/exchange/presentation/exchange_page.dart';
@@ -56,10 +60,8 @@ class ChatPlantScreen extends StatelessWidget {
       );
     }
 
-    context.read<ExchangeCubit>().listen(chatId);
-
+    // ─── États échange ───────────────────────────────────────────────────────
     final exchangeState = context.watch<ExchangeCubit>().state;
-
     final exchange = switch (exchangeState) {
       ExchangePending(:final exchange) => exchange,
       ExchangeAccepted(:final exchange) => exchange,
@@ -67,9 +69,21 @@ class ChatPlantScreen extends StatelessWidget {
       _ => null,
     };
 
+    // ─── États donation ──────────────────────────────────────────────────────
+    final donationState = context.watch<DonationCubit>().state;
+    final donation = switch (donationState) {
+      DonationPending(:final donation) => donation,
+      DonationAccepted(:final donation) => donation,
+      DonationRejected(:final donation) => donation,
+      DonationCompleted(:final donation) => donation,
+      _ => null,
+    };
+
     final bool isPlantOwner = currentUser.uid == plantOwnerId;
     final bool showExchangeAction =
         !isPlantOwner && plantOfferType == OfferType.exchange;
+    final bool showDonationAction =
+        !isPlantOwner && plantOfferType == OfferType.donation;
 
     return MultiBlocListener(
       listeners: [
@@ -83,27 +97,46 @@ class ChatPlantScreen extends StatelessWidget {
             }
           },
         ),
+        // ─── Listener Échange ────────────────────────────────────────────────
         BlocListener<ExchangeCubit, ExchangeState>(
           listener: (context, state) {
-            final exchange = switch (state) {
+            final ex = switch (state) {
               ExchangePending(:final exchange) => exchange,
               ExchangeAccepted(:final exchange) => exchange,
               ExchangeRejected(:final exchange) => exchange,
               _ => null,
             };
-
-            if (exchange == null) return;
-
+            if (ex == null) return;
             final cubit = context.read<ExchangeCubit>();
-
-            if (currentUser.uid == exchange.ownerId && !exchange.seenByOwner) {
-              cubit.markSeenByOwner(exchange.id);
+            if (currentUser.uid == ex.ownerId && !ex.seenByOwner) {
+              cubit.markSeenByOwner(ex.id);
             }
-
-            if (currentUser.uid == exchange.requestedBy &&
-                !exchange.seenByRequester &&
-                exchange.status != ExchangeStatus.pending) {
-              cubit.markSeenByRequester(exchange.id);
+            if (currentUser.uid == ex.requestedBy &&
+                !ex.seenByRequester &&
+                ex.status != ExchangeStatus.pending) {
+              cubit.markSeenByRequester(ex.id);
+            }
+          },
+        ),
+        // ─── Listener Donation ───────────────────────────────────────────────
+        BlocListener<DonationCubit, DonationState>(
+          listener: (context, state) {
+            final don = switch (state) {
+              DonationPending(:final donation) => donation,
+              DonationAccepted(:final donation) => donation,
+              DonationRejected(:final donation) => donation,
+              DonationCompleted(:final donation) => donation,
+              _ => null,
+            };
+            if (don == null) return;
+            final cubit = context.read<DonationCubit>();
+            if (currentUser.uid == don.ownerId && !don.seenByOwner) {
+              cubit.markSeenByOwner(don.id);
+            }
+            if (currentUser.uid == don.requestedBy &&
+                !don.seenByRequester &&
+                don.status != DonationStatus.pending) {
+              cubit.markSeenByRequester(don.id);
             }
           },
         ),
@@ -181,26 +214,59 @@ class ChatPlantScreen extends StatelessWidget {
         ),
         body: Column(
           children: [
+            // ─── Info bars Échange ───────────────────────────────────────────
             if (exchangeState is ExchangePending)
-              const _ExchangeInfoBar(
-                text: "Une demande d’échange est en attente de réponse",
+              const _InfoBar(
+                text: "Une demande d'échange est en attente de réponse",
                 color: Colors.orange,
+                icon: Icons.swap_horiz_rounded,
               ),
             if (exchangeState is ExchangeAccepted)
-              const _ExchangeInfoBar(
+              const _InfoBar(
                 text: "Échange accepté 🎉",
                 color: Colors.green,
+                icon: Icons.check_circle_outline_rounded,
               ),
             if (exchangeState is ExchangeRejected)
-              const _ExchangeInfoBar(
+              const _InfoBar(
                 text: "Échange refusé",
                 color: Colors.red,
+                icon: Icons.cancel_outlined,
               ),
             if (exchangeState is ExchangeCompleted)
-              const _ExchangeInfoBar(
+              const _InfoBar(
                 text: "Échange terminé ✅",
                 color: Colors.blue,
+                icon: Icons.task_alt_rounded,
               ),
+
+            // ─── Info bars Donation ──────────────────────────────────────────
+            if (donationState is DonationPending)
+              const _InfoBar(
+                text: "Une demande de donation est en attente de réponse",
+                color: Colors.orange,
+                icon: Icons.volunteer_activism_rounded,
+              ),
+            if (donationState is DonationAccepted)
+              const _InfoBar(
+                text: "Donation acceptée 🎉",
+                color: Colors.green,
+                icon: Icons.check_circle_outline_rounded,
+              ),
+            if (donationState is DonationRejected)
+              const _InfoBar(
+                text: "Donation refusée",
+                color: Colors.red,
+                icon: Icons.cancel_outlined,
+              ),
+            if (donationState is DonationCompleted)
+              const _InfoBar(
+                text: "Donation terminée ✅",
+                color: Colors.blue,
+                icon: Icons.task_alt_rounded,
+              ),
+
+            // ─── Chat ────────────────────────────────────────────────────────
             Expanded(
               child: Chat(
                 user: types.User(id: currentUser.uid),
@@ -210,21 +276,20 @@ class ChatPlantScreen extends StatelessWidget {
                     {required int messageWidth}) {
                   final metadata = message.metadata;
                   if (metadata?['messageType'] == 'plant_exchange') {
-                    final plantId = metadata?['plantId'] as String? ?? '';
-                    final plantName = metadata?['plantName'] as String? ?? '';
-                    final plantImage = metadata?['plantImage'] as String? ?? '';
+                    final pId = metadata?['plantId'] as String? ?? '';
+                    final pName = metadata?['plantName'] as String? ?? '';
+                    final pImage = metadata?['plantImage'] as String? ?? '';
                     final isSender = message.author.id == currentUser.uid;
 
                     return PlantMessageCard(
-                      plantId: plantId,
-                      plantName: plantName,
-                      plantImage: plantImage,
+                      plantId: pId,
+                      plantName: pName,
+                      plantImage: pImage,
                       isSender: isSender,
                       onTap: () async {
                         final catalogRepo = FirebaseCatalogRepository();
                         try {
-                          final catalog =
-                              await catalogRepo.getCatalogById(plantId);
+                          final catalog = await catalogRepo.getCatalogById(pId);
                           if (catalog != null && context.mounted) {
                             Navigator.push(
                               context,
@@ -250,54 +315,33 @@ class ChatPlantScreen extends StatelessWidget {
                 },
                 customBottomWidget: Column(
                   children: [
+                    // ─── Actions Échange (propriétaire) ─────────────────────
                     if (exchangeState is ExchangePending &&
                         currentUser.uid == plantOwnerId &&
                         exchange != null)
-                      _ExchangeAcceptOrRefuseActionBar(
-                        onExchangeAcceptPressed: () {
-                          context.read<ExchangeCubit>().accept(exchange.id);
-                        },
-                        onExchangeRefusePressed: () {
-                          context.read<ExchangeCubit>().reject(exchange.id);
-                        },
+                      _AcceptOrRefuseActionBar(
+                        label: "l'échange",
+                        onAccept: () =>
+                            context.read<ExchangeCubit>().accept(exchange.id),
+                        onRefuse: () =>
+                            context.read<ExchangeCubit>().reject(exchange.id),
                       ),
                     if (exchangeState is ExchangeAccepted &&
                         currentUser.uid == plantOwnerId &&
                         exchange != null)
-                      _CompleteExchangeButton(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (ctx) => AlertDialog(
-                              title: const Text('Clôturer l\'échange'),
-                              content: const Text(
-                                'Avez-vous effectué l\'échange physique ?\n\n'
-                                'Cette action marquera la conversation comme terminée '
-                                'et elle sera déplacée dans votre historique d\'échanges.',
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(ctx),
-                                  child: const Text('Annuler'),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.pop(ctx);
-                                    context
-                                        .read<ExchangeCubit>()
-                                        .complete(exchange.id, currentUser.uid);
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.green,
-                                    foregroundColor: Colors.white,
-                                  ),
-                                  child: const Text('Confirmer'),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
+                      _CompleteActionButton(
+                        label: "l'échange",
+                        dialogTitle: "Clôturer l'échange",
+                        dialogContent:
+                            'Avez-vous effectué l\'échange physique ?\n\n'
+                            'Cette action marquera la conversation comme terminée '
+                            'et elle sera déplacée dans votre historique d\'échanges.',
+                        onConfirm: () => context
+                            .read<ExchangeCubit>()
+                            .complete(exchange.id, currentUser.uid),
                       ),
+
+                    // ─── Action Échange (demandeur) ──────────────────────────
                     if (showExchangeAction &&
                         exchangeState is! ExchangePending &&
                         exchangeState is! ExchangeAccepted &&
@@ -316,6 +360,51 @@ class ChatPlantScreen extends StatelessWidget {
                           );
                         },
                       ),
+
+                    // ─── Actions Donation (propriétaire) ────────────────────
+                    if (donationState is DonationPending &&
+                        currentUser.uid == plantOwnerId &&
+                        donation != null)
+                      _AcceptOrRefuseActionBar(
+                        label: 'la donation',
+                        onAccept: () =>
+                            context.read<DonationCubit>().accept(donation.id),
+                        onRefuse: () =>
+                            context.read<DonationCubit>().reject(donation.id),
+                      ),
+                    if (donationState is DonationAccepted &&
+                        currentUser.uid == plantOwnerId &&
+                        donation != null)
+                      _CompleteActionButton(
+                        label: 'la donation',
+                        dialogTitle: 'Clôturer la donation',
+                        dialogContent:
+                            'Avez-vous remis la plante au bénéficiaire ?\n\n'
+                            'Cette action marquera la conversation comme terminée '
+                            'et archivera la plante.',
+                        onConfirm: () => context
+                            .read<DonationCubit>()
+                            .complete(donation.id, currentUser.uid),
+                      ),
+
+                    // ─── Action Donation (demandeur) ─────────────────────────
+                    if (showDonationAction &&
+                        donationState is! DonationPending &&
+                        donationState is! DonationAccepted &&
+                        donationState is! DonationCompleted)
+                      _DonationRequestBar(
+                        onPressed: () {
+                          _showDonationConfirmDialog(
+                            context: context,
+                            currentUserId: currentUser.uid,
+                            plantId: plantId,
+                            plantName: plantName,
+                            plantImage: plantImage,
+                            ownerId: plantOwnerId,
+                          );
+                        },
+                      ),
+
                     _ChatTextInput(
                       onSend: (text) {
                         context.read<ChatPlantCubit>().send(
@@ -341,12 +430,231 @@ class ChatPlantScreen extends StatelessWidget {
       ),
     );
   }
+
+  /// Dialogue de confirmation avant de créer une demande de donation
+  void _showDonationConfirmDialog({
+    required BuildContext context,
+    required String currentUserId,
+    required String plantId,
+    required String plantName,
+    required String plantImage,
+    required String ownerId,
+  }) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Demander cette plante'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (plantImage.isNotEmpty)
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.network(
+                  plantImage,
+                  height: 120,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            const SizedBox(height: 12),
+            Text(
+              'Souhaitez-vous envoyer une demande de donation pour "$plantName" ?',
+              textAlign: TextAlign.center,
+              style: InterTextStyle.inter(AppTypo.textS,
+                  color: AppColors.greyDark),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Annuler'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              context.read<DonationCubit>().request(
+                    Donation(
+                      chatId: chatId,
+                      requestedBy: currentUserId,
+                      ownerId: ownerId,
+                      plantId: plantId,
+                      plantName: plantName,
+                      plantImage: plantImage,
+                      status: DonationStatus.pending,
+                      createdAt: DateTime.now(),
+                      seenByOwner: false,
+                      seenByRequester: true,
+                    ),
+                  );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.greenDark,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Envoyer la demande'),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
-class _ExchangeActionBar extends StatelessWidget {
-  const _ExchangeActionBar({
-    required this.onExchangePressed,
+// ─────────────────────────────────────────────────────────────────────────────
+// Widgets privés
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// Barre d'information colorée (échange ou donation)
+class _InfoBar extends StatelessWidget {
+  final String text;
+  final Color color;
+  final IconData icon;
+
+  const _InfoBar({
+    required this.text,
+    required this.color,
+    required this.icon,
   });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      color: color.withValues(alpha: 0.1),
+      child: Row(
+        children: [
+          Icon(icon, color: color, size: 18),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                color: color,
+                fontWeight: FontWeight.w600,
+                fontSize: AppTypo.textXs,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Barre Accepter / Refuser (réutilisée pour échange ET donation)
+class _AcceptOrRefuseActionBar extends StatelessWidget {
+  const _AcceptOrRefuseActionBar({
+    required this.label,
+    required this.onAccept,
+    required this.onRefuse,
+  });
+
+  final String label;
+  final VoidCallback onAccept;
+  final VoidCallback onRefuse;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        border: Border(top: BorderSide(color: AppColors.greyLight)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: ButtonRounded(
+              onPressed: onAccept,
+              bgColor: AppColors.greenLight,
+              textColor: AppColors.blueGreen,
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              text: 'Accepter',
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: ButtonOutlinedRounded(
+              onPressed: onRefuse,
+              borderColor: AppColors.blueGreen,
+              textColor: AppColors.blueGreen,
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              text: 'Refuser',
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Bouton "Clôturer" générique (échange ou donation)
+class _CompleteActionButton extends StatelessWidget {
+  const _CompleteActionButton({
+    required this.label,
+    required this.dialogTitle,
+    required this.dialogContent,
+    required this.onConfirm,
+  });
+
+  final String label;
+  final String dialogTitle;
+  final String dialogContent;
+  final VoidCallback onConfirm;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        border: Border(top: BorderSide(color: AppColors.greyLight)),
+      ),
+      child: OutlinedButton.icon(
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: Text(dialogTitle),
+              content: Text(dialogContent),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: const Text('Annuler'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(ctx);
+                    onConfirm();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    foregroundColor: Colors.white,
+                  ),
+                  child: const Text('Confirmer'),
+                ),
+              ],
+            ),
+          );
+        },
+        icon: const Icon(Icons.check_circle_outline, size: 20),
+        label: Text('Marquer $label comme terminée'),
+        style: OutlinedButton.styleFrom(
+          foregroundColor: Colors.green.shade700,
+          side: BorderSide(color: Colors.green.shade300),
+          padding: const EdgeInsets.symmetric(vertical: 14),
+        ),
+      ),
+    );
+  }
+}
+
+/// Barre "Proposer un échange" (demandeur, plante type échange)
+class _ExchangeActionBar extends StatelessWidget {
+  const _ExchangeActionBar({required this.onExchangePressed});
 
   final VoidCallback onExchangePressed;
 
@@ -357,9 +665,7 @@ class _ExchangeActionBar extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       decoration: const BoxDecoration(
         color: Colors.white,
-        border: Border(
-          top: BorderSide(color: AppColors.greyLight),
-        ),
+        border: Border(top: BorderSide(color: AppColors.greyLight)),
       ),
       child: ElevatedButton.icon(
         onPressed: onExchangePressed,
@@ -370,10 +676,7 @@ class _ExchangeActionBar extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
           ),
         ),
-        icon: const Icon(
-          LucideIcons.heart_handshake,
-          color: Colors.white,
-        ),
+        icon: const Icon(LucideIcons.heart_handshake, color: Colors.white),
         label: const Text(
           'Proposer un échange',
           style: TextStyle(
@@ -387,14 +690,11 @@ class _ExchangeActionBar extends StatelessWidget {
   }
 }
 
-class _ExchangeAcceptOrRefuseActionBar extends StatelessWidget {
-  const _ExchangeAcceptOrRefuseActionBar({
-    required this.onExchangeAcceptPressed,
-    required this.onExchangeRefusePressed,
-  });
+/// Barre "Demander cette plante" (demandeur, plante type donation)
+class _DonationRequestBar extends StatelessWidget {
+  const _DonationRequestBar({required this.onPressed});
 
-  final VoidCallback onExchangeAcceptPressed;
-  final VoidCallback onExchangeRefusePressed;
+  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -403,70 +703,39 @@ class _ExchangeAcceptOrRefuseActionBar extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       decoration: const BoxDecoration(
         color: Colors.white,
-        border: Border(
-          top: BorderSide(color: AppColors.greyLight),
-        ),
+        border: Border(top: BorderSide(color: AppColors.greyLight)),
       ),
-      child: Row(
-        children: [
-          Expanded(
-            child: ButtonRounded(
-              onPressed: onExchangeAcceptPressed,
-              bgColor: AppColors.greenLight,
-              textColor: AppColors.blueGreen,
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              text: "Accepter",
-            ),
+      child: ElevatedButton.icon(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.blueGreen,
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: ButtonOutlinedRounded(
-              onPressed: onExchangeRefusePressed,
-              borderColor: AppColors.blueGreen,
-              textColor: AppColors.blueGreen,
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              text: "Refuser",
-            ),
+        ),
+        icon: const Icon(Icons.volunteer_activism_rounded, color: Colors.white),
+        label: const Text(
+          'Demander cette plante',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: AppTypo.text,
+            fontWeight: FontWeight.w600,
           ),
-        ],
+        ),
       ),
     );
   }
 }
 
+/// Input texte du chat
 class _ChatTextInput extends StatefulWidget {
-  const _ChatTextInput({
-    required this.onSend,
-  });
+  const _ChatTextInput({required this.onSend});
 
   final void Function(String text) onSend;
 
   @override
   State<_ChatTextInput> createState() => _ChatTextInputState();
-}
-
-class _ExchangeInfoBar extends StatelessWidget {
-  final String text;
-  final Color color;
-
-  const _ExchangeInfoBar({required this.text, required this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(12),
-      color: color.withValues(alpha: 0.1),
-      child: Text(
-        text,
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          color: color,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    );
-  }
 }
 
 class _ChatTextInputState extends State<_ChatTextInput> {
@@ -475,7 +744,6 @@ class _ChatTextInputState extends State<_ChatTextInput> {
   void _handleSend() {
     final text = _controller.text.trim();
     if (text.isEmpty) return;
-
     widget.onSend(text);
     _controller.clear();
   }
@@ -488,9 +756,7 @@ class _ChatTextInputState extends State<_ChatTextInput> {
         padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
         decoration: const BoxDecoration(
           color: Colors.white,
-          border: Border(
-            top: BorderSide(color: AppColors.greyLight),
-          ),
+          border: Border(top: BorderSide(color: AppColors.greyLight)),
         ),
         child: Row(
           children: [
@@ -520,34 +786,6 @@ class _ChatTextInputState extends State<_ChatTextInput> {
               onPressed: _handleSend,
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _CompleteExchangeButton extends StatelessWidget {
-  const _CompleteExchangeButton({required this.onPressed});
-
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: AppColors.greyLight)),
-      ),
-      child: OutlinedButton.icon(
-        onPressed: onPressed,
-        icon: const Icon(Icons.check_circle_outline, size: 20),
-        label: const Text('Marquer l\'échange comme terminé'),
-        style: OutlinedButton.styleFrom(
-          foregroundColor: Colors.green.shade700,
-          side: BorderSide(color: Colors.green.shade300),
-          padding: const EdgeInsets.symmetric(vertical: 14),
         ),
       ),
     );

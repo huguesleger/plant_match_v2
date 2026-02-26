@@ -1,33 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/widgets/badge/badge_pill.dart';
 import 'package:plant_match_v2/core/widgets/favorite_btn/favorite_btn.dart';
+import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/features/catolog/domain/entity/catalog.dart';
 
 class CardPlant extends StatelessWidget {
   const CardPlant({
     super.key,
-    required this.imageUrl,
-    required this.name,
-    required this.description,
-    required this.environment,
-    required this.offerType,
+    required this.catalog,
     required this.onPressed,
   });
 
-  final String imageUrl;
-  final String name;
-  final String description;
-  final Environment environment;
-  final OfferType offerType;
+  final Catalog catalog;
   final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
-    final offerTypeDonation = offerType == OfferType.donation;
+    final currentUserId = context.read<AuthCubit>().userId;
+    final offerTypeDonation = catalog.offerType == OfferType.donation;
     return Material(
       color: AppColors.white,
       clipBehavior: Clip.antiAlias,
@@ -47,7 +42,7 @@ class CardPlant extends StatelessWidget {
                     borderRadius:
                         const BorderRadius.vertical(top: Radius.circular(20)),
                     child: Image.network(
-                      imageUrl,
+                      catalog.images.isNotEmpty ? catalog.images.first : '',
                       height: 120,
                       width: 200,
                       fit: BoxFit.cover,
@@ -69,7 +64,10 @@ class CardPlant extends StatelessWidget {
                         ],
                       ),
                       padding: const EdgeInsets.all(6),
-                      child: const FavoriteBtn(),
+                      child: FavoriteBtn(
+                        catalog: catalog,
+                        currentUserId: currentUserId,
+                      ),
                     ),
                   ),
                 ],
@@ -82,7 +80,7 @@ class CardPlant extends StatelessWidget {
                     Text(
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
-                      name.toCapitalize(),
+                      catalog.name.toCapitalize(),
                       style: const TextStyle(
                         fontSize: AppTypo.text,
                         fontWeight: FontWeight.w600,
@@ -92,7 +90,7 @@ class CardPlant extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          'plante ${environment.envName}',
+                          'plante ${catalog.environment.envName}',
                           style: const TextStyle(
                             fontSize: AppTypo.textXs,
                             color: Colors.grey,
@@ -105,7 +103,7 @@ class CardPlant extends StatelessWidget {
                             width: 25,
                             height: 25,
                             child: Icon(
-                              environment == Environment.outdoor
+                              catalog.environment == Environment.outdoor
                                   ? LucideIcons.trees
                                   : LucideIcons.house,
                               color: AppColors.blueGreen,
@@ -119,7 +117,7 @@ class CardPlant extends StatelessWidget {
                       padding: const EdgeInsets.only(top: 8),
                       child: BadgePill(
                         text: Text(
-                          offerType.offerTypeName,
+                          catalog.offerType.offerTypeName,
                           style: TextStyle(
                             fontSize: AppTypo.textXs,
                             color: offerTypeDonation

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -11,6 +12,7 @@ import 'package:plant_match_v2/core/widgets/bottom_bar/bottom_bar.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_rounded_with_icon.dart';
 import 'package:plant_match_v2/core/widgets/favorite_btn/favorite_btn.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
+import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/features/catolog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/chat_plant/data/firebase_chat_plant.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/chat_plant_page.dart';
@@ -76,6 +78,7 @@ class DetailPlant extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentUserId = context.read<AuthCubit>().userId;
     return Scaffold(
       appBar: AppBarHeaderSlider(
         headerHeight: 320,
@@ -98,7 +101,10 @@ class DetailPlant extends StatelessWidget {
               ),
             ),
             padding: const EdgeInsets.all(6),
-            child: const FavoriteBtn(),
+            child: FavoriteBtn(
+              catalog: catalog,
+              currentUserId: currentUserId,
+            ),
           ),
         ],
       ),

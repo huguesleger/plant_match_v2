@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/theme/inter_text_style.dart';
 import 'package:plant_match_v2/core/widgets/favorite_btn/favorite_btn.dart';
+import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/features/catolog/domain/entity/catalog.dart';
 
 class RecentCard extends StatelessWidget {
@@ -15,6 +17,7 @@ class RecentCard extends StatelessWidget {
     required this.recentDate,
     required this.onPressed,
     required this.offerType,
+    this.catalog,
   });
 
   final String imageUrl;
@@ -22,11 +25,13 @@ class RecentCard extends StatelessWidget {
   final DateTime recentDate;
   final VoidCallback onPressed;
   final OfferType offerType;
+  final Catalog? catalog;
 
   @override
   Widget build(BuildContext context) {
     final date = DateFormat('d/MM/y', 'fr_FR');
     final offerTypeDonation = offerType == OfferType.donation;
+    final currentUserId = context.read<AuthCubit>().userId;
     return InkWell(
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
@@ -68,7 +73,10 @@ class RecentCard extends StatelessWidget {
                       ],
                     ),
                     padding: const EdgeInsets.all(6),
-                    child: const FavoriteBtn(),
+                    child: FavoriteBtn(
+                      catalog: catalog,
+                      currentUserId: currentUserId,
+                    ),
                   ),
                 ),
                 Positioned(

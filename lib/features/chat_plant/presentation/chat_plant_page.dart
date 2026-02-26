@@ -10,6 +10,9 @@ import 'package:plant_match_v2/features/chat_plant/domain/repository/chat_plant_
 import 'package:plant_match_v2/features/chat_plant/presentation/chat_plant_screen.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/cubit/chat_plant_cubit.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/state/chat_plant_state.dart';
+import 'package:plant_match_v2/features/donation/data/firebase_donation.dart';
+import 'package:plant_match_v2/features/donation/presentation/cubit/donation_cubit.dart';
+import 'package:plant_match_v2/features/exchange/data/firebase_exchange.dart';
 import 'package:plant_match_v2/features/exchange/presentation/cubit/exchange_cubit.dart';
 
 class ChatPlantPage extends StatelessWidget {
@@ -39,54 +42,66 @@ class ChatPlantPage extends StatelessWidget {
       );
     }
 
-    context.read<ExchangeCubit>().listen(chatId);
-
-    return BlocProvider(
-      create: (_) => ChatPlantCubit(repository: chatRepository)
-        ..subscribe(
-          chatId: chatId,
-          currentUserId: currentUser.uid,
-        )
-        ..markMessagesAsRead(
-          chatId: chatId,
-          currentUserId: currentUser.uid,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => ExchangeCubit(
+            repository: FirebaseExchange(),
+            chatRepository: chatRepository,
+          )..listen(chatId),
         ),
-      child: FutureBuilder<Catalog?>(
-        future: catalogRepo.getCatalogById(plantId),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
+        BlocProvider(
+          create: (_) =>
+              DonationCubit(repository: FirebaseDonation())..listen(chatId),
+        ),
+      ],
+      child: BlocProvider(
+        create: (_) => ChatPlantCubit(repository: chatRepository)
+          ..subscribe(
+            chatId: chatId,
+            currentUserId: currentUser.uid,
+          )
+          ..markMessagesAsRead(
+            chatId: chatId,
+            currentUserId: currentUser.uid,
+          ),
+        child: FutureBuilder<Catalog?>(
+          future: catalogRepo.getCatalogById(plantId),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return const Scaffold(
+                body: Center(child: CircularProgressIndicator()),
+              );
+            }
+
+            final plant = snapshot.data!;
+
+            return BlocBuilder<ChatPlantCubit, ChatPlantState>(
+              builder: (context, state) {
+                return switch (state) {
+                  ChatPlantInitial() || ChatPlantLoading() => const Scaffold(
+                      backgroundColor: AppColors.white,
+                      body: Center(child: CircularProgressIndicator()),
+                    ),
+                  ChatPlantError() => ErrorPage(errorMessage: state.message),
+                  ChatPlantLoaded() => ChatPlantScreen(
+                      chatId: chatId,
+                      plantId: plant.catalogId!,
+                      plantName: plant.name,
+                      plantDescription: plant.description,
+                      plantImage:
+                          plant.images.isNotEmpty ? plant.images.first : '',
+                      plantOfferType: plant.offerType,
+                      plantOwnerId: plant.userId,
+                      plantOwnerName: plantOwnerName,
+                      plantOwnerAvatar: plantOwnerAvatar,
+                      messages: state.messages,
+                    ),
+                };
+              },
             );
-          }
-
-          final plant = snapshot.data!;
-
-          return BlocBuilder<ChatPlantCubit, ChatPlantState>(
-            builder: (context, state) {
-              return switch (state) {
-                ChatPlantInitial() || ChatPlantLoading() => const Scaffold(
-                    backgroundColor: AppColors.white,
-                    body: Center(child: CircularProgressIndicator()),
-                  ),
-                ChatPlantError() => ErrorPage(errorMessage: state.message),
-                ChatPlantLoaded() => ChatPlantScreen(
-                    chatId: chatId,
-                    plantId: plant.catalogId!,
-                    plantName: plant.name,
-                    plantDescription: plant.description,
-                    plantImage:
-                        plant.images.isNotEmpty ? plant.images.first : '',
-                    plantOfferType: plant.offerType,
-                    plantOwnerId: plant.userId,
-                    plantOwnerName: plantOwnerName,
-                    plantOwnerAvatar: plantOwnerAvatar,
-                    messages: state.messages,
-                  ),
-              };
-            },
-          );
-        },
+          },
+        ),
       ),
     );
   }
