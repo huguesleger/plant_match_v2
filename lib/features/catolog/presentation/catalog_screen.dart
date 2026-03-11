@@ -61,6 +61,7 @@ class _CatalogScreenState extends State<CatalogScreen>
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: null,
         onPressed: () async {
           final result = await Navigator.push(
             context,

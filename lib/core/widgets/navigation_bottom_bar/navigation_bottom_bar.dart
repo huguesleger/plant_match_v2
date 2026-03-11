@@ -34,16 +34,16 @@ class NavigationBottomBar extends StatelessWidget {
           onTap: onTap,
           items: const [
             BottomNavigationBarItem(
-              icon: Icon(LucideIcons.house),
-              label: 'Accueil',
-            ),
-            BottomNavigationBarItem(
               icon: Icon(LucideIcons.heart_handshake),
-              label: 'Echanges',
+              label: 'Explorer',
             ),
             BottomNavigationBarItem(
               icon: Icon(LucideIcons.map_pin),
               label: 'A promixité',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(LucideIcons.circle_plus),
+              label: 'Ajouter',
             ),
             BottomNavigationBarItem(
               icon: MessagesBadgeIcon(),

@@ -97,7 +97,7 @@ class _PlantsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (plants.isEmpty) {
-      return _EmptyState(
+      return const _EmptyState(
         icon: Icons.eco_rounded,
         message: 'Aucune plante en favoris',
         subtitle: 'Appuyez sur ❤️ sur une plante pour l\'ajouter',
@@ -136,7 +136,7 @@ class _UsersTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (users.isEmpty) {
-      return _EmptyState(
+      return const _EmptyState(
         icon: Icons.person_search_rounded,
         message: 'Aucun profil en favoris',
         subtitle: 'Appuyez sur ❤️ sur un profil pour l\'ajouter',

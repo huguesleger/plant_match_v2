@@ -45,15 +45,17 @@ class ItemRadio extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: AppTypo.textXs,
                 )),
-        trailing: Radio<String>(
-          value: value,
+        trailing: RadioGroup<String>(
           groupValue: selectedItem,
           onChanged: (String? newValue) {
             if (newValue != null) {
               onItemSelected(newValue);
             }
           },
-          activeColor: AppColors.greenDark,
+          child: Radio<String>(
+            value: value,
+            activeColor: AppColors.greenDark,
+          ),
         ),
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
