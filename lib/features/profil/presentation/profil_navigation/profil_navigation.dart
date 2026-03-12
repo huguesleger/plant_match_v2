@@ -8,6 +8,7 @@ import 'package:plant_match_v2/features/get_started/presentation/get_started_pag
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/features/profil/presentation/exchange_history/exchange_history_page.dart';
 import 'package:plant_match_v2/features/profil/presentation/profil_navigation/profil_navigation_item.dart';
+import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
 import 'package:plant_match_v2/features/profil/presentation/profil_personal_information/presentation/profil_personal_information_page.dart';
 
 class ProfilNavigation extends StatelessWidget {
@@ -26,9 +27,12 @@ class ProfilNavigation extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ProfilPersonalInformationPage(
-                  profilUser: profilUser,
-                  userId: profilUser.uid,
+                builder: (contextRoute) => BlocProvider.value(
+                  value: context.read<ProfilCubit>(),
+                  child: ProfilPersonalInformationPage(
+                    profilUser: profilUser,
+                    userId: profilUser.uid,
+                  ),
                 ),
               ),
             );
