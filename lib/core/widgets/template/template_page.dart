@@ -5,7 +5,6 @@ import 'package:plant_match_v2/features/catolog/data/firebase_catalog_repository
 import 'package:plant_match_v2/features/catolog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catolog/presentation/add_plant_wizard/add_plant_wizard_page.dart';
 import 'package:plant_match_v2/features/catolog/presentation/cubit/catalog_cubit.dart';
-import 'package:plant_match_v2/features/exchange/presentation/cubit/unread_exhange_cubit.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/around_me_page.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/features/home/presentation/home_page.dart';
@@ -13,8 +12,9 @@ import 'package:plant_match_v2/features/message/presentation/message_page.dart';
 import 'package:plant_match_v2/features/message/presentation/cubit/unread_messages_cubit.dart';
 import 'package:plant_match_v2/features/profil/presentation/profil_page.dart';
 import 'package:plant_match_v2/features/storage/data/firebase_storage_repository.dart';
-
-// Index du bouton "Ajouter" dans la nav bar
+import 'package:plant_match_v2/features/chat_plant/data/firebase_chat_plant.dart';
+import 'package:plant_match_v2/features/exchange/data/firebase_exchange.dart';
+import 'package:plant_match_v2/features/exchange/presentation/cubit/unread_exhange_cubit.dart';
 const int _addButtonIndex = 2;
 
 class TemplatePage extends StatefulWidget {
@@ -30,6 +30,8 @@ class TemplatePageState extends State<TemplatePage> {
   late int _currentIndex;
   late final String uid;
   late final List<Widget> _pages;
+  final chatRepository = FirebaseChatPlant();
+  final exchangeRepository = FirebaseExchange();
 
   @override
   void initState() {
@@ -47,9 +49,6 @@ class TemplatePageState extends State<TemplatePage> {
       MessagesPage(),
       ProfilPage(uid: uid),
     ];
-
-    context.read<UnreadMessagesCubit>().listen(uid);
-    context.read<UnreadExchangesCubit>().listen(uid);
   }
 
   void _onPageChanged(int index) {
@@ -81,10 +80,24 @@ class TemplatePageState extends State<TemplatePage> {
 
   @override
   Widget build(BuildContext context) {
-    return NavigationBottomBar(
-      body: _pages[_currentIndex],
-      currentIndex: _currentIndex,
-      onTap: _onPageChanged,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => UnreadMessagesCubit(
+            repository: chatRepository,
+          )..listen(uid),
+        ),
+        BlocProvider(
+          create: (_) => UnreadExchangesCubit(
+            repository: exchangeRepository,
+          )..listen(uid),
+        ),
+      ],
+      child: NavigationBottomBar(
+        body: _pages[_currentIndex],
+        currentIndex: _currentIndex,
+        onTap: _onPageChanged,
+      ),
     );
   }
 }

@@ -6,27 +6,12 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:plant_match_v2/core/theme/app_theme.dart';
 import 'package:plant_match_v2/core/widgets/error/error_page.dart';
 import 'package:plant_match_v2/core/widgets/template/template_page.dart';
-import 'package:plant_match_v2/features/around_me_map/data/firebase_around_me.dart';
-import 'package:plant_match_v2/features/around_me_map/presentation/cubit/around_me_cubit.dart';
 import 'package:plant_match_v2/features/auth/data/firebase_auth_service.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_state.dart';
 import 'package:plant_match_v2/features/auth/presentation/email_verification/email_verification_page.dart';
-import 'package:plant_match_v2/features/catolog/data/firebase_catalog_repository.dart';
-import 'package:plant_match_v2/features/catolog/presentation/cubit/catalog_cubit.dart';
-import 'package:plant_match_v2/features/chat_plant/data/firebase_chat_plant.dart';
-import 'package:plant_match_v2/features/exchange/data/firebase_exchange.dart';
-import 'package:plant_match_v2/features/exchange/presentation/cubit/exchange_cubit.dart';
-import 'package:plant_match_v2/features/exchange/presentation/cubit/unread_exhange_cubit.dart';
 import 'package:plant_match_v2/features/get_started/presentation/get_started_page.dart';
-import 'package:plant_match_v2/features/message/presentation/cubit/unread_messages_cubit.dart';
-import 'package:plant_match_v2/features/profil/data/firebase_profil_repo.dart';
-import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
-import 'package:plant_match_v2/features/storage/data/firebase_storage_repository.dart';
-import 'package:plant_match_v2/features/user/data/firebase_user.dart';
-import 'package:plant_match_v2/features/user/presentation/cubit/user_cubit.dart';
 import 'package:plant_match_v2/features/user_points/data/firebase_user_points.dart';
-import 'package:plant_match_v2/features/user_points/presentation/cubit/user_points_cubit.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -37,14 +22,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   final authRepository = FirebaseAuthService();
-  final profilRepository = FirebaseProfilRepo();
-  final storageRepository = FirebaseStorageRepository();
   final userPointsRepository = FirebaseUserPoints();
-  final aroundMeRepository = FirebaseAroundMe();
-  final catalogRepository = FirebaseCatalogRepository();
-  final userRepository = FirebaseUser();
-  final chatPlantRepository = FirebaseChatPlant();
-  final exchangeRepository = FirebaseExchange();
 
   @override
   void initState() {
@@ -81,62 +59,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (context) => AuthCubit(
-              authRepository: authRepository,
-              userPointsRepository: userPointsRepository)
-            ..checkCurrentUser(),
-        ),
-        BlocProvider(
-          create: (context) => ProfilCubit(
-            profilRepository: profilRepository,
-            storageRepository: storageRepository,
-          ),
-        ),
-        BlocProvider(
-          create: (context) =>
-              UserPointsCubit(repository: userPointsRepository),
-        ),
-        BlocProvider(
-          create: (context) => AroundMeCubit(
-            aroundMeRepository: aroundMeRepository,
-            profilRepository: profilRepository,
-            catalogRepository: catalogRepository,
-          ),
-        ),
-        BlocProvider(
-          create: (context) => UserCubit(
-            userRepository: userRepository,
-            catalogRepository: catalogRepository,
-            userPointsRepository: userPointsRepository,
-            exchangeRepository: exchangeRepository,
-          ),
-        ),
-        BlocProvider(
-          create: (context) => CatalogCubit(
-            catalogRepository: catalogRepository,
-            storageRepository: storageRepository,
-          ),
-        ),
-        BlocProvider(
-          create: (_) => UnreadMessagesCubit(
-            repository: chatPlantRepository,
-          ),
-        ),
-        BlocProvider(
-          create: (_) => ExchangeCubit(
-            repository: exchangeRepository,
-            chatRepository: chatPlantRepository,
-          ),
-        ),
-        BlocProvider(
-          create: (_) => UnreadExchangesCubit(
-            repository: exchangeRepository,
-          ),
-        ),
-      ],
+    return BlocProvider(
+      create: (context) => AuthCubit(
+          authRepository: authRepository,
+          userPointsRepository: userPointsRepository)
+        ..checkCurrentUser(),
       child: MaterialApp(
         title: 'Plant Match',
         theme: AppTheme.defaultTheme,

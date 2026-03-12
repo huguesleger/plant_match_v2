@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
 import 'package:plant_match_v2/core/extension/first_word_before_space/first_word_after_space.dart';
@@ -14,7 +13,6 @@ import 'package:plant_match_v2/core/widgets/buttons/button_outlined_rounded_with
 import 'package:plant_match_v2/features/around_me_map/presentation/catalog_users/catalog_users.dart';
 import 'package:plant_match_v2/features/catolog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
-import 'package:plant_match_v2/features/user/presentation/cubit/user_cubit.dart';
 import 'package:plant_match_v2/features/user/presentation/user_page.dart';
 
 void bottomSheetUser({
@@ -163,10 +161,7 @@ void bottomSheetUser({
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => BlocProvider.value(
-                            value: context.read<UserCubit>(),
-                            child: UserPage(uid: user.uid),
-                          ),
+                          builder: (context) => UserPage(uid: user.uid),
                         ),
                       );
                     },

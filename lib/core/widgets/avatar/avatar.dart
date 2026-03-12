@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
-import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
-import 'package:plant_match_v2/features/profil/presentation/cubit/profil_state.dart';
 
 class Avatar extends StatelessWidget {
   const Avatar({
@@ -21,37 +18,31 @@ class Avatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ProfilCubit, ProfilState>(
-      builder: (context, state) {
-        String imageUrl = profilUser.profilImg;
+    String imageUrl = profilUser.profilImg;
 
-        if (state is ProfilLoaded) {
-          imageUrl = state.profilUser.profilImg.isNotEmpty
-              ? state.profilUser.profilImg
-              : 'assets/images/avatar.png';
-        }
+    if (imageUrl.isEmpty) {
+      imageUrl = 'assets/images/avatar.png';
+    }
 
-        const String defaultAvatar = 'assets/images/avatar.png';
-        final bool isNetworkImage = imageUrl.contains('http');
-        final bool isDefaultAvatar = imageUrl == defaultAvatar;
-        final bool isSelectedAvatar = imageUrl.isNotEmpty &&
-            !isDefaultAvatar &&
-            imageUrl.contains('avatar');
+    const String defaultAvatar = 'assets/images/avatar.png';
+    final bool isNetworkImage = imageUrl.contains('http');
+    final bool isDefaultAvatar = imageUrl == defaultAvatar;
+    final bool isSelectedAvatar = imageUrl.isNotEmpty &&
+        !isDefaultAvatar &&
+        imageUrl.contains('avatar');
 
-        if (isSelectedAvatar) {
-          return _buildSelectedAvatar(imageUrl);
-        }
+    if (isSelectedAvatar) {
+      return _buildSelectedAvatar(imageUrl);
+    }
 
-        return CircleAvatar(
-          backgroundColor: AppColors.greyLight,
-          radius: radius,
-          child: ClipOval(
-            child: isNetworkImage
-                ? _buildNetworkImage(imageUrl)
-                : _buildDefaultAvatar(defaultAvatar),
-          ),
-        );
-      },
+    return CircleAvatar(
+      backgroundColor: AppColors.greyLight,
+      radius: radius,
+      child: ClipOval(
+        child: isNetworkImage
+            ? _buildNetworkImage(imageUrl)
+            : _buildDefaultAvatar(defaultAvatar),
+      ),
     );
   }
 

@@ -96,14 +96,17 @@ class ProfilPersonalDetailPage extends StatelessWidget {
                 onPressed: () async {
                   final profilCubit = context.read<ProfilCubit>();
                   profilCubit.getProfilUser(profilUser.uid);
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ProfilPersonalDetailWizardPage(
-                        profilUser: profilUser,
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (contextRoute) => BlocProvider.value(
+                          value: profilCubit,
+                          child: ProfilPersonalDetailWizardPage(
+                            profilUser: profilUser,
+                          ),
+                        ),
                       ),
-                    ),
-                  );
+                    );
                   profilCubit.getProfilUser(profilUser.uid);
                 },
                 bgColor: AppColors.greenLight,
