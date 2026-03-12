@@ -1,15 +1,15 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:plant_match_v2/features/catolog/data/firebase_catalog_repository.dart';
-import 'package:plant_match_v2/features/catolog/domain/entity/catalog.dart';
-import 'package:plant_match_v2/features/exchange/presentation/exchange_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:plant_match_v2/features/exchange/presentation/cubit/exchange_cubit.dart';
-import 'package:plant_match_v2/features/exchange/data/firebase_exchange.dart';
+import 'package:plant_match_v2/core/widgets/error/error_page.dart';
+import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/features/chat_plant/data/firebase_chat_plant.dart';
+import 'package:plant_match_v2/features/exchange/data/firebase_exchange.dart';
+import 'package:plant_match_v2/features/exchange/presentation/cubit/exchange_cubit.dart';
+import 'package:plant_match_v2/features/exchange/presentation/exchange_screen.dart';
+import 'package:plant_match_v2/features/exchange/presentation/state/exchange_state.dart';
 
 class ExchangePage extends StatelessWidget {
-  ExchangePage({
+  const ExchangePage({
     required this.chatId,
     required this.targetPlantId,
     required this.targetOwnerId,
@@ -20,73 +20,63 @@ class ExchangePage extends StatelessWidget {
   final String targetPlantId;
   final String targetOwnerId;
 
-  final catalogRepo = FirebaseCatalogRepository();
-  final exchangeRepo = FirebaseExchange();
-  final chatRepo = FirebaseChatPlant();
-
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
+    final userId = context.read<AuthCubit>().userId;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Choisir une plante à échanger"),
-      ),
-      body: FutureBuilder<List<Catalog>>(
-        future: catalogRepo.getCatalogsByUserId(user!.uid),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
+    if (userId == null) {
+      return const Scaffold(
+        body: Center(child: Text("Utilisateur non connecté")),
+      );
+    }
+
+    return BlocProvider(
+      create: (context) => ExchangeCubit(
+        repository: FirebaseExchange(),
+        chatRepository: FirebaseChatPlant(),
+      )..initExchange(
+          userId: userId,
+          targetPlantId: targetPlantId,
+          targetOwnerId: targetOwnerId,
+          chatId: chatId,
+        ),
+      child: BlocConsumer<ExchangeCubit, ExchangeState>(
+        listener: (context, state) {
+          if (state is ExchangeSuccess) {
+            Future.delayed(const Duration(milliseconds: 500), () {
+              if (context.mounted) {
+                Navigator.pop(context);
+              }
+            });
           }
-
-          final plants = snapshot.data!
-              .where((p) => p.offerType == OfferType.exchange)
-              .toList();
-
-          if (plants.isEmpty) {
-            return const Center(
-              child: Text("Tu n'as pas encore de plantes à échanger"),
-            );
-          }
-
-            return BlocProvider(
-              create: (context) => ExchangeCubit(
-                repository: exchangeRepo,
-                chatRepository: chatRepo,
-              ),
-              child: ListView.builder(
-                itemCount: plants.length,
-                itemBuilder: (context, i) {
-                  final plant = plants[i];
-                  return ListTile(
-                    leading: CircleAvatar(
-                      backgroundImage: plant.images.isNotEmpty
-                          ? NetworkImage(plant.images.first)
-                          : null,
-                    ),
-                    title: Text(plant.name),
-                    subtitle: Text(plant.description),
-                    onTap: () async {
-                      final confirmed = await Navigator.push<bool>(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ExchangeScreen(
-                            chatId: chatId,
-                            targetPlantId: targetPlantId,
-                            targetOwnerId: targetOwnerId,
-                            offeredPlant: plant,
-                          ),
-                        ),
-                      );
-
-                      if (confirmed == true && context.mounted) {
-                        Navigator.pop(context, plant);
-                      }
-                    },
-                  );
-                },
-              ),
-            );
+        },
+        builder: (context, state) {
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(state is ExchangeConfirming
+                  ? "Confirmer l'échange"
+                  : "Choisir une plante à échanger"),
+            ),
+            body: switch (state) {
+              ExchangeInitial() || ExchangeLoading() => const Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ExchangePickingPlant(:final userPlants) => ExchangeScreen(
+                  userPlants: userPlants,
+                ),
+              ExchangeConfirming(:final targetPlant, :final offeredPlant) =>
+                ExchangeScreen(
+                  targetPlant: targetPlant,
+                  offeredPlant: offeredPlant,
+                ),
+              ExchangeSuccess() => const Center(
+                  child: Text("Échange proposé avec succès !"),
+                ),
+              ExchangeError(:final message) => ErrorPage(errorMessage: message),
+              // Gestion des états hérités si nécessaire dans cette vue
+              _ => const SizedBox.shrink(),
+            },
+          );
         },
       ),
     );

@@ -1,3 +1,4 @@
+import 'package:plant_match_v2/features/catolog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/exchange/domain/entities/exchange.dart';
 
 sealed class ExchangeState {}
@@ -6,12 +7,42 @@ class ExchangeInitial extends ExchangeState {}
 
 class ExchangeLoading extends ExchangeState {}
 
-class ExchangeLoaded extends ExchangeState {
-  final Exchange? exchange;
+// État pour la sélection de la plante à offrir
+class ExchangePickingPlant extends ExchangeState {
+  final List<Catalog> userPlants;
+  final String targetPlantId;
+  final String targetOwnerId;
+  final String chatId;
 
-  ExchangeLoaded(this.exchange);
+  ExchangePickingPlant({
+    required this.userPlants,
+    required this.targetPlantId,
+    required this.targetOwnerId,
+    required this.chatId,
+  });
 }
 
+// État pour la confirmation de l'échange
+class ExchangeConfirming extends ExchangeState {
+  final Catalog targetPlant;
+  final Catalog offeredPlant;
+  final String chatId;
+
+  ExchangeConfirming({
+    required this.targetPlant,
+    required this.offeredPlant,
+    required this.chatId,
+  });
+}
+
+class ExchangeSuccess extends ExchangeState {}
+
+class ExchangeError extends ExchangeState {
+  final String message;
+  ExchangeError(this.message);
+}
+
+// États hérités de l'ancienne version (pour la gestion des échanges existants)
 class ExchangePending extends ExchangeState {
   final Exchange exchange;
   ExchangePending(this.exchange);
@@ -30,10 +61,4 @@ class ExchangeRejected extends ExchangeState {
 class ExchangeCompleted extends ExchangeState {
   final Exchange exchange;
   ExchangeCompleted(this.exchange);
-}
-
-class ExchangeError extends ExchangeState {
-  final String message;
-
-  ExchangeError(this.message);
 }
