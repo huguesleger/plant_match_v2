@@ -6,13 +6,10 @@ class OnboardingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: SafeArea(
-      child: Padding(
-        padding: EdgeInsets.only(
-            top: MediaQuery.of(context).size.height > 700 ? 90 : 50),
-        child: const Carousel(),
+    return const Scaffold(
+      body: SafeArea(
+        child: Carousel(),
       ),
-    ));
+    );
   }
 }

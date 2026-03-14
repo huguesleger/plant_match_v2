@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -222,17 +223,28 @@ class FirebaseAuthService implements AuthRepository {
   @override
   Future<void> logOut() async {
     try {
-      User? user = _firebaseAuth.currentUser;
-      if (user != null) {
-        await _firebaseFirestore.collection('users').doc(user.uid).update({
-          'isOnline': false,
-        });
+      try {
+        await _googleSignIn.signOut();
+      } catch (_) {}
+
+      try {
+        await FacebookAuth.instance.logOut();
+      } catch (_) {}
+
+      try {
+        User? user = _firebaseAuth.currentUser;
+        if (user != null) {
+          await _firebaseFirestore.collection('users').doc(user.uid).update({
+            'isOnline': false,
+          });
+        }
+      } catch (e) {
+        debugPrint("Note: Impossible de mettre à jour le statut online: $e");
       }
       await _firebaseAuth.signOut();
-/*      await _googleSignIn.signOut();
-      await FacebookAuth.instance.logOut();*/
+
     } catch (e) {
-      throw Exception("Erreur lors de la déconnexion.");
+      throw Exception("Erreur lors de la déconnexion : ${e.toString()}");
     }
   }
 

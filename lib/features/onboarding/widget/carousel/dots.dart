@@ -10,18 +10,14 @@ class Dots extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height > 900 ? defaultHeight : 270,
-      alignment: Alignment.bottomCenter,
-      child: SmoothPageIndicator(
-        controller: controller,
-        count: 4,
-        effect: const ExpandingDotsEffect(
-          dotColor: AppColors.greyLight,
-          activeDotColor: AppColors.greenLight,
-          dotWidth: 8,
-          dotHeight: 8,
-        ),
+    return SmoothPageIndicator(
+      controller: controller,
+      count: 4,
+      effect: const ExpandingDotsEffect(
+        dotColor: AppColors.greyLight,
+        activeDotColor: AppColors.greenLight,
+        dotWidth: 8,
+        dotHeight: 8,
       ),
     );
   }

@@ -188,7 +188,7 @@ class _FormRegisterState extends State<FormRegister> {
             ),
           ),
           const SizedBox(
-            height: 50,
+            height: 30,
           ),
           SizedBox(
             width: double.infinity,

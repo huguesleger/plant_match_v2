@@ -4,34 +4,22 @@ import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_template.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
 import 'package:plant_match_v2/features/auth/presentation/register/form_register.dart';
-import 'package:plant_match_v2/features/auth/presentation/sign_in_or_register.dart';
 
 class RegisterScreen extends StatelessWidget {
   const RegisterScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       appBar: AppBarTemplate(
         backgroundColor: AppColors.white,
         surfaceTintColor: AppColors.white,
-        styleIconButton: IconButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          side: const BorderSide(color: AppColors.greyLight),
-        ),
-        onPressed: () {
-          //Navigator.pop(context);
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const SignInOrRegister(),
-            ),
-          );
-        },
+        shadowColor: AppColors.black,
+        leading: false,
+        title: 'Créer un compte',
+        centerTitle: true,
       ),
-      body: const SafeArea(
+      body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -40,10 +28,12 @@ class RegisterScreen extends StatelessWidget {
               Padding(
                 padding: AppSpacing.paddingHorizontal,
                 child: TitlePage(
-                  title: 'Créer un compte',
+                  title: 'Commencez !',
+                  subtitle:
+                      'Il semblerait que vous soyez nouveau ici. Créons votre profil.',
                 ),
               ),
-              SizedBox(height: 50),
+              SizedBox(height: 40),
               FormRegister(),
             ],
           ),

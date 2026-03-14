@@ -46,14 +46,18 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   Future<void> _setUserOffline() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .update({
-        'isOnline': false,
-      });
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .update({
+          'isOnline': false,
+        });
+      }
+    } catch (e) {
+      debugPrint("Erreur lors de la mise hors ligne automatique : $e");
     }
   }
 

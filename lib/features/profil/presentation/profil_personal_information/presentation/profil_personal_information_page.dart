@@ -13,7 +13,7 @@ import 'package:plant_match_v2/features/profil/presentation/profil_personal_info
 import 'package:skeletonizer/skeletonizer.dart';
 
 class ProfilPersonalInformationPage extends StatelessWidget {
-  ProfilPersonalInformationPage({
+  const ProfilPersonalInformationPage({
     super.key,
     required this.userId,
     required this.profilUser,

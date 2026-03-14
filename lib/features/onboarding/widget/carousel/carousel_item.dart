@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 
 class CarouselItem extends StatelessWidget {
@@ -18,18 +19,18 @@ class CarouselItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.sizeOf(context).height;
+
     return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
       children: [
+        SizedBox(height: screenHeight * 0.08),
         SizedBox(
-          height:
-              MediaQuery.of(context).size.height > 900 ? defaultHeightImg : 250,
-          child: Image.asset(image),
+          height: screenHeight * 0.32,
+          child: Image.asset(image, fit: BoxFit.contain),
         ),
+        const SizedBox(height: 20),
         Padding(
-          padding: EdgeInsets.only(
-            top: MediaQuery.of(context).size.height > 700 ? 50 : 30,
-          ),
+          padding: AppSpacing.paddingHorizontal,
           child: Text(
             title,
             textAlign: TextAlign.center,
@@ -41,15 +42,16 @@ class CarouselItem extends StatelessWidget {
             ),
           ),
         ),
+        const SizedBox(height: 25),
         Padding(
-          padding: EdgeInsets.only(
-            top: MediaQuery.of(context).size.height > 700 ? 20 : 10,
+          padding: AppSpacing.paddingHorizontal,
+          child: Text(
+            description,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: AppTypo.textXs,
+            ),
           ),
-          child: Text(description,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: AppTypo.textXs,
-              )),
         ),
       ],
     );
