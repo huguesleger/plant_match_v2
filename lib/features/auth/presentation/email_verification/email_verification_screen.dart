@@ -21,7 +21,8 @@ class EmailVerificationScreen extends StatefulWidget {
       _EmailVerificationScreenState();
 }
 
-class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
+class _EmailVerificationScreenState extends State<EmailVerificationScreen>
+    with WidgetsBindingObserver {
   bool _cooldown = true;
   Timer? _autoTimer;
   Timer? _timer;
@@ -30,14 +31,28 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _startCooldown();
 
-    // ✅ Vérification automatique toutes les 10 secondes
-    _autoTimer = Timer.periodic(const Duration(seconds: 10), (_) async {
-      await context
-          .read<AuthCubit>()
-          .checkEmailVerified(fullName: widget.user.fullName);
+    // ✅ Vérification automatique toutes les 5 secondes (au lieu de 10)
+    _autoTimer = Timer.periodic(const Duration(seconds: 5), (_) async {
+      await _checkVerification();
     });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // ✅ Déclencher une vérification immédiate dès que l'utilisateur revient dans l'app
+    if (state == AppLifecycleState.resumed) {
+      _checkVerification();
+    }
+  }
+
+  Future<void> _checkVerification() async {
+    if (!mounted) return;
+    await context
+        .read<AuthCubit>()
+        .checkEmailVerified(fullName: widget.user.fullName);
   }
 
   void _startCooldown() {
@@ -59,6 +74,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _autoTimer?.cancel();
     _timer?.cancel();
     super.dispose();
@@ -93,8 +109,6 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -133,10 +147,14 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                   textAlign: TextAlign.center,
                 ),
               ),
-              SizedBox(height: screenHeight > 700 ? 45 : 25),
-              SizedBox(
-                height: screenHeight > 700 ? 373 : 280,
-                child: Image.asset('assets/images/auth/verify_email.png'),
+              const SizedBox(height: 20),
+              Expanded(
+                child: Center(
+                  child: Image.asset(
+                    'assets/images/auth/verify_email.png',
+                    fit: BoxFit.contain,
+                  ),
+                ),
               ),
               const SizedBox(height: 20),
               Column(

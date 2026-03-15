@@ -15,6 +15,8 @@ class AuthCubit extends Cubit<AuthState> {
   //final UserPointsRepository userPointsRepository;
   final FirebaseUserPoints userPointsRepository;
 
+  bool _isCheckingEmail = false;
+
   AuthCubit({required this.authRepository, required this.userPointsRepository})
       : super(AuthInitial());
 
@@ -157,6 +159,9 @@ class AuthCubit extends Cubit<AuthState> {
 
   /// Vérifie si l'email est validé ; si oui -> Authenticated
   Future<void> checkEmailVerified({String? fullName}) async {
+    if (_isCheckingEmail) return;
+    _isCheckingEmail = true;
+
     try {
       final bool verified = await authRepository.isEmailVerified();
       if (!verified) {
@@ -174,20 +179,33 @@ class AuthCubit extends Cubit<AuthState> {
         return;
       }
 
+      // 🔹 On émet l'état de finalisation pour afficher un loader
+      emit(AuthFinalizing(
+        UserAuth(
+          uid: user.uid,
+          email: user.email!,
+          fullName: fullName ?? _currentUser?.fullName ?? '',
+        ),
+      ));
+
       // 🔹 Une fois vérifié, on crée enfin le document Firestore
-      await authRepository.finalizeRegistration(
+      // On ne procède à l'emailing et aux points que si c'est la toute première finalisation
+      final bool isFirstFinalization = await authRepository.finalizeRegistration(
         user,
         fullName ?? _currentUser?.fullName ?? '',
       );
 
-      try {
-        await welcomeEmail(
-            user.email!, fullName ?? _currentUser?.fullName ?? '');
-      } catch (e) {
-        throw Exception(
-            'Erreur lors de l\'envoi de l\'email de bienvenue : $e');
+      if (isFirstFinalization) {
+        try {
+          await welcomeEmail(
+              user.email!, fullName ?? _currentUser?.fullName ?? '');
+        } catch (e) {
+          throw Exception(
+            'Erreur lors de l\'envoi de l\'email de bienvenue : $e',
+          );
+        }
+        await _addInitialPoints(user.uid);
       }
-      await _addInitialPoints(user.uid);
 
       final authenticatedUser = UserAuth(
         uid: user.uid,
@@ -200,6 +218,8 @@ class AuthCubit extends Cubit<AuthState> {
     } catch (e) {
       final errorMessage = e.toString().replaceFirst('Exception: ', '');
       emit(AuthError(errorMessage));
+    } finally {
+      _isCheckingEmail = false;
     }
   }
 

@@ -33,6 +33,21 @@ class EmailVerificationPage extends StatelessWidget {
             ),
           Unauthenticated() => const RegisterScreen(),
           AuthEmailVerificationSent() => EmailVerificationScreen(user: user),
+          AuthFinalizing() => const Scaffold(
+              body: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(height: 20),
+                    Text(
+                      'Finalisation de votre inscription...',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+            ),
         };
       },
     );

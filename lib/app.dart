@@ -88,8 +88,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 Authenticated() => const TemplatePage(),
                 Unauthenticated() => const GetStartedPage(),
                 AuthError() => ErrorPage(errorMessage: authState.message),
-                AuthEmailVerificationSent() =>
-                  EmailVerificationPage(user: authState.user),
+                AuthEmailVerificationSent(user: var u) ||
+                AuthFinalizing(user: var u) =>
+                  EmailVerificationPage(user: u),
               },
             );
           },

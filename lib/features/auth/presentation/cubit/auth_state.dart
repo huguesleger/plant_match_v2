@@ -22,6 +22,12 @@ class AuthEmailVerificationSent extends AuthState {
   AuthEmailVerificationSent(this.user);
 }
 
+class AuthFinalizing extends AuthState {
+  final UserAuth user;
+
+  AuthFinalizing(this.user);
+}
+
 class AuthError extends AuthState {
   final String message;
 

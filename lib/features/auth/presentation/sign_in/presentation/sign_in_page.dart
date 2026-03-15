@@ -66,8 +66,9 @@ class SignInPage extends StatelessWidget {
               errorMessage: state.message,
               onPressed: () => context.read<AuthCubit>().reset(),
             ),
-          AuthEmailVerificationSent() =>
-            EmailVerificationPage(user: state.user),
+          AuthEmailVerificationSent(user: var u) ||
+          AuthFinalizing(user: var u) =>
+            EmailVerificationPage(user: u),
         };
       },
     );

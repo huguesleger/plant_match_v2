@@ -24,5 +24,5 @@ abstract class AuthRepository {
 
   Future<bool> isEmailVerified();
 
-  Future<void> finalizeRegistration(User user, String fullName);
+  Future<bool> finalizeRegistration(User user, String fullName);
 }

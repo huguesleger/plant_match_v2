@@ -72,83 +72,100 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: AppSpacing.paddingHorizontal,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Center(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: constraints.maxHeight,
+                ),
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: SvgPicture.asset('assets/logo/logo_color.svg'),
+                  padding: AppSpacing.paddingHorizontal,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: SvgPicture.asset('assets/logo/logo_color.svg'),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      const TitlePage(
+                        title: 'Mot de passe oublié ?',
+                        fontSize: AppTypo.textXl,
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 5),
+                      const Center(
+                        child: Text(
+                          'Entrez votre e-mail pour réinitialiser le mot de passe',
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      const SizedBox(height: 30),
+                      ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxHeight: MediaQuery.of(context).size.height * 0.35,
+                        ),
+                        child: Image.asset(
+                          'assets/images/auth/forgot_password.png',
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                      const SizedBox(height: 30),
+                      Column(
+                        children: [
+                          FormBuilder(
+                            key: _formKey,
+                            child: FormBuilderTextField(
+                              name: 'email',
+                              decoration: DecorationInput.inputDecoration(
+                                hintText: 'Entrez votre e-mail',
+                                labelText: 'E-mail',
+                              ),
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
+                              controller: _emailController,
+                              validator: FormBuilderValidators.compose([
+                                FormBuilderValidators.required(
+                                    errorText: 'Ce champ est requis'),
+                                FormBuilderValidators.email(
+                                    errorText: 'Entrez un e-mail valide'),
+                              ]),
+                            ),
+                          ),
+                          const SizedBox(height: 30),
+                          SizedBox(
+                            width: double.infinity,
+                            child: ButtonRounded(
+                              text: 'Envoyer',
+                              bgColor: AppColors.greenLight,
+                              textColor: AppColors.blueGreen,
+                              onPressed: onPressed,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          SizedBox(
+                            width: double.infinity,
+                            child: ButtonOutlinedRounded(
+                              text: 'Retour',
+                              borderColor: AppColors.greyLight,
+                              textColor: AppColors.blueGreen,
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              const SizedBox(height: 20),
-              const TitlePage(
-                title: 'Mot de passe oublié ?',
-                fontSize: AppTypo.textXl,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 5),
-              const Center(
-                child: Text(
-                    'Entrez votre e-mail pour réinitialiser le mot de passe'),
-              ),
-              SizedBox(
-                  height: MediaQuery.of(context).size.height > 700 ? 45 : 25),
-              SizedBox(
-                height: MediaQuery.of(context).size.height > 700 ? 373 : 280,
-                child: Image.asset('assets/images/auth/forgot_password.png'),
-              ),
-              const SizedBox(height: 20),
-              Column(
-                children: [
-                  SafeArea(
-                    child: FormBuilder(
-                      key: _formKey,
-                      child: FormBuilderTextField(
-                        name: 'email',
-                        decoration: DecorationInput.inputDecoration(
-                          hintText: 'Entrez votre e-mail',
-                          labelText: 'E-mail',
-                        ),
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        controller: _emailController,
-                        validator: FormBuilderValidators.compose([
-                          FormBuilderValidators.required(
-                              errorText: 'Ce champ est requis'),
-                          FormBuilderValidators.email(
-                              errorText: 'Entrez un e-mail valide'),
-                        ]),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 30),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ButtonRounded(
-                      text: 'Envoyer',
-                      bgColor: AppColors.greenLight,
-                      textColor: AppColors.blueGreen,
-                      onPressed: onPressed,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ButtonOutlinedRounded(
-                      text: 'Retour',
-                      borderColor: AppColors.greyLight,
-                      textColor: AppColors.blueGreen,
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );

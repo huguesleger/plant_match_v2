@@ -115,11 +115,11 @@ class FirebaseAuthService implements AuthRepository {
   }
 
   @override
-  Future<void> finalizeRegistration(User user, String fullName) async {
+  Future<bool> finalizeRegistration(User user, String fullName) async {
     final docRef = _firebaseFirestore.collection('users').doc(user.uid);
 
     final existingDoc = await docRef.get();
-    if (existingDoc.exists) return;
+    if (existingDoc.exists) return false;
 
     await docRef.set({
       'email': user.email,
@@ -128,6 +128,7 @@ class FirebaseAuthService implements AuthRepository {
       'createdAt': FieldValue.serverTimestamp(),
       'emailVerified': true,
     });
+    return true;
   }
 
   @override
