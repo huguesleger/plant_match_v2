@@ -2,16 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/widgets/error/error_page.dart';
 import 'package:plant_match_v2/core/widgets/template/template_page.dart';
-import 'package:plant_match_v2/features/auth/domain/entities/user_auth.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_state.dart';
-import 'package:plant_match_v2/features/auth/presentation/email_verification/email_verification_screen.dart';
+import 'package:plant_match_v2/features/auth/presentation/email_verification/email_verification_page_route.dart';
 import 'package:plant_match_v2/features/auth/presentation/register/register_screen.dart';
 
-class EmailVerificationPage extends StatelessWidget {
-  final UserAuth user;
-
-  const EmailVerificationPage({super.key, required this.user});
+class RegisterPageRoute extends StatelessWidget {
+  const RegisterPageRoute({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,36 +18,22 @@ class EmailVerificationPage extends StatelessWidget {
           AuthInitial() || AuthLoading() => const Scaffold(
               body: SizedBox(
                 height: double.infinity,
-                child: Center(child: CircularProgressIndicator()),
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
               ),
             ),
           Authenticated() => const TemplatePage(),
           AuthError() => ErrorPage(
               errorMessage: state.message,
-              onPressed: () {
-                context.read<AuthCubit>().reset();
-              },
               onRetry: () {
                 context.read<AuthCubit>().checkCurrentUser();
               },
             ),
           Unauthenticated() => const RegisterScreen(),
-          AuthEmailVerificationSent() => EmailVerificationScreen(user: user),
-          AuthFinalizing() => const Scaffold(
-              body: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CircularProgressIndicator(),
-                    SizedBox(height: 20),
-                    Text(
-                      'Finalisation de votre inscription...',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+          AuthEmailVerificationSent(user: var u) ||
+          AuthFinalizing(user: var u) =>
+            EmailVerificationPageRoute(user: u),
         };
       },
     );

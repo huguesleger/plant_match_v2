@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:plant_match_v2/features/auth/presentation/register/register_page.dart';
-
-import 'sign_in/presentation/sign_in_page.dart';
+import 'package:plant_match_v2/features/auth/presentation/register/register_page_route.dart';
+import 'sign_in/sign_in_page_route.dart';
 
 class SignInOrRegister extends StatefulWidget {
   const SignInOrRegister({super.key});
@@ -22,9 +21,9 @@ class _SignInOrRegisterState extends State<SignInOrRegister> {
   @override
   Widget build(BuildContext context) {
     if (showSignIn) {
-      return SignInPage(toggleSignInOrRegister: toggleSignInOrRegister);
+      return SignInPageRoute(toggleSignInOrRegister: toggleSignInOrRegister);
     } else {
-      return const RegisterPage();
+      return const RegisterPageRoute();
     }
   }
 }

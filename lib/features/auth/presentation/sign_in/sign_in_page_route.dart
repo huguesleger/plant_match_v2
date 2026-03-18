@@ -7,11 +7,11 @@ import 'package:plant_match_v2/core/widgets/error/error_page.dart';
 import 'package:plant_match_v2/core/widgets/template/template_page.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_state.dart';
-import 'package:plant_match_v2/features/auth/presentation/email_verification/email_verification_page.dart';
-import 'package:plant_match_v2/features/auth/presentation/sign_in/presentation/sign_in_screen.dart';
+import 'package:plant_match_v2/features/auth/presentation/email_verification/email_verification_page_route.dart';
+import 'package:plant_match_v2/features/auth/presentation/sign_in/sign_in_screen.dart';
 
-class SignInPage extends StatelessWidget {
-  const SignInPage({super.key, required this.toggleSignInOrRegister});
+class SignInPageRoute extends StatelessWidget {
+  const SignInPageRoute({super.key, required this.toggleSignInOrRegister});
 
   final void Function() toggleSignInOrRegister;
 
@@ -71,7 +71,7 @@ class SignInPage extends StatelessWidget {
             ),
           AuthEmailVerificationSent(user: var u) ||
           AuthFinalizing(user: var u) =>
-            EmailVerificationPage(user: u),
+            EmailVerificationPageRoute(user: u),
         };
       },
     );

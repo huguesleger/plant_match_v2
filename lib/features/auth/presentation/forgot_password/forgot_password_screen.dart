@@ -11,7 +11,7 @@ import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
 import 'package:plant_match_v2/core/widgets/form/decoration_input.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
-import 'package:plant_match_v2/features/auth/presentation/sign_in/presentation/sign_in_page.dart';
+import 'package:plant_match_v2/features/auth/presentation/sign_in/sign_in_page_route.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -43,7 +43,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           context,
           MaterialPageRoute(
               builder: (_) =>
-                  SignInPage(toggleSignInOrRegister: toggleSignInOrRegister)),
+                  SignInPageRoute(toggleSignInOrRegister: toggleSignInOrRegister)),
         );
       }
       if (mounted) {

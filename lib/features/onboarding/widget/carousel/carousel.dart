@@ -3,7 +3,7 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_outlined_rounded.dart';
-import 'package:plant_match_v2/features/auth/presentation/register/register_page.dart';
+import 'package:plant_match_v2/features/auth/presentation/register/register_page_route.dart';
 import 'package:plant_match_v2/features/auth/presentation/sign_in_or_register.dart';
 import 'package:plant_match_v2/features/onboarding/widget/carousel/carousel_item.dart';
 import 'package:plant_match_v2/features/onboarding/widget/carousel/dots.dart';
@@ -94,7 +94,7 @@ class _CarouselState extends State<Carousel> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const RegisterPage(),
+                          builder: (context) => const RegisterPageRoute(),
                         ),
                       );
                     },

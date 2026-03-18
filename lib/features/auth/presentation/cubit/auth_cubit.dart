@@ -16,7 +16,7 @@ class AuthCubit extends Cubit<AuthState> {
   bool _isCheckingEmail = false;
 
   AuthCubit({required this.authRepository, required this.userPointsRepository})
-      : super(AuthInitial());
+      : super(const AuthInitial());
 
   UserAuth? get currentUser => _currentUser;
   String? get userId => _currentUser?.uid;
@@ -27,9 +27,9 @@ class AuthCubit extends Cubit<AuthState> {
     authRepository
         .getCurrentUser()
         .match(
-          (failure) => Unauthenticated(),
+          (failure) => const Unauthenticated(),
           (option) => option.match(
-            () => Unauthenticated(),
+            () => const Unauthenticated(),
             (user) {
               _currentUser = user;
               return Authenticated(user);
@@ -46,14 +46,14 @@ class AuthCubit extends Cubit<AuthState> {
     required String email,
     required String password,
   }) {
-    emit(AuthLoading());
+    emit(const AuthLoading());
 
     authRepository
         .signInWithEmailAndPassword(email: email, password: password)
         .match(
       (failure) {
         emit(AuthError(failure.message));
-        return Unauthenticated();
+        return const Unauthenticated();
       },
       (user) {
         _currentUser = user;
@@ -69,7 +69,7 @@ class AuthCubit extends Cubit<AuthState> {
     required String password,
     required String fullName,
   }) {
-    emit(AuthLoading());
+    emit(const AuthLoading());
 
     authRepository
         .registerWithEmailAndPassword(
@@ -95,7 +95,7 @@ class AuthCubit extends Cubit<AuthState> {
         if (_currentUser != null) {
           return AuthEmailVerificationSent(_currentUser!);
         } else {
-          return Unauthenticated();
+          return const Unauthenticated();
         }
       },
     ).map(emit).run();
@@ -156,7 +156,7 @@ class AuthCubit extends Cubit<AuthState> {
         if (failure is AuthFailure && failure.message == "Email non vérifié") {
           return _currentUser != null
               ? AuthEmailVerificationSent(_currentUser!)
-              : Unauthenticated();
+              : const Unauthenticated();
         }
         return AuthError(failure.message);
       },
@@ -171,12 +171,12 @@ class AuthCubit extends Cubit<AuthState> {
   // ─── signInWithGoogle ─────────────────────────────────────────────────────
 
   void signInWithGoogle() {
-    emit(AuthLoading());
+    emit(const AuthLoading());
 
     authRepository.signInWithGoogle().match(
       (failure) {
         emit(AuthError(failure.message));
-        return Unauthenticated();
+        return const Unauthenticated();
       },
       (user) {
         _currentUser = user;
@@ -188,12 +188,12 @@ class AuthCubit extends Cubit<AuthState> {
   // ─── signInWithFacebook ───────────────────────────────────────────────────
 
   void signInWithFacebook() {
-    emit(AuthLoading());
+    emit(const AuthLoading());
 
     authRepository.signInWithFacebook().match(
       (failure) {
         emit(AuthError(failure.message));
-        return Unauthenticated();
+        return const Unauthenticated();
       },
       (user) {
         _currentUser = user;
@@ -209,7 +209,7 @@ class AuthCubit extends Cubit<AuthState> {
       (failure) => AuthError(failure.message),
       (_) {
         _currentUser = null;
-        return Unauthenticated();
+        return const Unauthenticated();
       },
     ).map(emit).run();
   }
@@ -252,12 +252,12 @@ class AuthCubit extends Cubit<AuthState> {
       (failure) => AuthError(failure.message),
       (_) {
         _currentUser = null;
-        return Unauthenticated();
+        return const Unauthenticated();
       },
     ).map(emit).run();
   }
 
   // ─── reset ────────────────────────────────────────────────────────────────
 
-  void reset() => emit(Unauthenticated());
+  void reset() => emit(const Unauthenticated());
 }

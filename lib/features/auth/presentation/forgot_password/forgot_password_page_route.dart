@@ -4,11 +4,11 @@ import 'package:plant_match_v2/core/widgets/error/error_page.dart';
 import 'package:plant_match_v2/core/widgets/template/template_page.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_state.dart';
-import 'package:plant_match_v2/features/auth/presentation/email_verification/email_verification_page.dart';
+import 'package:plant_match_v2/features/auth/presentation/email_verification/email_verification_page_route.dart';
 import 'package:plant_match_v2/features/auth/presentation/forgot_password/forgot_password_screen.dart';
 
-class ForgotPasswordPage extends StatelessWidget {
-  const ForgotPasswordPage({super.key});
+class ForgotPasswordPageRoute extends StatelessWidget {
+  const ForgotPasswordPageRoute({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,7 @@ class ForgotPasswordPage extends StatelessWidget {
           ),
         Unauthenticated() => const ForgotPasswordScreen(),
         AuthEmailVerificationSent(user: var u) || AuthFinalizing(user: var u) =>
-            EmailVerificationPage(user: u),
+            EmailVerificationPageRoute(user: u),
       };
     });
   }
