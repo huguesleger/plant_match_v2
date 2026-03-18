@@ -4,7 +4,7 @@ import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/features/around_me_map/domain/repository/around_me_repository.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 
-class FirebaseAroundMe implements AroundMeRepository {
+class FirebaseAroundMeRepository implements AroundMeRepository {
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
   @override

@@ -5,7 +5,7 @@ import 'package:plant_match_v2/features/catolog/data/firebase_catalog_repository
 import 'package:plant_match_v2/features/catolog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catolog/presentation/add_plant_wizard/add_plant_wizard_page.dart';
 import 'package:plant_match_v2/features/catolog/presentation/cubit/catalog_cubit.dart';
-import 'package:plant_match_v2/features/around_me_map/presentation/around_me_page.dart';
+import 'package:plant_match_v2/features/around_me_map/presentation/around_me_page_route.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/features/home/presentation/home_page.dart';
 import 'package:plant_match_v2/features/message/presentation/message_page.dart';
@@ -44,7 +44,7 @@ class TemplatePageState extends State<TemplatePage> {
 
     _pages = [
       const HomePage(),
-      AroundMePage(uid: uid),
+      AroundMePageRoute(uid: uid),
       const SizedBox.shrink(), // placeholder pour l'index "Ajouter"
       MessagesPage(),
       ProfilPage(uid: uid),

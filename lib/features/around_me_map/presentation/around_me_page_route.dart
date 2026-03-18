@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/widgets/error/error_page.dart';
-import 'package:plant_match_v2/features/around_me_map/data/firebase_around_me.dart';
-import 'package:plant_match_v2/features/around_me_map/presentation/around_me_map_screen.dart';
+import 'package:plant_match_v2/features/around_me_map/data/firebase_around_me_repository.dart';
+import 'package:plant_match_v2/features/around_me_map/presentation/around_me_screen.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/cubit/around_me_cubit.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/cubit/around_me_state.dart';
 import 'package:plant_match_v2/features/catolog/data/firebase_catalog_repository.dart';
 import 'package:plant_match_v2/features/profil/data/firebase_profil_repo.dart';
 import 'package:plant_match_v2/features/storage/data/firebase_storage_repository.dart';
 
-class AroundMePage extends StatelessWidget {
+class AroundMePageRoute extends StatelessWidget {
   final String uid;
-  final aroundMeRepository = FirebaseAroundMe();
+  final aroundMeRepository = FirebaseAroundMeRepository();
   final profilRepository = FirebaseProfilRepo();
   final catalogRepository = FirebaseCatalogRepository();
   final storageRepository = FirebaseStorageRepository();
 
-  AroundMePage({super.key, required this.uid});
+  AroundMePageRoute({super.key, required this.uid});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,7 @@ class AroundMePage extends StatelessWidget {
             AroundMeInitial() || AroundMeLoading() => const Center(
                 child: CircularProgressIndicator(),
               ),
-            AroundMeLoaded() => AroundMeMapScreen(uid: uid),
+            AroundMeLoaded() => AroundMeScreen(uid: uid),
             AroundMeError() => ErrorPage(
                 errorMessage: state.message,
                 onRetry: () {
