@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/features/profil/domain/repository/favorites_repository.dart';
 import 'package:plant_match_v2/features/profil/presentation/profil_favorite/cubit/profil_favorite_state.dart';
 
@@ -11,12 +12,12 @@ class ProfilFavoriteCubit extends Cubit<ProfilFavoriteState> {
   StreamSubscription? _usersSub;
 
   ProfilFavoriteCubit({required this.favoritesRepository})
-      : super(ProfilFavoriteInitial());
+      : super(const ProfilFavoriteInitial());
 
   // ─── loadFavorites ─────────────────────────────────────────────────────────
 
   void loadFavorites(String uid) {
-    emit(ProfilFavoriteLoading());
+    emit(const ProfilFavoriteLoading());
 
     List<Map<String, dynamic>>? latestPlants;
     List? latestUsers;
@@ -24,40 +25,54 @@ class ProfilFavoriteCubit extends Cubit<ProfilFavoriteState> {
     // Stream des plantes favorites avec vérification de disponibilité
     _plantsSub = favoritesRepository.getFavoritePlantsRaw(uid).listen(
       (rawPlants) {
-        Future.wait(rawPlants.map((plant) async {
+        final checkTasks = rawPlants.map((plant) {
           final catalogId = plant['id'] as String? ?? '';
-          final result = await favoritesRepository.checkPlantAvailability(catalogId).run();
-          final isAvailable = result.getOrElse((_) => false);
-          return {...plant, 'isAvailable': isAvailable};
-        })).then((enriched) {
-          latestPlants = enriched;
+          return favoritesRepository
+              .checkPlantAvailability(catalogId)
+              .map((isAvailable) => {...plant, 'isAvailable': isAvailable});
+        }).toList();
 
-          if (state is ProfilFavoriteLoaded) {
-            final current = state as ProfilFavoriteLoaded;
-            emit(ProfilFavoriteLoaded(
-              plants: enriched,
-              users: current.users,
-            ));
-          } else if (latestUsers != null) {
-            emit(ProfilFavoriteLoaded(
-              plants: enriched,
-              users: latestUsers!.cast(),
-            ));
-          }
+        TaskEither.sequenceList(checkTasks).run().then((result) {
+          if (isClosed) return;
+
+          result.match(
+            (failure) => emit(ProfilFavoriteError(failure.message)),
+            (enriched) {
+              latestPlants = enriched;
+
+              final currentState = state;
+              if (currentState is ProfilFavoriteLoaded) {
+                emit(ProfilFavoriteLoaded(
+                  plants: enriched,
+                  users: currentState.users,
+                ));
+              } else if (latestUsers != null) {
+                emit(ProfilFavoriteLoaded(
+                  plants: enriched,
+                  users: latestUsers!.cast(),
+                ));
+              }
+            },
+          );
         });
       },
-      onError: (e) => emit(ProfilFavoriteError(e.toString())),
+      onError: (e) {
+        if (!isClosed) {
+          emit(ProfilFavoriteError(e.toString()));
+        }
+      },
     );
 
     // Stream des profils favoris
     _usersSub = favoritesRepository.getFavoriteUsers(uid).listen(
       (users) {
+        if (isClosed) return;
         latestUsers = users;
 
-        if (state is ProfilFavoriteLoaded) {
-          final current = state as ProfilFavoriteLoaded;
+        final currentState = state;
+        if (currentState is ProfilFavoriteLoaded) {
           emit(ProfilFavoriteLoaded(
-            plants: current.plants,
+            plants: currentState.plants,
             users: users,
           ));
         } else if (latestPlants != null) {
@@ -67,7 +82,11 @@ class ProfilFavoriteCubit extends Cubit<ProfilFavoriteState> {
           ));
         }
       },
-      onError: (e) => emit(ProfilFavoriteError(e.toString())),
+      onError: (e) {
+        if (!isClosed) {
+          emit(ProfilFavoriteError(e.toString()));
+        }
+      },
     );
   }
 
@@ -76,11 +95,16 @@ class ProfilFavoriteCubit extends Cubit<ProfilFavoriteState> {
   void removeFavoritePlant(String uid, String catalogId) {
     favoritesRepository
         .removeFavoritePlant(uid, catalogId)
-        .run()
-        .then((result) => result.match(
-              (failure) => emit(ProfilFavoriteError(failure.message)),
-              (_) => null,
-            ));
+        .match(
+          (failure) => ProfilFavoriteError(failure.message),
+          (_) => state,
+        )
+        .map((s) {
+          if (!isClosed) {
+            emit(s);
+          }
+        })
+        .run();
   }
 
   // ─── removeFavoriteUser ───────────────────────────────────────────────────
@@ -88,11 +112,16 @@ class ProfilFavoriteCubit extends Cubit<ProfilFavoriteState> {
   void removeFavoriteUser(String uid, String targetUid) {
     favoritesRepository
         .removeFavoriteUser(uid, targetUid)
-        .run()
-        .then((result) => result.match(
-              (failure) => emit(ProfilFavoriteError(failure.message)),
-              (_) => null,
-            ));
+        .match(
+          (failure) => ProfilFavoriteError(failure.message),
+          (_) => state,
+        )
+        .map((s) {
+          if (!isClosed) {
+            emit(s);
+          }
+        })
+        .run();
   }
 
   @override

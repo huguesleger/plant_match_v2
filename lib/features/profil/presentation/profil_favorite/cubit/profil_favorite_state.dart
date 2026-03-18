@@ -4,9 +4,13 @@ sealed class ProfilFavoriteState {
   const ProfilFavoriteState();
 }
 
-class ProfilFavoriteInitial extends ProfilFavoriteState {}
+class ProfilFavoriteInitial extends ProfilFavoriteState {
+  const ProfilFavoriteInitial();
+}
 
-class ProfilFavoriteLoading extends ProfilFavoriteState {}
+class ProfilFavoriteLoading extends ProfilFavoriteState {
+  const ProfilFavoriteLoading();
+}
 
 class ProfilFavoriteLoaded extends ProfilFavoriteState {
   final List<Map<String, dynamic>> plants;

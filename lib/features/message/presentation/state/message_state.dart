@@ -1,19 +1,25 @@
 import 'package:plant_match_v2/features/chat_plant/domain/entities/chat_plant.dart';
 
-sealed class MessagesState {}
+sealed class MessagesState {
+  const MessagesState();
+}
 
-class MessagesInitial extends MessagesState {}
+class MessagesInitial extends MessagesState {
+  const MessagesInitial();
+}
 
-class MessagesLoading extends MessagesState {}
+class MessagesLoading extends MessagesState {
+  const MessagesLoading();
+}
 
 class MessagesLoaded extends MessagesState {
   final List<ChatPlant> chats;
 
-  MessagesLoaded({required this.chats});
+  const MessagesLoaded({required this.chats});
 }
 
 class MessagesError extends MessagesState {
   final String message;
 
-  MessagesError(this.message);
+  const MessagesError(this.message);
 }

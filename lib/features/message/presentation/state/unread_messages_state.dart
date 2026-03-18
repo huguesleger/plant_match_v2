@@ -1,9 +1,13 @@
-sealed class UnreadMessagesState {}
+sealed class UnreadMessagesState {
+  const UnreadMessagesState();
+}
 
-class UnreadMessagesInitial extends UnreadMessagesState {}
+class UnreadMessagesInitial extends UnreadMessagesState {
+  const UnreadMessagesInitial();
+}
 
 class UnreadMessagesLoaded extends UnreadMessagesState {
   final int count;
 
-  UnreadMessagesLoaded(this.count);
+  const UnreadMessagesLoaded(this.count);
 }

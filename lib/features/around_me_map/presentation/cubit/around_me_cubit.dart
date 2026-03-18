@@ -25,33 +25,30 @@ class AroundMeCubit extends Cubit<AroundMeState> {
     emit(AroundMeLoading());
 
     aroundMeRepository.getAllUserUids().flatMap((users) {
-      return profilRepository.getProfilUser(uid).flatMap((option) =>
-          option.match(
+      return profilRepository.getProfilUser(uid).flatMap((option) => option.match(
             () => TaskEither.left(const AuthFailure('Utilisateur introuvable')),
-            (currentUser) => TaskEither<Failure, AroundMeState>.tryCatch(
-              () async {
-                final userCatalogs = <String, List<Catalog>>{};
-                await Future.wait(users.map((user) async {
-                  final catalogsResult =
-                      await catalogRepository.getCatalogsByUserId(user.uid).run();
-                  userCatalogs[user.uid] = catalogsResult.getOrElse((_) => []);
-                }));
+            (currentUser) {
+              final catalogTasks = users
+                  .map((user) => catalogRepository.getCatalogsByUserId(user.uid))
+                  .toList();
 
+              return TaskEither.sequenceList(catalogTasks).map((allCatalogs) {
+                final userCatalogs = <String, List<Catalog>>{};
+                for (var i = 0; i < users.length; i++) {
+                  userCatalogs[users[i].uid] = allCatalogs[i];
+                }
                 return AroundMeLoaded(
                   currentUser: currentUser,
                   users: users,
                   userCatalogs: userCatalogs,
                 );
-              },
-              (error, _) =>
-                  UnexpectedFailure('Erreur lors du chargement: $error'),
-            ),
+              });
+            },
           ));
-    }).run().then((result) => result.match(
-          (failure) => emit(
-              AroundMeError('Erreur lors du chargement des utilisateurs')),
-          (state) => emit(state),
-        ));
+    }).match<AroundMeState>(
+      (failure) => AroundMeError('Erreur lors du chargement des utilisateurs'),
+      (state) => state,
+    ).map((s) => emit(s)).run();
   }
 
   // ─── fetchConnectedUsers ──────────────────────────────────────────────────
@@ -60,36 +57,34 @@ class AroundMeCubit extends Cubit<AroundMeState> {
     emit(AroundMeLoading());
 
     aroundMeRepository.getAllUserUids().flatMap((users) {
-      return profilRepository.getProfilUser(uid).flatMap((option) =>
-          option.match(
+      return profilRepository.getProfilUser(uid).flatMap((option) => option.match(
             () => TaskEither.left(const AuthFailure('Utilisateur introuvable')),
-            (currentUser) => TaskEither<Failure, AroundMeState>.tryCatch(
-              () async {
-                final connectedUsers =
-                    users.where((user) => user.uid != uid).toList();
+            (currentUser) {
+              final connectedUsers =
+                  users.where((user) => user.uid != uid).toList();
 
+              final catalogTasks = connectedUsers
+                  .map((user) => catalogRepository.getCatalogsByUserId(user.uid))
+                  .toList();
+
+              return TaskEither.sequenceList(catalogTasks).map((allCatalogs) {
                 final userCatalogs = <String, List<Catalog>>{};
-                await Future.wait(connectedUsers.map((user) async {
-                  final catalogsResult =
-                      await catalogRepository.getCatalogsByUserId(user.uid).run();
-                  userCatalogs[user.uid] = catalogsResult.getOrElse((_) => []);
-                }));
-
+                for (var i = 0; i < connectedUsers.length; i++) {
+                  userCatalogs[connectedUsers[i].uid] = allCatalogs[i];
+                }
                 return AroundMeLoaded(
                   currentUser: currentUser,
                   users: connectedUsers,
                   userCatalogs: userCatalogs,
                 );
-              },
-              (error, _) => UnexpectedFailure(
-                  'Erreur lors de la récupération des utilisateurs: $error'),
-            ),
+              });
+            },
           ));
-    }).run().then((result) => result.match(
-          (failure) => emit(AroundMeError(
-              'Erreur lors de la récupération des utilisateurs')),
-          (state) => emit(state),
-        ));
+    }).match<AroundMeState>(
+      (failure) => AroundMeError(
+          'Erreur lors de la récupération des utilisateurs'),
+      (state) => state,
+    ).map((s) => emit(s)).run();
   }
 
   // ─── updateUserLocation ───────────────────────────────────────────────────
@@ -100,30 +95,26 @@ class AroundMeCubit extends Cubit<AroundMeState> {
     aroundMeRepository
         .updateUserLocation(updatedUser)
         .flatMap((_) => aroundMeRepository.getAllUserUids())
-        .flatMap((users) => TaskEither<Failure, Unit>.tryCatch(
-              () async {
-                final userCatalogs = <String, List<Catalog>>{};
-                await Future.wait(users.map((user) async {
-                  final catalogsResult =
-                      await catalogRepository.getCatalogsByUserId(user.uid).run();
-                  userCatalogs[user.uid] = catalogsResult.getOrElse((_) => []);
-                }));
+        .flatMap((users) {
+      final catalogTasks = users
+          .map((user) => catalogRepository.getCatalogsByUserId(user.uid))
+          .toList();
 
-                emit(AroundMeLoaded(
-                  currentUser: updatedUser,
-                  users: users,
-                  userCatalogs: userCatalogs,
-                ));
-                return unit;
-              },
-              (error, _) =>
-                  UnexpectedFailure('Erreur lors du rechargement: $error'),
-            ))
-        .run()
-        .then((result) => result.match(
-              (failure) =>
-                  emit(AroundMeError('Erreur de mise à jour de la localisation')),
-              (_) => null,
-            ));
+      return TaskEither.sequenceList(catalogTasks).map((allCatalogs) {
+        final userCatalogs = <String, List<Catalog>>{};
+        for (var i = 0; i < users.length; i++) {
+          userCatalogs[users[i].uid] = allCatalogs[i];
+        }
+        return AroundMeLoaded(
+          currentUser: updatedUser,
+          users: users,
+          userCatalogs: userCatalogs,
+        );
+      });
+    }).match<AroundMeState>(
+      (failure) =>
+          AroundMeError('Erreur de mise à jour de la localisation'),
+      (state) => state,
+    ).map((s) => emit(s)).run();
   }
 }

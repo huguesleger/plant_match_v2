@@ -52,6 +52,8 @@ class ExchangeCubit extends Cubit<ExchangeState> {
     );
   }
 
+  // ─── initExchange ──────────────────────────────────────────────────────────
+
   void initExchange({
     required String userId,
     required String targetPlantId,
@@ -63,25 +65,30 @@ class ExchangeCubit extends Cubit<ExchangeState> {
     _chatId = chatId;
 
     emit(ExchangeLoading());
-    
-    _catalogRepo.getCatalogsByUserId(userId).run().then((result) {
-      result.match(
-        (failure) => emit(ExchangeError('Erreur lors de l\'initialisation de l\'échange')),
-        (userPlants) {
-          _userPlants = userPlants
-              .where((p) => p.offerType == OfferType.exchange)
-              .toList();
 
-          emit(ExchangePickingPlant(
-            userPlants: _userPlants,
-            targetPlantId: targetPlantId,
-            targetOwnerId: targetOwnerId,
-            chatId: chatId,
-          ));
-        },
-      );
-    });
+    _catalogRepo
+        .getCatalogsByUserId(userId)
+        .match(
+          (failure) =>
+              ExchangeError('Erreur lors de l\'initialisation de l\'échange'),
+          (userPlants) {
+            _userPlants = userPlants
+                .where((p) => p.offerType == OfferType.exchange)
+                .toList();
+
+            return ExchangePickingPlant(
+              userPlants: _userPlants,
+              targetPlantId: targetPlantId,
+              targetOwnerId: targetOwnerId,
+              chatId: chatId,
+            );
+          },
+        )
+        .map(emit)
+        .run();
   }
+
+  // ─── selectPlant ───────────────────────────────────────────────────────────
 
   void selectPlant({
     required Catalog offeredPlant,
@@ -89,22 +96,23 @@ class ExchangeCubit extends Cubit<ExchangeState> {
     required String chatId,
   }) {
     emit(ExchangeLoading());
-    
-    _catalogRepo.getCatalogById(targetPlantId).run().then((result) {
-      result.match(
-        (failure) => emit(ExchangeError('Erreur lors du chargement de la plante cible')),
-        (option) => option.match(
-          () => emit(ExchangeError('Plante cible non trouvée')),
-          (targetPlant) {
-            emit(ExchangeConfirming(
+
+    _catalogRepo
+        .getCatalogById(targetPlantId)
+        .match(
+          (failure) =>
+              ExchangeError('Erreur lors du chargement de la plante cible'),
+          (option) => option.match(
+            () => ExchangeError('Plante cible non trouvée'),
+            (targetPlant) => ExchangeConfirming(
               targetPlant: targetPlant,
               offeredPlant: offeredPlant,
               chatId: chatId,
-            ));
-          },
-        ),
-      );
-    });
+            ),
+          ),
+        )
+        .map(emit)
+        .run();
   }
 
   void cancelSelection() {
@@ -118,30 +126,27 @@ class ExchangeCubit extends Cubit<ExchangeState> {
     }
   }
 
+  // ─── propose ───────────────────────────────────────────────────────────────
+
   void propose(Exchange exchange) {
     emit(ExchangeLoading());
-    
-    repository.createExchange(exchange).run().then((result) {
-      result.match(
-        (failure) => emit(ExchangeError(failure.message)),
-        (_) {
-          // Envoyer un message de chat avec les détails de la plante proposée
-          chatRepository.sendPlantExchangeMessage(
-            chatId: exchange.chatId,
-            senderId: exchange.requestedBy,
-            receiverId: exchange.ownerId,
-            plantId: exchange.offeredPlantId,
-            plantName: exchange.offeredPlantName,
-            plantImage: exchange.offeredPlantImage,
-          ).run().then((messageResult) {
-            messageResult.match(
-              (failure) => emit(ExchangeError(failure.message)),
-              (_) => emit(ExchangeSuccess()),
-            );
-          });
-        },
-      );
-    });
+
+    repository
+        .createExchange(exchange)
+        .flatMap((_) => chatRepository.sendPlantExchangeMessage(
+              chatId: exchange.chatId,
+              senderId: exchange.requestedBy,
+              receiverId: exchange.ownerId,
+              plantId: exchange.offeredPlantId,
+              plantName: exchange.offeredPlantName,
+              plantImage: exchange.offeredPlantImage,
+            ))
+        .match(
+          (failure) => ExchangeError(failure.message),
+          (_) => ExchangeSuccess(),
+        )
+        .map(emit)
+        .run();
   }
 
   void accept(String requestId) {

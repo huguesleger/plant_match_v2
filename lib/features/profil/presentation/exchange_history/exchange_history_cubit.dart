@@ -24,11 +24,11 @@ class ExchangeHistoryCubit extends Cubit<ExchangeHistoryState> {
     required this.exchangeRepository,
     required this.donationRepository,
     required this.userId,
-  }) : super(ExchangeHistoryInitial());
+  }) : super(const ExchangeHistoryInitial());
 
   void load({HistoryStatusFilter filter = HistoryStatusFilter.all}) {
     _currentFilter = filter;
-    emit(ExchangeHistoryLoading());
+    emit(const ExchangeHistoryLoading());
 
     _exchangeSub?.cancel();
     _donationSub?.cancel();
@@ -38,7 +38,11 @@ class ExchangeHistoryCubit extends Cubit<ExchangeHistoryState> {
         _exchanges = exchanges;
         _emitLoaded();
       },
-      onError: (e) => emit(ExchangeHistoryError(e.toString())),
+      onError: (e) {
+        if (!isClosed) {
+          emit(ExchangeHistoryError(e.toString()));
+        }
+      },
     );
 
     _donationSub = donationRepository.getCompletedDonations(userId).listen(
@@ -46,11 +50,17 @@ class ExchangeHistoryCubit extends Cubit<ExchangeHistoryState> {
         _donations = donations;
         _emitLoaded();
       },
-      onError: (e) => emit(ExchangeHistoryError(e.toString())),
+      onError: (e) {
+        if (!isClosed) {
+          emit(ExchangeHistoryError(e.toString()));
+        }
+      },
     );
   }
 
   void _emitLoaded() {
+    if (isClosed) return;
+
     final exchangeItems = _exchanges.map(HistoryItem.fromExchange).toList();
     final donationItems = _donations.map(HistoryItem.fromDonation).toList();
 
@@ -87,6 +97,3 @@ class ExchangeHistoryCubit extends Cubit<ExchangeHistoryState> {
     return super.close();
   }
 }
-
-// Conservé pour compatibilité, remplacé par HistoryStatusFilter
-typedef ExchangeStatusFilter = HistoryStatusFilter;

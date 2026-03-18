@@ -26,18 +26,18 @@ class AuthCubit extends Cubit<AuthState> {
   void checkCurrentUser() {
     authRepository
         .getCurrentUser()
-        .map((option) => option.match(
-              () => emit(Unauthenticated()),
-              (user) {
-                _currentUser = user;
-                emit(Authenticated(user));
-              },
-            ))
-        .run()
-        .then((result) => result.match(
-              (failure) => emit(Unauthenticated()),
-              (_) => null,
-            ));
+        .match(
+          (failure) => Unauthenticated(),
+          (option) => option.match(
+            () => Unauthenticated(),
+            (user) {
+              _currentUser = user;
+              return Authenticated(user);
+            },
+          ),
+        )
+        .map(emit)
+        .run();
   }
 
   // ─── signInWithEmailAndPassword ───────────────────────────────────────────
@@ -50,18 +50,16 @@ class AuthCubit extends Cubit<AuthState> {
 
     authRepository
         .signInWithEmailAndPassword(email: email, password: password)
-        .map((user) {
-          _currentUser = user;
-          emit(Authenticated(user));
-        })
-        .run()
-        .then((result) => result.match(
-              (failure) {
-                emit(AuthError(failure.message));
-                emit(Unauthenticated());
-              },
-              (_) => null,
-            ));
+        .match(
+      (failure) {
+        emit(AuthError(failure.message));
+        return Unauthenticated();
+      },
+      (user) {
+        _currentUser = user;
+        return Authenticated(user);
+      },
+    ).map(emit).run();
   }
 
   // ─── registerWithEmailAndPassword ─────────────────────────────────────────
@@ -76,36 +74,31 @@ class AuthCubit extends Cubit<AuthState> {
     authRepository
         .registerWithEmailAndPassword(
             email: email, password: password, fullName: fullName)
-        .flatMap((user) =>
-            authRepository.sendEmailVerification().map((_) => user))
-        .map((user) {
-          _currentUser = user;
-          emit(AuthEmailVerificationSent(user));
-        })
-        .run()
-        .then((result) => result.match(
-              (failure) => emit(AuthError(failure.message)),
-              (_) => null,
-            ));
+        .flatMap((user) => authRepository
+            .sendEmailVerification()
+            .map((_) => user))
+        .match(
+      (failure) => AuthError(failure.message),
+      (user) {
+        _currentUser = user;
+        return AuthEmailVerificationSent(user);
+      },
+    ).map(emit).run();
   }
 
   // ─── resendEmailVerification ──────────────────────────────────────────────
 
   void resendEmailVerification() {
-    authRepository
-        .sendEmailVerification()
-        .map((_) {
-          if (_currentUser != null) {
-            emit(AuthEmailVerificationSent(_currentUser!));
-          } else {
-            emit(Unauthenticated());
-          }
-        })
-        .run()
-        .then((result) => result.match(
-              (failure) => emit(AuthError(failure.message)),
-              (_) => null,
-            ));
+    authRepository.sendEmailVerification().match(
+      (failure) => AuthError(failure.message),
+      (_) {
+        if (_currentUser != null) {
+          return AuthEmailVerificationSent(_currentUser!);
+        } else {
+          return Unauthenticated();
+        }
+      },
+    ).map(emit).run();
   }
 
   // ─── checkEmailVerified ───────────────────────────────────────────────────
@@ -121,62 +114,58 @@ class AuthCubit extends Cubit<AuthState> {
 
       final firebaseUser = FirebaseAuth.instance.currentUser;
       if (firebaseUser == null) {
-        return TaskEither.left(
-            const AuthFailure("Utilisateur introuvable après vérification"));
+        return TaskEither.left(const AuthFailure("Utilisateur introuvable"));
       }
 
       final resolvedName = fullName ?? _currentUser?.fullName ?? '';
-      
-      // On wrap l'émission d'état dans Unit pour rester dans le flux TaskEither
+      final userAuth = UserAuth(
+        uid: firebaseUser.uid,
+        email: firebaseUser.email!,
+        fullName: resolvedName,
+      );
+
+      // On émet Finalizing juste avant l'étape longue (Firestore + Email + Points)
       return TaskEither<Failure, Unit>.tryCatch(
         () async {
-          emit(AuthFinalizing(UserAuth(
-            uid: firebaseUser.uid,
-            email: firebaseUser.email!,
-            fullName: resolvedName,
-          )));
+          emit(AuthFinalizing(userAuth));
           return unit;
         },
         (error, _) => UnexpectedFailure(error.toString()),
       ).flatMap((_) => authRepository
-          .finalizeRegistration(firebaseUser, resolvedName)
-          .flatMap((isFirst) => TaskEither<Failure, Unit>.tryCatch(
+              .finalizeRegistration(firebaseUser, resolvedName)
+              .flatMap((isFirst) {
+            if (isFirst) {
+              return TaskEither<Failure, UserAuth>.tryCatch(
                 () async {
-                  if (isFirst) {
-                    try {
-                      await welcomeEmail(firebaseUser.email!, resolvedName);
-                    } catch (_) {}
-                    await userPointsRepository.addPoints(firebaseUser.uid, 25, 1).run();
-                  }
-                  final authenticatedUser = UserAuth(
-                    uid: firebaseUser.uid,
-                    email: firebaseUser.email!,
-                    fullName: resolvedName,
-                  );
-                  _currentUser = authenticatedUser;
-                  emit(Authenticated(authenticatedUser));
-                  return unit;
+                  try {
+                    await welcomeEmail(firebaseUser.email!, resolvedName);
+                  } catch (_) {}
+                  await userPointsRepository
+                      .addPoints(firebaseUser.uid, 25, 1)
+                      .run();
+                  return userAuth;
                 },
-                (error, _) => UnexpectedFailure(
-                    'Erreur lors de la finalisation : $error'),
-              )));
-    }).run().then((result) {
-      _isCheckingEmail = false;
-      result.match(
-        (failure) {
-          if (failure is AuthFailure && failure.message == "Email non vérifié") {
-             if (_currentUser != null) {
-              emit(AuthEmailVerificationSent(_currentUser!));
-            } else {
-              emit(Unauthenticated());
+                (error, _) => UnexpectedFailure(error.toString()),
+              );
             }
-          } else {
-            emit(AuthError(failure.message));
-          }
-        },
-        (_) => null,
-      );
-    });
+            return TaskEither.right(userAuth);
+          }));
+    }).match(
+      (failure) {
+        _isCheckingEmail = false;
+        if (failure is AuthFailure && failure.message == "Email non vérifié") {
+          return _currentUser != null
+              ? AuthEmailVerificationSent(_currentUser!)
+              : Unauthenticated();
+        }
+        return AuthError(failure.message);
+      },
+      (user) {
+        _isCheckingEmail = false;
+        _currentUser = user;
+        return Authenticated(user);
+      },
+    ).map(emit).run();
   }
 
   // ─── signInWithGoogle ─────────────────────────────────────────────────────
@@ -184,20 +173,16 @@ class AuthCubit extends Cubit<AuthState> {
   void signInWithGoogle() {
     emit(AuthLoading());
 
-    authRepository
-        .signInWithGoogle()
-        .map((user) {
-          _currentUser = user;
-          emit(Authenticated(user));
-        })
-        .run()
-        .then((result) => result.match(
-              (failure) {
-                emit(AuthError(failure.message));
-                emit(Unauthenticated());
-              },
-              (_) => null,
-            ));
+    authRepository.signInWithGoogle().match(
+      (failure) {
+        emit(AuthError(failure.message));
+        return Unauthenticated();
+      },
+      (user) {
+        _currentUser = user;
+        return Authenticated(user);
+      },
+    ).map(emit).run();
   }
 
   // ─── signInWithFacebook ───────────────────────────────────────────────────
@@ -205,33 +190,28 @@ class AuthCubit extends Cubit<AuthState> {
   void signInWithFacebook() {
     emit(AuthLoading());
 
-    authRepository
-        .signInWithFacebook()
-        .map((user) {
-          _currentUser = user;
-          emit(Authenticated(user));
-        })
-        .run()
-        .then((result) => result.match(
-              (failure) {
-                emit(AuthError(failure.message));
-                emit(Unauthenticated());
-              },
-              (_) => null,
-            ));
+    authRepository.signInWithFacebook().match(
+      (failure) {
+        emit(AuthError(failure.message));
+        return Unauthenticated();
+      },
+      (user) {
+        _currentUser = user;
+        return Authenticated(user);
+      },
+    ).map(emit).run();
   }
 
   // ─── logOut ───────────────────────────────────────────────────────────────
 
   void logOut() {
-    authRepository
-        .logOut()
-        .map((_) => emit(Unauthenticated()))
-        .run()
-        .then((result) => result.match(
-              (failure) => emit(AuthError(failure.message)),
-              (_) => null,
-            ));
+    authRepository.logOut().match(
+      (failure) => AuthError(failure.message),
+      (_) {
+        _currentUser = null;
+        return Unauthenticated();
+      },
+    ).map(emit).run();
   }
 
   // ─── sendPasswordResetEmail ───────────────────────────────────────────────
@@ -239,11 +219,12 @@ class AuthCubit extends Cubit<AuthState> {
   void sendPasswordResetEmail({required String email}) {
     authRepository
         .sendPasswordResetEmail(email: email)
-        .run()
-        .then((result) => result.match(
-              (failure) => emit(AuthError(failure.message)),
-              (_) => null,
-            ));
+        .match(
+          (failure) => AuthError(failure.message),
+          (_) => state, // On garde l'état actuel ou on émet un succès si besoin
+        )
+        .map(emit)
+        .run();
   }
 
   // ─── deleteUnverifiedUser ─────────────────────────────────────────────────
@@ -254,20 +235,26 @@ class AuthCubit extends Cubit<AuthState> {
         final user = FirebaseAuth.instance.currentUser;
         if (user != null && !user.emailVerified) {
           await user.delete();
-          emit(Unauthenticated());
+          return unit;
         }
         return unit;
       },
       (error, _) {
-        if (error is FirebaseAuthException && error.code == 'requires-recent-login') {
-           return const AuthFailure('Reconnexion requise pour supprimer le compte');
+        if (error is FirebaseAuthException &&
+            error.code == 'requires-recent-login') {
+          return const AuthFailure(
+              'Reconnexion requise pour supprimer le compte');
         }
-        return UnexpectedFailure('Erreur lors de la suppression du compte : $error');
+        return UnexpectedFailure(
+            'Erreur lors de la suppression du compte : $error');
       },
-    ).run().then((result) => result.match(
-      (failure) => emit(AuthError(failure.message)),
-      (_) => null,
-    ));
+    ).match(
+      (failure) => AuthError(failure.message),
+      (_) {
+        _currentUser = null;
+        return Unauthenticated();
+      },
+    ).map(emit).run();
   }
 
   // ─── reset ────────────────────────────────────────────────────────────────

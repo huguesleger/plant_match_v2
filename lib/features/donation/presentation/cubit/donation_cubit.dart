@@ -40,44 +40,58 @@ class DonationCubit extends Cubit<DonationState> {
     );
   }
 
+  // ─── request ───────────────────────────────────────────────────────────────
+
   void request(Donation donation) {
+    emit(DonationLoading());
+
     repository
         .createDonation(donation)
-        .run()
-        .then((result) => result.match(
-              (failure) => emit(DonationError(failure.message)),
-              (_) => null,
-            ));
+        .match(
+          (failure) => DonationError(failure.message),
+          (_) => state,
+        )
+        .map((s) => emit(s))
+        .run();
   }
+
+  // ─── accept ────────────────────────────────────────────────────────────────
 
   void accept(String donationId) {
     repository
         .setStatus(donationId, DonationStatus.accepted)
-        .run()
-        .then((result) => result.match(
-              (failure) => emit(DonationError(failure.message)),
-              (_) => null,
-            ));
+        .match(
+          (failure) => DonationError(failure.message),
+          (_) => state,
+        )
+        .map((s) => emit(s))
+        .run();
   }
+
+  // ─── reject ────────────────────────────────────────────────────────────────
 
   void reject(String donationId) {
     repository
         .setStatus(donationId, DonationStatus.rejected)
-        .run()
-        .then((result) => result.match(
-              (failure) => emit(DonationError(failure.message)),
-              (_) => null,
-            ));
+        .match(
+          (failure) => DonationError(failure.message),
+          (_) => state,
+        )
+        .map((s) => emit(s))
+        .run();
   }
+
+  // ─── complete ──────────────────────────────────────────────────────────────
 
   void complete(String donationId, String completedBy) {
     repository
         .markAsCompleted(donationId, completedBy)
-        .run()
-        .then((result) => result.match(
-              (failure) => emit(DonationError(failure.message)),
-              (_) => null,
-            ));
+        .match(
+          (failure) => DonationError(failure.message),
+          (_) => state,
+        )
+        .map((s) => emit(s))
+        .run();
   }
 
   void markSeenByOwner(String donationId) {

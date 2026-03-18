@@ -22,15 +22,15 @@ class ProfilCubit extends Cubit<ProfilState> {
 
     profilRepository
         .getProfilUser(uid)
-        .map((option) => option.match(
-              () => emit(ProfilError('Profil introuvable')),
-              (user) => emit(ProfilLoaded(user)),
-            ))
-        .run()
-        .then((result) => result.match(
-              (failure) => emit(ProfilError(failure.message)),
-              (_) => null,
-            ));
+        .match(
+          (failure) => ProfilError(failure.message),
+          (option) => option.match(
+            () => ProfilError('Profil introuvable'),
+            (user) => ProfilLoaded(user),
+          ),
+        )
+        .map(emit)
+        .run();
   }
 
   // ─── updateProfilUser ───────────────────────────────────────────────────────
@@ -49,50 +49,52 @@ class ProfilCubit extends Cubit<ProfilState> {
   }) {
     emit(ProfilLoading());
 
-    profilRepository.getProfilUser(uid).flatMap((option) {
-      return option.match(
-        () => TaskEither.left(const AuthFailure('Profil introuvable')),
-        (currentUser) {
-          if (imageUrl != null) {
-            return storageRepository
-                .uploadImageFromUrl(
-                  path: imageUrl,
-                  fileName: uid,
-                  folder: 'profile_images',
-                )
-                .map((imageDownloadUrl) => currentUser.copyWith(
+    profilRepository
+        .getProfilUser(uid)
+        .flatMap((option) => option.match(
+              () => TaskEither.left(const AuthFailure('Profil introuvable')),
+              (currentUser) => imageUrl != null
+                  ? storageRepository
+                      .uploadImageFromUrl(
+                        path: imageUrl,
+                        fileName: uid,
+                        folder: 'profile_images',
+                      )
+                      .map((imageDownloadUrl) => currentUser.copyWith(
+                            newBio: newBio ?? currentUser.bio,
+                            newProfilImg: imageDownloadUrl,
+                            newUserName: newUserName ?? currentUser.userName,
+                            newLocalisation:
+                                newLocalisation ?? currentUser.localisation,
+                            newCountry: newCountry ?? currentUser.country,
+                            newZipCode: newZipCode ?? currentUser.zipCode,
+                            newBirthdayDate:
+                                newBirthdayDate ?? currentUser.birthdayDate,
+                            newLatitude: newLatitude ?? currentUser.latitude,
+                            newLongitude: newLongitude ?? currentUser.longitude,
+                          ))
+                  : TaskEither.right(currentUser.copyWith(
                       newBio: newBio ?? currentUser.bio,
-                      newProfilImg: imageDownloadUrl,
                       newUserName: newUserName ?? currentUser.userName,
-                      newLocalisation: newLocalisation ?? currentUser.localisation,
+                      newLocalisation:
+                          newLocalisation ?? currentUser.localisation,
                       newCountry: newCountry ?? currentUser.country,
                       newZipCode: newZipCode ?? currentUser.zipCode,
-                      newBirthdayDate: newBirthdayDate ?? currentUser.birthdayDate,
+                      newBirthdayDate:
+                          newBirthdayDate ?? currentUser.birthdayDate,
                       newLatitude: newLatitude ?? currentUser.latitude,
                       newLongitude: newLongitude ?? currentUser.longitude,
-                    ));
-          } else {
-            return TaskEither.right(currentUser.copyWith(
-              newBio: newBio ?? currentUser.bio,
-              newUserName: newUserName ?? currentUser.userName,
-              newLocalisation: newLocalisation ?? currentUser.localisation,
-              newCountry: newCountry ?? currentUser.country,
-              newZipCode: newZipCode ?? currentUser.zipCode,
-              newBirthdayDate: newBirthdayDate ?? currentUser.birthdayDate,
-              newLatitude: newLatitude ?? currentUser.latitude,
-              newLongitude: newLongitude ?? currentUser.longitude,
-            ));
-          }
-        },
-      );
-    }).flatMap((updatedUser) {
-      return profilRepository
-          .updateProfilUser(updatedUser)
-          .map((_) => updatedUser);
-    }).run().then((result) => result.match(
-          (failure) => emit(ProfilError(failure.message)),
-          (updatedUser) => emit(ProfilLoaded(updatedUser)),
-        ));
+                    )),
+            ))
+        .flatMap((updatedUser) => profilRepository
+            .updateProfilUser(updatedUser)
+            .map((_) => updatedUser))
+        .match(
+          (failure) => ProfilError(failure.message),
+          (updatedUser) => ProfilLoaded(updatedUser),
+        )
+        .map(emit)
+        .run();
   }
 
   // ─── updateProfilImage ─────────────────────────────────────────────────────
@@ -116,22 +118,25 @@ class ProfilCubit extends Cubit<ProfilState> {
             folder: 'profile_images',
           );
 
-    uploadTask.flatMap((finalImageUrl) {
-      return profilRepository
-          .updateProfilField(
-            uid: uid,
-            field: 'profilImg',
-            value: finalImageUrl,
-          )
-          .flatMap((_) => profilRepository.getProfilUser(uid))
-          .flatMap((option) => option.match(
-                () => TaskEither.left(const AuthFailure('Profil introuvable')),
-                (user) => TaskEither.right(user),
-              ));
-    }).run().then((result) => result.match(
-          (failure) => emit(ProfilError(failure.message)),
-          (user) => emit(ProfilLoaded(user)),
-        ));
+    uploadTask
+        .flatMap((finalImageUrl) => profilRepository
+            .updateProfilField(
+              uid: uid,
+              field: 'profilImg',
+              value: finalImageUrl,
+            )
+            .flatMap((_) => profilRepository.getProfilUser(uid))
+            .flatMap((option) => option.match(
+                  () =>
+                      TaskEither.left(const AuthFailure('Profil introuvable')),
+                  (user) => TaskEither.right(user),
+                )))
+        .match(
+          (failure) => ProfilError(failure.message),
+          (user) => ProfilLoaded(user),
+        )
+        .map(emit)
+        .run();
   }
 
   // ─── deleteImageProfile ────────────────────────────────────────────────────
@@ -145,15 +150,20 @@ class ProfilCubit extends Cubit<ProfilState> {
 
     final currentUser = currentState.profilUser;
 
-    storageRepository.deleteImage(imageUrl: imageUrl).flatMap((_) {
-      final updatedProfilUser = currentUser.copyWith(newProfilImg: '');
-      return profilRepository
-          .updateProfilUser(updatedProfilUser)
-          .map((_) => updatedProfilUser);
-    }).run().then((result) => result.match(
-          (failure) => emit(ProfilError(failure.message)),
-          (updatedUser) => emit(ProfilLoaded(updatedUser)),
-        ));
+    storageRepository
+        .deleteImage(imageUrl: imageUrl)
+        .flatMap((_) {
+          final updatedProfilUser = currentUser.copyWith(newProfilImg: '');
+          return profilRepository
+              .updateProfilUser(updatedProfilUser)
+              .map((_) => updatedProfilUser);
+        })
+        .match(
+          (failure) => ProfilError(failure.message),
+          (updatedUser) => ProfilLoaded(updatedUser),
+        )
+        .map(emit)
+        .run();
   }
 
   // ─── saveProfilUser ────────────────────────────────────────────────────────
@@ -161,15 +171,18 @@ class ProfilCubit extends Cubit<ProfilState> {
   void saveProfilUser(ProfilUser profilUser) {
     emit(ProfilLoading());
 
-    profilRepository.getProfilUser(profilUser.uid).flatMap((option) {
-      return option.match(
-        () => profilRepository.createProfilUser(profilUser),
-        (existing) => profilRepository.updateProfilUser(profilUser),
-      );
-    }).run().then((result) => result.match(
-          (failure) => emit(ProfilError(failure.message)),
-          (_) => emit(ProfilLoaded(profilUser)),
-        ));
+    profilRepository
+        .getProfilUser(profilUser.uid)
+        .flatMap((option) => option.match(
+              () => profilRepository.createProfilUser(profilUser),
+              (existing) => profilRepository.updateProfilUser(profilUser),
+            ))
+        .match(
+          (failure) => ProfilError(failure.message),
+          (_) => ProfilLoaded(profilUser),
+        )
+        .map(emit)
+        .run();
   }
 
   // ─── clearField ────────────────────────────────────────────────────────────
@@ -180,28 +193,31 @@ class ProfilCubit extends Cubit<ProfilState> {
   }) {
     emit(ProfilLoading());
 
-    profilRepository.getProfilUser(uid).flatMap((option) {
-      return option.match(
-        () => TaskEither.left(const AuthFailure('Profil introuvable')),
-        (currentUser) {
-          final updatedProfilUser = currentUser.copyWith(
-            newUserName: fieldName == 'userName' ? '' : null,
-            newBio: fieldName == 'bio' ? '' : null,
-            newLocalisation: fieldName == 'localisation' ? '' : null,
-            newCountry: fieldName == 'country' ? '' : null,
-            newZipCode: fieldName == 'zipCode' ? '' : null,
-            newLatitude: fieldName == 'latitude' ? 0 : null,
-            newLongitude: fieldName == 'longitude' ? 0 : null,
-          );
+    profilRepository
+        .getProfilUser(uid)
+        .flatMap((option) => option.match(
+              () => TaskEither.left(const AuthFailure('Profil introuvable')),
+              (currentUser) {
+                final updatedProfilUser = currentUser.copyWith(
+                  newUserName: fieldName == 'userName' ? '' : null,
+                  newBio: fieldName == 'bio' ? '' : null,
+                  newLocalisation: fieldName == 'localisation' ? '' : null,
+                  newCountry: fieldName == 'country' ? '' : null,
+                  newZipCode: fieldName == 'zipCode' ? '' : null,
+                  newLatitude: fieldName == 'latitude' ? 0 : null,
+                  newLongitude: fieldName == 'longitude' ? 0 : null,
+                );
 
-          return profilRepository
-              .updateProfilUser(updatedProfilUser)
-              .map((_) => updatedProfilUser);
-        },
-      );
-    }).run().then((result) => result.match(
-          (failure) => emit(ProfilError(failure.message)),
-          (updatedUser) => emit(ProfilLoaded(updatedUser)),
-        ));
+                return profilRepository
+                    .updateProfilUser(updatedProfilUser)
+                    .map((_) => updatedProfilUser);
+              },
+            ))
+        .match(
+          (failure) => ProfilError(failure.message),
+          (updatedUser) => ProfilLoaded(updatedUser),
+        )
+        .map(emit)
+        .run();
   }
 }

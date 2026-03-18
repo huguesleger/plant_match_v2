@@ -15,44 +15,51 @@ class ChatPlantCubit extends Cubit<ChatPlantState> {
     required this.repository,
   }) : super(ChatPlantInitial());
 
+  // ─── subscribe ─────────────────────────────────────────────────────────────
+
   void subscribe({
     required String chatId,
     required String currentUserId,
   }) {
     emit(ChatPlantLoading());
 
-    repository.getParticipants(chatId).run().then((result) {
-      result.match(
-        (failure) => emit(ChatPlantError(failure.message)),
-        (participants) {
-          _otherUserId = participants.firstWhere(
-            (id) => id != currentUserId,
-            orElse: () => '',
-          );
+    repository
+        .getParticipants(chatId)
+        .match<ChatPlantState>(
+          (failure) => ChatPlantError(failure.message),
+          (participants) {
+            final otherId = participants.firstWhere(
+              (id) => id != currentUserId,
+              orElse: () => '',
+            );
 
-          if (_otherUserId!.isEmpty) {
-            emit(ChatPlantError('Impossible de déterminer le destinataire'));
-            return;
-          }
+            if (otherId.isEmpty) {
+              return ChatPlantError('Impossible de déterminer le destinataire');
+            }
 
-          _messagesSub?.cancel();
+            _otherUserId = otherId;
+            _messagesSub?.cancel();
+            _messagesSub = repository.messagesStream(chatId).listen(
+              (messages) {
+                if (!isClosed) {
+                  emit(ChatPlantLoaded(messages: messages));
+                }
+              },
+              onError: (e) {
+                if (!isClosed) {
+                  emit(ChatPlantError(e.toString()));
+                }
+              },
+            );
 
-          _messagesSub = repository.messagesStream(chatId).listen(
-            (messages) {
-              emit(
-                ChatPlantLoaded(
-                  messages: messages,
-                ),
-              );
-            },
-            onError: (e) {
-              emit(ChatPlantError(e.toString()));
-            },
-          );
-        },
-      );
-    });
+            return state; // On reste en loading ou on garde l'état actuel en attendant les messages
+          },
+        )
+        .map((s) => emit(s))
+        .run();
   }
+
+  // ─── send ──────────────────────────────────────────────────────────────────
 
   void send({
     required String chatId,
@@ -68,11 +75,12 @@ class ChatPlantCubit extends Cubit<ChatPlantState> {
           receiverId: _otherUserId!,
           text: text,
         )
-        .run()
-        .then((result) => result.match(
-              (failure) => emit(ChatPlantError(failure.message)),
-              (_) => null,
-            ));
+        .match(
+          (failure) => ChatPlantError(failure.message),
+          (_) => state,
+        )
+        .map((s) => emit(s))
+        .run();
   }
 
   void markMessagesAsRead({
@@ -87,15 +95,21 @@ class ChatPlantCubit extends Cubit<ChatPlantState> {
         .run();
   }
 
+  // ─── softDeleteChat ────────────────────────────────────────────────────────
+
   void softDeleteChat(String chatId, String userId) {
     repository
         .softDeleteChat(chatId: chatId, userId: userId)
-        .run()
-        .then((result) => result.match(
-              (failure) => emit(ChatPlantError('Impossible de supprimer la conversation')),
-              (_) => null,
-            ));
+        .match(
+          (failure) =>
+              ChatPlantError('Impossible de supprimer la conversation'),
+          (_) => state,
+        )
+        .map((s) => emit(s))
+        .run();
   }
+
+  // ─── sendPlantExchange ─────────────────────────────────────────────────────
 
   void sendPlantExchange({
     required String chatId,
@@ -115,11 +129,12 @@ class ChatPlantCubit extends Cubit<ChatPlantState> {
           plantName: plantName,
           plantImage: plantImage,
         )
-        .run()
-        .then((result) => result.match(
-              (failure) => emit(ChatPlantError(failure.message)),
-              (_) => null,
-            ));
+        .match(
+          (failure) => ChatPlantError(failure.message),
+          (_) => state,
+        )
+        .map((s) => emit(s))
+        .run();
   }
 
   @override

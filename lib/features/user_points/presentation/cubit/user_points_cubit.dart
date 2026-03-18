@@ -14,16 +14,16 @@ class UserPointsCubit extends Cubit<UserPointsState> {
 
     repository
         .getPoints(userId)
-        .map((userPoints) => emit(UserPointsLoaded(
-              userPoints.currentPoints,
-              userPoints.level,
-              userPoints,
-            )))
-        .run()
-        .then((result) => result.match(
-              (failure) => emit(UserPointsError(failure.message)),
-              (_) => null,
-            ));
+        .match(
+          (failure) => UserPointsError(failure.message),
+          (userPoints) => UserPointsLoaded(
+            userPoints.currentPoints,
+            userPoints.level,
+            userPoints,
+          ),
+        )
+        .map(emit)
+        .run();
   }
 
   // ─── addUserPoints ─────────────────────────────────────────────────────────
@@ -37,16 +37,16 @@ class UserPointsCubit extends Cubit<UserPointsState> {
 
     repository
         .addPoints(userId, initialPoints, level)
-        .map((userPoints) => emit(UserPointsLoaded(
-              userPoints.currentPoints,
-              userPoints.level,
-              userPoints,
-            )))
-        .run()
-        .then((result) => result.match(
-              (failure) => emit(UserPointsError(failure.message)),
-              (_) => null,
-            ));
+        .match(
+          (failure) => UserPointsError(failure.message),
+          (userPoints) => UserPointsLoaded(
+            userPoints.currentPoints,
+            userPoints.level,
+            userPoints,
+          ),
+        )
+        .map(emit)
+        .run();
   }
 
   // ─── updateUserPoints ──────────────────────────────────────────────────────
@@ -57,15 +57,15 @@ class UserPointsCubit extends Cubit<UserPointsState> {
     repository
         .updatePoints(userId, pointsToAdd)
         .flatMap((_) => repository.getPoints(userId))
-        .map((userPoints) => emit(UserPointsLoaded(
-              userPoints.currentPoints,
-              userPoints.level,
-              userPoints,
-            )))
-        .run()
-        .then((result) => result.match(
-              (failure) => emit(UserPointsError(failure.message)),
-              (_) => null,
-            ));
+        .match(
+          (failure) => UserPointsError(failure.message),
+          (userPoints) => UserPointsLoaded(
+            userPoints.currentPoints,
+            userPoints.level,
+            userPoints,
+          ),
+        )
+        .map(emit)
+        .run();
   }
 }

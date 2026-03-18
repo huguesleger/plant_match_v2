@@ -9,12 +9,14 @@ class UnreadExchangesCubit extends Cubit<UnreadExchangesState> {
   StreamSubscription? _sub;
 
   UnreadExchangesCubit({required this.repository})
-      : super(UnreadExchangesInitial());
+      : super(const UnreadExchangesInitial());
 
   void listen(String uid) {
     _sub?.cancel();
     _sub = repository.unreadExchangeCount(uid).listen((count) {
-      emit(UnreadExchangesLoaded(count));
+      if (!isClosed) {
+        emit(UnreadExchangesLoaded(count));
+      }
     });
   }
 

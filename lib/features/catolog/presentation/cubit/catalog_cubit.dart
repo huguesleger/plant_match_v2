@@ -22,17 +22,18 @@ class CatalogCubit extends Cubit<CatalogState> {
 
     catalogRepository
         .getCatalogsByUserId(userId)
-        .flatMap((catalogs) => catalogRepository.getCatalogById(userId).map(
-              (option) => option.match(
-                () => CatalogLoaded(catalogs, Catalog.empty(userId)),
-                (catalog) => CatalogLoaded(catalogs, catalog),
-              ),
-            ))
-        .run()
-        .then((result) => result.match(
-              (failure) => emit(CatalogError(failure.message)),
-              (state) => emit(state),
-            ));
+        .flatMap((catalogs) => catalogRepository
+            .getCatalogById(userId)
+            .map((option) => option.match(
+                  () => CatalogLoaded(catalogs, Catalog.empty(userId)),
+                  (catalog) => CatalogLoaded(catalogs, catalog),
+                )))
+        .match(
+          (failure) => CatalogError(failure.message),
+          (state) => state,
+        )
+        .map(emit)
+        .run();
   }
 
   // ─── addCatalog ────────────────────────────────────────────────────────────
@@ -40,14 +41,21 @@ class CatalogCubit extends Cubit<CatalogState> {
   TaskEither<Failure, String> addCatalog(Catalog catalog) {
     emit(CatalogLoading());
 
-    return catalogRepository
-        .createCatalog(catalog)
-        .flatMap((id) => catalogRepository
-            .getCatalogsByUserId(catalog.userId)
-            .map((catalogs) {
-          emit(CatalogLoaded(catalogs, catalog.copyWith(newCatalogId: id)));
-          return id;
-        }));
+    return catalogRepository.createCatalog(catalog).flatMap((id) {
+      final updatedCatalog = catalog.copyWith(newCatalogId: id);
+      return catalogRepository
+          .getCatalogsByUserId(catalog.userId)
+          .flatMap((catalogs) {
+        // On émet l'état chargé avant de retourner l'ID
+        return TaskEither<Failure, String>.tryCatch(
+          () async {
+            emit(CatalogLoaded(catalogs, updatedCatalog));
+            return id;
+          },
+          (error, _) => UnexpectedFailure(error.toString()),
+        );
+      });
+    });
   }
 
   // ─── updateCatalog ─────────────────────────────────────────────────────────
@@ -58,11 +66,12 @@ class CatalogCubit extends Cubit<CatalogState> {
     catalogRepository
         .updateCatalog(catalog)
         .flatMap((_) => catalogRepository.getCatalogsByUserId(catalog.userId))
-        .run()
-        .then((result) => result.match(
-              (failure) => emit(CatalogError(failure.message)),
-              (catalogs) => emit(CatalogLoaded(catalogs, catalog)),
-            ));
+        .match(
+          (failure) => CatalogError(failure.message),
+          (catalogs) => CatalogLoaded(catalogs, catalog),
+        )
+        .map(emit)
+        .run();
   }
 
   // ─── editCatalog ───────────────────────────────────────────────────────────
@@ -73,11 +82,12 @@ class CatalogCubit extends Cubit<CatalogState> {
     catalogRepository
         .updateCatalog(catalog)
         .flatMap((_) => catalogRepository.getCatalogsByUserId(catalog.userId))
-        .run()
-        .then((result) => result.match(
-              (failure) => emit(CatalogError(failure.message)),
-              (catalogs) => emit(CatalogLoaded(catalogs, catalog)),
-            ));
+        .match(
+          (failure) => CatalogError(failure.message),
+          (catalogs) => CatalogLoaded(catalogs, catalog),
+        )
+        .map(emit)
+        .run();
   }
 
   // ─── uploadCatalogImages ───────────────────────────────────────────────────
@@ -90,7 +100,6 @@ class CatalogCubit extends Cubit<CatalogState> {
   }) {
     emit(CatalogLoading());
 
-    // Utilisation de traverse pour uploader plusieurs images
     final uploadTasks = imagePaths.map((imagePath) {
       final fileName = "${catalogId}_${imagePath.split('/').last}";
       return storageRepository.uploadImageFromUrl(
@@ -110,9 +119,14 @@ class CatalogCubit extends Cubit<CatalogState> {
       return catalogRepository
           .updateCatalog(updatedCatalog)
           .flatMap((_) => catalogRepository.getCatalogsByUserId(catalog.userId))
-          .map((catalogs) {
-        emit(CatalogLoaded(catalogs, updatedCatalog));
-        return updatedCatalog;
+          .flatMap((catalogs) {
+        return TaskEither<Failure, Catalog>.tryCatch(
+          () async {
+            emit(CatalogLoaded(catalogs, updatedCatalog));
+            return updatedCatalog;
+          },
+          (error, _) => UnexpectedFailure(error.toString()),
+        );
       });
     });
   }
@@ -133,9 +147,14 @@ class CatalogCubit extends Cubit<CatalogState> {
       return catalogRepository
           .updateCatalog(updatedCatalog)
           .flatMap((_) => catalogRepository.getCatalogsByUserId(catalog.userId))
-          .map((catalogs) {
-        emit(CatalogLoaded(catalogs, updatedCatalog));
-        return updatedCatalog;
+          .flatMap((catalogs) {
+        return TaskEither<Failure, Catalog>.tryCatch(
+          () async {
+            emit(CatalogLoaded(catalogs, updatedCatalog));
+            return updatedCatalog;
+          },
+          (error, _) => UnexpectedFailure(error.toString()),
+        );
       });
     });
   }
@@ -149,8 +168,13 @@ class CatalogCubit extends Cubit<CatalogState> {
         option.match(
           () => TaskEither.left(const FirebaseFailure("Catalogue non trouvé")),
           (catalog) {
-            emit(CatalogLoaded([catalog], catalog));
-            return TaskEither.right(catalog);
+            return TaskEither<Failure, Catalog>.tryCatch(
+              () async {
+                emit(CatalogLoaded([catalog], catalog));
+                return catalog;
+              },
+              (error, _) => UnexpectedFailure(error.toString()),
+            );
           },
         ));
   }
@@ -163,10 +187,11 @@ class CatalogCubit extends Cubit<CatalogState> {
     catalogRepository
         .deleteCatalog(catalogId)
         .flatMap((_) => catalogRepository.getCatalogsByUserId(userId))
-        .run()
-        .then((result) => result.match(
-              (failure) => emit(CatalogError(failure.message)),
-              (catalogs) => emit(CatalogLoaded(catalogs, Catalog.empty(userId))),
-            ));
+        .match(
+          (failure) => CatalogError(failure.message),
+          (catalogs) => CatalogLoaded(catalogs, Catalog.empty(userId)),
+        )
+        .map(emit)
+        .run();
   }
 }

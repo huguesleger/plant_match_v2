@@ -21,12 +21,12 @@ class UserCubit extends Cubit<UserState> {
     required this.catalogRepository,
     required this.userPointsRepository,
     required this.exchangeRepository,
-  }) : super(UserInitial());
+  }) : super(const UserInitial());
 
-  Future<void> fetchUser(String uid) async {
-    emit(UserLoading());
+  void fetchUser(String uid) {
+    emit(const UserLoading());
 
-    await userRepository
+    userRepository
         .getUserUid(uid)
         .flatMap((user) => catalogRepository
             .getCatalogsByUserId(user.uid)
@@ -67,17 +67,22 @@ class UserCubit extends Cubit<UserState> {
             selectedFilter: CatalogFilter.all,
           );
         })
-        .run()
-        .then((result) => result.match(
-              (failure) => emit(UserError(failure.message)),
-              (userData) => emit(UserLoaded(data: userData)),
-            ));
+        .match(
+          (failure) => UserError(failure.message),
+          (userData) => UserLoaded(data: userData),
+        )
+        .map((s) {
+          if (!isClosed) {
+            emit(s);
+          }
+        })
+        .run();
   }
 
   void updateFilter(CatalogFilter filter) {
-    if (state is UserLoaded) {
-      final s = state as UserLoaded;
-      final updated = s.data.copyWith(selectedFilter: filter);
+    final currentState = state;
+    if (currentState is UserLoaded) {
+      final updated = currentState.data.copyWith(selectedFilter: filter);
       emit(UserLoaded(data: updated));
     }
   }

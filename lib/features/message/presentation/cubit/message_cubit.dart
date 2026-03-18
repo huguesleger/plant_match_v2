@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/features/chat_plant/domain/entities/chat_plant.dart';
 import 'package:plant_match_v2/features/chat_plant/domain/repository/chat_plant_repository.dart';
 import 'package:plant_match_v2/features/exchange/domain/entities/exchange.dart';
@@ -23,10 +25,10 @@ class MessagesCubit extends Cubit<MessagesState> {
     required this.chatPlantRepository,
     required this.userRepository,
     required this.exchangeRepository,
-  }) : super(MessagesInitial());
+  }) : super(const MessagesInitial());
 
   void load(String currentUserId) {
-    emit(MessagesLoading());
+    emit(const MessagesLoading());
 
     _chatsSub = chatPlantRepository.chatsForUser(currentUserId).listen(
       (chats) {
@@ -34,7 +36,9 @@ class MessagesCubit extends Cubit<MessagesState> {
         _emitCombined(currentUserId);
       },
       onError: (e) {
-        emit(MessagesError(e.toString()));
+        if (!isClosed) {
+          emit(MessagesError(e.toString()));
+        }
       },
     );
 
@@ -45,27 +49,30 @@ class MessagesCubit extends Cubit<MessagesState> {
         _emitCombined(currentUserId);
       },
       onError: (e) {
-        emit(MessagesError(e.toString()));
+        if (!isClosed) {
+          emit(MessagesError(e.toString()));
+        }
       },
     );
   }
 
   void _emitCombined(String currentUserId) {
-    final List<Future<ChatPlant?>> futures = _lastChats.map((chat) {
-      /// 1️⃣ Trouver l'interlocuteur
+    if (_lastChats.isEmpty) {
+      if (!isClosed) {
+        emit(const MessagesLoaded(chats: []));
+      }
+      return;
+    }
+
+    final List<TaskEither<Failure, ChatPlant?>> tasks = _lastChats.map((chat) {
       final otherUserId = chat.participants.firstWhere(
         (id) => id != currentUserId,
         orElse: () => '',
       );
 
-      if (otherUserId.isEmpty) return Future.value(null);
+      if (otherUserId.isEmpty) return TaskEither<Failure, ChatPlant?>.of(null);
 
-      return userRepository.getUserUid(otherUserId).run().then((userResult) {
-        final userOption = userResult.toOption();
-        if (userOption.isNone()) return null;
-
-        final user = userOption.toNullable()!;
-
+      return userRepository.getUserUid(otherUserId).map((user) {
         final displayName = user.userName.isNotEmpty
             ? user.userName
             : user.fullName.split(' ').first;
@@ -76,7 +83,6 @@ class MessagesCubit extends Cubit<MessagesState> {
         final bool hasUnreadExchange =
             _lastExchanges.any((e) => e.chatId == chat.chatId);
 
-        // Trouver l'échange accepté pour ce chat
         final acceptedExchange = _lastExchanges.firstWhere(
           (e) => e.chatId == chat.chatId && e.status == ExchangeStatus.accepted,
           orElse: () => Exchange(
@@ -121,21 +127,22 @@ class MessagesCubit extends Cubit<MessagesState> {
       });
     }).toList();
 
-    Future.wait(futures).then((results) {
-      if (isClosed) return;
-      
-      final List<ChatPlant> chatPlants = results.whereType<ChatPlant>().toList();
-      
-      // Filtrer les conversations clôturées
-      final filteredResult =
-          chatPlants.where((chat) => !chat.isExchangeCompleted).toList();
-
-      emit(MessagesLoaded(chats: filteredResult));
-    }).catchError((e) {
-      if (!isClosed) {
-        emit(MessagesError(e.toString()));
-      }
-    });
+    TaskEither.sequenceList(tasks)
+        .match<MessagesState>(
+          (failure) => MessagesError(failure.message),
+          (results) {
+            final chatPlants = results.whereType<ChatPlant>().toList();
+            final filteredResult =
+                chatPlants.where((chat) => !chat.isExchangeCompleted).toList();
+            return MessagesLoaded(chats: filteredResult);
+          },
+        )
+        .map((s) {
+          if (!isClosed) {
+            emit(s);
+          }
+        })
+        .run();
   }
 
   @override
