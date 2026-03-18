@@ -66,7 +66,11 @@ class ChatPlantPage extends StatelessWidget {
             currentUserId: currentUser.uid,
           ),
         child: FutureBuilder<Catalog?>(
-          future: catalogRepo.getCatalogById(plantId),
+          future: catalogRepo
+              .getCatalogById(plantId)
+              .map((opt) => opt.toNullable())
+              .getOrElse((_) => null)
+              .run(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return const Scaffold(

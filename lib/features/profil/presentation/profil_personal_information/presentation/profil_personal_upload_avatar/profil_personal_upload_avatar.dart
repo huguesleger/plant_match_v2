@@ -30,7 +30,7 @@ class _ProfilPersonalUploadAvatarState
 
     if (mounted && image != null) {
       final profilCubit = context.read<ProfilCubit>();
-      await profilCubit.updateProfilImage(
+      profilCubit.updateProfilImage(
         uid: widget.profilUser.uid,
         imagePath: image.path,
         isAsset: false,

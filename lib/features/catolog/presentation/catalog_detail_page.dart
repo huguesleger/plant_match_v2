@@ -360,7 +360,7 @@ class _CatalogDetailPageState extends State<CatalogDetailPage> {
                           onPressed: () async {
                             Navigator.pop(ctx);
                             final userId = _catalog.userId;
-                            await context
+                            context
                                 .read<CatalogCubit>()
                                 .deleteCatalog(_catalog.catalogId!, userId);
                             if (context.mounted) {
@@ -397,15 +397,21 @@ class _CatalogDetailPageState extends State<CatalogDetailPage> {
                       ),
                     );
                     if (result == true && context.mounted) {
-                      final updatedCatalog = await context
+                      final getResult = await context
                           .read<CatalogCubit>()
-                          .getCatalogById(_catalog.catalogId!);
+                          .getCatalogById(_catalog.catalogId!)
+                          .run();
 
-                      if (mounted) {
-                        setState(() {
-                          _catalog = updatedCatalog!;
-                        });
-                      }
+                      getResult.match(
+                        (failure) => null,
+                        (updatedCatalog) {
+                          if (mounted) {
+                            setState(() {
+                              _catalog = updatedCatalog;
+                            });
+                          }
+                        },
+                      );
                     }
                   },
                   bgColor: AppColors.greenLight,

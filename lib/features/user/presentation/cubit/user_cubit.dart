@@ -28,15 +28,9 @@ class UserCubit extends Cubit<UserState> {
 
     await userRepository
         .getUserUid(uid)
-        .flatMap((user) => TaskEither.tryCatch(
-              () async {
-                final catalogs =
-                    await catalogRepository.getCatalogsByUserId(user.uid);
-                return (user, catalogs);
-              },
-              (error, stackTrace) => FirebaseFailure(
-                  'Erreur lors du chargement des catalogues : $error'),
-            ))
+        .flatMap((user) => catalogRepository
+            .getCatalogsByUserId(user.uid)
+            .map((catalogs) => (user, catalogs)))
         .flatMap((data) {
           final (user, catalogs) = data;
           return userPointsRepository.getPoints(user.uid).map((userPoints) {

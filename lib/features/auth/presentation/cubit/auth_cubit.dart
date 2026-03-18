@@ -42,13 +42,13 @@ class AuthCubit extends Cubit<AuthState> {
 
   // ─── signInWithEmailAndPassword ───────────────────────────────────────────
 
-  Future<void> signInWithEmailAndPassword({
+  void signInWithEmailAndPassword({
     required String email,
     required String password,
-  }) async {
+  }) {
     emit(AuthLoading());
 
-    await authRepository
+    authRepository
         .signInWithEmailAndPassword(email: email, password: password)
         .map((user) {
           _currentUser = user;
@@ -66,14 +66,14 @@ class AuthCubit extends Cubit<AuthState> {
 
   // ─── registerWithEmailAndPassword ─────────────────────────────────────────
 
-  Future<void> registerWithEmailAndPassword({
+  void registerWithEmailAndPassword({
     required String email,
     required String password,
     required String fullName,
-  }) async {
+  }) {
     emit(AuthLoading());
 
-    await authRepository
+    authRepository
         .registerWithEmailAndPassword(
             email: email, password: password, fullName: fullName)
         .flatMap((user) =>
@@ -91,8 +91,8 @@ class AuthCubit extends Cubit<AuthState> {
 
   // ─── resendEmailVerification ──────────────────────────────────────────────
 
-  Future<void> resendEmailVerification() async {
-    await authRepository
+  void resendEmailVerification() {
+    authRepository
         .sendEmailVerification()
         .map((_) {
           if (_currentUser != null) {
@@ -109,43 +109,36 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   // ─── checkEmailVerified ───────────────────────────────────────────────────
-  // Logique séquentielle : on extrait isEmailVerified d'abord, puis on enchaîne
-  // en fp-dart pour la finalisation.
 
-  Future<void> checkEmailVerified({String? fullName}) async {
+  void checkEmailVerified({String? fullName}) {
     if (_isCheckingEmail) return;
     _isCheckingEmail = true;
 
-    try {
-      // 1. Vérifier si l'email est validé
-      final verifiedResult = await authRepository.isEmailVerified().run();
-      final verified = verifiedResult.getOrElse((_) => false);
-
+    authRepository.isEmailVerified().flatMap((verified) {
       if (!verified) {
-        if (_currentUser != null) {
-          emit(AuthEmailVerificationSent(_currentUser!));
-        } else {
-          emit(Unauthenticated());
-        }
-        return;
+        return TaskEither.left(const AuthFailure("Email non vérifié"));
       }
 
-      // 2. Récupérer l'utilisateur Firebase courant
       final firebaseUser = FirebaseAuth.instance.currentUser;
       if (firebaseUser == null) {
-        emit(AuthError('Utilisateur introuvable après vérification.'));
-        return;
+        return TaskEither.left(
+            const AuthFailure("Utilisateur introuvable après vérification"));
       }
 
       final resolvedName = fullName ?? _currentUser?.fullName ?? '';
-      emit(AuthFinalizing(UserAuth(
-        uid: firebaseUser.uid,
-        email: firebaseUser.email!,
-        fullName: resolvedName,
-      )));
-
-      // 3. Finalisation + email de bienvenue + points initiaux
-      await authRepository
+      
+      // On wrap l'émission d'état dans Unit pour rester dans le flux TaskEither
+      return TaskEither<Failure, Unit>.tryCatch(
+        () async {
+          emit(AuthFinalizing(UserAuth(
+            uid: firebaseUser.uid,
+            email: firebaseUser.email!,
+            fullName: resolvedName,
+          )));
+          return unit;
+        },
+        (error, _) => UnexpectedFailure(error.toString()),
+      ).flatMap((_) => authRepository
           .finalizeRegistration(firebaseUser, resolvedName)
           .flatMap((isFirst) => TaskEither<Failure, Unit>.tryCatch(
                 () async {
@@ -153,7 +146,7 @@ class AuthCubit extends Cubit<AuthState> {
                     try {
                       await welcomeEmail(firebaseUser.email!, resolvedName);
                     } catch (_) {}
-                    await _addInitialPoints(firebaseUser.uid);
+                    await userPointsRepository.addPoints(firebaseUser.uid, 25, 1).run();
                   }
                   final authenticatedUser = UserAuth(
                     uid: firebaseUser.uid,
@@ -166,23 +159,32 @@ class AuthCubit extends Cubit<AuthState> {
                 },
                 (error, _) => UnexpectedFailure(
                     'Erreur lors de la finalisation : $error'),
-              ))
-          .run()
-          .then((result) => result.match(
-                (failure) => emit(AuthError(failure.message)),
-                (_) => null,
-              ));
-    } finally {
+              )));
+    }).run().then((result) {
       _isCheckingEmail = false;
-    }
+      result.match(
+        (failure) {
+          if (failure is AuthFailure && failure.message == "Email non vérifié") {
+             if (_currentUser != null) {
+              emit(AuthEmailVerificationSent(_currentUser!));
+            } else {
+              emit(Unauthenticated());
+            }
+          } else {
+            emit(AuthError(failure.message));
+          }
+        },
+        (_) => null,
+      );
+    });
   }
 
   // ─── signInWithGoogle ─────────────────────────────────────────────────────
 
-  Future<void> signInWithGoogle() async {
+  void signInWithGoogle() {
     emit(AuthLoading());
 
-    await authRepository
+    authRepository
         .signInWithGoogle()
         .map((user) {
           _currentUser = user;
@@ -200,10 +202,10 @@ class AuthCubit extends Cubit<AuthState> {
 
   // ─── signInWithFacebook ───────────────────────────────────────────────────
 
-  Future<void> signInWithFacebook() async {
+  void signInWithFacebook() {
     emit(AuthLoading());
 
-    await authRepository
+    authRepository
         .signInWithFacebook()
         .map((user) {
           _currentUser = user;
@@ -221,8 +223,8 @@ class AuthCubit extends Cubit<AuthState> {
 
   // ─── logOut ───────────────────────────────────────────────────────────────
 
-  Future<void> logOut() async {
-    await authRepository
+  void logOut() {
+    authRepository
         .logOut()
         .map((_) => emit(Unauthenticated()))
         .run()
@@ -234,8 +236,8 @@ class AuthCubit extends Cubit<AuthState> {
 
   // ─── sendPasswordResetEmail ───────────────────────────────────────────────
 
-  Future<void> sendPasswordResetEmail({required String email}) async {
-    await authRepository
+  void sendPasswordResetEmail({required String email}) {
+    authRepository
         .sendPasswordResetEmail(email: email)
         .run()
         .then((result) => result.match(
@@ -246,40 +248,29 @@ class AuthCubit extends Cubit<AuthState> {
 
   // ─── deleteUnverifiedUser ─────────────────────────────────────────────────
 
-  Future<void> deleteUnverifiedUser() async {
-    try {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user != null && !user.emailVerified) {
-        await user.delete();
-        emit(Unauthenticated());
-      }
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'requires-recent-login') {
+  void deleteUnverifiedUser() {
+    TaskEither<Failure, Unit>.tryCatch(
+      () async {
         final user = FirebaseAuth.instance.currentUser;
-        if (user != null) {
-          try {
-            await user.reload();
-            await user.delete();
-            emit(Unauthenticated());
-          } catch (e) {
-            emit(AuthError('Impossible de supprimer le compte : $e'));
-          }
+        if (user != null && !user.emailVerified) {
+          await user.delete();
+          emit(Unauthenticated());
         }
-      } else {
-        emit(AuthError('Erreur lors de la suppression du compte : ${e.code}'));
-      }
-    } catch (e) {
-      emit(AuthError('Erreur inconnue : $e'));
-    }
+        return unit;
+      },
+      (error, _) {
+        if (error is FirebaseAuthException && error.code == 'requires-recent-login') {
+           return const AuthFailure('Reconnexion requise pour supprimer le compte');
+        }
+        return UnexpectedFailure('Erreur lors de la suppression du compte : $error');
+      },
+    ).run().then((result) => result.match(
+      (failure) => emit(AuthError(failure.message)),
+      (_) => null,
+    ));
   }
 
   // ─── reset ────────────────────────────────────────────────────────────────
 
   void reset() => emit(Unauthenticated());
-
-  // ─── _addInitialPoints ────────────────────────────────────────────────────
-
-  Future<void> _addInitialPoints(String userId) async {
-    await userPointsRepository.addPoints(userId, 25, 1).run();
-  }
 }

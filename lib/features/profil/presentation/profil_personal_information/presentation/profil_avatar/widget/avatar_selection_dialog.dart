@@ -80,7 +80,7 @@ class _AvatarSelectionDialogState extends State<AvatarSelectionDialog> {
                         final profilCubit = context.read<ProfilCubit>();
                         final navigator = Navigator.of(context);
 
-                        await profilCubit.updateProfilImage(
+                        profilCubit.updateProfilImage(
                           uid: widget.profilUser.uid,
                           imagePath: selectedPath,
                           isAsset: true,

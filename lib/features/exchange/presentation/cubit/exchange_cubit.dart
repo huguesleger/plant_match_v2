@@ -52,52 +52,59 @@ class ExchangeCubit extends Cubit<ExchangeState> {
     );
   }
 
-  Future<void> initExchange({
+  void initExchange({
     required String userId,
     required String targetPlantId,
     required String targetOwnerId,
     required String chatId,
-  }) async {
+  }) {
     _targetPlantId = targetPlantId;
     _targetOwnerId = targetOwnerId;
     _chatId = chatId;
 
     emit(ExchangeLoading());
-    try {
-      final userPlants = await _catalogRepo.getCatalogsByUserId(userId);
-      _userPlants = userPlants
-          .where((p) => p.offerType == OfferType.exchange)
-          .toList();
+    
+    _catalogRepo.getCatalogsByUserId(userId).run().then((result) {
+      result.match(
+        (failure) => emit(ExchangeError('Erreur lors de l\'initialisation de l\'échange')),
+        (userPlants) {
+          _userPlants = userPlants
+              .where((p) => p.offerType == OfferType.exchange)
+              .toList();
 
-      emit(ExchangePickingPlant(
-        userPlants: _userPlants,
-        targetPlantId: targetPlantId,
-        targetOwnerId: targetOwnerId,
-        chatId: chatId,
-      ));
-    } catch (e) {
-      emit(ExchangeError('Erreur lors de l\'initialisation de l\'échange'));
-    }
+          emit(ExchangePickingPlant(
+            userPlants: _userPlants,
+            targetPlantId: targetPlantId,
+            targetOwnerId: targetOwnerId,
+            chatId: chatId,
+          ));
+        },
+      );
+    });
   }
 
-  Future<void> selectPlant({
+  void selectPlant({
     required Catalog offeredPlant,
     required String targetPlantId,
     required String chatId,
-  }) async {
+  }) {
     emit(ExchangeLoading());
-    try {
-      final targetPlant = await _catalogRepo.getCatalogById(targetPlantId);
-      if (targetPlant == null) throw Exception('Plante cible non trouvée');
-
-      emit(ExchangeConfirming(
-        targetPlant: targetPlant,
-        offeredPlant: offeredPlant,
-        chatId: chatId,
-      ));
-    } catch (e) {
-      emit(ExchangeError('Erreur lors du chargement de la plante cible'));
-    }
+    
+    _catalogRepo.getCatalogById(targetPlantId).run().then((result) {
+      result.match(
+        (failure) => emit(ExchangeError('Erreur lors du chargement de la plante cible')),
+        (option) => option.match(
+          () => emit(ExchangeError('Plante cible non trouvée')),
+          (targetPlant) {
+            emit(ExchangeConfirming(
+              targetPlant: targetPlant,
+              offeredPlant: offeredPlant,
+              chatId: chatId,
+            ));
+          },
+        ),
+      );
+    });
   }
 
   void cancelSelection() {
@@ -111,44 +118,50 @@ class ExchangeCubit extends Cubit<ExchangeState> {
     }
   }
 
-  Future<void> propose(Exchange exchange) async {
+  void propose(Exchange exchange) {
     emit(ExchangeLoading());
-    try {
-      await repository.createExchange(exchange);
-
-      // Envoyer un message de chat avec les détails de la plante proposée
-      await chatRepository.sendPlantExchangeMessage(
-        chatId: exchange.chatId,
-        senderId: exchange.requestedBy,
-        receiverId: exchange.ownerId,
-        plantId: exchange.offeredPlantId,
-        plantName: exchange.offeredPlantName,
-        plantImage: exchange.offeredPlantImage,
+    
+    repository.createExchange(exchange).run().then((result) {
+      result.match(
+        (failure) => emit(ExchangeError(failure.message)),
+        (_) {
+          // Envoyer un message de chat avec les détails de la plante proposée
+          chatRepository.sendPlantExchangeMessage(
+            chatId: exchange.chatId,
+            senderId: exchange.requestedBy,
+            receiverId: exchange.ownerId,
+            plantId: exchange.offeredPlantId,
+            plantName: exchange.offeredPlantName,
+            plantImage: exchange.offeredPlantImage,
+          ).run().then((messageResult) {
+            messageResult.match(
+              (failure) => emit(ExchangeError(failure.message)),
+              (_) => emit(ExchangeSuccess()),
+            );
+          });
+        },
       );
-      emit(ExchangeSuccess());
-    } catch (e) {
-      emit(ExchangeError(e.toString()));
-    }
+    });
   }
 
-  Future<void> accept(String requestId) async {
-    await repository.setStatus(requestId, ExchangeStatus.accepted);
+  void accept(String requestId) {
+    repository.setStatus(requestId, ExchangeStatus.accepted).run();
   }
 
-  Future<void> reject(String requestId) async {
-    await repository.setStatus(requestId, ExchangeStatus.rejected);
+  void reject(String requestId) {
+    repository.setStatus(requestId, ExchangeStatus.rejected).run();
   }
 
-  Future<void> markSeenByOwner(String exchangeId) {
-    return repository.markSeenByOwner(exchangeId);
+  void markSeenByOwner(String exchangeId) {
+    repository.markSeenByOwner(exchangeId).run();
   }
 
-  Future<void> markSeenByRequester(String exchangeId) {
-    return repository.markSeenByRequester(exchangeId);
+  void markSeenByRequester(String exchangeId) {
+    repository.markSeenByRequester(exchangeId).run();
   }
 
-  Future<void> complete(String exchangeId, String completedBy) async {
-    await repository.markAsCompleted(exchangeId, completedBy);
+  void complete(String exchangeId, String completedBy) {
+    repository.markAsCompleted(exchangeId, completedBy).run();
   }
 
   @override

@@ -15,105 +15,111 @@ class ChatPlantCubit extends Cubit<ChatPlantState> {
     required this.repository,
   }) : super(ChatPlantInitial());
 
-  Future<void> subscribe({
+  void subscribe({
     required String chatId,
     required String currentUserId,
-  }) async {
+  }) {
     emit(ChatPlantLoading());
 
-    try {
-      final participants = await repository.getParticipants(chatId);
+    repository.getParticipants(chatId).run().then((result) {
+      result.match(
+        (failure) => emit(ChatPlantError(failure.message)),
+        (participants) {
+          _otherUserId = participants.firstWhere(
+            (id) => id != currentUserId,
+            orElse: () => '',
+          );
 
-      _otherUserId = participants.firstWhere(
-        (id) => id != currentUserId,
-        orElse: () => '',
-      );
+          if (_otherUserId!.isEmpty) {
+            emit(ChatPlantError('Impossible de déterminer le destinataire'));
+            return;
+          }
 
-      if (_otherUserId!.isEmpty) {
-        throw Exception('Impossible de déterminer le destinataire');
-      }
+          _messagesSub?.cancel();
 
-      await _messagesSub?.cancel();
-
-      _messagesSub = repository.messagesStream(chatId).listen(
-        (messages) {
-          emit(
-            ChatPlantLoaded(
-              messages: messages,
-            ),
+          _messagesSub = repository.messagesStream(chatId).listen(
+            (messages) {
+              emit(
+                ChatPlantLoaded(
+                  messages: messages,
+                ),
+              );
+            },
+            onError: (e) {
+              emit(ChatPlantError(e.toString()));
+            },
           );
         },
-        onError: (e) {
-          emit(ChatPlantError(e.toString()));
-        },
       );
-    } catch (e) {
-      emit(ChatPlantError(e.toString()));
-    }
+    });
   }
 
-  Future<void> send({
+  void send({
     required String chatId,
     required String senderId,
     required String text,
-  }) async {
+  }) {
     if (_otherUserId == null || _otherUserId!.isEmpty) return;
 
-    try {
-      await repository.sendMessage(
-        chatId: chatId,
-        senderId: senderId,
-        receiverId: _otherUserId!,
-        text: text,
-      );
-    } catch (e) {
-      emit(ChatPlantError(e.toString()));
-    }
+    repository
+        .sendMessage(
+          chatId: chatId,
+          senderId: senderId,
+          receiverId: _otherUserId!,
+          text: text,
+        )
+        .run()
+        .then((result) => result.match(
+              (failure) => emit(ChatPlantError(failure.message)),
+              (_) => null,
+            ));
   }
 
-  Future<void> markMessagesAsRead({
+  void markMessagesAsRead({
     required String chatId,
     required String currentUserId,
-  }) async {
-    try {
-      await repository.markMessagesAsRead(
-        chatId: chatId,
-        currentUserId: currentUserId,
-      );
-    } catch (_) {
-      // volontairement silencieux
-    }
+  }) {
+    repository
+        .markMessagesAsRead(
+          chatId: chatId,
+          currentUserId: currentUserId,
+        )
+        .run();
   }
 
-  Future<void> softDeleteChat(String chatId, String userId) async {
-    try {
-      await repository.softDeleteChat(chatId: chatId, userId: userId);
-    } catch (_) {
-      emit(ChatPlantError('Impossible de supprimer la conversation'));
-    }
+  void softDeleteChat(String chatId, String userId) {
+    repository
+        .softDeleteChat(chatId: chatId, userId: userId)
+        .run()
+        .then((result) => result.match(
+              (failure) => emit(ChatPlantError('Impossible de supprimer la conversation')),
+              (_) => null,
+            ));
   }
 
-  Future<void> sendPlantExchange({
+  void sendPlantExchange({
     required String chatId,
     required String senderId,
     required String plantId,
     required String plantName,
     required String plantImage,
-  }) async {
+  }) {
     if (_otherUserId == null || _otherUserId!.isEmpty) return;
 
-    try {
-      await repository.sendPlantExchangeMessage(
-        chatId: chatId,
-        senderId: senderId,
-        receiverId: _otherUserId!,
-        plantId: plantId,
-        plantName: plantName,
-        plantImage: plantImage,
-      );
-    } catch (e) {
-      emit(ChatPlantError(e.toString()));
-    }
+    repository
+        .sendPlantExchangeMessage(
+          chatId: chatId,
+          senderId: senderId,
+          receiverId: _otherUserId!,
+          plantId: plantId,
+          plantName: plantName,
+          plantImage: plantImage,
+        )
+        .run()
+        .then((result) => result.match(
+              (failure) => emit(ChatPlantError(failure.message)),
+              (_) => null,
+            ));
   }
 
   @override

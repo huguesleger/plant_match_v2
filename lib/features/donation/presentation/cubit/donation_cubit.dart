@@ -40,32 +40,52 @@ class DonationCubit extends Cubit<DonationState> {
     );
   }
 
-  Future<void> request(Donation donation) async {
-    try {
-      await repository.createDonation(donation);
-    } catch (e) {
-      emit(DonationError(e.toString()));
-    }
+  void request(Donation donation) {
+    repository
+        .createDonation(donation)
+        .run()
+        .then((result) => result.match(
+              (failure) => emit(DonationError(failure.message)),
+              (_) => null,
+            ));
   }
 
-  Future<void> accept(String donationId) async {
-    await repository.setStatus(donationId, DonationStatus.accepted);
+  void accept(String donationId) {
+    repository
+        .setStatus(donationId, DonationStatus.accepted)
+        .run()
+        .then((result) => result.match(
+              (failure) => emit(DonationError(failure.message)),
+              (_) => null,
+            ));
   }
 
-  Future<void> reject(String donationId) async {
-    await repository.setStatus(donationId, DonationStatus.rejected);
+  void reject(String donationId) {
+    repository
+        .setStatus(donationId, DonationStatus.rejected)
+        .run()
+        .then((result) => result.match(
+              (failure) => emit(DonationError(failure.message)),
+              (_) => null,
+            ));
   }
 
-  Future<void> complete(String donationId, String completedBy) async {
-    await repository.markAsCompleted(donationId, completedBy);
+  void complete(String donationId, String completedBy) {
+    repository
+        .markAsCompleted(donationId, completedBy)
+        .run()
+        .then((result) => result.match(
+              (failure) => emit(DonationError(failure.message)),
+              (_) => null,
+            ));
   }
 
-  Future<void> markSeenByOwner(String donationId) {
-    return repository.markSeenByOwner(donationId);
+  void markSeenByOwner(String donationId) {
+    repository.markSeenByOwner(donationId).run();
   }
 
-  Future<void> markSeenByRequester(String donationId) {
-    return repository.markSeenByRequester(donationId);
+  void markSeenByRequester(String donationId) {
+    repository.markSeenByRequester(donationId).run();
   }
 
   @override

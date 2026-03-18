@@ -27,53 +27,68 @@ class DetailPlant extends StatelessWidget {
 
   final Catalog catalog;
 
-  Future<void> openPlantChat(BuildContext context) async {
+  void openPlantChat(BuildContext context) {
     final currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser == null) return;
 
-    final userDoc = await FirebaseFirestore.instance
+    FirebaseFirestore.instance
         .collection('users')
         .doc(catalog.userId)
-        .get();
+        .get()
+        .then((userDoc) {
+      final data = userDoc.data();
+      final String ownerName = (data?['userName'] != null &&
+              (data!['userName'] as String).trim().isNotEmpty)
+          ? data['userName']
+          : (data?['fullName'] != null &&
+                  (data!['fullName'] as String).trim().isNotEmpty)
+              ? (data['fullName'] as String).split(' ').first
+              : 'Propriétaire';
 
-    final data = userDoc.data();
-    final String ownerName = (data?['userName'] != null &&
-            (data!['userName'] as String).trim().isNotEmpty)
-        ? data['userName']
-        : (data?['fullName'] != null &&
-                (data!['fullName'] as String).trim().isNotEmpty)
-            ? (data['fullName'] as String).split(' ').first
-            : 'Propriétaire';
+      final String? ownerAvatar =
+          (data?['profilImg'] as String?)?.trim().isNotEmpty == true
+              ? data!['profilImg']
+              : null;
 
-    final String? ownerAvatar =
-        (data?['profilImg'] as String?)?.trim().isNotEmpty == true
-            ? data!['profilImg']
-            : null;
+      final chatRepository = FirebaseChatPlant();
+      chatRepository
+          .getOrCreatePlantChat(
+        currentUserId: currentUser.uid,
+        plantOwnerId: catalog.userId,
+        plantId: catalog.catalogId ?? '',
+        plantName: catalog.name,
+        plantDescription: catalog.description,
+        plantImage: catalog.images.first,
+        plantExchangeType: catalog.offerType.offerTypeName,
+      )
+          .run()
+          .then((result) {
+        result.match(
+          (failure) {
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(failure.message)),
+              );
+            }
+          },
+          (chatId) {
+            if (!context.mounted) return;
 
-    final chatRepository = FirebaseChatPlant();
-    final chatId = await chatRepository.getOrCreatePlantChat(
-      currentUserId: currentUser.uid,
-      plantOwnerId: catalog.userId,
-      plantId: catalog.catalogId ?? '',
-      plantName: catalog.name,
-      plantDescription: catalog.description,
-      plantImage: catalog.images.first,
-      plantExchangeType: catalog.offerType.offerTypeName,
-    );
-
-    if (!context.mounted) return;
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => ChatPlantPage(
-          chatId: chatId,
-          plantId: catalog.catalogId ?? '',
-          plantOwnerName: ownerName,
-          plantOwnerAvatar: ownerAvatar ?? '',
-        ),
-      ),
-    );
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => ChatPlantPage(
+                  chatId: chatId,
+                  plantId: catalog.catalogId ?? '',
+                  plantOwnerName: ownerName,
+                  plantOwnerAvatar: ownerAvatar ?? '',
+                ),
+              ),
+            );
+          },
+        );
+      });
+    });
   }
 
   @override

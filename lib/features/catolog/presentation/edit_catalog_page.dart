@@ -80,28 +80,32 @@ class _EditCatalogPageState extends State<EditCatalogPage> {
       Catalog updatedCatalog = catalog;
 
       if (localImages.isNotEmpty) {
-        final result = await catalogCubit.uploadCatalogImages(
+        final uploadResult = await catalogCubit.uploadCatalogImages(
           catalog: catalog,
           imagePaths: localImages,
           catalogId: catalog.catalogId ?? '',
           existingImages: existingImages,
+        ).run();
+
+        final updatedFromUpload = uploadResult.match(
+          (failure) {
+            setState(() {
+              _isSaving = false;
+            });
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text("Erreur lors de l’upload des images: ${failure.message}"),
+                ),
+              );
+            }
+            return null;
+          },
+          (res) => res,
         );
 
-        if (result == null) {
-          setState(() {
-            _isSaving = false;
-          });
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text("Erreur lors de l’upload des images"),
-              ),
-            );
-          }
-          return;
-        }
-
-        updatedCatalog = result;
+        if (updatedFromUpload == null) return;
+        updatedCatalog = updatedFromUpload;
       } else {
         updatedCatalog = catalog.copyWith(newImages: _updatedImages);
       }
@@ -124,7 +128,7 @@ class _EditCatalogPageState extends State<EditCatalogPage> {
             _isPublish == true ? CatalogStatus.published : CatalogStatus.draft,
       );
 
-      await catalogCubit.updateCatalog(fullyUpdated);
+      catalogCubit.updateCatalog(fullyUpdated);
 
       if (mounted) {
         setState(() {

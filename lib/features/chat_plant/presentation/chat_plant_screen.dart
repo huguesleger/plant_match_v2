@@ -202,7 +202,7 @@ class ChatPlantScreen extends StatelessWidget {
                   ),
                 );
                 if (confirm == true && context.mounted) {
-                  await context.read<ChatPlantCubit>().softDeleteChat(
+                  context.read<ChatPlantCubit>().softDeleteChat(
                         chatId,
                         FirebaseAuth.instance.currentUser!.uid,
                       );
@@ -289,7 +289,12 @@ class ChatPlantScreen extends StatelessWidget {
                       onTap: () async {
                         final catalogRepo = FirebaseCatalogRepository();
                         try {
-                          final catalog = await catalogRepo.getCatalogById(pId);
+                          final result =
+                              await catalogRepo.getCatalogById(pId).run();
+                          final catalog = result
+                              .map((opt) => opt.toNullable())
+                              .getOrElse((_) => null);
+
                           if (catalog != null && context.mounted) {
                             Navigator.push(
                               context,

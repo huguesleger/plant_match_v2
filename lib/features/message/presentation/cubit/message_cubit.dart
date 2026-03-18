@@ -50,24 +50,19 @@ class MessagesCubit extends Cubit<MessagesState> {
     );
   }
 
-  Future<void> _emitCombined(String currentUserId) async {
-    try {
-      final List<ChatPlant> result = [];
+  void _emitCombined(String currentUserId) {
+    final List<Future<ChatPlant?>> futures = _lastChats.map((chat) {
+      /// 1️⃣ Trouver l'interlocuteur
+      final otherUserId = chat.participants.firstWhere(
+        (id) => id != currentUserId,
+        orElse: () => '',
+      );
 
-      for (final chat in _lastChats) {
-        /// 1️⃣ Trouver l'interlocuteur
-        final otherUserId = chat.participants.firstWhere(
-          (id) => id != currentUserId,
-          orElse: () => '',
-        );
+      if (otherUserId.isEmpty) return Future.value(null);
 
-        if (otherUserId.isEmpty) continue;
-
-        final userResult = await userRepository.getUserUid(otherUserId).run();
-
-        // Si l'utilisateur n'est pas trouvé, on skip ce chat
+      return userRepository.getUserUid(otherUserId).run().then((userResult) {
         final userOption = userResult.toOption();
-        if (userOption.isNone()) continue;
+        if (userOption.isNone()) return null;
 
         final user = userOption.toNullable()!;
 
@@ -104,37 +99,43 @@ class MessagesCubit extends Cubit<MessagesState> {
         final acceptedExchangeId =
             acceptedExchange.chatId.isNotEmpty ? acceptedExchange.id : null;
 
-        result.add(
-          ChatPlant(
-            chatId: chat.chatId,
-            plantId: chat.plantId,
-            plantName: chat.plantName,
-            plantDescription: chat.plantDescription,
-            plantImage: chat.plantImage,
-            plantExchangeType: chat.plantExchangeType,
-            plantOwnerId: chat.plantOwnerId,
-            otherUserId: otherUserId,
-            plantOwnerName: displayName,
-            plantOwnerAvatar: displayAvatar,
-            participants: chat.participants,
-            lastMessage: chat.lastMessage,
-            lastMessageAt: chat.lastMessageAt,
-            unreadCount: chat.unreadCount,
-            hasUnreadExchange: hasUnreadExchange,
-            acceptedExchangeId: acceptedExchangeId,
-            isExchangeCompleted: chat.isExchangeCompleted,
-          ),
+        return ChatPlant(
+          chatId: chat.chatId,
+          plantId: chat.plantId,
+          plantName: chat.plantName,
+          plantDescription: chat.plantDescription,
+          plantImage: chat.plantImage,
+          plantExchangeType: chat.plantExchangeType,
+          plantOwnerId: chat.plantOwnerId,
+          otherUserId: otherUserId,
+          plantOwnerName: displayName,
+          plantOwnerAvatar: displayAvatar,
+          participants: chat.participants,
+          lastMessage: chat.lastMessage,
+          lastMessageAt: chat.lastMessageAt,
+          unreadCount: chat.unreadCount,
+          hasUnreadExchange: hasUnreadExchange,
+          acceptedExchangeId: acceptedExchangeId,
+          isExchangeCompleted: chat.isExchangeCompleted,
         );
-      }
+      });
+    }).toList();
 
+    Future.wait(futures).then((results) {
+      if (isClosed) return;
+      
+      final List<ChatPlant> chatPlants = results.whereType<ChatPlant>().toList();
+      
       // Filtrer les conversations clôturées
       final filteredResult =
-          result.where((chat) => !chat.isExchangeCompleted).toList();
+          chatPlants.where((chat) => !chat.isExchangeCompleted).toList();
 
       emit(MessagesLoaded(chats: filteredResult));
-    } catch (e) {
-      emit(MessagesError(e.toString()));
-    }
+    }).catchError((e) {
+      if (!isClosed) {
+        emit(MessagesError(e.toString()));
+      }
+    });
   }
 
   @override

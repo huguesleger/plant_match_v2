@@ -1,4 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/features/around_me_map/domain/repository/around_me_repository.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/cubit/around_me_state.dart';
 import 'package:plant_match_v2/features/catolog/domain/entity/catalog.dart';
@@ -17,77 +19,111 @@ class AroundMeCubit extends Cubit<AroundMeState> {
     required this.catalogRepository,
   }) : super(AroundMeInitial());
 
-  Future<void> getAllUserProfiles(String uid) async {
-    try {
-      final users = await aroundMeRepository.getAllUserUids();
-      final currentUser = await profilRepository.getProfilUser(uid);
+  // ─── getAllUserProfiles ────────────────────────────────────────────────────
 
-      if (currentUser == null) {
-        emit(AroundMeError("Utilisateur introuvable"));
-        return;
-      }
-
-      final userCatalogs = <String, List<Catalog>>{};
-      await Future.wait(users.map((user) async {
-        final catalogs = await catalogRepository.getCatalogsByUserId(user.uid);
-        userCatalogs[user.uid] = catalogs;
-      }));
-
-      emit(AroundMeLoaded(
-        currentUser: currentUser,
-        users: users,
-        userCatalogs: userCatalogs,
-      ));
-    } catch (e) {
-      emit(AroundMeError("Erreur lors du chargement des utilisateurs"));
-    }
-  }
-
-  Future<void> fetchConnectedUsers(String uid) async {
-    try {
-      emit(AroundMeLoading());
-      final users = await aroundMeRepository.getAllUserUids();
-      final currentUser = await profilRepository.getProfilUser(uid);
-      final connectedUsers = users.where((user) => user.uid != uid).toList();
-
-      if (currentUser == null) {
-        emit(AroundMeError("Utilisateur introuvable"));
-        return;
-      }
-
-      final userCatalogs = <String, List<Catalog>>{};
-      await Future.wait(connectedUsers.map((user) async {
-        final catalogs = await catalogRepository.getCatalogsByUserId(user.uid);
-        userCatalogs[user.uid] = catalogs;
-      }));
-
-      emit(AroundMeLoaded(
-          currentUser: currentUser,
-          users: connectedUsers,
-          userCatalogs: userCatalogs));
-    } catch (e) {
-      emit(AroundMeError(
-          "Erreur lors de la récupération des utilisateurs : $e"));
-    }
-  }
-
-  void updateUserLocation(ProfilUser updatedUser) async {
+  void getAllUserProfiles(String uid) {
     emit(AroundMeLoading());
 
-    try {
-      await aroundMeRepository.updateUserLocation(updatedUser);
-      final users = await aroundMeRepository.getAllUserUids();
+    aroundMeRepository.getAllUserUids().flatMap((users) {
+      return profilRepository.getProfilUser(uid).flatMap((option) =>
+          option.match(
+            () => TaskEither.left(const AuthFailure('Utilisateur introuvable')),
+            (currentUser) => TaskEither<Failure, AroundMeState>.tryCatch(
+              () async {
+                final userCatalogs = <String, List<Catalog>>{};
+                await Future.wait(users.map((user) async {
+                  final catalogsResult =
+                      await catalogRepository.getCatalogsByUserId(user.uid).run();
+                  userCatalogs[user.uid] = catalogsResult.getOrElse((_) => []);
+                }));
 
-      final userCatalogs = <String, List<Catalog>>{};
-      await Future.wait(users.map((user) async {
-        final catalogs = await catalogRepository.getCatalogsByUserId(user.uid);
-        userCatalogs[user.uid] = catalogs;
-      }));
+                return AroundMeLoaded(
+                  currentUser: currentUser,
+                  users: users,
+                  userCatalogs: userCatalogs,
+                );
+              },
+              (error, _) =>
+                  UnexpectedFailure('Erreur lors du chargement: $error'),
+            ),
+          ));
+    }).run().then((result) => result.match(
+          (failure) => emit(
+              AroundMeError('Erreur lors du chargement des utilisateurs')),
+          (state) => emit(state),
+        ));
+  }
 
-      emit(AroundMeLoaded(
-          currentUser: updatedUser, users: users, userCatalogs: userCatalogs));
-    } catch (e) {
-      emit(AroundMeError("Erreur de mise à jour de la localisation : $e"));
-    }
+  // ─── fetchConnectedUsers ──────────────────────────────────────────────────
+
+  void fetchConnectedUsers(String uid) {
+    emit(AroundMeLoading());
+
+    aroundMeRepository.getAllUserUids().flatMap((users) {
+      return profilRepository.getProfilUser(uid).flatMap((option) =>
+          option.match(
+            () => TaskEither.left(const AuthFailure('Utilisateur introuvable')),
+            (currentUser) => TaskEither<Failure, AroundMeState>.tryCatch(
+              () async {
+                final connectedUsers =
+                    users.where((user) => user.uid != uid).toList();
+
+                final userCatalogs = <String, List<Catalog>>{};
+                await Future.wait(connectedUsers.map((user) async {
+                  final catalogsResult =
+                      await catalogRepository.getCatalogsByUserId(user.uid).run();
+                  userCatalogs[user.uid] = catalogsResult.getOrElse((_) => []);
+                }));
+
+                return AroundMeLoaded(
+                  currentUser: currentUser,
+                  users: connectedUsers,
+                  userCatalogs: userCatalogs,
+                );
+              },
+              (error, _) => UnexpectedFailure(
+                  'Erreur lors de la récupération des utilisateurs: $error'),
+            ),
+          ));
+    }).run().then((result) => result.match(
+          (failure) => emit(AroundMeError(
+              'Erreur lors de la récupération des utilisateurs')),
+          (state) => emit(state),
+        ));
+  }
+
+  // ─── updateUserLocation ───────────────────────────────────────────────────
+
+  void updateUserLocation(ProfilUser updatedUser) {
+    emit(AroundMeLoading());
+
+    aroundMeRepository
+        .updateUserLocation(updatedUser)
+        .flatMap((_) => aroundMeRepository.getAllUserUids())
+        .flatMap((users) => TaskEither<Failure, Unit>.tryCatch(
+              () async {
+                final userCatalogs = <String, List<Catalog>>{};
+                await Future.wait(users.map((user) async {
+                  final catalogsResult =
+                      await catalogRepository.getCatalogsByUserId(user.uid).run();
+                  userCatalogs[user.uid] = catalogsResult.getOrElse((_) => []);
+                }));
+
+                emit(AroundMeLoaded(
+                  currentUser: updatedUser,
+                  users: users,
+                  userCatalogs: userCatalogs,
+                ));
+                return unit;
+              },
+              (error, _) =>
+                  UnexpectedFailure('Erreur lors du rechargement: $error'),
+            ))
+        .run()
+        .then((result) => result.match(
+              (failure) =>
+                  emit(AroundMeError('Erreur de mise à jour de la localisation')),
+              (_) => null,
+            ));
   }
 }

@@ -7,10 +7,12 @@ class UserPointsCubit extends Cubit<UserPointsState> {
 
   UserPointsCubit({required this.repository}) : super(UserPointsInitial());
 
-  Future<void> fetchUserPoints(String userId) async {
+  // ─── fetchUserPoints ───────────────────────────────────────────────────────
+
+  void fetchUserPoints(String userId) {
     emit(UserPointsLoading());
 
-    await repository
+    repository
         .getPoints(userId)
         .map((userPoints) => emit(UserPointsLoaded(
               userPoints.currentPoints,
@@ -24,14 +26,16 @@ class UserPointsCubit extends Cubit<UserPointsState> {
             ));
   }
 
-  Future<void> addUserPoints(
+  // ─── addUserPoints ─────────────────────────────────────────────────────────
+
+  void addUserPoints(
     String userId,
     int initialPoints,
     int level,
-  ) async {
+  ) {
     emit(UserPointsLoading());
 
-    await repository
+    repository
         .addPoints(userId, initialPoints, level)
         .map((userPoints) => emit(UserPointsLoaded(
               userPoints.currentPoints,
@@ -45,16 +49,23 @@ class UserPointsCubit extends Cubit<UserPointsState> {
             ));
   }
 
-  Future<void> updateUserPoints(String userId, int pointsToAdd) async {
+  // ─── updateUserPoints ──────────────────────────────────────────────────────
+
+  void updateUserPoints(String userId, int pointsToAdd) {
     emit(UserPointsLoading());
 
-    await repository
+    repository
         .updatePoints(userId, pointsToAdd)
-        .map((_) => fetchUserPoints(userId))
+        .flatMap((_) => repository.getPoints(userId))
+        .map((userPoints) => emit(UserPointsLoaded(
+              userPoints.currentPoints,
+              userPoints.level,
+              userPoints,
+            )))
         .run()
         .then((result) => result.match(
               (failure) => emit(UserPointsError(failure.message)),
-              (fetchFuture) => fetchFuture,
+              (_) => null,
             ));
   }
 }

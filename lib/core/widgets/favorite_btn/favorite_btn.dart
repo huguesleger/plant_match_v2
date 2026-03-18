@@ -55,9 +55,11 @@ class _FavoriteBtnState extends State<FavoriteBtn>
     bool? result;
 
     if (widget.catalog?.catalogId != null) {
-      result = await _repo.isFavoritePlant(uid, widget.catalog!.catalogId!);
+      final resultTE = await _repo.isFavoritePlant(uid, widget.catalog!.catalogId!).run();
+      result = resultTE.getOrElse((_) => false);
     } else if (widget.targetUser != null) {
-      result = await _repo.isFavoriteUser(uid, widget.targetUser!.uid);
+      final resultTE = await _repo.isFavoriteUser(uid, widget.targetUser!.uid).run();
+      result = resultTE.getOrElse((_) => false);
     }
 
     if (result != null && mounted) {
@@ -84,16 +86,20 @@ class _FavoriteBtnState extends State<FavoriteBtn>
       if (widget.catalog != null && widget.catalog!.catalogId != null) {
         // Mode plante
         if (newValue) {
-          await _repo.addFavoritePlant(uid, widget.catalog!);
+          final result = await _repo.addFavoritePlant(uid, widget.catalog!).run();
+          if (result.isLeft()) throw Exception('Erreur ajout plante');
         } else {
-          await _repo.removeFavoritePlant(uid, widget.catalog!.catalogId!);
+          final result = await _repo.removeFavoritePlant(uid, widget.catalog!.catalogId!).run();
+          if (result.isLeft()) throw Exception('Erreur suppression plante');
         }
       } else if (widget.targetUser != null) {
         // Mode profil
         if (newValue) {
-          await _repo.addFavoriteUser(uid, widget.targetUser!);
+          final result = await _repo.addFavoriteUser(uid, widget.targetUser!).run();
+          if (result.isLeft()) throw Exception('Erreur ajout utilisateur');
         } else {
-          await _repo.removeFavoriteUser(uid, widget.targetUser!.uid);
+          final result = await _repo.removeFavoriteUser(uid, widget.targetUser!.uid).run();
+          if (result.isLeft()) throw Exception('Erreur suppression utilisateur');
         }
       }
 

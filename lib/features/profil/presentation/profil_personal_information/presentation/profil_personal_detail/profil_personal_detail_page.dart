@@ -32,9 +32,9 @@ class ProfilPersonalDetailPage extends StatelessWidget {
               subtitle: profilUser.userName.isEmpty
                   ? 'A renseigner'
                   : profilUser.userName,
-              onTap: () async {
+              onTap: () {
                 final profilCubit = context.read<ProfilCubit>();
-                await profilCubit.clearField(
+                profilCubit.clearField(
                     uid: profilUser.uid, fieldName: 'userName');
               },
             ),
@@ -49,9 +49,9 @@ class ProfilPersonalDetailPage extends StatelessWidget {
             ProfilPersonalDetailItem(
               title: 'Bio',
               subtitle: profilUser.bio != '' ? profilUser.bio! : 'A renseigner',
-              onTap: () async {
+              onTap: () {
                 final profilCubit = context.read<ProfilCubit>();
-                await profilCubit.clearField(
+                profilCubit.clearField(
                     uid: profilUser.uid, fieldName: 'bio');
               },
             ),
@@ -61,25 +61,25 @@ class ProfilPersonalDetailPage extends StatelessWidget {
               subtitle: profilUser.localisation.isEmpty
                   ? 'A renseigner'
                   : '${profilUser.localisation} ${(profilUser.zipCode)} - ${profilUser.country}',
-              onTap: () async {
+              onTap: () {
                 final profilCubit = context.read<ProfilCubit>();
-                await profilCubit.clearField(
+                profilCubit.clearField(
                   uid: profilUser.uid,
                   fieldName: 'localisation',
                 );
-                await profilCubit.clearField(
+                profilCubit.clearField(
                   uid: profilUser.uid,
                   fieldName: 'country',
                 );
-                await profilCubit.clearField(
+                profilCubit.clearField(
                   uid: profilUser.uid,
                   fieldName: 'zipCode',
                 );
-                await profilCubit.clearField(
+                profilCubit.clearField(
                   uid: profilUser.uid,
                   fieldName: 'latitude',
                 );
-                await profilCubit.clearField(
+                profilCubit.clearField(
                   uid: profilUser.uid,
                   fieldName: 'longitude',
                 );

@@ -1,17 +1,19 @@
+import 'package:fpdart/fpdart.dart';
+import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/features/donation/domain/entities/donation.dart';
 
 abstract class DonationRepository {
   Stream<Donation?> watchDonation(String chatId);
 
-  Future<void> createDonation(Donation donation);
+  TaskEither<Failure, Unit> createDonation(Donation donation);
 
-  Future<void> setStatus(String donationId, DonationStatus status);
+  TaskEither<Failure, Unit> setStatus(String donationId, DonationStatus status);
 
-  Future<void> markSeenByOwner(String donationId);
+  TaskEither<Failure, Unit> markSeenByOwner(String donationId);
 
-  Future<void> markSeenByRequester(String donationId);
+  TaskEither<Failure, Unit> markSeenByRequester(String donationId);
 
-  Future<void> markAsCompleted(String donationId, String completedBy);
+  TaskEither<Failure, Unit> markAsCompleted(String donationId, String completedBy);
 
   Stream<List<Donation>> getCompletedDonations(String uid);
 }

@@ -35,8 +35,8 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
     _startCooldown();
 
     // ✅ Vérification automatique toutes les 5 secondes (au lieu de 10)
-    _autoTimer = Timer.periodic(const Duration(seconds: 5), (_) async {
-      await _checkVerification();
+    _autoTimer = Timer.periodic(const Duration(seconds: 5), (_) {
+      _checkVerification();
     });
   }
 
@@ -48,9 +48,9 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
     }
   }
 
-  Future<void> _checkVerification() async {
+  void _checkVerification() {
     if (!mounted) return;
-    await context
+    context
         .read<AuthCubit>()
         .checkEmailVerified(fullName: widget.user.fullName);
   }
@@ -85,7 +85,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
     _startCooldown();
 
     try {
-      await context.read<AuthCubit>().resendEmailVerification();
+      context.read<AuthCubit>().resendEmailVerification();
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -174,9 +174,9 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
                       text: 'Retour',
                       borderColor: AppColors.greyLight,
                       textColor: AppColors.blueGreen,
-                      onPressed: () async {
+                      onPressed: () {
                         final cubit = context.read<AuthCubit>();
-                        await cubit.deleteUnverifiedUser();
+                        cubit.deleteUnverifiedUser();
                         cubit.reset();
                       },
                     ),

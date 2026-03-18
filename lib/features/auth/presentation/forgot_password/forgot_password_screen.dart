@@ -37,7 +37,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     final authCubit = context.read<AuthCubit>();
 
     try {
-      await authCubit.sendPasswordResetEmail(email: email);
+      authCubit.sendPasswordResetEmail(email: email);
       if (mounted) {
         Navigator.pushReplacement(
           context,

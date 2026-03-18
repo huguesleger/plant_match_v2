@@ -285,10 +285,11 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
             final catalogCubit = context.read<CatalogCubit>();
 
             if (_catalog!.catalogId == null) {
-              final id = await catalogCubit.addCatalog(_catalog!);
+              final result = await catalogCubit.addCatalog(_catalog!).run();
+              final id = result.getOrElse((_) => "");
               _catalog = _catalog!.copyWith(newCatalogId: id);
             } else {
-              await catalogCubit.updateCatalog(_catalog!);
+              catalogCubit.updateCatalog(_catalog!);
             }
 
             final localImagePaths = _catalog!.images
@@ -297,18 +298,21 @@ class _AddPlantWizardPageState extends State<AddPlantWizardPage> {
             final existingUrls = _catalog!.images
                 .where((img) => img.startsWith('http'))
                 .toList();
-            final updatedWithImages = await catalogCubit.uploadCatalogImages(
+            final imagesResult = await catalogCubit.uploadCatalogImages(
               catalog: _catalog!,
               catalogId: _catalog!.catalogId!,
               imagePaths: localImagePaths,
               existingImages: existingUrls,
-            );
+            ).run();
 
-            if (updatedWithImages != null) {
-              setState(() {
-                _catalog = updatedWithImages;
-              });
-            }
+            imagesResult.match(
+              (failure) => null,
+              (updatedWithImages) {
+                setState(() {
+                  _catalog = updatedWithImages;
+                });
+              },
+            );
 
             // Fermer le dialog de chargement
             if (mounted) {

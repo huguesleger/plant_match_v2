@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/features/catolog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catolog/domain/repository/catalog_repository.dart';
 
@@ -9,75 +11,83 @@ class FirebaseCatalogRepository implements CatalogRepository {
       : firestore = firestoreInstance ?? FirebaseFirestore.instance;
 
   @override
-  Future<void> updateCatalog(Catalog catalog) async {
+  TaskEither<Failure, Unit> updateCatalog(Catalog catalog) {
     if (catalog.catalogId == null) {
-      throw Exception('catalogId is required to update a catalog');
+      return TaskEither.left(
+          const UnexpectedFailure('catalogId is required to update a catalog'));
     }
 
-    try {
-      final data = catalog.toJson();
-      data.remove('createdAt');
+    return TaskEither.tryCatch(
+      () async {
+        final data = catalog.toJson();
+        data.remove('createdAt');
 
-      await firestore
-          .collection('catalogs')
-          .doc(catalog.catalogId)
-          .update(data);
-    } catch (e) {
-      throw Exception('Failed to update catalog: $e');
-    }
-  }
-
-  @override
-  Future<List<Catalog>> getCatalogsByUserId(String userId) async {
-    try {
-      final querySnapshot = await firestore
-          .collection('catalogs')
-          .where('userId', isEqualTo: userId)
-          .orderBy('createdAt', descending: true)
-          .get();
-
-      return querySnapshot.docs
-          .map((doc) => Catalog.fromJson(doc.data(), doc.id))
-          .toList();
-    } catch (e) {
-      throw Exception('Failed to fetch catalogs: $e');
-    }
-  }
-
-  @override
-  Future<Catalog?> getCatalogById(String catalogId) async {
-    try {
-      final doc = await firestore.collection('catalogs').doc(catalogId).get();
-      if (doc.exists) {
-        final data = doc.data();
-        if (data != null) {
-          return Catalog.fromJson(data, doc.id);
-        }
-      }
-    } catch (e) {
-      throw Exception('Failed to get catalog by ID: $e');
-    }
-    return null;
-  }
-
-  @override
-  Future<String> createCatalog(Catalog catalog) async {
-    try {
-      final data = catalog.toJson();
-      data['createdAt'] = FieldValue.serverTimestamp();
-      final docRef = await firestore.collection('catalogs').add(data);
-      return docRef.id;
-    } catch (e) {
-      throw Exception('Failed to create catalog: $e');
-    }
-  }
-
-  @override
-  Future<void> deleteCatalog(String catalogId) {
-    return firestore.collection('catalogs').doc(catalogId).delete().catchError(
-      (error) {
-        throw Exception('Failed to delete catalog: $error');
+        await firestore
+            .collection('catalogs')
+            .doc(catalog.catalogId)
+            .update(data);
+        return unit;
       },
+      (error, _) => _mapErrorToFailure(error),
+    );
+  }
+
+  @override
+  TaskEither<Failure, List<Catalog>> getCatalogsByUserId(String userId) {
+    return TaskEither.tryCatch(
+      () async {
+        final querySnapshot = await firestore
+            .collection('catalogs')
+            .where('userId', isEqualTo: userId)
+            .orderBy('createdAt', descending: true)
+            .get();
+
+        return querySnapshot.docs
+            .map((doc) => Catalog.fromJson(doc.data(), doc.id))
+            .toList();
+      },
+      (error, _) => _mapErrorToFailure(error),
+    );
+  }
+
+  @override
+  TaskEither<Failure, Option<Catalog>> getCatalogById(String catalogId) {
+    return TaskEither.tryCatch(
+      () async {
+        final doc = await firestore.collection('catalogs').doc(catalogId).get();
+        if (doc.exists) {
+          final data = doc.data();
+          if (data != null) {
+            return Some(Catalog.fromJson(data, doc.id));
+          }
+        }
+        return const None();
+      },
+      (error, _) => _mapErrorToFailure(error),
+    );
+  }
+
+  @override
+  TaskEither<Failure, String> createCatalog(Catalog catalog) {
+    return TaskEither.tryCatch(
+      () async {
+        final data = catalog.toJson();
+        data['createdAt'] = FieldValue.serverTimestamp();
+        final docRef = await firestore.collection('catalogs').add(data);
+        return docRef.id;
+      },
+      (error, _) => _mapErrorToFailure(error),
+    );
+  }
+
+  @override
+  TaskEither<Failure, Unit> deleteCatalog(String catalogId) {
+    return TaskEither.tryCatch(
+      () async {
+        await firestore.collection('catalogs').doc(catalogId).delete();
+        return unit;
+      },
+      (error, _) => _mapErrorToFailure(error),
     );
   }
 
@@ -106,5 +116,13 @@ class FirebaseCatalogRepository implements CatalogRepository {
         .map((query) => query.docs
             .map((doc) => Catalog.fromJson(doc.data(), doc.id))
             .toList());
+  }
+
+  Failure _mapErrorToFailure(Object error) {
+    if (error is Failure) return error;
+    if (error is FirebaseException) {
+      return FirebaseFailure('Erreur Firebase: ${error.message ?? error.code}');
+    }
+    return UnexpectedFailure('Erreur inattendue: $error');
   }
 }

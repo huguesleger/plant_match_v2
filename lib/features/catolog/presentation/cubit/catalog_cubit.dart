@@ -1,4 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/features/catolog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catolog/domain/repository/catalog_repository.dart';
 import 'package:plant_match_v2/features/catolog/presentation/cubit/catalog_state.dart';
@@ -8,169 +10,163 @@ class CatalogCubit extends Cubit<CatalogState> {
   final CatalogRepository catalogRepository;
   final StorageRepository storageRepository;
 
-  CatalogCubit(
-      {required this.catalogRepository, required this.storageRepository})
-      : super(CatalogInitial());
+  CatalogCubit({
+    required this.catalogRepository,
+    required this.storageRepository,
+  }) : super(CatalogInitial());
 
-  Future<void> getCatalogsByUserId(String userId) async {
+  // ─── getCatalogsByUserId ───────────────────────────────────────────────────
+
+  void getCatalogsByUserId(String userId) {
     emit(CatalogLoading());
-    try {
-      final catalogs = await catalogRepository.getCatalogsByUserId(userId);
-      final catalog = await catalogRepository.getCatalogById(userId);
-      if (catalog == null) {
-        final catalogEmpty = Catalog(
-          userId: userId,
-          name: '',
-          description: '',
-          images: [],
-          environment: Environment.indoor,
-          family: [Family.flower],
-          levelMaintenance: LevelMaintenance.low,
-          watering: Watering.little,
-          lighting: Lighting.sun,
-          status: CatalogStatus.draft,
-          createdAt: DateTime.now(),
-          offerType: OfferType.exchange,
-        );
-        return emit(CatalogLoaded(catalogs, catalogEmpty));
-      }
-      emit(CatalogLoaded(catalogs, catalog));
-    } catch (e) {
-      emit(CatalogError("Erreur chargement : $e"));
-    }
+
+    catalogRepository
+        .getCatalogsByUserId(userId)
+        .flatMap((catalogs) => catalogRepository.getCatalogById(userId).map(
+              (option) => option.match(
+                () => CatalogLoaded(catalogs, Catalog.empty(userId)),
+                (catalog) => CatalogLoaded(catalogs, catalog),
+              ),
+            ))
+        .run()
+        .then((result) => result.match(
+              (failure) => emit(CatalogError(failure.message)),
+              (state) => emit(state),
+            ));
   }
 
-  Future<String> addCatalog(Catalog catalog) async {
+  // ─── addCatalog ────────────────────────────────────────────────────────────
+
+  TaskEither<Failure, String> addCatalog(Catalog catalog) {
     emit(CatalogLoading());
-    try {
-      final id = await catalogRepository.createCatalog(catalog);
-      final catalogs =
-          await catalogRepository.getCatalogsByUserId(catalog.userId);
-      emit(CatalogLoaded(catalogs, catalog.copyWith(newCatalogId: id)));
-      return id;
-    } catch (e) {
-      emit(CatalogError("Erreur ajout : $e"));
-      rethrow;
-    }
+
+    return catalogRepository
+        .createCatalog(catalog)
+        .flatMap((id) => catalogRepository
+            .getCatalogsByUserId(catalog.userId)
+            .map((catalogs) {
+          emit(CatalogLoaded(catalogs, catalog.copyWith(newCatalogId: id)));
+          return id;
+        }));
   }
 
-  Future<void> updateCatalog(Catalog catalog) async {
+  // ─── updateCatalog ─────────────────────────────────────────────────────────
+
+  void updateCatalog(Catalog catalog) {
     emit(CatalogLoading());
-    try {
-      await catalogRepository.updateCatalog(catalog);
-      final catalogs =
-          await catalogRepository.getCatalogsByUserId(catalog.userId);
-      emit(CatalogLoaded(catalogs, catalog));
-    } catch (e) {
-      emit(CatalogError("Erreur mise à jour : $e"));
-    }
+
+    catalogRepository
+        .updateCatalog(catalog)
+        .flatMap((_) => catalogRepository.getCatalogsByUserId(catalog.userId))
+        .run()
+        .then((result) => result.match(
+              (failure) => emit(CatalogError(failure.message)),
+              (catalogs) => emit(CatalogLoaded(catalogs, catalog)),
+            ));
   }
 
-  Future<void> editCatalog(Catalog catalog) async {
-    emit(CatalogLoading());
-    try {
-      await catalogRepository.updateCatalog(catalog);
+  // ─── editCatalog ───────────────────────────────────────────────────────────
 
-      final catalogs =
-          await catalogRepository.getCatalogsByUserId(catalog.userId);
-      emit(CatalogLoaded(catalogs, catalog));
-    } catch (e) {
-      emit(CatalogError("Erreur lors de la modification : $e"));
-    }
+  void editCatalog(Catalog catalog) {
+    emit(CatalogLoading());
+
+    catalogRepository
+        .updateCatalog(catalog)
+        .flatMap((_) => catalogRepository.getCatalogsByUserId(catalog.userId))
+        .run()
+        .then((result) => result.match(
+              (failure) => emit(CatalogError(failure.message)),
+              (catalogs) => emit(CatalogLoaded(catalogs, catalog)),
+            ));
   }
 
-  Future<Catalog?> uploadCatalogImages({
+  // ─── uploadCatalogImages ───────────────────────────────────────────────────
+
+  TaskEither<Failure, Catalog> uploadCatalogImages({
     required Catalog catalog,
     required List<String> imagePaths,
     required String catalogId,
     required List<String> existingImages,
-  }) async {
+  }) {
     emit(CatalogLoading());
-    try {
-      final List<String> uploadedUrls = [];
 
-      for (final imagePath in imagePaths) {
-        final fileName = "${catalogId}_${imagePath.split('/').last}";
+    // Utilisation de traverse pour uploader plusieurs images
+    final uploadTasks = imagePaths.map((imagePath) {
+      final fileName = "${catalogId}_${imagePath.split('/').last}";
+      return storageRepository.uploadImageFromUrl(
+        path: imagePath,
+        fileName: fileName,
+        folder: 'catalog_images',
+      );
+    }).toList();
 
-        final imageUrl = await storageRepository.uploadImageFromUrl(
-          path: imagePath,
-          fileName: fileName,
-          folder: 'catalog_images',
-        );
-
-        if (imageUrl != null) {
-          uploadedUrls.add(imageUrl);
-        }
-      }
-
+    return TaskEither.sequenceList(uploadTasks).flatMap((uploadedUrls) {
       final newImageList = [...existingImages, ...uploadedUrls];
-
       final updatedCatalog = catalog.copyWith(
         newCatalogId: catalogId,
         newImages: newImageList,
       );
 
-      await catalogRepository.updateCatalog(updatedCatalog);
-
-      final catalogs =
-          await catalogRepository.getCatalogsByUserId(catalog.userId);
-      emit(CatalogLoaded(catalogs, updatedCatalog));
-
-      return updatedCatalog;
-    } catch (e) {
-      emit(CatalogError("Erreur upload d’images : $e"));
-      return null;
-    }
+      return catalogRepository
+          .updateCatalog(updatedCatalog)
+          .flatMap((_) => catalogRepository.getCatalogsByUserId(catalog.userId))
+          .map((catalogs) {
+        emit(CatalogLoaded(catalogs, updatedCatalog));
+        return updatedCatalog;
+      });
+    });
   }
 
-  Future<Catalog?> deleteImageCatalog({
+  // ─── deleteImageCatalog ────────────────────────────────────────────────────
+
+  TaskEither<Failure, Catalog> deleteImageCatalog({
     required Catalog catalog,
     required String imageUrl,
-  }) async {
+  }) {
     emit(CatalogLoading());
 
-    try {
-      await storageRepository.deleteImage(imageUrl: imageUrl);
+    return storageRepository.deleteImage(imageUrl: imageUrl).flatMap((_) {
       final updatedImages =
           catalog.images.where((img) => img != imageUrl).toList();
       final updatedCatalog = catalog.copyWith(newImages: updatedImages);
-      await catalogRepository.updateCatalog(updatedCatalog);
-      final catalogs =
-          await catalogRepository.getCatalogsByUserId(catalog.userId);
 
-      emit(CatalogLoaded(catalogs, updatedCatalog));
-
-      return updatedCatalog;
-    } catch (e) {
-      emit(CatalogError("Erreur suppression d’image : $e"));
-      return null;
-    }
+      return catalogRepository
+          .updateCatalog(updatedCatalog)
+          .flatMap((_) => catalogRepository.getCatalogsByUserId(catalog.userId))
+          .map((catalogs) {
+        emit(CatalogLoaded(catalogs, updatedCatalog));
+        return updatedCatalog;
+      });
+    });
   }
 
-  Future<Catalog?> getCatalogById(String catalogId) async {
+  // ─── getCatalogById ────────────────────────────────────────────────────────
+
+  TaskEither<Failure, Catalog> getCatalogById(String catalogId) {
     emit(CatalogLoading());
-    try {
-      final catalog = await catalogRepository.getCatalogById(catalogId);
-      if (catalog == null) {
-        emit(CatalogError("Catalogue non trouvé"));
-        return null;
-      }
-      emit(CatalogLoaded([catalog], catalog));
-      return catalog;
-    } catch (e) {
-      emit(CatalogError("Erreur chargement du catalogue : $e"));
-      return null;
-    }
+
+    return catalogRepository.getCatalogById(catalogId).flatMap((option) =>
+        option.match(
+          () => TaskEither.left(const FirebaseFailure("Catalogue non trouvé")),
+          (catalog) {
+            emit(CatalogLoaded([catalog], catalog));
+            return TaskEither.right(catalog);
+          },
+        ));
   }
 
-  Future<void> deleteCatalog(String catalogId, String userId) async {
+  // ─── deleteCatalog ─────────────────────────────────────────────────────────
+
+  void deleteCatalog(String catalogId, String userId) {
     emit(CatalogLoading());
-    try {
-      await catalogRepository.deleteCatalog(catalogId);
-      final catalogs = await catalogRepository.getCatalogsByUserId(userId);
-      emit(CatalogLoaded(catalogs, Catalog.empty(userId)));
-    } catch (e) {
-      emit(CatalogError("Erreur suppression : $e"));
-    }
+
+    catalogRepository
+        .deleteCatalog(catalogId)
+        .flatMap((_) => catalogRepository.getCatalogsByUserId(userId))
+        .run()
+        .then((result) => result.match(
+              (failure) => emit(CatalogError(failure.message)),
+              (catalogs) => emit(CatalogLoaded(catalogs, Catalog.empty(userId))),
+            ));
   }
 }

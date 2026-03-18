@@ -1,13 +1,11 @@
 import 'dart:async';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/features/profil/domain/repository/favorites_repository.dart';
 import 'package:plant_match_v2/features/profil/presentation/profil_favorite/cubit/profil_favorite_state.dart';
 
 class ProfilFavoriteCubit extends Cubit<ProfilFavoriteState> {
   final FavoritesRepository favoritesRepository;
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   StreamSubscription<List<Map<String, dynamic>>>? _plantsSub;
   StreamSubscription? _usersSub;
@@ -15,39 +13,38 @@ class ProfilFavoriteCubit extends Cubit<ProfilFavoriteState> {
   ProfilFavoriteCubit({required this.favoritesRepository})
       : super(ProfilFavoriteInitial());
 
+  // ─── loadFavorites ─────────────────────────────────────────────────────────
+
   void loadFavorites(String uid) {
     emit(ProfilFavoriteLoading());
 
-    List<List<Map<String, dynamic>>>? latestPlants;
+    List<Map<String, dynamic>>? latestPlants;
     List? latestUsers;
 
     // Stream des plantes favorites avec vérification de disponibilité
     _plantsSub = favoritesRepository.getFavoritePlantsRaw(uid).listen(
-      (rawPlants) async {
-        final enriched = await Future.wait(rawPlants.map((plant) async {
+      (rawPlants) {
+        Future.wait(rawPlants.map((plant) async {
           final catalogId = plant['id'] as String? ?? '';
-          bool isAvailable = false;
-          if (catalogId.isNotEmpty) {
-            final doc = await _db.collection('catalogs').doc(catalogId).get();
-            isAvailable = doc.exists && (doc.data()?['status'] != 'archived');
-          }
+          final result = await favoritesRepository.checkPlantAvailability(catalogId).run();
+          final isAvailable = result.getOrElse((_) => false);
           return {...plant, 'isAvailable': isAvailable};
-        }));
+        })).then((enriched) {
+          latestPlants = enriched;
 
-        latestPlants = [enriched];
-
-        if (state is ProfilFavoriteLoaded) {
-          final current = state as ProfilFavoriteLoaded;
-          emit(ProfilFavoriteLoaded(
-            plants: enriched,
-            users: current.users,
-          ));
-        } else if (latestUsers != null) {
-          emit(ProfilFavoriteLoaded(
-            plants: enriched,
-            users: latestUsers!.cast(),
-          ));
-        }
+          if (state is ProfilFavoriteLoaded) {
+            final current = state as ProfilFavoriteLoaded;
+            emit(ProfilFavoriteLoaded(
+              plants: enriched,
+              users: current.users,
+            ));
+          } else if (latestUsers != null) {
+            emit(ProfilFavoriteLoaded(
+              plants: enriched,
+              users: latestUsers!.cast(),
+            ));
+          }
+        });
       },
       onError: (e) => emit(ProfilFavoriteError(e.toString())),
     );
@@ -65,7 +62,7 @@ class ProfilFavoriteCubit extends Cubit<ProfilFavoriteState> {
           ));
         } else if (latestPlants != null) {
           emit(ProfilFavoriteLoaded(
-            plants: latestPlants!.first,
+            plants: latestPlants!,
             users: users,
           ));
         }
@@ -74,12 +71,28 @@ class ProfilFavoriteCubit extends Cubit<ProfilFavoriteState> {
     );
   }
 
-  Future<void> removeFavoritePlant(String uid, String catalogId) async {
-    await favoritesRepository.removeFavoritePlant(uid, catalogId);
+  // ─── removeFavoritePlant ──────────────────────────────────────────────────
+
+  void removeFavoritePlant(String uid, String catalogId) {
+    favoritesRepository
+        .removeFavoritePlant(uid, catalogId)
+        .run()
+        .then((result) => result.match(
+              (failure) => emit(ProfilFavoriteError(failure.message)),
+              (_) => null,
+            ));
   }
 
-  Future<void> removeFavoriteUser(String uid, String targetUid) async {
-    await favoritesRepository.removeFavoriteUser(uid, targetUid);
+  // ─── removeFavoriteUser ───────────────────────────────────────────────────
+
+  void removeFavoriteUser(String uid, String targetUid) {
+    favoritesRepository
+        .removeFavoriteUser(uid, targetUid)
+        .run()
+        .then((result) => result.match(
+              (failure) => emit(ProfilFavoriteError(failure.message)),
+              (_) => null,
+            ));
   }
 
   @override

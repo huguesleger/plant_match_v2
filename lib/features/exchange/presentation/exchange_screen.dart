@@ -119,7 +119,7 @@ class ExchangeScreen extends StatelessWidget {
                   seenByRequester: true,
                 );
 
-                await context.read<ExchangeCubit>().propose(exchange);
+                context.read<ExchangeCubit>().propose(exchange);
               }
             },
             child: const Text("Confirmer l'échange"),
