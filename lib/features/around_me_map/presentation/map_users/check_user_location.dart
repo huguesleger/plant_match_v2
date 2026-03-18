@@ -84,7 +84,7 @@ class _NoLocation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: AppSpacing.paddingHorizontal,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -92,13 +92,12 @@ class _NoLocation extends StatelessWidget {
           const TitlePage(
             title: 'Oups ! vous n\'êtes pas localisé',
             fontSize: AppTypo.textXl,
-            textAlign: TextAlign.center,
           ),
           const SizedBox(height: 5),
           const Center(
             child: Text(
-                'Veuillez activer votre localisation pour voir les utilisateurs autour de vous',
-                textAlign: TextAlign.center),
+              'Veuillez activer votre localisation pour voir les utilisateurs autour de vous',
+            ),
           ),
           SizedBox(height: MediaQuery.of(context).size.height > 700 ? 45 : 25),
           SizedBox(

@@ -23,7 +23,12 @@ class ForgotPasswordPage extends StatelessWidget {
             ),
           ),
         Authenticated() => const TemplatePage(),
-        AuthError() => ErrorPage(errorMessage: state.message),
+        AuthError() => ErrorPage(
+            errorMessage: state.message,
+            onRetry: () {
+              context.read<AuthCubit>().checkCurrentUser();
+            },
+          ),
         Unauthenticated() => const ForgotPasswordScreen(),
         AuthEmailVerificationSent(user: var u) || AuthFinalizing(user: var u) =>
             EmailVerificationPage(user: u),

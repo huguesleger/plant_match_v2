@@ -38,7 +38,12 @@ class UserPage extends StatelessWidget {
                   child: CircularProgressIndicator(),
                 ),
               ),
-            UserError() => ErrorPage(errorMessage: state.message),
+            UserError() => ErrorPage(
+                errorMessage: state.message,
+                onRetry: () {
+                  context.read<UserCubit>().fetchUser(uid);
+                },
+              ),
             UserLoaded(:final data) => UserScreen(
                 data: data,
               ),

@@ -30,6 +30,9 @@ class EmailVerificationPage extends StatelessWidget {
               onPressed: () {
                 context.read<AuthCubit>().reset();
               },
+              onRetry: () {
+                context.read<AuthCubit>().checkCurrentUser();
+              },
             ),
           Unauthenticated() => const RegisterScreen(),
           AuthEmailVerificationSent() => EmailVerificationScreen(user: user),

@@ -72,7 +72,17 @@ class ExchangePage extends StatelessWidget {
               ExchangeSuccess() => const Center(
                   child: Text("Échange proposé avec succès !"),
                 ),
-              ExchangeError(:final message) => ErrorPage(errorMessage: message),
+              ExchangeError(:final message) => ErrorPage(
+                  errorMessage: message,
+                  onRetry: () {
+                    context.read<ExchangeCubit>().initExchange(
+                      userId: userId,
+                      targetPlantId: targetPlantId,
+                      targetOwnerId: targetOwnerId,
+                      chatId: chatId,
+                    );
+                  },
+                ),
               // Gestion des états hérités si nécessaire dans cette vue
               _ => const SizedBox.shrink(),
             },

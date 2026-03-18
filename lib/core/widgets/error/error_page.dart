@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
+import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
 
 class ErrorPage extends StatelessWidget {
   const ErrorPage({
     super.key,
     required this.errorMessage,
+    required this.onRetry,
     this.onPressed,
   });
 
   final String errorMessage;
   final VoidCallback? onPressed;
+  final VoidCallback onRetry;
 
   @override
   Widget build(BuildContext context) {
@@ -23,35 +25,35 @@ class ErrorPage extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Center(
+/*                 Center(
                   child: Padding(
                     padding: const EdgeInsets.only(top: 10),
                     child: SvgPicture.asset('assets/logo/logo_color.svg'),
                   ),
-                ),
+                ), */
                 const SizedBox(height: 20),
                 const TitlePage(
-                  title: 'Oups ! une erreur est survénue',
+                  title: 'Oups ! une erreur est survenue',
                   fontSize: AppTypo.textXl,
-                  textAlign: TextAlign.center,
+                  //textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 5),
-                Center(
-                  child: Text(
-                    errorMessage,
-                    textAlign: TextAlign.center,
-                  ),
+                Text(
+                  errorMessage,
+                  //textAlign: TextAlign.left,
                 ),
                 const SizedBox(height: 30),
-                ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxHeight: MediaQuery.of(context).size.height * 0.4,
-                  ),
-                  child: Image.asset(
-                    'assets/images/auth/error.png',
-                    fit: BoxFit.contain,
+                Center(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxHeight: MediaQuery.of(context).size.height * 0.4,
+                    ),
+                    child: Image.asset(
+                      'assets/images/auth/error.png',
+                      fit: BoxFit.contain,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 30),
@@ -75,6 +77,15 @@ class ErrorPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  child: ButtonRounded(
+                    text: 'Essayer à nouveau',
+                    bgColor: AppColors.blueGreen,
+                    textColor: AppColors.white,
+                    onPressed: onRetry,
+                  ),
+                )
               ],
             ),
           ),

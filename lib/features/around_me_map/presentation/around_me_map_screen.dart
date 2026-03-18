@@ -6,7 +6,9 @@ import 'package:plant_match_v2/features/around_me_map/presentation/cubit/around_
 import 'package:plant_match_v2/features/around_me_map/presentation/map_users/check_user_location.dart';
 
 class AroundMeMapScreen extends StatelessWidget {
-  const AroundMeMapScreen({super.key});
+  const AroundMeMapScreen({super.key, required this.uid});
+
+  final String uid;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +25,12 @@ class AroundMeMapScreen extends StatelessWidget {
                   users: state.users,
                   userCatalogs: state.userCatalogs,
                 ),
-              AroundMeError() => ErrorPage(errorMessage: state.message),
+              AroundMeError() => ErrorPage(
+                  errorMessage: state.message,
+                  onRetry: () {
+                    context.read<AroundMeCubit>().getAllUserProfiles(uid);
+                  },
+                ),
             };
           },
         ),

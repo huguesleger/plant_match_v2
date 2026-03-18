@@ -87,7 +87,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   ),
                 Authenticated() => const TemplatePage(),
                 Unauthenticated() => const GetStartedPage(),
-                AuthError() => ErrorPage(errorMessage: authState.message),
+                AuthError() => ErrorPage(
+                    errorMessage: authState.message,
+                    onRetry: () {
+                      context.read<AuthCubit>().checkCurrentUser();
+                    },
+                  ),
                 AuthEmailVerificationSent(user: var u) ||
                 AuthFinalizing(user: var u) =>
                   EmailVerificationPage(user: u),

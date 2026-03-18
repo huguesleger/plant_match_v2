@@ -32,8 +32,13 @@ class AroundMePage extends StatelessWidget {
             AroundMeInitial() || AroundMeLoading() => const Center(
                 child: CircularProgressIndicator(),
               ),
-            AroundMeLoaded() => const AroundMeMapScreen(),
-            AroundMeError() => ErrorPage(errorMessage: state.message),
+            AroundMeLoaded() => AroundMeMapScreen(uid: uid),
+            AroundMeError() => ErrorPage(
+                errorMessage: state.message,
+                onRetry: () {
+                  context.read<AroundMeCubit>().getAllUserProfiles(uid);
+                },
+              ),
           };
         },
       ),

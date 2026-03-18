@@ -83,7 +83,15 @@ class ChatPlantPage extends StatelessWidget {
                       backgroundColor: AppColors.white,
                       body: Center(child: CircularProgressIndicator()),
                     ),
-                  ChatPlantError() => ErrorPage(errorMessage: state.message),
+                  ChatPlantError() => ErrorPage(
+                      errorMessage: state.message,
+                      onRetry: () {
+                        context.read<ChatPlantCubit>().subscribe(
+                          chatId: chatId,
+                          currentUserId: currentUser.uid,
+                        );
+                      },
+                    ),
                   ChatPlantLoaded() => ChatPlantScreen(
                       chatId: chatId,
                       plantId: plant.catalogId!,

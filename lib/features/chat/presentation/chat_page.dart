@@ -50,7 +50,12 @@ class ChatPage extends StatelessWidget {
                 backgroundColor: AppColors.white,
                 body: Center(child: CircularProgressIndicator()),
               ),
-            ChatError() => ErrorPage(errorMessage: state.message),
+            ChatError() => ErrorPage(
+                errorMessage: state.message,
+                onRetry: () {
+                  context.read<ChatCubit>().subscribe(chatId);
+                },
+              ),
             ChatLoaded() => ChatScreen(
                 chatId: chatId,
                 otherUserId: otherUserId,

@@ -65,6 +65,9 @@ class SignInPage extends StatelessWidget {
           AuthError() => ErrorPage(
               errorMessage: state.message,
               onPressed: () => context.read<AuthCubit>().reset(),
+              onRetry: () {
+                context.read<AuthCubit>().checkCurrentUser();
+              },
             ),
           AuthEmailVerificationSent(user: var u) ||
           AuthFinalizing(user: var u) =>

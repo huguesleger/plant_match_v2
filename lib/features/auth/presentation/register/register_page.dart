@@ -24,7 +24,12 @@ class RegisterPage extends StatelessWidget {
               ),
             ),
           Authenticated() => const TemplatePage(),
-          AuthError() => ErrorPage(errorMessage: state.message),
+          AuthError() => ErrorPage(
+              errorMessage: state.message,
+              onRetry: () {
+                context.read<AuthCubit>().checkCurrentUser();
+              },
+            ),
           Unauthenticated() => const RegisterScreen(),
           AuthEmailVerificationSent(user: var u) ||
           AuthFinalizing(user: var u) =>

@@ -48,7 +48,12 @@ class ProfilBadgePage extends StatelessWidget {
               UserPointsInitial() ||
               UserPointsLoading() =>
                 const Center(child: CircularProgressIndicator()),
-              UserPointsError() => ErrorPage(errorMessage: state.message),
+              UserPointsError() => ErrorPage(
+                  errorMessage: state.message,
+                  onRetry: () {
+                    context.read<UserPointsCubit>().fetchUserPoints(userId);
+                  },
+                ),
               UserPointsLoaded() =>
                 ProfilBadgeScreen(userPoints: state.userPoints),
             };

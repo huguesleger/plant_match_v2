@@ -40,7 +40,12 @@ class CatalogPage extends StatelessWidget {
                   catalogs: catalogs,
                   catalog: catalog,
                 ),
-              CatalogError(:final message) => ErrorPage(errorMessage: message),
+              CatalogError(:final message) => ErrorPage(
+                  errorMessage: message,
+                  onRetry: () {
+                    context.read<CatalogCubit>().getCatalogsByUserId(userId);
+                  },
+                ),
             },
           );
         },

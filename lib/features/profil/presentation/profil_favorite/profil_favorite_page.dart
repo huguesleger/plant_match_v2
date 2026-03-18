@@ -49,7 +49,12 @@ class ProfilFavoritePage extends StatelessWidget {
               ProfilFavoriteInitial() ||
               ProfilFavoriteLoading() =>
                 const Center(child: CircularProgressIndicator()),
-              ProfilFavoriteError() => ErrorPage(errorMessage: state.message),
+              ProfilFavoriteError() => ErrorPage(
+                  errorMessage: state.message,
+                  onRetry: () {
+                    context.read<ProfilFavoriteCubit>().loadFavorites(userId);
+                  },
+                ),
               ProfilFavoriteLoaded() => ProfilFavoriteScreen(
                   uid: userId,
                   plants: state.plants,

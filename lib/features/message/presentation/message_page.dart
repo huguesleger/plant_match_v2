@@ -43,7 +43,12 @@ class MessagesPage extends StatelessWidget {
                 backgroundColor: AppColors.white,
                 body: Center(child: CircularProgressIndicator()),
               ),
-            MessagesError() => ErrorPage(errorMessage: state.message),
+            MessagesError() => ErrorPage(
+                errorMessage: state.message,
+                onRetry: () {
+                  context.read<MessagesCubit>().load(currentUser.uid);
+                },
+              ),
             MessagesLoaded() => MessagesScreen(chats: state.chats),
           };
         },

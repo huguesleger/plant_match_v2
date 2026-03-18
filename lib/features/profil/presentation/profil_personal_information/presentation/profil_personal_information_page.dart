@@ -89,6 +89,9 @@ class ProfilPersonalInformationPage extends StatelessWidget {
                         ),
                       ProfilError(:final message) => ErrorPage(
                           errorMessage: message,
+                          onRetry: () {
+                            context.read<ProfilCubit>().getProfilUser(userId);
+                          },
                         ),
                     },
                   ],
@@ -100,7 +103,12 @@ class ProfilPersonalInformationPage extends StatelessWidget {
             ProfilInitial() || ProfilLoading() => const Center(
                 child: CircularProgressIndicator(),
               ),
-            ProfilError(:final message) => ErrorPage(errorMessage: message),
+            ProfilError(:final message) => ErrorPage(
+                errorMessage: message,
+                onRetry: () {
+                  context.read<ProfilCubit>().getProfilUser(userId);
+                },
+              ),
             _ => SafeArea(
                 child: SizedBox(
                   width: double.infinity,
