@@ -1,6 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/features/auth/domain/entities/user_auth.dart';
 import 'package:plant_match_v2/features/auth/domain/repository/auth_repository.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_state.dart';
@@ -9,161 +10,117 @@ import 'package:plant_match_v2/features/user_points/data/firebase_user_points.da
 
 class AuthCubit extends Cubit<AuthState> {
   final AuthRepository authRepository;
-  UserAuth? _currentUser;
-
-  //final UserPointsCubit userPointsCubit;
-  //final UserPointsRepository userPointsRepository;
   final FirebaseUserPoints userPointsRepository;
 
+  UserAuth? _currentUser;
   bool _isCheckingEmail = false;
 
   AuthCubit({required this.authRepository, required this.userPointsRepository})
       : super(AuthInitial());
 
   UserAuth? get currentUser => _currentUser;
-
   String? get userId => _currentUser?.uid;
 
-  void checkCurrentUser() async {
-    final UserAuth? user = await authRepository.getCurrentUser();
+  // ─── checkCurrentUser ─────────────────────────────────────────────────────
 
-    if (user != null) {
-      _currentUser = user;
-      emit(Authenticated(user));
-    } else {
-      emit(Unauthenticated());
-    }
+  void checkCurrentUser() {
+    authRepository
+        .getCurrentUser()
+        .map((option) => option.match(
+              () => emit(Unauthenticated()),
+              (user) {
+                _currentUser = user;
+                emit(Authenticated(user));
+              },
+            ))
+        .run()
+        .then((result) => result.match(
+              (failure) => emit(Unauthenticated()),
+              (_) => null,
+            ));
   }
 
-/*  void checkCurrentUser() async {
-    try {
-      final UserAuth? user = await authRepository.getCurrentUser();
-
-      if (user != null) {
-        _currentUser = user;
-        emit(Authenticated(user));
-      } else {
-        emit(Unauthenticated());
-      }
-    } catch (e) {
-      final errorMessage = e.toString().replaceFirst('Exception: ', '');
-      print("Erreur lors de la récupération de l'utilisateur : $e");
-      emit(AuthError(errorMessage));
-    }
-  }*/
+  // ─── signInWithEmailAndPassword ───────────────────────────────────────────
 
   Future<void> signInWithEmailAndPassword({
     required String email,
     required String password,
   }) async {
-    try {
-      emit(AuthLoading());
-      final UserAuth? user = await authRepository.signInWithEmailAndPassword(
-          email: email, password: password);
-      if (user != null) {
-        _currentUser = user;
-        emit(Authenticated(user));
-      } else {
-        emit(Unauthenticated());
-      }
-    } catch (e) {
-      final errorMessage = e.toString().replaceFirst('Exception: ', '');
-      emit(AuthError(errorMessage));
-      emit(Unauthenticated());
-    }
+    emit(AuthLoading());
+
+    await authRepository
+        .signInWithEmailAndPassword(email: email, password: password)
+        .map((user) {
+          _currentUser = user;
+          emit(Authenticated(user));
+        })
+        .run()
+        .then((result) => result.match(
+              (failure) {
+                emit(AuthError(failure.message));
+                emit(Unauthenticated());
+              },
+              (_) => null,
+            ));
   }
 
-/*  Future<void> signInWithEmailAndPassword({
-    required String email,
-    required String password,
-  }) async {
-    try {
-      emit(AuthLoading());
-      final UserAuth? user = await authRepository.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-
-      if (user == null) {
-        // Ne restez pas silencieux : c'est une erreur fonctionnelle
-        emit(AuthError(
-            'Impossible de se connecter. Vérifiez vos identifiants.'));
-        return;
-      }
-
-      _currentUser = user;
-      emit(Authenticated(user));
-    } on Exception catch (e) {
-      final errorMessage = e.toString().replaceFirst('Exception: ', '');
-      emit(AuthError(errorMessage));
-      // **NE PAS** émettre Unauthenticated() ici
-    } catch (e) {
-      emit(AuthError('Une erreur inconnue est survenue. Veuillez réessayer.'));
-    }
-  }*/
-
-  void reset() {
-    // Permet d'aller revenir à l'écran de connexion proprement
-    emit(Unauthenticated());
-  }
+  // ─── registerWithEmailAndPassword ─────────────────────────────────────────
 
   Future<void> registerWithEmailAndPassword({
     required String email,
     required String password,
     required String fullName,
   }) async {
-    try {
-      emit(AuthLoading());
+    emit(AuthLoading());
 
-      final UserAuth? user = await authRepository.registerWithEmailAndPassword(
-        email: email,
-        password: password,
-        fullName: fullName,
-      );
-
-      if (user != null) {
-        _currentUser = user;
-
-        // 🔹 Envoi de l’email de vérification
-        await authRepository.sendEmailVerification();
-
-        // 🔹 Ne pas créer de document Firestore tant que l’email n’est pas validé
-        emit(AuthEmailVerificationSent(user));
-      } else {
-        emit(Unauthenticated());
-      }
-    } catch (e) {
-      final errorMessage = e.toString().replaceFirst('Exception: ', '');
-      emit(AuthError(errorMessage));
-    }
+    await authRepository
+        .registerWithEmailAndPassword(
+            email: email, password: password, fullName: fullName)
+        .flatMap((user) =>
+            authRepository.sendEmailVerification().map((_) => user))
+        .map((user) {
+          _currentUser = user;
+          emit(AuthEmailVerificationSent(user));
+        })
+        .run()
+        .then((result) => result.match(
+              (failure) => emit(AuthError(failure.message)),
+              (_) => null,
+            ));
   }
 
-  /// Renvoyer l'email de vérification -> reste sur AuthEmailVerificationSent si succès.
+  // ─── resendEmailVerification ──────────────────────────────────────────────
+
   Future<void> resendEmailVerification() async {
-    try {
-      await authRepository.sendEmailVerification();
-
-      // Si tout s'est bien passé, on reste sur l'état "email envoyé"
-      if (_currentUser != null) {
-        emit(AuthEmailVerificationSent(_currentUser!));
-      } else {
-        emit(Unauthenticated());
-      }
-    } catch (e) {
-      final errorMessage = e.toString().replaceFirst('Exception: ', '');
-      // On émet AuthError pour afficher un écran d'erreur si vraiment nécessaire
-      emit(AuthError(errorMessage));
-      // NE PAS rethrower: l'UI a déjà reçu l'état AuthError
-    }
+    await authRepository
+        .sendEmailVerification()
+        .map((_) {
+          if (_currentUser != null) {
+            emit(AuthEmailVerificationSent(_currentUser!));
+          } else {
+            emit(Unauthenticated());
+          }
+        })
+        .run()
+        .then((result) => result.match(
+              (failure) => emit(AuthError(failure.message)),
+              (_) => null,
+            ));
   }
 
-  /// Vérifie si l'email est validé ; si oui -> Authenticated
+  // ─── checkEmailVerified ───────────────────────────────────────────────────
+  // Logique séquentielle : on extrait isEmailVerified d'abord, puis on enchaîne
+  // en fp-dart pour la finalisation.
+
   Future<void> checkEmailVerified({String? fullName}) async {
     if (_isCheckingEmail) return;
     _isCheckingEmail = true;
 
     try {
-      final bool verified = await authRepository.isEmailVerified();
+      // 1. Vérifier si l'email est validé
+      final verifiedResult = await authRepository.isEmailVerified().run();
+      final verified = verifiedResult.getOrElse((_) => false);
+
       if (!verified) {
         if (_currentUser != null) {
           emit(AuthEmailVerificationSent(_currentUser!));
@@ -173,138 +130,134 @@ class AuthCubit extends Cubit<AuthState> {
         return;
       }
 
-      final user = FirebaseAuth.instance.currentUser;
-      if (user == null) {
-        emit(AuthError("Utilisateur introuvable après vérification."));
+      // 2. Récupérer l'utilisateur Firebase courant
+      final firebaseUser = FirebaseAuth.instance.currentUser;
+      if (firebaseUser == null) {
+        emit(AuthError('Utilisateur introuvable après vérification.'));
         return;
       }
 
-      // 🔹 On émet l'état de finalisation pour afficher un loader
-      emit(AuthFinalizing(
-        UserAuth(
-          uid: user.uid,
-          email: user.email!,
-          fullName: fullName ?? _currentUser?.fullName ?? '',
-        ),
-      ));
+      final resolvedName = fullName ?? _currentUser?.fullName ?? '';
+      emit(AuthFinalizing(UserAuth(
+        uid: firebaseUser.uid,
+        email: firebaseUser.email!,
+        fullName: resolvedName,
+      )));
 
-      // 🔹 Une fois vérifié, on crée enfin le document Firestore
-      // On ne procède à l'emailing et aux points que si c'est la toute première finalisation
-      final bool isFirstFinalization = await authRepository.finalizeRegistration(
-        user,
-        fullName ?? _currentUser?.fullName ?? '',
-      );
-
-      if (isFirstFinalization) {
-        try {
-          await welcomeEmail(
-              user.email!, fullName ?? _currentUser?.fullName ?? '');
-        } catch (e) {
-          throw Exception(
-            'Erreur lors de l\'envoi de l\'email de bienvenue : $e',
-          );
-        }
-        await _addInitialPoints(user.uid);
-      }
-
-      final authenticatedUser = UserAuth(
-        uid: user.uid,
-        email: user.email!,
-        fullName: fullName ?? _currentUser?.fullName ?? '',
-      );
-
-      _currentUser = authenticatedUser;
-      emit(Authenticated(authenticatedUser));
-    } catch (e) {
-      final errorMessage = e.toString().replaceFirst('Exception: ', '');
-      emit(AuthError(errorMessage));
+      // 3. Finalisation + email de bienvenue + points initiaux
+      await authRepository
+          .finalizeRegistration(firebaseUser, resolvedName)
+          .flatMap((isFirst) => TaskEither<Failure, Unit>.tryCatch(
+                () async {
+                  if (isFirst) {
+                    try {
+                      await welcomeEmail(firebaseUser.email!, resolvedName);
+                    } catch (_) {}
+                    await _addInitialPoints(firebaseUser.uid);
+                  }
+                  final authenticatedUser = UserAuth(
+                    uid: firebaseUser.uid,
+                    email: firebaseUser.email!,
+                    fullName: resolvedName,
+                  );
+                  _currentUser = authenticatedUser;
+                  emit(Authenticated(authenticatedUser));
+                  return unit;
+                },
+                (error, _) => UnexpectedFailure(
+                    'Erreur lors de la finalisation : $error'),
+              ))
+          .run()
+          .then((result) => result.match(
+                (failure) => emit(AuthError(failure.message)),
+                (_) => null,
+              ));
     } finally {
       _isCheckingEmail = false;
     }
   }
 
-  Future<void> _addInitialPoints(String userId) async {
-    try {
-      const int initialPoints = 25;
-      const int initialLevel = 1;
-
-      await FirebaseFirestore.instance
-          .collection('userPoints')
-          .doc(userId)
-          .set({
-        'currentPoints': initialPoints,
-        'level': initialLevel,
-      });
-    } catch (e) {
-      throw Exception('Erreur lors de l\'ajout des points initiaux : $e');
-    }
-  }
+  // ─── signInWithGoogle ─────────────────────────────────────────────────────
 
   Future<void> signInWithGoogle() async {
-    try {
-      emit(AuthLoading());
-      final UserAuth? user = await authRepository.signInWithGoogle();
-      if (user != null) {
-        _currentUser = user;
-        emit(Authenticated(user));
-      } else {
-        emit(Unauthenticated());
-      }
-    } catch (e) {
-      final errorMessage = e.toString().replaceFirst('Exception: ', '');
-      emit(AuthError(errorMessage));
-      emit(Unauthenticated());
-    }
+    emit(AuthLoading());
+
+    await authRepository
+        .signInWithGoogle()
+        .map((user) {
+          _currentUser = user;
+          emit(Authenticated(user));
+        })
+        .run()
+        .then((result) => result.match(
+              (failure) {
+                emit(AuthError(failure.message));
+                emit(Unauthenticated());
+              },
+              (_) => null,
+            ));
   }
+
+  // ─── signInWithFacebook ───────────────────────────────────────────────────
 
   Future<void> signInWithFacebook() async {
-    try {
-      emit(AuthLoading());
-      final UserAuth? user = await authRepository.signInWithFacebook();
-      if (user != null) {
-        _currentUser = user;
-        emit(Authenticated(user));
-      } else {
-        emit(Unauthenticated());
-      }
-    } catch (e) {
-      final errorMessage = e.toString().replaceFirst('Exception: ', '');
-      emit(AuthError(errorMessage));
-      emit(Unauthenticated());
-    }
+    emit(AuthLoading());
+
+    await authRepository
+        .signInWithFacebook()
+        .map((user) {
+          _currentUser = user;
+          emit(Authenticated(user));
+        })
+        .run()
+        .then((result) => result.match(
+              (failure) {
+                emit(AuthError(failure.message));
+                emit(Unauthenticated());
+              },
+              (_) => null,
+            ));
   }
+
+  // ─── logOut ───────────────────────────────────────────────────────────────
 
   Future<void> logOut() async {
-    authRepository.logOut();
-    emit(Unauthenticated());
+    await authRepository
+        .logOut()
+        .map((_) => emit(Unauthenticated()))
+        .run()
+        .then((result) => result.match(
+              (failure) => emit(AuthError(failure.message)),
+              (_) => null,
+            ));
   }
 
+  // ─── sendPasswordResetEmail ───────────────────────────────────────────────
+
   Future<void> sendPasswordResetEmail({required String email}) async {
-    try {
-      await authRepository.sendPasswordResetEmail(email: email);
-    } catch (e) {
-      final errorMessage = e.toString().replaceFirst('Exception: ', '');
-      emit(AuthError(errorMessage));
-    }
+    await authRepository
+        .sendPasswordResetEmail(email: email)
+        .run()
+        .then((result) => result.match(
+              (failure) => emit(AuthError(failure.message)),
+              (_) => null,
+            ));
   }
+
+  // ─── deleteUnverifiedUser ─────────────────────────────────────────────────
 
   Future<void> deleteUnverifiedUser() async {
     try {
       final user = FirebaseAuth.instance.currentUser;
-
       if (user != null && !user.emailVerified) {
-        await user.delete(); // Supprime le compte directement
+        await user.delete();
         emit(Unauthenticated());
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'requires-recent-login') {
-        // On récupère à nouveau le user ici
         final user = FirebaseAuth.instance.currentUser;
-        if (user != null && user.email != null) {
+        if (user != null) {
           try {
-            // ⚠️ Il faut redemander les identifiants — ici, on ne les a pas
-            // Donc on ne peut pas reauthentifier automatiquement.
-            // La meilleure solution dans ce cas : simplement déconnecter l'utilisateur.
             await user.reload();
             await user.delete();
             emit(Unauthenticated());
@@ -318,5 +271,15 @@ class AuthCubit extends Cubit<AuthState> {
     } catch (e) {
       emit(AuthError('Erreur inconnue : $e'));
     }
+  }
+
+  // ─── reset ────────────────────────────────────────────────────────────────
+
+  void reset() => emit(Unauthenticated());
+
+  // ─── _addInitialPoints ────────────────────────────────────────────────────
+
+  Future<void> _addInitialPoints(String userId) async {
+    await userPointsRepository.addPoints(userId, 25, 1).run();
   }
 }

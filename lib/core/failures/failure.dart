@@ -1,4 +1,4 @@
-/// Classe de base pour toutes les erreurs du domaine user_points
+/// Classe de base pour toutes les erreurs du domaine
 sealed class Failure {
   final String message;
 
@@ -21,4 +21,9 @@ class NotFoundFailure extends Failure {
 /// Erreur inattendue ou inconnue
 class UnexpectedFailure extends Failure {
   const UnexpectedFailure(super.message);
+}
+
+/// Erreur spécifique à l'authentification (credentials invalides, email non vérifié, etc.)
+class AuthFailure extends Failure {
+  const AuthFailure(super.message);
 }

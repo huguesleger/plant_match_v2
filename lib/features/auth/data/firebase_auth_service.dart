@@ -1,9 +1,11 @@
-import 'package:flutter/foundation.dart';
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/features/auth/domain/entities/user_auth.dart';
 import 'package:plant_match_v2/features/auth/domain/repository/auth_repository.dart';
 
@@ -12,299 +14,334 @@ class FirebaseAuthService implements AuthRepository {
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
-  @override
-  Future<UserAuth?> getCurrentUser() async {
-    final firebaseUser = _firebaseAuth.currentUser;
+  // ─── getCurrentUser ───────────────────────────────────────────────────────
 
-    if (firebaseUser != null) {
-      final userDoc = await _firebaseFirestore
-          .collection('users')
-          .doc(firebaseUser.uid)
-          .get();
-      if (userDoc.exists) {
-        return UserAuth(
+  @override
+  TaskEither<Failure, Option<UserAuth>> getCurrentUser() {
+    return TaskEither.tryCatch(
+      () async {
+        final firebaseUser = _firebaseAuth.currentUser;
+        if (firebaseUser == null) return const None();
+
+        final userDoc = await _firebaseFirestore
+            .collection('users')
+            .doc(firebaseUser.uid)
+            .get();
+
+        return Some(UserAuth(
           email: firebaseUser.email!,
           uid: firebaseUser.uid,
           fullName: userDoc.data()?['fullName'] ?? '',
-        );
-      } else {
-        return UserAuth(
-          email: firebaseUser.email!,
-          uid: firebaseUser.uid,
-          fullName: '',
-        );
-      }
-    } else {
-      return null;
-    }
+        ));
+      },
+      (error, _) => _mapErrorToFailure(error),
+    );
   }
 
+  // ─── signInWithEmailAndPassword ───────────────────────────────────────────
+
   @override
-  Future<UserAuth?> signInWithEmailAndPassword({
+  TaskEither<Failure, UserAuth> signInWithEmailAndPassword({
     required String email,
     required String password,
     String? fullName,
-  }) async {
-    try {
-      UserCredential userCredential = await _firebaseAuth
-          .signInWithEmailAndPassword(email: email, password: password);
+  }) {
+    return TaskEither.tryCatch(
+      () async {
+        final userCredential = await _firebaseAuth.signInWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
 
-      final user = userCredential.user;
+        final user = userCredential.user;
+        if (user == null) {
+          throw const AuthFailure(
+              'Une erreur inattendue est survenue. Veuillez réessayer.');
+        }
 
-      if (user != null) {
-        final userDoc = await FirebaseFirestore.instance
+        final userDoc = await _firebaseFirestore
             .collection('users')
             .doc(user.uid)
             .get();
 
-        await _firebaseFirestore.collection('users').doc(user.uid).update({
-          'isOnline': true,
-        });
+        await _firebaseFirestore
+            .collection('users')
+            .doc(user.uid)
+            .update({'isOnline': true});
 
         return UserAuth(
           uid: user.uid,
           email: user.email!,
           fullName: userDoc.data()?['fullName'] ?? '',
         );
-      } else {
-        throw Exception(
-            'Une erreur inattendue est survenue. Veuillez réessayer.');
-      }
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        throw Exception('Aucun compte trouvé pour cet email.');
-      } else if (e.code == 'wrong-password') {
-        throw Exception('Mot de passe incorrect.');
-      } else if (e.code == 'invalid-email') {
-        throw Exception('Email invalide.');
-      } else if (e.code == 'user-disabled') {
-        throw Exception('Ce compte a été désactivé.');
-      } else if (e.code == 'invalid-credential') {
-        throw Exception('Les informations de connexion sont incorrectes.');
-      } else {
-        throw Exception(
-            'Une erreur inattendue est survenue. Veuillez réessayer.');
-      }
-    } catch (e) {
-      throw Exception('Une erreur inconnue est survenue. Veuillez réessayer.');
-    }
+      },
+      (error, _) => _mapErrorToFailure(error),
+    );
   }
 
+  // ─── registerWithEmailAndPassword ─────────────────────────────────────────
+
   @override
-  Future<UserAuth?> registerWithEmailAndPassword({
+  TaskEither<Failure, UserAuth> registerWithEmailAndPassword({
     required String email,
     required String password,
     required String fullName,
-  }) async {
-    try {
-      // Création du compte Firebase (sans doc Firestore)
-      UserCredential userCredential = await _firebaseAuth
-          .createUserWithEmailAndPassword(email: email, password: password);
+  }) {
+    return TaskEither.tryCatch(
+      () async {
+        final userCredential = await _firebaseAuth
+            .createUserWithEmailAndPassword(email: email, password: password);
 
-      final user = userCredential.user;
-      if (user == null) throw Exception("Impossible de créer l'utilisateur.");
+        final user = userCredential.user;
+        if (user == null) {
+          throw const AuthFailure("Impossible de créer l'utilisateur.");
+        }
 
-      return UserAuth(
-        email: email,
-        uid: user.uid,
-        fullName: fullName,
-      );
-    } on FirebaseAuthException catch (e) {
-      throw Exception(e.message);
-    }
+        return UserAuth(email: email, uid: user.uid, fullName: fullName);
+      },
+      (error, _) => _mapErrorToFailure(error),
+    );
   }
 
+  // ─── finalizeRegistration ─────────────────────────────────────────────────
+
   @override
-  Future<bool> finalizeRegistration(User user, String fullName) async {
-    final docRef = _firebaseFirestore.collection('users').doc(user.uid);
+  TaskEither<Failure, bool> finalizeRegistration(
+      User user, String fullName) {
+    return TaskEither.tryCatch(
+      () async {
+        final docRef =
+            _firebaseFirestore.collection('users').doc(user.uid);
+        final existingDoc = await docRef.get();
+        if (existingDoc.exists) return false;
 
-    final existingDoc = await docRef.get();
-    if (existingDoc.exists) return false;
-
-    await docRef.set({
-      'email': user.email,
-      'fullName': fullName,
-      'isOnline': true,
-      'createdAt': FieldValue.serverTimestamp(),
-      'emailVerified': true,
-    });
-    return true;
+        await docRef.set({
+          'email': user.email,
+          'fullName': fullName,
+          'isOnline': true,
+          'createdAt': FieldValue.serverTimestamp(),
+          'emailVerified': true,
+        });
+        return true;
+      },
+      (error, _) => _mapErrorToFailure(error),
+    );
   }
 
+  // ─── signInWithGoogle ─────────────────────────────────────────────────────
+
   @override
-  Future<UserAuth?> signInWithGoogle() async {
-    try {
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) {
-        throw Exception("Connexion avec Google annulée.");
-      }
+  TaskEither<Failure, UserAuth> signInWithGoogle() {
+    return TaskEither.tryCatch(
+      () async {
+        final googleUser = await _googleSignIn.signIn();
+        if (googleUser == null) {
+          throw const AuthFailure('Connexion avec Google annulée.');
+        }
 
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+        final googleAuth = await googleUser.authentication;
+        final credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
 
-      final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
+        final userCredential =
+            await _firebaseAuth.signInWithCredential(credential);
+        final firebaseUser = userCredential.user;
 
-      final UserCredential userCredential =
-          await _firebaseAuth.signInWithCredential(credential);
-      final User? firebaseUser = userCredential.user;
+        if (firebaseUser == null) {
+          throw const AuthFailure("Échec de l'authentification avec Google.");
+        }
 
-      if (firebaseUser != null) {
-        UserAuth userAuth = UserAuth(
+        final userAuth = UserAuth(
           email: firebaseUser.email,
           uid: firebaseUser.uid,
           fullName: firebaseUser.displayName ?? '',
         );
 
-        await _firebaseFirestore.collection('users').doc(userAuth.uid).set({
+        await _firebaseFirestore
+            .collection('users')
+            .doc(userAuth.uid)
+            .set({
           'email': userAuth.email,
           'fullName': userAuth.fullName,
           'isOnline': true,
         });
+
         return userAuth;
-      } else {
-        throw Exception("Échec de l'authentification avec Google.");
-      }
-    } on FirebaseAuthException catch (e) {
-      throw Exception(e.message);
-    } catch (e) {
-      final errorMessage = e.toString().replaceFirst('Exception: ', '');
-      throw Exception(errorMessage);
-    }
+      },
+      (error, _) => _mapErrorToFailure(error),
+    );
   }
 
-  @override
-  Future<UserAuth?> signInWithFacebook() async {
-    try {
-      final nonce = DateTime.now().toIso8601String();
-      final LoginResult result =
-          await FacebookAuth.instance.login(permissions: [
-        "public_profile",
-        "email",
-      ], loginTracking: LoginTracking.enabled, nonce: nonce);
+  // ─── signInWithFacebook ───────────────────────────────────────────────────
 
-      if (result.status == LoginStatus.success) {
+  @override
+  TaskEither<Failure, UserAuth> signInWithFacebook() {
+    return TaskEither.tryCatch(
+      () async {
+        final nonce = DateTime.now().toIso8601String();
+        final result = await FacebookAuth.instance.login(
+          permissions: ['public_profile', 'email'],
+          loginTracking: LoginTracking.enabled,
+          nonce: nonce,
+        );
+
+        if (result.status != LoginStatus.success) {
+          throw const AuthFailure('Connexion avec Facebook annulée.');
+        }
+
         final userData = await FacebookAuth.instance.getUserData();
-        final AccessToken accessToken = result.accessToken!;
-        final OAuthCredential credential =
+        final accessToken = result.accessToken!;
+        final credential =
             FacebookAuthProvider.credential(accessToken.tokenString);
         await AppTrackingTransparency.requestTrackingAuthorization();
 
-        final UserCredential userCredential =
+        final userCredential =
             await FirebaseAuth.instance.signInWithCredential(credential);
-        final User? firebaseUser = userCredential.user;
+        final firebaseUser = userCredential.user;
 
-        if (firebaseUser != null) {
-          UserAuth userAuth = UserAuth(
-            email: userData['email'],
-            uid: firebaseUser.uid,
-            fullName: userData['name'],
-          );
-
-          await _firebaseFirestore.collection('users').doc(userAuth.uid).set({
-            'email': userAuth.email,
-            'fullName': userAuth.fullName,
-            'isOnline': true,
-          });
-
-          return userAuth;
-        } else {
-          throw Exception('Échec de l\'authentification avec Facebook.');
+        if (firebaseUser == null) {
+          throw const AuthFailure(
+              "Échec de l'authentification avec Facebook.");
         }
-      } else {
-        throw Exception('Connexion avec Facebook annulée.');
-      }
-    } catch (e) {
-      throw Exception('Échec de la connexion avec Facebook.');
-    }
+
+        final userAuth = UserAuth(
+          email: userData['email'],
+          uid: firebaseUser.uid,
+          fullName: userData['name'],
+        );
+
+        await _firebaseFirestore
+            .collection('users')
+            .doc(userAuth.uid)
+            .set({
+          'email': userAuth.email,
+          'fullName': userAuth.fullName,
+          'isOnline': true,
+        });
+
+        return userAuth;
+      },
+      (error, _) => _mapErrorToFailure(error),
+    );
   }
 
+  // ─── logOut ───────────────────────────────────────────────────────────────
+
   @override
-  Future<void> logOut() async {
-    try {
-      try {
-        await _googleSignIn.signOut();
-      } catch (_) {}
+  TaskEither<Failure, Unit> logOut() {
+    return TaskEither.tryCatch(
+      () async {
+        try {
+          await _googleSignIn.signOut();
+        } catch (_) {}
 
-      try {
-        await FacebookAuth.instance.logOut();
-      } catch (_) {}
+        try {
+          await FacebookAuth.instance.logOut();
+        } catch (_) {}
 
-      try {
+        try {
+          final user = _firebaseAuth.currentUser;
+          if (user != null) {
+            await _firebaseFirestore
+                .collection('users')
+                .doc(user.uid)
+                .update({'isOnline': false});
+          }
+        } catch (e) {
+          debugPrint(
+              'Note: Impossible de mettre à jour le statut online: $e');
+        }
+
+        await _firebaseAuth.signOut();
+        return unit;
+      },
+      (error, _) => _mapErrorToFailure(error),
+    );
+  }
+
+  // ─── sendPasswordResetEmail ───────────────────────────────────────────────
+
+  @override
+  TaskEither<Failure, Unit> sendPasswordResetEmail({required String email}) {
+    return TaskEither.tryCatch(
+      () async {
+        await _firebaseAuth.sendPasswordResetEmail(email: email);
+        return unit;
+      },
+      (error, _) => _mapErrorToFailure(error),
+    );
+  }
+
+  // ─── sendEmailVerification ────────────────────────────────────────────────
+
+  @override
+  TaskEither<Failure, Unit> sendEmailVerification() {
+    return TaskEither.tryCatch(
+      () async {
         User? user = _firebaseAuth.currentUser;
-        if (user != null) {
-          await _firebaseFirestore.collection('users').doc(user.uid).update({
-            'isOnline': false,
-          });
+        if (user == null) {
+          throw const AuthFailure(
+              "Aucun utilisateur connecté. Impossible d'envoyer le mail de vérification.");
         }
-      } catch (e) {
-        debugPrint("Note: Impossible de mettre à jour le statut online: $e");
-      }
-      await _firebaseAuth.signOut();
 
-    } catch (e) {
-      throw Exception("Erreur lors de la déconnexion : ${e.toString()}");
-    }
-  }
-
-  @override
-  Future<void> sendPasswordResetEmail({required String email}) async {
-    try {
-      await _firebaseAuth.sendPasswordResetEmail(email: email);
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        throw Exception('Aucun compte trouvé pour cet email.');
-      } else if (e.code == 'invalid-email') {
-        throw Exception('Email invalide.');
-      } else {
-        throw Exception(
-            'Une erreur inattendue est survenue. Veuillez réessayer.');
-      }
-    } catch (e) {
-      throw Exception('Une erreur inconnue est survenue. Veuillez réessayer.');
-    }
-  }
-
-  @override
-  Future<void> sendEmailVerification() async {
-    try {
-      User? user = _firebaseAuth.currentUser;
-
-      if (user == null) {
-        throw Exception(
-            "Aucun utilisateur connecté. Impossible d'envoyer le mail de vérification.");
-      }
-      await user.reload();
-      user = _firebaseAuth.currentUser;
-
-      if (user == null) {
-        throw Exception("Aucun utilisateur après reload. Réessayez.");
-      }
-
-      if (user.emailVerified) {
-        throw Exception("Email déjà vérifié.");
-      }
-      await user.sendEmailVerification();
-    } catch (e) {
-      throw Exception(
-          "Erreur lors de l'envoi de l'email de vérification : ${e.toString()}");
-    }
-  }
-
-  @override
-  Future<bool> isEmailVerified() async {
-    try {
-      User? user = _firebaseAuth.currentUser;
-      if (user != null) {
         await user.reload();
-        return user.emailVerified;
-      } else {
-        throw Exception("Aucun utilisateur connecté.");
-      }
-    } catch (e) {
-      throw Exception("Erreur lors de la vérification de l'email.");
+        user = _firebaseAuth.currentUser;
+
+        if (user == null) {
+          throw const AuthFailure('Aucun utilisateur après reload. Réessayez.');
+        }
+        if (user.emailVerified) {
+          throw const AuthFailure('Email déjà vérifié.');
+        }
+
+        await user.sendEmailVerification();
+        return unit;
+      },
+      (error, _) => _mapErrorToFailure(error),
+    );
+  }
+
+  // ─── isEmailVerified ──────────────────────────────────────────────────────
+
+  @override
+  TaskEither<Failure, bool> isEmailVerified() {
+    return TaskEither.tryCatch(
+      () async {
+        final user = _firebaseAuth.currentUser;
+        if (user == null) {
+          throw const AuthFailure('Aucun utilisateur connecté.');
+        }
+        await user.reload();
+        return _firebaseAuth.currentUser?.emailVerified ?? false;
+      },
+      (error, _) => _mapErrorToFailure(error),
+    );
+  }
+
+  // ─── Mapping d'erreurs ────────────────────────────────────────────────────
+
+  Failure _mapErrorToFailure(Object error) {
+    if (error is Failure) return error;
+
+    if (error is FirebaseAuthException) {
+      final message = switch (error.code) {
+        'user-not-found' => 'Aucun compte trouvé pour cet email.',
+        'wrong-password' => 'Mot de passe incorrect.',
+        'invalid-email' => 'Email invalide.',
+        'user-disabled' => 'Ce compte a été désactivé.',
+        'invalid-credential' =>
+          'Les informations de connexion sont incorrectes.',
+        _ => 'Une erreur inattendue est survenue. Veuillez réessayer.',
+      };
+      return AuthFailure(message);
     }
+
+    if (error is FirebaseException) {
+      return FirebaseFailure('Erreur Firebase: ${error.message ?? error.code}');
+    }
+
+    return UnexpectedFailure('Erreur inconnue: $error');
   }
 }
