@@ -7,11 +7,14 @@ import 'package:plant_match_v2/features/profil/presentation/cubit/profil_state.d
 import 'package:plant_match_v2/features/profil/presentation/profil_screen.dart';
 import 'package:plant_match_v2/features/storage/data/firebase_storage_repository.dart';
 
+import 'package:plant_match_v2/core/services/location/location_service.dart';
+
 class ProfilPage extends StatelessWidget {
   ProfilPage({super.key, required this.uid});
 
   final profilRepository = FirebaseProfilRepo();
   final storageRepository = FirebaseStorageRepository();
+  final locationService = LocationServiceImpl();
   final String uid;
 
   @override
@@ -19,7 +22,8 @@ class ProfilPage extends StatelessWidget {
     return BlocProvider(
       create: (context) => ProfilCubit(
           profilRepository: profilRepository,
-          storageRepository: storageRepository)
+          storageRepository: storageRepository,
+          locationService: locationService)
         ..getProfilUser(uid),
       child: BlocBuilder<ProfilCubit, ProfilState>(
         builder: (context, state) {

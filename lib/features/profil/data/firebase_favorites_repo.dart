@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
-import 'package:plant_match_v2/features/catolog/domain/entity/catalog.dart';
+import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/features/profil/domain/repository/favorites_repository.dart';
 

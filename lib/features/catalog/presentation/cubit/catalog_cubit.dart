@@ -1,9 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
-import 'package:plant_match_v2/features/catolog/domain/entity/catalog.dart';
-import 'package:plant_match_v2/features/catolog/domain/repository/catalog_repository.dart';
-import 'package:plant_match_v2/features/catolog/presentation/cubit/catalog_state.dart';
+import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
+import 'package:plant_match_v2/features/catalog/domain/repository/catalog_repository.dart';
+import 'package:plant_match_v2/features/catalog/presentation/cubit/catalog_state.dart';
 import 'package:plant_match_v2/features/storage/domain/storage_repository.dart';
 
 class CatalogCubit extends Cubit<CatalogState> {
@@ -13,21 +13,21 @@ class CatalogCubit extends Cubit<CatalogState> {
   CatalogCubit({
     required this.catalogRepository,
     required this.storageRepository,
-  }) : super(CatalogInitial());
+  }) : super(const CatalogInitial());
 
   // ─── getCatalogsByUserId ───────────────────────────────────────────────────
 
   void getCatalogsByUserId(String userId) {
-    emit(CatalogLoading());
+    emit(const CatalogLoading());
 
     catalogRepository
         .getCatalogsByUserId(userId)
-        .flatMap((catalogs) => catalogRepository
-            .getCatalogById(userId)
-            .map((option) => option.match(
-                  () => CatalogLoaded(catalogs, Catalog.empty(userId)),
-                  (catalog) => CatalogLoaded(catalogs, catalog),
-                )))
+        .flatMap((catalogs) => catalogRepository.getCatalogById(userId).map(
+              (option) => option.match(
+                () => CatalogLoaded(catalogs, Catalog.empty(userId)),
+                (catalog) => CatalogLoaded(catalogs, catalog),
+              ),
+            ))
         .match(
           (failure) => CatalogError(failure.message),
           (state) => state,
@@ -39,14 +39,11 @@ class CatalogCubit extends Cubit<CatalogState> {
   // ─── addCatalog ────────────────────────────────────────────────────────────
 
   TaskEither<Failure, String> addCatalog(Catalog catalog) {
-    emit(CatalogLoading());
+    emit(const CatalogLoading());
 
     return catalogRepository.createCatalog(catalog).flatMap((id) {
       final updatedCatalog = catalog.copyWith(newCatalogId: id);
-      return catalogRepository
-          .getCatalogsByUserId(catalog.userId)
-          .flatMap((catalogs) {
-        // On émet l'état chargé avant de retourner l'ID
+      return catalogRepository.getCatalogsByUserId(catalog.userId).flatMap((catalogs) {
         return TaskEither<Failure, String>.tryCatch(
           () async {
             emit(CatalogLoaded(catalogs, updatedCatalog));
@@ -61,7 +58,7 @@ class CatalogCubit extends Cubit<CatalogState> {
   // ─── updateCatalog ─────────────────────────────────────────────────────────
 
   void updateCatalog(Catalog catalog) {
-    emit(CatalogLoading());
+    emit(const CatalogLoading());
 
     catalogRepository
         .updateCatalog(catalog)
@@ -77,7 +74,7 @@ class CatalogCubit extends Cubit<CatalogState> {
   // ─── editCatalog ───────────────────────────────────────────────────────────
 
   void editCatalog(Catalog catalog) {
-    emit(CatalogLoading());
+    emit(const CatalogLoading());
 
     catalogRepository
         .updateCatalog(catalog)
@@ -98,7 +95,7 @@ class CatalogCubit extends Cubit<CatalogState> {
     required String catalogId,
     required List<String> existingImages,
   }) {
-    emit(CatalogLoading());
+    emit(const CatalogLoading());
 
     final uploadTasks = imagePaths.map((imagePath) {
       final fileName = "${catalogId}_${imagePath.split('/').last}";
@@ -137,11 +134,10 @@ class CatalogCubit extends Cubit<CatalogState> {
     required Catalog catalog,
     required String imageUrl,
   }) {
-    emit(CatalogLoading());
+    emit(const CatalogLoading());
 
     return storageRepository.deleteImage(imageUrl: imageUrl).flatMap((_) {
-      final updatedImages =
-          catalog.images.where((img) => img != imageUrl).toList();
+      final updatedImages = catalog.images.where((img) => img != imageUrl).toList();
       final updatedCatalog = catalog.copyWith(newImages: updatedImages);
 
       return catalogRepository
@@ -162,10 +158,9 @@ class CatalogCubit extends Cubit<CatalogState> {
   // ─── getCatalogById ────────────────────────────────────────────────────────
 
   TaskEither<Failure, Catalog> getCatalogById(String catalogId) {
-    emit(CatalogLoading());
+    emit(const CatalogLoading());
 
-    return catalogRepository.getCatalogById(catalogId).flatMap((option) =>
-        option.match(
+    return catalogRepository.getCatalogById(catalogId).flatMap((option) => option.match(
           () => TaskEither.left(const FirebaseFailure("Catalogue non trouvé")),
           (catalog) {
             return TaskEither<Failure, Catalog>.tryCatch(
@@ -182,7 +177,7 @@ class CatalogCubit extends Cubit<CatalogState> {
   // ─── deleteCatalog ─────────────────────────────────────────────────────────
 
   void deleteCatalog(String catalogId, String userId) {
-    emit(CatalogLoading());
+    emit(const CatalogLoading());
 
     catalogRepository
         .deleteCatalog(catalogId)

@@ -27,3 +27,8 @@ class UnexpectedFailure extends Failure {
 class AuthFailure extends Failure {
   const AuthFailure(super.message);
 }
+
+/// Erreur spécifique à la localisation
+class LocationFailure extends Failure {
+  const LocationFailure(super.message);
+}

@@ -3,20 +3,24 @@ import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/features/around_me_map/domain/repository/around_me_repository.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/cubit/around_me_state.dart';
-import 'package:plant_match_v2/features/catolog/domain/entity/catalog.dart';
-import 'package:plant_match_v2/features/catolog/domain/repository/catalog_repository.dart';
+import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
+import 'package:plant_match_v2/features/catalog/domain/repository/catalog_repository.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/features/profil/domain/repository/profil_repository.dart';
+
+import 'package:plant_match_v2/core/services/location/location_service.dart';
 
 class AroundMeCubit extends Cubit<AroundMeState> {
   final AroundMeRepository aroundMeRepository;
   final ProfilRepository profilRepository;
   final CatalogRepository catalogRepository;
+  final LocationService locationService;
 
   AroundMeCubit({
     required this.aroundMeRepository,
     required this.profilRepository,
     required this.catalogRepository,
+    required this.locationService,
   }) : super(const AroundMeInitial());
 
   // ─── getAllUserProfiles ────────────────────────────────────────────────────
@@ -70,13 +74,24 @@ class AroundMeCubit extends Cubit<AroundMeState> {
 
   // ─── updateUserLocation ───────────────────────────────────────────────────
 
-  void updateUserLocation(ProfilUser updatedUser) {
+  void updateUserLocation(ProfilUser user) {
     emit(const AroundMeLoading());
 
-    aroundMeRepository
-        .updateUserLocation(updatedUser)
-        .flatMap((_) => aroundMeRepository.getAllUserUids())
-        .flatMap((users) => _getUsersWithCatalogs(users, updatedUser))
+    locationService
+        .getCurrentPosition()
+        .flatMap((position) => locationService.getPlacemarkFromPosition(position).map((placemark) => (position, placemark)))
+        .flatMap((data) {
+          final position = data.$1;
+          final placemark = data.$2;
+          final updatedUser = user.copyWith(
+            newLocalisation: placemark.locality ?? '',
+            newCountry: placemark.country ?? '',
+            newLatitude: position.latitude,
+            newLongitude: position.longitude,
+          );
+          return aroundMeRepository.updateUserLocation(updatedUser).map((_) => updatedUser);
+        })
+        .flatMap((updatedUser) => aroundMeRepository.getAllUserUids().flatMap((users) => _getUsersWithCatalogs(users, updatedUser)))
         .match(
           (failure) => AroundMeError(failure.message),
           (state) => state,

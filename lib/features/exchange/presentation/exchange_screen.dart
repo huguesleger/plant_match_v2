@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
-import 'package:plant_match_v2/features/catolog/domain/entity/catalog.dart';
+import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/exchange/domain/entities/exchange.dart';
 import 'package:plant_match_v2/features/exchange/presentation/cubit/exchange_cubit.dart';
 import 'package:plant_match_v2/features/exchange/presentation/state/exchange_state.dart';

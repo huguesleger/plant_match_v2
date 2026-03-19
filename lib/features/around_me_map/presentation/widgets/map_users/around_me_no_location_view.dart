@@ -7,7 +7,6 @@ import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/cubit/around_me_cubit.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
-import 'package:plant_match_v2/features/profil/presentation/profil_personal_information/widget/profil_personal_detail_location.dart';
 
 class AroundMeNoLocationView extends StatelessWidget {
   const AroundMeNoLocationView({
@@ -55,27 +54,7 @@ class AroundMeNoLocationView extends StatelessWidget {
     );
   }
 
-  Future<void> _updateLocationAndSave(BuildContext context, ProfilUser profilUser) async {
-    try {
-      currentPosition = await getCurrentLocation();
-      await getCurrentAddress();
-
-      final updatedUser = profilUser.copyWith(
-        newLocalisation: currentAddress,
-        newCountry: currentCountry,
-        newLatitude: currentLatitude,
-        newLongitude: currentLongitude,
-      );
-
-      if (context.mounted) {
-        context.read<AroundMeCubit>().updateUserLocation(updatedUser);
-      }
-    } catch (error) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Erreur lors de la mise à jour de la localisation')),
-        );
-      }
-    }
+  void _updateLocationAndSave(BuildContext context, ProfilUser profilUser) {
+    context.read<AroundMeCubit>().updateUserLocation(profilUser);
   }
 }

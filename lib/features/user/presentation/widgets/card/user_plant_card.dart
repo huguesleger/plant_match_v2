@@ -9,7 +9,7 @@ import 'package:plant_match_v2/core/theme/inter_text_style.dart';
 import 'package:plant_match_v2/core/widgets/badge/badge_pill.dart';
 import 'package:plant_match_v2/core/widgets/favorite_btn/favorite_btn.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
-import 'package:plant_match_v2/features/catolog/domain/entity/catalog.dart';
+import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 
 class UserPlantCard extends StatelessWidget {
   const UserPlantCard({

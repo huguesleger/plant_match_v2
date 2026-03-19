@@ -1,8 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:intl/intl.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_template.dart';
@@ -12,7 +12,6 @@ import 'package:plant_match_v2/core/widgets/form/decoration_input.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
 import 'package:plant_match_v2/features/profil/presentation/profil_personal_information/presentation/profil_personal_detail_wizard/profil_personal_detail_wizard_item.dart';
-import 'package:plant_match_v2/features/profil/presentation/profil_personal_information/widget/profil_personal_detail_location.dart';
 
 class ProfilPersonalDetailWizardPage extends StatefulWidget {
   const ProfilPersonalDetailWizardPage({super.key, required this.profilUser});
@@ -71,25 +70,8 @@ class _ProfilPersonalDetailWizardPageState
     }
   }
 
-  Future<void> _onPressedLocation() async {
-    currentPosition = await getCurrentLocation();
-    await getCurrentAddress();
-    setState(() {
-      context.read<ProfilCubit>().saveProfilUser(
-            widget.profilUser.copyWith(
-              newUserName: _pseudoController.text,
-              newBirthdayDate:
-                  DateFormat('dd/MM/yyyy').parse(_birthdayDateController.text),
-              newBio: _bioController.text,
-              newLocalisation: currentAddress,
-              newCountry: currentCountry,
-              newZipCode: currentZipCode,
-              newLatitude: currentLatitude,
-              newLongitude: currentLongitude,
-              newPosition: GeoPoint(currentLatitude, currentLongitude),
-            ),
-          );
-    });
+  void _onPressedLocation() {
+    context.read<ProfilCubit>().updateLocation(widget.profilUser.uid);
   }
 
   Future<void> _handlePageAction(int currentPage) async {
@@ -210,6 +192,8 @@ class _ProfilPersonalDetailWizardPageState
                     ),
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     controller: _pseudoController,
+                    validator: FormBuilderValidators.required(
+                        errorText: 'Ce champ est requis'),
                   ),
                 ),
                 ProfilPersonalDetailWizardItem(
@@ -237,6 +221,8 @@ class _ProfilPersonalDetailWizardPageState
                     ),
                     locale: const Locale('fr', 'FR'),
                     controller: _birthdayDateController,
+                    validator: FormBuilderValidators.required(
+                        errorText: 'Ce champ est requis'),
                   ),
                 ),
                 ProfilPersonalDetailWizardItem(
@@ -255,6 +241,8 @@ class _ProfilPersonalDetailWizardPageState
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     controller: _bioController,
                     maxLength: 150,
+                    validator: FormBuilderValidators.required(
+                        errorText: 'Ce champ est requis'),
                   ),
                 ),
                 ProfilPersonalDetailWizardItem(
@@ -288,7 +276,7 @@ class _ProfilPersonalDetailWizardPageState
           text: _currentPage == _totalPages - 1 ? 'Me géolocaliser' : 'Suivant',
           onPressed: () async {
             if (_currentPage == _totalPages - 1) {
-              await _onPressedLocation();
+              _onPressedLocation();
             } else {
               await _handlePageAction(_currentPage);
             }

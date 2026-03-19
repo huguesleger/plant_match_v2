@@ -1,6 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
-import 'package:plant_match_v2/features/catolog/domain/entity/catalog.dart';
+import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 
 abstract class CatalogRepository {
   /// Met à jour un catalogue

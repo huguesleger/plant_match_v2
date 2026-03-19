@@ -6,14 +6,12 @@ import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
 class AddPlantWizardItem extends StatelessWidget {
   const AddPlantWizardItem({
     super.key,
-    //this.formKey,
     required this.title,
     required this.description,
     required this.child,
     this.formKey,
   });
 
-  //final GlobalKey? formKey;
   final String title;
   final String description;
   final Widget child;

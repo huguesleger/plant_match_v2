@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/widgets/map_users/around_me_map_view.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/widgets/map_users/around_me_no_location_view.dart';
-import 'package:plant_match_v2/features/catolog/domain/entity/catalog.dart';
+import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 
 class CheckUserLocation extends StatelessWidget {

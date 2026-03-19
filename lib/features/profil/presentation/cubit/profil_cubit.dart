@@ -6,13 +6,17 @@ import 'package:plant_match_v2/features/profil/domain/repository/profil_reposito
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_state.dart';
 import 'package:plant_match_v2/features/storage/domain/storage_repository.dart';
 
+import 'package:plant_match_v2/core/services/location/location_service.dart';
+
 class ProfilCubit extends Cubit<ProfilState> {
   final ProfilRepository profilRepository;
   final StorageRepository storageRepository;
+  final LocationService locationService;
 
   ProfilCubit({
     required this.profilRepository,
     required this.storageRepository,
+    required this.locationService,
   }) : super(ProfilInitial());
 
   // ─── getProfilUser ─────────────────────────────────────────────────────────
@@ -216,6 +220,39 @@ class ProfilCubit extends Cubit<ProfilState> {
         .match(
           (failure) => ProfilError(failure.message),
           (updatedUser) => ProfilLoaded(updatedUser),
+        )
+        .map(emit)
+        .run();
+  }
+
+  // ─── updateLocation ────────────────────────────────────────────────────────
+
+  void updateLocation(String uid) {
+    emit(ProfilLoading());
+
+    locationService
+        .getCurrentPosition()
+        .flatMap((position) => locationService.getPlacemarkFromPosition(position).map((placemark) => (position, placemark)))
+        .flatMap((data) {
+          final position = data.$1;
+          final placemark = data.$2;
+          return profilRepository.getProfilUser(uid).flatMap((option) => option.match(
+                () => TaskEither.left(const AuthFailure('Profil introuvable')),
+                (user) {
+                  final updatedUser = user.copyWith(
+                    newLocalisation: placemark.locality ?? '',
+                    newCountry: placemark.country ?? '',
+                    newZipCode: placemark.postalCode ?? '',
+                    newLatitude: position.latitude,
+                    newLongitude: position.longitude,
+                  );
+                  return profilRepository.updateProfilUser(updatedUser).map((_) => updatedUser);
+                },
+              ));
+        })
+        .match(
+          (failure) => ProfilError(failure.message),
+          (user) => ProfilLoaded(user),
         )
         .map(emit)
         .run();

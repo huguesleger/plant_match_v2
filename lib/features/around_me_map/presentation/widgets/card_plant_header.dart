@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/favorite_btn/favorite_btn.dart';
-import 'package:plant_match_v2/features/catolog/domain/entity/catalog.dart';
+import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 
 class CardPlantHeader extends StatelessWidget {
   const CardPlantHeader({

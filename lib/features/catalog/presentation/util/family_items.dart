@@ -1,5 +1,5 @@
 import 'package:flutter_lucide/flutter_lucide.dart';
-import 'package:plant_match_v2/features/catolog/domain/entity/family_item.dart';
+import 'package:plant_match_v2/features/catalog/domain/entity/family_item.dart';
 
 final List<FamilyItem> familyItems = [
   FamilyItem(

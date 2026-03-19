@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
-import 'package:plant_match_v2/features/catolog/domain/entity/catalog.dart';
-import 'package:plant_match_v2/features/catolog/domain/repository/catalog_repository.dart';
+import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
+import 'package:plant_match_v2/features/catalog/domain/repository/catalog_repository.dart';
 
 class FirebaseCatalogRepository implements CatalogRepository {
   final FirebaseFirestore firestore;

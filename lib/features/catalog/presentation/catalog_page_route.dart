@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/widgets/error/error_page.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
-import 'package:plant_match_v2/features/catolog/data/firebase_catalog_repository.dart';
-import 'package:plant_match_v2/features/catolog/presentation/catalog_screen.dart';
-import 'package:plant_match_v2/features/catolog/presentation/cubit/catalog_cubit.dart';
-import 'package:plant_match_v2/features/catolog/presentation/cubit/catalog_state.dart';
+import 'package:plant_match_v2/features/catalog/data/firebase_catalog_repository.dart';
+import 'package:plant_match_v2/features/catalog/presentation/widgets/catalog_screen.dart';
+import 'package:plant_match_v2/features/catalog/presentation/cubit/catalog_cubit.dart';
+import 'package:plant_match_v2/features/catalog/presentation/cubit/catalog_state.dart';
 import 'package:plant_match_v2/features/storage/data/firebase_storage_repository.dart';
 
-class CatalogPage extends StatelessWidget {
-  CatalogPage({super.key});
+class CatalogPageRoute extends StatelessWidget {
+  CatalogPageRoute({super.key});
 
   final catalogRepository = FirebaseCatalogRepository();
   final storageRepository = FirebaseStorageRepository();

@@ -11,7 +11,7 @@ import 'package:plant_match_v2/core/widgets/app_card/app_card.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_outlined_rounded_with_icon.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/widgets/catalog_users/catalog_users.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/widgets/map_users/user_bottom_sheet_header.dart';
-import 'package:plant_match_v2/features/catolog/domain/entity/catalog.dart';
+import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/features/user/presentation/user_page.dart';
 

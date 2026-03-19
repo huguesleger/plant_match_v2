@@ -13,7 +13,7 @@ import 'package:plant_match_v2/core/widgets/buttons/button_rounded_with_icon.dar
 import 'package:plant_match_v2/core/widgets/favorite_btn/favorite_btn.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
-import 'package:plant_match_v2/features/catolog/domain/entity/catalog.dart';
+import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/chat_plant/data/firebase_chat_plant.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/chat_plant_page.dart';
 import 'package:plant_match_v2/features/user/presentation/detail_plant/widgets/badge_family.dart';

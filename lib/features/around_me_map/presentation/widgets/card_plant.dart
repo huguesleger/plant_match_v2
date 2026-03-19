@@ -4,7 +4,7 @@ import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/widgets/card_plant_content.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/widgets/card_plant_header.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
-import 'package:plant_match_v2/features/catolog/domain/entity/catalog.dart';
+import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 
 class CardPlant extends StatelessWidget {
   const CardPlant({

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:plant_match_v2/features/catolog/presentation/util/family_items.dart';
-import 'package:plant_match_v2/features/catolog/widget/selectable_item.dart';
+import 'package:plant_match_v2/features/catalog/presentation/util/family_items.dart';
+import 'package:plant_match_v2/features/catalog/presentation/widgets/selectable_item.dart';
 
 class GridSelectableItem extends StatelessWidget {
   const GridSelectableItem({

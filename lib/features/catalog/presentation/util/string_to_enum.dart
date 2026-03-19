@@ -1,4 +1,4 @@
-import 'package:plant_match_v2/features/catolog/domain/entity/catalog.dart';
+import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 
 T? stringToEnum<T>(String value, List<T> enumValues) {
   try {

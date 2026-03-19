@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
-import 'package:plant_match_v2/features/catolog/domain/repository/catalog_repository.dart';
+import 'package:plant_match_v2/features/catalog/domain/repository/catalog_repository.dart';
 import 'package:plant_match_v2/features/user/domain/entities/catalog_filter.dart';
 import 'package:plant_match_v2/features/user/domain/entities/user.dart';
 import 'package:plant_match_v2/features/user/domain/repository/user_repository.dart';

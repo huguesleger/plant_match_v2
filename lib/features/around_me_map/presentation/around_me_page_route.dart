@@ -5,8 +5,9 @@ import 'package:plant_match_v2/features/around_me_map/data/firebase_around_me_re
 import 'package:plant_match_v2/features/around_me_map/presentation/around_me_screen.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/cubit/around_me_cubit.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/cubit/around_me_state.dart';
-import 'package:plant_match_v2/features/catolog/data/firebase_catalog_repository.dart';
+import 'package:plant_match_v2/features/catalog/data/firebase_catalog_repository.dart';
 import 'package:plant_match_v2/features/profil/data/firebase_profil_repo.dart';
+import 'package:plant_match_v2/core/services/location/location_service.dart';
 import 'package:plant_match_v2/features/storage/data/firebase_storage_repository.dart';
 
 class AroundMePageRoute extends StatelessWidget {
@@ -15,6 +16,7 @@ class AroundMePageRoute extends StatelessWidget {
   final profilRepository = FirebaseProfilRepo();
   final catalogRepository = FirebaseCatalogRepository();
   final storageRepository = FirebaseStorageRepository();
+  final locationService = LocationServiceImpl();
 
   AroundMePageRoute({super.key, required this.uid});
 
@@ -25,6 +27,7 @@ class AroundMePageRoute extends StatelessWidget {
         aroundMeRepository: aroundMeRepository,
         profilRepository: profilRepository,
         catalogRepository: catalogRepository,
+        locationService: locationService,
       )..getAllUserProfiles(uid),
       child: BlocBuilder<AroundMeCubit, AroundMeState>(
         builder: (context, state) {

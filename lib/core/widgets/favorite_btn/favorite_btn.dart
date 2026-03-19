@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
-import 'package:plant_match_v2/features/catolog/domain/entity/catalog.dart';
+import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/profil/data/firebase_favorites_repo.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 
