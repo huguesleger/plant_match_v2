@@ -21,7 +21,7 @@ import 'package:plant_match_v2/features/donation/presentation/cubit/donation_cub
 import 'package:plant_match_v2/features/donation/presentation/state/donation_state.dart';
 import 'package:plant_match_v2/features/exchange/domain/entities/exchange.dart';
 import 'package:plant_match_v2/features/exchange/presentation/cubit/exchange_cubit.dart';
-import 'package:plant_match_v2/features/exchange/presentation/exchange_page.dart';
+import 'package:plant_match_v2/features/exchange/presentation/exchange_page_route.dart';
 import 'package:plant_match_v2/features/exchange/presentation/state/exchange_state.dart';
 import 'package:plant_match_v2/features/user/presentation/detail_plant/detail_plant.dart';
 
@@ -356,7 +356,7 @@ class ChatPlantScreen extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => ExchangePage(
+                              builder: (_) => ExchangePageRoute(
                                 chatId: chatId,
                                 targetPlantId: plantId,
                                 targetOwnerId: plantOwnerId,

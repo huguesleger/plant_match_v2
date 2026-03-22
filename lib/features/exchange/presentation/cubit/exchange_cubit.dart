@@ -33,20 +33,14 @@ class ExchangeCubit extends Cubit<ExchangeState> {
           return;
         }
 
-        switch (request.status) {
-          case ExchangeStatus.pending:
-            emit(ExchangePending(request));
-            break;
-          case ExchangeStatus.accepted:
-            emit(ExchangeAccepted(request));
-            break;
-          case ExchangeStatus.rejected:
-            emit(ExchangeRejected(request));
-            break;
-          case ExchangeStatus.completed:
-            emit(ExchangeCompleted(request));
-            break;
-        }
+        emit(
+          switch (request.status) {
+            ExchangeStatus.pending => ExchangePending(request),
+            ExchangeStatus.accepted => ExchangeAccepted(request),
+            ExchangeStatus.rejected => ExchangeRejected(request),
+            ExchangeStatus.completed => ExchangeCompleted(request),
+          },
+        );
       },
       onError: (_) => emit(ExchangeError('Erreur échange')),
     );

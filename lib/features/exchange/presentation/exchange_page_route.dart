@@ -7,9 +7,11 @@ import 'package:plant_match_v2/features/exchange/data/firebase_exchange.dart';
 import 'package:plant_match_v2/features/exchange/presentation/cubit/exchange_cubit.dart';
 import 'package:plant_match_v2/features/exchange/presentation/exchange_screen.dart';
 import 'package:plant_match_v2/features/exchange/presentation/state/exchange_state.dart';
+import 'package:plant_match_v2/features/exchange/presentation/widgets/exchange_confirmation.dart';
+import 'package:plant_match_v2/features/exchange/presentation/widgets/exchange_plant_picker.dart';
 
-class ExchangePage extends StatelessWidget {
-  const ExchangePage({
+class ExchangePageRoute extends StatelessWidget {
+  const ExchangePageRoute({
     required this.chatId,
     required this.targetPlantId,
     required this.targetOwnerId,
@@ -40,7 +42,7 @@ class ExchangePage extends StatelessWidget {
           targetOwnerId: targetOwnerId,
           chatId: chatId,
         ),
-      child: BlocConsumer<ExchangeCubit, ExchangeState>(
+      child: BlocListener<ExchangeCubit, ExchangeState>(
         listener: (context, state) {
           if (state is ExchangeSuccess) {
             Future.delayed(const Duration(milliseconds: 500), () {
@@ -50,44 +52,50 @@ class ExchangePage extends StatelessWidget {
             });
           }
         },
-        builder: (context, state) {
-          return Scaffold(
-            appBar: AppBar(
-              title: Text(state is ExchangeConfirming
-                  ? "Confirmer l'échange"
-                  : "Choisir une plante à échanger"),
-            ),
-            body: switch (state) {
-              ExchangeInitial() || ExchangeLoading() => const Center(
-                  child: CircularProgressIndicator(),
+        child: BlocBuilder<ExchangeCubit, ExchangeState>(
+          builder: (context, state) {
+            return switch (state) {
+              ExchangeInitial() || ExchangeLoading() => const ExchangeScreen(
+                  title: "Chargement...",
+                  body: Center(child: CircularProgressIndicator()),
                 ),
               ExchangePickingPlant(:final userPlants) => ExchangeScreen(
-                  userPlants: userPlants,
+                  title: "Choisir une plante à échanger",
+                  body: ExchangePlantPicker(plants: userPlants),
                 ),
               ExchangeConfirming(:final targetPlant, :final offeredPlant) =>
                 ExchangeScreen(
-                  targetPlant: targetPlant,
-                  offeredPlant: offeredPlant,
+                  title: "Confirmer l'échange",
+                  body: ExchangeConfirmation(
+                    targetPlant: targetPlant,
+                    offeredPlant: offeredPlant,
+                  ),
                 ),
-              ExchangeSuccess() => const Center(
-                  child: Text("Échange proposé avec succès !"),
+              ExchangeSuccess() => const ExchangeScreen(
+                  title: "Succès",
+                  body: Center(child: Text("Échange proposé avec succès !")),
                 ),
-              ExchangeError(:final message) => ErrorPage(
-                  errorMessage: message,
-                  onRetry: () {
-                    context.read<ExchangeCubit>().initExchange(
-                      userId: userId,
-                      targetPlantId: targetPlantId,
-                      targetOwnerId: targetOwnerId,
-                      chatId: chatId,
-                    );
-                  },
+              ExchangeError(:final message) => ExchangeScreen(
+                  title: "Erreur",
+                  body: ErrorPage(
+                    errorMessage: message,
+                    onRetry: () {
+                      context.read<ExchangeCubit>().initExchange(
+                            userId: userId,
+                            targetPlantId: targetPlantId,
+                            targetOwnerId: targetOwnerId,
+                            chatId: chatId,
+                          );
+                    },
+                  ),
                 ),
-              // Gestion des états hérités si nécessaire dans cette vue
-              _ => const SizedBox.shrink(),
-            },
-          );
-        },
+              _ => const ExchangeScreen(
+                  title: "",
+                  body: SizedBox.shrink(),
+                ),
+            };
+          },
+        ),
       ),
     );
   }
