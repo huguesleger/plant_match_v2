@@ -31,19 +31,28 @@ class UserPointsCubit extends Cubit<UserPointsState> {
   void addUserPoints(
     String userId,
     int initialPoints,
-    int level,
-  ) {
+    int level, {
+    bool isFromRegistration = false,
+  }) {
     emit(UserPointsLoading());
 
     repository
         .addPoints(userId, initialPoints, level)
         .match(
           (failure) => UserPointsError(failure.message),
-          (userPoints) => UserPointsLoaded(
-            userPoints.currentPoints,
-            userPoints.level,
-            userPoints,
-          ),
+          (userPoints) {
+            emit(UserPointsAwarded(
+              initialPoints,
+              userId,
+              userPoints,
+              isFromRegistration: isFromRegistration,
+            ));
+            return UserPointsLoaded(
+              userPoints.currentPoints,
+              userPoints.level,
+              userPoints,
+            );
+          },
         )
         .map(emit)
         .run();
@@ -59,11 +68,14 @@ class UserPointsCubit extends Cubit<UserPointsState> {
         .flatMap((_) => repository.getPoints(userId))
         .match(
           (failure) => UserPointsError(failure.message),
-          (userPoints) => UserPointsLoaded(
-            userPoints.currentPoints,
-            userPoints.level,
-            userPoints,
-          ),
+          (userPoints) {
+            emit(UserPointsAwarded(pointsToAdd, userId, userPoints));
+            return UserPointsLoaded(
+              userPoints.currentPoints,
+              userPoints.level,
+              userPoints,
+            );
+          },
         )
         .map(emit)
         .run();

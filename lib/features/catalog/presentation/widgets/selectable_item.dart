@@ -41,7 +41,7 @@ class SelectableItem extends StatelessWidget {
           children: [
             Icon(
               icon,
-              size: AppTypo.textXxL,
+              size: AppTypo.textXxl,
               color: isSelected ? AppColors.greenDark : AppColors.greyDark,
             ),
             const SizedBox(height: 5),

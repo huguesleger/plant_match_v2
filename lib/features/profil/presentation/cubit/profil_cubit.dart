@@ -232,11 +232,14 @@ class ProfilCubit extends Cubit<ProfilState> {
 
     locationService
         .getCurrentPosition()
-        .flatMap((position) => locationService.getPlacemarkFromPosition(position).map((placemark) => (position, placemark)))
+        .flatMap((position) => locationService
+            .getPlacemarkFromPosition(position)
+            .map((placemark) => (position, placemark)))
         .flatMap((data) {
           final position = data.$1;
           final placemark = data.$2;
-          return profilRepository.getProfilUser(uid).flatMap((option) => option.match(
+          return profilRepository.getProfilUser(uid).flatMap((option) =>
+              option.match(
                 () => TaskEither.left(const AuthFailure('Profil introuvable')),
                 (user) {
                   final updatedUser = user.copyWith(
@@ -246,7 +249,9 @@ class ProfilCubit extends Cubit<ProfilState> {
                     newLatitude: position.latitude,
                     newLongitude: position.longitude,
                   );
-                  return profilRepository.updateProfilUser(updatedUser).map((_) => updatedUser);
+                  return profilRepository
+                      .updateProfilUser(updatedUser)
+                      .map((_) => updatedUser);
                 },
               ));
         })

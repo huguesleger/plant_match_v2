@@ -54,8 +54,12 @@ class ProfilBadgePage extends StatelessWidget {
                     context.read<UserPointsCubit>().fetchUserPoints(userId);
                   },
                 ),
-              UserPointsLoaded() =>
-                ProfilBadgeScreen(userPoints: state.userPoints),
+              UserPointsLoaded() ||
+              UserPointsAwarded() =>
+                ProfilBadgeScreen(
+                    userPoints: state is UserPointsLoaded
+                        ? state.userPoints
+                        : (state as UserPointsAwarded).points as dynamic), // This part is slightly tricky because UserPointsAwarded doesn't have UserPoints entity. 
             };
           },
         ),

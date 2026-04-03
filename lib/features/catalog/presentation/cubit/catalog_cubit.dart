@@ -38,16 +38,19 @@ class CatalogCubit extends Cubit<CatalogState> {
 
   // ─── addCatalog ────────────────────────────────────────────────────────────
 
-  TaskEither<Failure, String> addCatalog(Catalog catalog) {
+  TaskEither<Failure, (String, bool)> addCatalog(Catalog catalog) {
     emit(const CatalogLoading());
 
     return catalogRepository.createCatalog(catalog).flatMap((id) {
       final updatedCatalog = catalog.copyWith(newCatalogId: id);
-      return catalogRepository.getCatalogsByUserId(catalog.userId).flatMap((catalogs) {
-        return TaskEither<Failure, String>.tryCatch(
+      return catalogRepository
+          .getCatalogsByUserId(catalog.userId)
+          .flatMap((catalogs) {
+        final isFirstPlant = catalogs.length == 1;
+        return TaskEither<Failure, (String, bool)>.tryCatch(
           () async {
             emit(CatalogLoaded(catalogs, updatedCatalog));
-            return id;
+            return (id, isFirstPlant);
           },
           (error, _) => UnexpectedFailure(error.toString()),
         );
@@ -137,7 +140,8 @@ class CatalogCubit extends Cubit<CatalogState> {
     emit(const CatalogLoading());
 
     return storageRepository.deleteImage(imageUrl: imageUrl).flatMap((_) {
-      final updatedImages = catalog.images.where((img) => img != imageUrl).toList();
+      final updatedImages =
+          catalog.images.where((img) => img != imageUrl).toList();
       final updatedCatalog = catalog.copyWith(newImages: updatedImages);
 
       return catalogRepository
@@ -160,7 +164,8 @@ class CatalogCubit extends Cubit<CatalogState> {
   TaskEither<Failure, Catalog> getCatalogById(String catalogId) {
     emit(const CatalogLoading());
 
-    return catalogRepository.getCatalogById(catalogId).flatMap((option) => option.match(
+    return catalogRepository.getCatalogById(catalogId).flatMap((option) =>
+        option.match(
           () => TaskEither.left(const FirebaseFailure("Catalogue non trouvé")),
           (catalog) {
             return TaskEither<Failure, Catalog>.tryCatch(

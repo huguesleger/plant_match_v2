@@ -282,7 +282,7 @@ class _EditButton extends StatelessWidget {
       onPressed: () async {
         final result = await Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => EditCatalogPageRouteRoute(catalog: catalog)),
+          MaterialPageRoute(builder: (_) => EditCatalogPageRoute(catalog: catalog)),
         );
         if (result == true && context.mounted) {
           final getResult = await context.read<CatalogCubit>().getCatalogById(catalog.catalogId!).run();

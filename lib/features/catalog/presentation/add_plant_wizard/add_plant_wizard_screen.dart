@@ -18,6 +18,7 @@ import 'package:plant_match_v2/features/catalog/presentation/widgets/catalog_upl
 import 'package:plant_match_v2/features/catalog/presentation/widgets/grid_selectable_item.dart';
 import 'package:plant_match_v2/features/catalog/presentation/widgets/item_radio.dart';
 import 'package:plant_match_v2/features/catalog/presentation/widgets/selectable_item.dart';
+import 'package:plant_match_v2/features/user_points/presentation/cubit/user_points_cubit.dart';
 
 class AddPlantWizardScreen extends StatefulWidget {
   const AddPlantWizardScreen({super.key, required this.catalog});
@@ -252,7 +253,7 @@ class _AddPlantWizardScreenState extends State<AddPlantWizardScreen> {
       );
 
       final saveRes = await cubit.addCatalog(finalCatalog).run();
-      final id = saveRes.getOrElse((_) => "");
+      final (id, isFirst) = saveRes.getOrElse((_) => ("", false));
 
       final localImages =
           finalCatalog.images.where((img) => !img.startsWith('http')).toList();
@@ -262,6 +263,12 @@ class _AddPlantWizardScreenState extends State<AddPlantWizardScreen> {
             catalogId: id,
             imagePaths: localImages,
             existingImages: []).run();
+      }
+
+      if (isFirst && mounted) {
+        context
+            .read<UserPointsCubit>()
+            .updateUserPoints(finalCatalog.userId, 25);
       }
 
       if (mounted) {

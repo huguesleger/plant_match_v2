@@ -61,7 +61,7 @@ class _Content extends StatelessWidget {
       children: [
         const TitlePage(
           title: 'Échangez, adoptez et cultivez ensemble.',
-          fontSize: 30,
+          fontSize: AppTypo.textXxl,
           fontWeight: FontWeight.bold,
           color: AppColors.greenLight,
         ),

@@ -97,7 +97,6 @@ class UserPointsUtils {
     int newLevel = userPoints.level;
 
     while (newPoints >= getMaxPointsForLevel(newLevel)) {
-      newPoints -= getMaxPointsForLevel(newLevel);
       newLevel++;
     }
 

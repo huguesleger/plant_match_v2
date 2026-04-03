@@ -19,3 +19,13 @@ class UserPointsError extends UserPointsState {
 
   UserPointsError(this.message);
 }
+
+class UserPointsAwarded extends UserPointsState {
+  final int points;
+  final String userId;
+  final UserPoints userPoints;
+  final bool isFromRegistration;
+
+  UserPointsAwarded(this.points, this.userId, this.userPoints,
+      {this.isFromRegistration = false});
+}

@@ -14,8 +14,9 @@ class AuthLoading extends AuthState {
 
 class Authenticated extends AuthState {
   final UserAuth user;
+  final bool isFirstTime;
 
-  const Authenticated(this.user);
+  const Authenticated(this.user, {this.isFirstTime = false});
 }
 
 class Unauthenticated extends AuthState {

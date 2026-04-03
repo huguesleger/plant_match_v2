@@ -1,5 +1,5 @@
 class AppTypo {
-  static const double textXxL = 30;
+  static const double textXxl = 30;
   static const double textXl = 24;
   static const double textL = 20;
   static const double textM = 18;

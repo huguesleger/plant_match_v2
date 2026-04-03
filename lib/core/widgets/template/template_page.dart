@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/widgets/navigation_bottom_bar/navigation_bottom_bar.dart';
-import 'package:plant_match_v2/features/catalog/data/firebase_catalog_repository.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/add_plant_wizard_page.dart';
-import 'package:plant_match_v2/features/catalog/presentation/cubit/catalog_cubit.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/around_me_page_route.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/features/home/presentation/home_page.dart';
 import 'package:plant_match_v2/features/message/presentation/message_page.dart';
 import 'package:plant_match_v2/features/message/presentation/cubit/unread_messages_cubit.dart';
 import 'package:plant_match_v2/features/profil/presentation/profil_page.dart';
-import 'package:plant_match_v2/features/storage/data/firebase_storage_repository.dart';
 import 'package:plant_match_v2/features/chat_plant/data/firebase_chat_plant.dart';
 import 'package:plant_match_v2/features/exchange/data/firebase_exchange.dart';
 import 'package:plant_match_v2/features/exchange/presentation/cubit/unread_exhange_cubit.dart';
+
 const int _addButtonIndex = 2;
 
 class TemplatePage extends StatefulWidget {
@@ -65,14 +63,8 @@ class TemplatePageState extends State<TemplatePage> {
     await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => BlocProvider(
-          create: (_) => CatalogCubit(
-            catalogRepository: FirebaseCatalogRepository(),
-            storageRepository: FirebaseStorageRepository(),
-          ),
-          child: AddPlantWizardPageRoute(
-            catalog: Catalog.empty(uid),
-          ),
+        builder: (_) => AddPlantWizardPageRoute(
+          catalog: Catalog.empty(uid),
         ),
       ),
     );

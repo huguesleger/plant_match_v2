@@ -74,10 +74,9 @@ class FirebaseUserPoints implements UserPointsRepository {
         int currentPoints = data['currentPoints'] as int;
         int level = data['level'] as int;
 
-        // Calculer les nouveaux points et niveau
+        // Calculer les nouveaux points et niveau (système cumulatif)
         currentPoints += pointsToAdd;
         while (currentPoints >= UserPointsUtils.getMaxPointsForLevel(level)) {
-          currentPoints -= UserPointsUtils.getMaxPointsForLevel(level);
           level++;
         }
 
