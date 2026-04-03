@@ -17,6 +17,7 @@ class AuthCguCheckbox extends StatelessWidget {
   Widget build(BuildContext context) {
     return FormBuilderField<bool>(
       name: 'acceptTerms',
+      initialValue: isChecked,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       validator: FormBuilderValidators.compose([
         (value) {
@@ -32,13 +33,16 @@ class AuthCguCheckbox extends StatelessWidget {
           child: InputDecorator(
             decoration: InputDecoration(
               border: InputBorder.none,
-              errorText: isChecked == false ? field.errorText : null,
+              errorText: field.errorText,
             ),
             child: Transform(
               transform: Matrix4.translationValues(-22, 0.0, 0.0),
               child: CguCheckboxField(
                 value: isChecked,
-                onChanged: onChanged,
+                onChanged: (val) {
+                    field.didChange(val);
+                    onChanged(val);
+                  },
               ),
             ),
           ),
