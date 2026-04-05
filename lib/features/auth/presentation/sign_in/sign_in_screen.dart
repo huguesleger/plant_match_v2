@@ -4,6 +4,7 @@ import 'package:plant_match_v2/core/widgets/app_bar/app_bar_dynamic_header.dart'
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
 import 'package:plant_match_v2/features/auth/presentation/sign_in/widgets/form_sign_in.dart';
 import 'package:plant_match_v2/features/auth/presentation/sign_in/widgets/sign_in_header_logo.dart';
+import 'package:plant_match_v2/features/auth/presentation/sign_in/widgets/sign_in_background.dart';
 
 class SignInScreen extends StatelessWidget {
   const SignInScreen({
@@ -40,32 +41,32 @@ class SignInScreen extends StatelessWidget {
             ),
           ),
         ),
-        backgroundAppBar: SizedBox(
-          //width: double.infinity,
-          //height: MediaQuery.of(context).size.height * 0.4,
-          child: ClipPath(
-            clipper: BottomRoundedClipper(),
-            child: Image.asset(
-              'assets/images/auth/login.jpg',
-              fit: BoxFit.cover,
-            ),
-          ),
-        ),
+        backgroundAppBar : const SignInBackground(),
       ),
     );
   }
 }
 
 class BottomRoundedClipper extends CustomClipper<Path> {
+  final double curveHeight;
+  final double progress;
+  BottomRoundedClipper({this.curveHeight = 60.0, this.progress = 1.0});
+
   @override
   Path getClip(Size size) {
     Path path = Path();
-    path.lineTo(0, size.height - 60);
+    
+    // Les extrémités descendent vers size.height
+    final yExtremities = size.height - curveHeight;
+    // Le point de contrôle remonte vers size.height - 60
+    final yControl = size.height - (60.0 - curveHeight);
+
+    path.lineTo(0, yExtremities);
     path.quadraticBezierTo(
       size.width / 2,
-      size.height,
+      yControl,
       size.width,
-      size.height - 60,
+      yExtremities,
     );
     path.lineTo(size.width, 0);
     path.close();
@@ -73,7 +74,7 @@ class BottomRoundedClipper extends CustomClipper<Path> {
   }
 
   @override
-  bool shouldReclip(covariant CustomClipper<Path> oldClipper) {
-    return false;
+  bool shouldReclip(covariant BottomRoundedClipper oldClipper) {
+    return oldClipper.curveHeight != curveHeight || oldClipper.progress != progress;
   }
 }
