@@ -19,6 +19,7 @@ class PasswordField extends StatelessWidget {
   Widget build(BuildContext context) {
     return FancyPasswordField(
       controller: controller,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Ce champ est requis';
@@ -28,7 +29,7 @@ class PasswordField extends StatelessWidget {
       validationRules: {
         MinCharactersValidationRule(8, customText: 'Au moins 8 caractères'),
         DigitValidationRule(
-          customText: 'Un 1 chiffre',
+          customText: 'Un chiffre',
         ),
         UppercaseValidationRule(
           customText: 'Une majuscule',
@@ -83,6 +84,9 @@ class PasswordField extends StatelessWidget {
       obscureText: obscureText,
       hasStrengthIndicator: false,
       decoration: InputDecoration(
+        errorStyle: const TextStyle(
+          color: AppColors.error,
+        ),
         isDense: true,
         labelText: 'Mot de passe',
         border: const OutlineInputBorder(
