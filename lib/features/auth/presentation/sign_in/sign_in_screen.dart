@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_dynamic_header.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
 import 'package:plant_match_v2/features/auth/presentation/sign_in/widgets/form_sign_in.dart';
+import 'package:plant_match_v2/features/auth/presentation/sign_in/widgets/sign_in_header_logo.dart';
 
 class SignInScreen extends StatelessWidget {
   const SignInScreen({
@@ -19,14 +19,10 @@ class SignInScreen extends StatelessWidget {
       body: AppBarDynamicHeader(
         height: MediaQuery.of(context).size.height > 700 ? 345 : 250,
         leading: false,
-        titlePadding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).size.height > 700 ? 140 : 70,
-            top: 50),
-        visual: SvgPicture.asset('assets/logo/logo_white.svg'),
-        shrinkVisual: SvgPicture.asset(
-          'assets/logo/logo_color.svg',
-          width: 60,
-        ),
+        titlePadding: const EdgeInsets.only(bottom: 0),
+        titlePaddingShrink: const EdgeInsets.only(bottom: 0),
+        visual: const SignInHeaderLogo(),
+        shrinkVisual: const SignInHeaderLogo(),
         body: Padding(
           padding: AppSpacing.paddingHorizontal,
           child: IntrinsicHeight(
