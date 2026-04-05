@@ -10,9 +10,20 @@ import 'package:plant_match_v2/features/auth/domain/entities/user_auth.dart';
 import 'package:plant_match_v2/features/auth/domain/repository/auth_repository.dart';
 
 class FirebaseAuthRepository implements AuthRepository {
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final FirebaseAuth _firebaseAuth;
+  final FirebaseFirestore _firebaseFirestore;
+  final GoogleSignIn _googleSignIn;
+  final FacebookAuth _facebookAuth;
+
+  FirebaseAuthRepository({
+    FirebaseAuth? firebaseAuth,
+    FirebaseFirestore? firebaseFirestore,
+    GoogleSignIn? googleSignIn,
+    FacebookAuth? facebookAuth,
+  })  : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
+        _firebaseFirestore = firebaseFirestore ?? FirebaseFirestore.instance,
+        _googleSignIn = googleSignIn ?? GoogleSignIn(),
+        _facebookAuth = facebookAuth ?? FacebookAuth.instance;
 
   // ─── getCurrentUser ───────────────────────────────────────────────────────
 
@@ -59,10 +70,8 @@ class FirebaseAuthRepository implements AuthRepository {
               'Une erreur inattendue est survenue. Veuillez réessayer.');
         }
 
-        final userDoc = await _firebaseFirestore
-            .collection('users')
-            .doc(user.uid)
-            .get();
+        final userDoc =
+            await _firebaseFirestore.collection('users').doc(user.uid).get();
 
         await _firebaseFirestore
             .collection('users')
@@ -106,12 +115,10 @@ class FirebaseAuthRepository implements AuthRepository {
   // ─── finalizeRegistration ─────────────────────────────────────────────────
 
   @override
-  TaskEither<Failure, bool> finalizeRegistration(
-      User user, String fullName) {
+  TaskEither<Failure, bool> finalizeRegistration(User user, String fullName) {
     return TaskEither.tryCatch(
       () async {
-        final docRef =
-            _firebaseFirestore.collection('users').doc(user.uid);
+        final docRef = _firebaseFirestore.collection('users').doc(user.uid);
         final existingDoc = await docRef.get();
         if (existingDoc.exists) return false;
 
@@ -159,10 +166,7 @@ class FirebaseAuthRepository implements AuthRepository {
           fullName: firebaseUser.displayName ?? '',
         );
 
-        await _firebaseFirestore
-            .collection('users')
-            .doc(userAuth.uid)
-            .set({
+        await _firebaseFirestore.collection('users').doc(userAuth.uid).set({
           'email': userAuth.email,
           'fullName': userAuth.fullName,
           'isOnline': true,
@@ -181,7 +185,7 @@ class FirebaseAuthRepository implements AuthRepository {
     return TaskEither.tryCatch(
       () async {
         final nonce = DateTime.now().toIso8601String();
-        final result = await FacebookAuth.instance.login(
+        final result = await _facebookAuth.login(
           permissions: ['public_profile', 'email'],
           loginTracking: LoginTracking.enabled,
           nonce: nonce,
@@ -191,19 +195,18 @@ class FirebaseAuthRepository implements AuthRepository {
           throw const AuthFailure('Connexion avec Facebook annulée.');
         }
 
-        final userData = await FacebookAuth.instance.getUserData();
+        final userData = await _facebookAuth.getUserData();
         final accessToken = result.accessToken!;
         final credential =
             FacebookAuthProvider.credential(accessToken.tokenString);
         await AppTrackingTransparency.requestTrackingAuthorization();
 
         final userCredential =
-            await FirebaseAuth.instance.signInWithCredential(credential);
+            await _firebaseAuth.signInWithCredential(credential);
         final firebaseUser = userCredential.user;
 
         if (firebaseUser == null) {
-          throw const AuthFailure(
-              "Échec de l'authentification avec Facebook.");
+          throw const AuthFailure("Échec de l'authentification avec Facebook.");
         }
 
         final userAuth = UserAuth(
@@ -212,10 +215,7 @@ class FirebaseAuthRepository implements AuthRepository {
           fullName: userData['name'],
         );
 
-        await _firebaseFirestore
-            .collection('users')
-            .doc(userAuth.uid)
-            .set({
+        await _firebaseFirestore.collection('users').doc(userAuth.uid).set({
           'email': userAuth.email,
           'fullName': userAuth.fullName,
           'isOnline': true,
@@ -238,7 +238,7 @@ class FirebaseAuthRepository implements AuthRepository {
         } catch (_) {}
 
         try {
-          await FacebookAuth.instance.logOut();
+          await _facebookAuth.logOut();
         } catch (_) {}
 
         try {
@@ -250,8 +250,7 @@ class FirebaseAuthRepository implements AuthRepository {
                 .update({'isOnline': false});
           }
         } catch (e) {
-          debugPrint(
-              'Note: Impossible de mettre à jour le statut online: $e');
+          debugPrint('Note: Impossible de mettre à jour le statut online: $e');
         }
 
         await _firebaseAuth.signOut();

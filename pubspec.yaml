@@ -100,6 +100,11 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^4.0.0
+  mocktail: ^1.0.4
+  bloc_test: ^9.1.7
+  fake_cloud_firestore: ^3.1.0
+  firebase_auth_mocks: ^0.14.2
+  google_sign_in_mocks: ^0.3.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
