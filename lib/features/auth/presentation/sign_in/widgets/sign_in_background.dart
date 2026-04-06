@@ -8,18 +8,15 @@ class SignInBackground extends StatelessWidget {
   Widget build(BuildContext context) {
     final settings =
         context.dependOnInheritedWidgetOfExactType<FlexibleSpaceBarSettings>();
-    
-    // Calcul de la progression t (1.0 = étendu, 0.0 = réduit)
-    final t = settings == null 
-        ? 1.0 
+
+    final t = settings == null
+        ? 1.0
         : ((settings.currentExtent - settings.minExtent) /
-            (settings.maxExtent - settings.minExtent))
-                .clamp(0.0, 1.0);
+                (settings.maxExtent - settings.minExtent))
+            .clamp(0.0, 1.0);
 
-    // Progression accélérée pour la courbe (la transition se termine à la moitié du scroll)
-    final tCurve = (t * 2.0 - 1.0).clamp(0.0, 1.0);
+    final tCurve = (t * 2.0 - 1.2).clamp(0.0, 1.0);
 
-    // La courbe varie de 60 à 0
     final curveHeight = 60.0 * tCurve;
 
     return ClipPath(
