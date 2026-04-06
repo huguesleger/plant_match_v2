@@ -73,9 +73,10 @@ class MessagesCubit extends Cubit<MessagesState> {
       if (otherUserId.isEmpty) return TaskEither<Failure, ChatPlant?>.of(null);
 
       return userRepository.getUserUid(otherUserId).map((user) {
-        final displayName = user.userName.isNotEmpty
-            ? user.userName
-            : user.fullName.split(' ').first;
+        final String displayName = user.userName.match(
+          () => user.fullName.split(' ').first,
+          (name) => name,
+        );
 
         final displayAvatar =
             user.profilImg.trim().isNotEmpty == true ? user.profilImg : '';

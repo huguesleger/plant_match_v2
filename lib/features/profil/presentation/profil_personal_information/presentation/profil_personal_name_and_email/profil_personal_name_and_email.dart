@@ -17,9 +17,10 @@ class ProfilPersonalNameAndEmail extends StatelessWidget {
       child: Column(
         children: [
           TitlePage(
-            title: profilUser.userName.isNotEmpty
-                ? profilUser.userName.toCapitalizeWords()
-                : profilUser.fullName.toCapitalizeWords(),
+            title: profilUser.userName.match(
+              () => profilUser.fullName.toCapitalizeWords(),
+              (userName) => userName.toCapitalizeWords(),
+            ),
             fontSize: AppTypo.textL,
             color: AppColors.white,
             textAlign: TextAlign.center,

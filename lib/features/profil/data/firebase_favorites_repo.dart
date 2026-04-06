@@ -124,13 +124,15 @@ class FirebaseFavoritesRepo implements FavoritesRepository {
                 uid: data['uid'] ?? '',
                 email: '',
                 fullName: data['fullName'] ?? '',
-                bio: '',
+                bio: const None(),
                 profilImg: data['profilImg'] ?? '',
                 userName: data['userName'] ?? '',
                 localisation: data['localisation'] ?? '',
                 country: '',
                 zipCode: data['zipCode'] ?? '',
-                position: const GeoPoint(0, 0),
+                birthdayDate: const None(),
+                latitude: const None(),
+                longitude: const None(),
                 isOnline: data['isOnline'] ?? false,
               );
             }).toList());

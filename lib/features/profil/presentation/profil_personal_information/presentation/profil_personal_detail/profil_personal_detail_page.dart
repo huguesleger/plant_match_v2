@@ -29,9 +29,10 @@ class ProfilPersonalDetailPage extends StatelessWidget {
             ),
             ProfilPersonalDetailItem(
               title: 'Pseudo d\'affichage',
-              subtitle: profilUser.userName.isEmpty
-                  ? 'A renseigner'
-                  : profilUser.userName,
+              subtitle: profilUser.userName.match(
+                () => 'A renseigner',
+                (userName) => userName.isEmpty ? 'A renseigner' : userName,
+              ),
               onTap: () {
                 final profilCubit = context.read<ProfilCubit>();
                 profilCubit.clearField(
@@ -41,9 +42,10 @@ class ProfilPersonalDetailPage extends StatelessWidget {
             const Divider(height: 0),
             ProfilPersonalDetailItem(
               title: 'Date d\'anniversaire',
-              subtitle: profilUser.birthdayDate != null
-                  ? DateFormat('dd/MM/yyyy').format(profilUser.birthdayDate!)
-                  : 'A renseigner',
+              subtitle: profilUser.birthdayDate.match(
+                () => 'A renseigner',
+                (date) => DateFormat('dd/MM/yyyy').format(date),
+              ),
               onTap: () {
                 final profilCubit = context.read<ProfilCubit>();
                 profilCubit.clearField(
@@ -53,7 +55,10 @@ class ProfilPersonalDetailPage extends StatelessWidget {
             const Divider(height: 0),
             ProfilPersonalDetailItem(
               title: 'Bio',
-              subtitle: profilUser.bio != '' ? profilUser.bio! : 'A renseigner',
+              subtitle: profilUser.bio.match(
+                () => 'A renseigner',
+                (bio) => bio.isEmpty ? 'A renseigner' : bio,
+              ),
               onTap: () {
                 final profilCubit = context.read<ProfilCubit>();
                 profilCubit.clearField(

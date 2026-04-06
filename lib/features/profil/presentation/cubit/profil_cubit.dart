@@ -65,29 +65,27 @@ class ProfilCubit extends Cubit<ProfilState> {
                         folder: 'profile_images',
                       )
                       .map((imageDownloadUrl) => currentUser.copyWith(
-                            newBio: newBio ?? currentUser.bio,
+                            newBio: Option.fromNullable(newBio),
                             newProfilImg: imageDownloadUrl,
-                            newUserName: newUserName ?? currentUser.userName,
+                            newUserName: Option.fromNullable(newUserName),
                             newLocalisation:
                                 newLocalisation ?? currentUser.localisation,
                             newCountry: newCountry ?? currentUser.country,
                             newZipCode: newZipCode ?? currentUser.zipCode,
-                            newBirthdayDate:
-                                newBirthdayDate ?? currentUser.birthdayDate,
-                            newLatitude: newLatitude ?? currentUser.latitude,
-                            newLongitude: newLongitude ?? currentUser.longitude,
+                            newBirthdayDate: Option.fromNullable(newBirthdayDate),
+                            newLatitude: Option.fromNullable(newLatitude),
+                            newLongitude: Option.fromNullable(newLongitude),
                           ))
                   : TaskEither.right(currentUser.copyWith(
-                      newBio: newBio ?? currentUser.bio,
-                      newUserName: newUserName ?? currentUser.userName,
+                      newBio: Option.fromNullable(newBio),
+                      newUserName: Option.fromNullable(newUserName),
                       newLocalisation:
                           newLocalisation ?? currentUser.localisation,
                       newCountry: newCountry ?? currentUser.country,
                       newZipCode: newZipCode ?? currentUser.zipCode,
-                      newBirthdayDate:
-                          newBirthdayDate ?? currentUser.birthdayDate,
-                      newLatitude: newLatitude ?? currentUser.latitude,
-                      newLongitude: newLongitude ?? currentUser.longitude,
+                      newBirthdayDate: Option.fromNullable(newBirthdayDate),
+                      newLatitude: Option.fromNullable(newLatitude),
+                      newLongitude: Option.fromNullable(newLongitude),
                     )),
             ))
         .flatMap((updatedUser) => profilRepository
@@ -203,14 +201,14 @@ class ProfilCubit extends Cubit<ProfilState> {
               () => TaskEither.left(const AuthFailure('Profil introuvable')),
               (currentUser) {
                 final updatedProfilUser = currentUser.copyWith(
-                  newUserName: fieldName == 'userName' ? '' : null,
-                  clearBio: fieldName == 'bio',
+                  newUserName: fieldName == 'userName' ? const None() : null,
+                  newBio: fieldName == 'bio' ? const None() : null,
                   newLocalisation: fieldName == 'localisation' ? '' : null,
                   newCountry: fieldName == 'country' ? '' : null,
                   newZipCode: fieldName == 'zipCode' ? '' : null,
-                  newLatitude: fieldName == 'latitude' ? 0.0 : null,
-                  newLongitude: fieldName == 'longitude' ? 0.0 : null,
-                  clearBirthdayDate: fieldName == 'birthdayDate',
+                  newLatitude: fieldName == 'latitude' ? const None() : null,
+                  newLongitude: fieldName == 'longitude' ? const None() : null,
+                  newBirthdayDate: fieldName == 'birthdayDate' ? const None() : null,
                 );
 
                 return profilRepository
@@ -240,8 +238,8 @@ class ProfilCubit extends Cubit<ProfilState> {
                   newLocalisation: '',
                   newCountry: '',
                   newZipCode: '',
-                  newLatitude: 0.0,
-                  newLongitude: 0.0,
+                  newLatitude: const None(),
+                  newLongitude: const None(),
                 );
 
                 return profilRepository
@@ -278,8 +276,8 @@ class ProfilCubit extends Cubit<ProfilState> {
                     newLocalisation: placemark.locality ?? '',
                     newCountry: placemark.country ?? '',
                     newZipCode: placemark.postalCode ?? '',
-                    newLatitude: position.latitude,
-                    newLongitude: position.longitude,
+                    newLatitude: Some(position.latitude),
+                    newLongitude: Some(position.longitude),
                   );
                   return profilRepository
                       .updateProfilUser(updatedUser)

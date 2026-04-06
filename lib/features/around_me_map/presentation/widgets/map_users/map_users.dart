@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:latlong2/latlong.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/widgets/map_users/map_controls.dart';
@@ -57,7 +58,10 @@ class _MapUsersState extends State<MapUsers> {
     }
   }
 
-  LatLng _getUserPosition(ProfilUser user) => LatLng(user.latitude ?? 0.0, user.longitude ?? 0.0);
+  LatLng _getUserPosition(ProfilUser user) => LatLng(
+        user.latitude.getOrElse(() => 0.0),
+        user.longitude.getOrElse(() => 0.0),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -116,8 +120,8 @@ class _MapUsersState extends State<MapUsers> {
     const Distance distance = Distance();
     double meters = distance.as(
       LengthUnit.Meter,
-      LatLng(currentUser.latitude ?? 0.0, currentUser.longitude ?? 0.0),
-      LatLng(user.latitude ?? 0.0, user.longitude ?? 0.0),
+      _getUserPosition(currentUser),
+      _getUserPosition(user),
     );
     return double.parse((meters / 1000).toStringAsFixed(2));
   }

@@ -32,8 +32,8 @@ class FirebaseAroundMeRepository implements AroundMeRepository {
             .collection('users')
             .doc(user.uid)
             .update({
-          'latitude': user.latitude,
-          'longitude': user.longitude,
+          'latitude': user.latitude.toNullable(),
+          'longitude': user.longitude.toNullable(),
           'localisation': user.localisation,
           'country': user.country,
         });

@@ -1,65 +1,60 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/features/auth/domain/entities/user_auth.dart';
 
 class ProfilUser extends UserAuth {
-  final String? bio;
+  final Option<String> bio;
   final String profilImg;
-  final String userName;
+  final Option<String> userName;
   final String localisation;
   final String country;
   final String zipCode;
-  final DateTime? birthdayDate;
-  final double? latitude;
-  final double? longitude;
-  final GeoPoint position;
+  final Option<DateTime> birthdayDate;
+  final Option<double> latitude;
+  final Option<double> longitude;
   final bool isOnline;
 
   ProfilUser({
     required super.uid,
     required super.email,
     required super.fullName,
-    this.bio,
+    required this.bio,
     required this.profilImg,
     required this.userName,
     required this.localisation,
     required this.country,
     required this.zipCode,
-    this.latitude,
-    this.longitude,
-    required this.position,
-    this.birthdayDate,
+    required this.birthdayDate,
+    required this.latitude,
+    required this.longitude,
     required this.isOnline,
   });
 
   ProfilUser copyWith({
-    String? newBio,
-    bool clearBio = false,
+    Option<String>? newBio,
     String? newProfilImg,
-    String? newUserName,
+    Option<String>? newUserName,
     String? newLocalisation,
     String? newZipCode,
     String? newCountry,
-    DateTime? newBirthdayDate,
-    bool clearBirthdayDate = false,
-    double? newLatitude,
-    double? newLongitude,
-    GeoPoint? newPosition,
+    Option<DateTime>? newBirthdayDate,
+    Option<double>? newLatitude,
+    Option<double>? newLongitude,
     bool? newIsOnline,
   }) {
     return ProfilUser(
       uid: uid,
       email: email,
       fullName: fullName,
-      bio: clearBio ? null : (newBio ?? bio),
+      bio: newBio ?? bio,
       profilImg: newProfilImg ?? profilImg,
       userName: newUserName ?? userName,
       localisation: newLocalisation ?? localisation,
       country: newCountry ?? country,
       zipCode: newZipCode ?? zipCode,
-      birthdayDate: clearBirthdayDate ? null : (newBirthdayDate ?? birthdayDate),
+      birthdayDate: newBirthdayDate ?? birthdayDate,
       latitude: newLatitude ?? latitude,
       longitude: newLongitude ?? longitude,
-      position: newPosition ?? position,
       isOnline: newIsOnline ?? isOnline,
     );
   }
@@ -70,44 +65,46 @@ class ProfilUser extends UserAuth {
       'uid': uid,
       'email': email,
       'fullName': fullName,
-      'bio': bio,
+      'bio': bio.toNullable(),
       'profilImg': profilImg,
-      'userName': userName,
+      'userName': userName.toNullable(),
       'localisation': localisation,
       'country': country,
       'zipCode': zipCode,
-      'birthdayDate': birthdayDate?.toIso8601String(),
-      'latitude': latitude,
-      'longitude': longitude,
-      'position': {
-        'geopoint': position,
-      },
+      'birthdayDate': birthdayDate.match(
+        () => null,
+        (date) => Timestamp.fromDate(date),
+      ),
+      'latitude': latitude.toNullable(),
+      'longitude': longitude.toNullable(),
       'isOnline': isOnline,
     };
   }
 
   factory ProfilUser.fromJson(Map<String, dynamic> json) {
+    Option<String> stringToOption(dynamic value) {
+      final s = value as String?;
+      if (s == null || s.trim().isEmpty) return const None();
+      return Some(s);
+    }
+
     return ProfilUser(
       uid: json['uid'] ?? '',
       email: json['email'] ?? '',
       fullName: json['fullName'] ?? '',
-      bio: json['bio'] ?? '',
+      bio: stringToOption(json['bio']),
       profilImg: json['profilImg'] ?? '',
-      userName: json['userName'] ?? '',
+      userName: stringToOption(json['userName']),
       localisation: json['localisation'] ?? '',
       country: json['country'] ?? '',
       zipCode: json['zipCode'] ?? '',
-      birthdayDate: json['birthdayDate'] != null
-          ? (json['birthdayDate'] is Timestamp
-              ? (json['birthdayDate'] as Timestamp).toDate()
-              : DateTime.tryParse(json['birthdayDate'].toString()))
-          : null,
-      latitude: (json['latitude'] != null) ? json['latitude'].toDouble() : 0.0,
-      longitude:
-          (json['longitude'] != null) ? json['longitude'].toDouble() : 0.0,
-      position: json['position'] != null && json['position']['geopoint'] != null
-          ? json['position']['geopoint'] as GeoPoint
-          : const GeoPoint(0, 0),
+      birthdayDate: Option.fromNullable(json['birthdayDate']).map((d) {
+        if (d is Timestamp) return d.toDate();
+        if (d is String) return DateTime.tryParse(d) ?? DateTime.now();
+        return DateTime.now();
+      }),
+      latitude: Option.fromNullable(json['latitude']?.toDouble()),
+      longitude: Option.fromNullable(json['longitude']?.toDouble()),
       isOnline: json['isOnline'] ?? false,
     );
   }

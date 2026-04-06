@@ -20,9 +20,10 @@ class FavoriteUserCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final displayName = user.userName.isNotEmpty
-        ? user.userName.toCapitalize()
-        : user.fullName.toCapitalize();
+    final displayName = user.userName.match(
+      () => user.fullName.toCapitalize(),
+      (userName) => userName.toCapitalize(),
+    );
 
     return Material(
       elevation: 4,

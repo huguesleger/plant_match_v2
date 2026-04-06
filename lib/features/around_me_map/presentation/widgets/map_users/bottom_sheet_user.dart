@@ -74,7 +74,10 @@ class _CatalogSection extends StatelessWidget {
             )
           : Center(
               child: Text(
-                "${user.userName.isNotEmpty ? user.userName.toCapitalize() : user.fullName.getFirstWordBeforeSpace().toCapitalize()} n'a pas encore de catalogue.",
+                "${user.userName.match(
+                  () => user.fullName.getFirstWordBeforeSpace().toCapitalize(),
+                  (userName) => userName.toCapitalize(),
+                )} n'a pas encore de catalogue.",
                 textAlign: TextAlign.center,
                 style: InterTextStyle.inter(
                   AppTypo.textM,

@@ -35,9 +35,10 @@ class UserScreen extends StatelessWidget {
               child: Padding(
                 padding: AppSpacing.paddingHorizontal,
                 child: Text(
-                  (user.bio != null && user.bio!.isNotEmpty)
-                      ? user.bio!
-                      : 'Pas encore de description...',
+                  user.bio.match(
+                    () => 'Pas encore de description...',
+                    (bio) => bio.isEmpty ? 'Pas encore de description...' : bio,
+                  ),
                   style: const TextStyle(color: Colors.grey),
                   textAlign: TextAlign.center,
                 ),

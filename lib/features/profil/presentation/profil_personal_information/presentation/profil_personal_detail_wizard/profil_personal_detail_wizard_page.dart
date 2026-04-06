@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:intl/intl.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_template.dart';
@@ -40,11 +41,12 @@ class _ProfilPersonalDetailWizardPageState
   @override
   void initState() {
     super.initState();
-    _pseudoController.text = widget.profilUser.userName;
-    _birthdayDateController.text = widget.profilUser.birthdayDate != null
-        ? DateFormat('dd/MM/yyyy').format(widget.profilUser.birthdayDate!)
-        : '';
-    _bioController.text = widget.profilUser.bio ?? '';
+    _pseudoController.text = widget.profilUser.userName.getOrElse(() => '');
+    _birthdayDateController.text = widget.profilUser.birthdayDate.match(
+      () => '',
+      (date) => DateFormat('dd/MM/yyyy').format(date),
+    );
+    _bioController.text = widget.profilUser.bio.getOrElse(() => '');
   }
 
   @override
@@ -82,7 +84,11 @@ class _ProfilPersonalDetailWizardPageState
           controller: _pseudoController,
           updateUserField: (value) {
             context.read<ProfilCubit>().saveProfilUser(
-                  widget.profilUser.copyWith(newUserName: value),
+                  widget.profilUser.copyWith(
+                    newUserName: value.trim().isEmpty
+                        ? const None()
+                        : Some(value.trim()),
+                  ),
                 );
           },
         );
@@ -94,8 +100,11 @@ class _ProfilPersonalDetailWizardPageState
           updateUserField: (value) {
             context.read<ProfilCubit>().saveProfilUser(
                   widget.profilUser.copyWith(
-                    newUserName: _pseudoController.text,
-                    newBirthdayDate: DateFormat('dd/MM/yyyy').parse(value),
+                    newUserName: _pseudoController.text.trim().isEmpty
+                        ? const None()
+                        : Some(_pseudoController.text.trim()),
+                    newBirthdayDate:
+                        Some(DateFormat('dd/MM/yyyy').parse(value)),
                   ),
                 );
           },
@@ -108,10 +117,14 @@ class _ProfilPersonalDetailWizardPageState
           updateUserField: (value) {
             context.read<ProfilCubit>().saveProfilUser(
                   widget.profilUser.copyWith(
-                    newUserName: _pseudoController.text,
-                    newBirthdayDate: DateFormat('dd/MM/yyyy')
-                        .parse(_birthdayDateController.text),
-                    newBio: value,
+                    newUserName: _pseudoController.text.trim().isEmpty
+                        ? const None()
+                        : Some(_pseudoController.text.trim()),
+                    newBirthdayDate: Some(DateFormat('dd/MM/yyyy')
+                        .parse(_birthdayDateController.text)),
+                    newBio: value.trim().isEmpty
+                        ? const None()
+                        : Some(value.trim()),
                   ),
                 );
           },
@@ -192,8 +205,6 @@ class _ProfilPersonalDetailWizardPageState
                     ),
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     controller: _pseudoController,
-                    validator: FormBuilderValidators.required(
-                        errorText: 'Ce champ est requis'),
                   ),
                 ),
                 ProfilPersonalDetailWizardItem(
@@ -207,11 +218,11 @@ class _ProfilPersonalDetailWizardPageState
                     initialDate: _birthdayDateController.text.isNotEmpty
                         ? DateFormat('dd/MM/yyyy')
                             .parse(_birthdayDateController.text)
-                        : widget.profilUser.birthdayDate,
+                        : widget.profilUser.birthdayDate.toNullable(),
                     initialValue: _birthdayDateController.text.isNotEmpty
                         ? DateFormat('dd/MM/yyyy')
                             .parse(_birthdayDateController.text)
-                        : null,
+                        : widget.profilUser.birthdayDate.toNullable(),
                     format: DateFormat('dd/MM/yyyy'),
                     lastDate: DateTime.now(),
                     decoration: DecorationInput.inputDecoration(
@@ -241,8 +252,6 @@ class _ProfilPersonalDetailWizardPageState
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     controller: _bioController,
                     maxLength: 150,
-                    validator: FormBuilderValidators.required(
-                        errorText: 'Ce champ est requis'),
                   ),
                 ),
                 ProfilPersonalDetailWizardItem(

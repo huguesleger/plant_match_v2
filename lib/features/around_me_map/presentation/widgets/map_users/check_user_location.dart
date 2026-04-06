@@ -18,10 +18,14 @@ class CheckUserLocation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool hasValidLocation = currentUser.latitude != null &&
-        currentUser.longitude != null &&
-        currentUser.latitude != 0 &&
-        currentUser.longitude != 0;
+    final bool hasValidLocation = currentUser.latitude.match(
+          () => false,
+          (lat) => lat != 0,
+        ) &&
+        currentUser.longitude.match(
+          () => false,
+          (lng) => lng != 0,
+        );
 
     return hasValidLocation
         ? AroundMeMapView(

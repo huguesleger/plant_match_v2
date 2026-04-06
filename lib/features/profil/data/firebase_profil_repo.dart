@@ -21,27 +21,10 @@ class FirebaseProfilRepo implements ProfilRepository {
           final userData = userDoc.data();
 
           if (userData != null) {
-            return Some(ProfilUser(
-              uid: uid,
-              email: userData['email'],
-              fullName: userData['fullName'],
-              bio: userData['bio'] ?? '',
-              profilImg: userData['profilImg'].toString(),
-              userName: userData['userName'] ?? '',
-              localisation: userData['localisation'] ?? '',
-              country: userData['country'] ?? '',
-              zipCode: userData['zipCode'] ?? '',
-              birthdayDate: userData['birthdayDate'] != null
-                  ? (userData['birthdayDate'] as Timestamp).toDate()
-                  : null,
-              latitude: userData['latitude'],
-              longitude: userData['longitude'],
-              position: userData['position'] != null &&
-                      userData['position']['geopoint'] != null
-                  ? userData['position']['geopoint'] as GeoPoint
-                  : const GeoPoint(0, 0),
-              isOnline: userData['isOnline'],
-            ));
+            return Some(ProfilUser.fromJson({
+              ...userData,
+              'uid': uid, // On s'assure que l'UID est présent pour fromJson
+            }));
           }
         }
         return const None();
@@ -59,26 +42,15 @@ class FirebaseProfilRepo implements ProfilRepository {
 
     return TaskEither.tryCatch(
       () async {
+        // On utilise toJson() qui gère déjà la conversion Option -> null et retire position
+        final data = updateProfilUser.toJson();
+        // On retire uid du body Firestore car il est en clé de document
+        data.remove('uid');
+        
         await _firebaseFirestore
             .collection('users')
             .doc(updateProfilUser.uid)
-            .update({
-          'bio': updateProfilUser.bio,
-          'profilImg': updateProfilUser.profilImg,
-          'userName': updateProfilUser.userName,
-          'localisation': updateProfilUser.localisation,
-          'country': updateProfilUser.country,
-          'zipCode': updateProfilUser.zipCode,
-          'birthdayDate': updateProfilUser.birthdayDate != null
-              ? Timestamp.fromDate(updateProfilUser.birthdayDate!)
-              : null,
-          'latitude': updateProfilUser.latitude,
-          'longitude': updateProfilUser.longitude,
-          'position': {
-            'geopoint': updateProfilUser.position,
-          },
-          'isOnline': updateProfilUser.isOnline,
-        });
+            .update(data);
         return unit;
       },
       (error, _) => _mapErrorToFailure(error),
@@ -94,25 +66,9 @@ class FirebaseProfilRepo implements ProfilRepository {
 
     return TaskEither.tryCatch(
       () async {
-        await _firebaseFirestore.collection('users').doc(profilUser.uid).set({
-          'email': profilUser.email,
-          'fullName': profilUser.fullName,
-          'bio': profilUser.bio,
-          'profilImg': profilUser.profilImg,
-          'userName': profilUser.userName,
-          'localisation': profilUser.localisation,
-          'country': profilUser.country,
-          'zipCode': profilUser.zipCode,
-          'birthdayDate': profilUser.birthdayDate != null
-              ? Timestamp.fromDate(profilUser.birthdayDate!)
-              : null,
-          'latitude': profilUser.latitude,
-          'longitude': profilUser.longitude,
-          'position': {
-            'geopoint': profilUser.position,
-          },
-          'isOnline': profilUser.isOnline,
-        });
+        final data = profilUser.toJson();
+        // Optionnel: garder l'uid dans le document ou non selon vos préférences Firestore
+        await _firebaseFirestore.collection('users').doc(profilUser.uid).set(data);
         return unit;
       },
       (error, _) => _mapErrorToFailure(error),

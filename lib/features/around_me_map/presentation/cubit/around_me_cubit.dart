@@ -86,8 +86,8 @@ class AroundMeCubit extends Cubit<AroundMeState> {
           final updatedUser = user.copyWith(
             newLocalisation: placemark.locality ?? '',
             newCountry: placemark.country ?? '',
-            newLatitude: position.latitude,
-            newLongitude: position.longitude,
+            newLatitude: Some(position.latitude),
+            newLongitude: Some(position.longitude),
           );
           return aroundMeRepository.updateUserLocation(updatedUser).map((_) => updatedUser);
         })

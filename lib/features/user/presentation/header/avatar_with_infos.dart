@@ -60,9 +60,10 @@ class AvatarWithInfos extends StatelessWidget {
         ),
         const SizedBox(height: 5),
         Text(
-          user.userName.isNotEmpty
-              ? user.userName.toCapitalize()
-              : user.fullName.getFirstWordBeforeSpace().toCapitalize(),
+          user.userName.match(
+            () => user.fullName.getFirstWordBeforeSpace().toCapitalize(),
+            (userName) => userName.toCapitalize(),
+          ),
           style: InterTextStyle.inter(
             AppTypo.textM,
             color: AppColors.greyDark,
