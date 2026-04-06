@@ -204,12 +204,44 @@ class ProfilCubit extends Cubit<ProfilState> {
               (currentUser) {
                 final updatedProfilUser = currentUser.copyWith(
                   newUserName: fieldName == 'userName' ? '' : null,
-                  newBio: fieldName == 'bio' ? '' : null,
+                  clearBio: fieldName == 'bio',
                   newLocalisation: fieldName == 'localisation' ? '' : null,
                   newCountry: fieldName == 'country' ? '' : null,
                   newZipCode: fieldName == 'zipCode' ? '' : null,
-                  newLatitude: fieldName == 'latitude' ? 0 : null,
-                  newLongitude: fieldName == 'longitude' ? 0 : null,
+                  newLatitude: fieldName == 'latitude' ? 0.0 : null,
+                  newLongitude: fieldName == 'longitude' ? 0.0 : null,
+                  clearBirthdayDate: fieldName == 'birthdayDate',
+                );
+
+                return profilRepository
+                    .updateProfilUser(updatedProfilUser)
+                    .map((_) => updatedProfilUser);
+              },
+            ))
+        .match(
+          (failure) => ProfilError(failure.message),
+          (updatedUser) => ProfilLoaded(updatedUser),
+        )
+        .map(emit)
+        .run();
+  }
+
+  // ─── clearLocation ──────────────────────────────────────────────────────────
+
+  void clearLocation(String uid) {
+    emit(ProfilLoading());
+
+    profilRepository
+        .getProfilUser(uid)
+        .flatMap((option) => option.match(
+              () => TaskEither.left(const AuthFailure('Profil introuvable')),
+              (currentUser) {
+                final updatedProfilUser = currentUser.copyWith(
+                  newLocalisation: '',
+                  newCountry: '',
+                  newZipCode: '',
+                  newLatitude: 0.0,
+                  newLongitude: 0.0,
                 );
 
                 return profilRepository

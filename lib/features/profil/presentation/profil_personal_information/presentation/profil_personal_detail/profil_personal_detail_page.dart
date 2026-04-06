@@ -44,6 +44,11 @@ class ProfilPersonalDetailPage extends StatelessWidget {
               subtitle: profilUser.birthdayDate != null
                   ? DateFormat('dd/MM/yyyy').format(profilUser.birthdayDate!)
                   : 'A renseigner',
+              onTap: () {
+                final profilCubit = context.read<ProfilCubit>();
+                profilCubit.clearField(
+                    uid: profilUser.uid, fieldName: 'birthdayDate');
+              },
             ),
             const Divider(height: 0),
             ProfilPersonalDetailItem(
@@ -62,27 +67,7 @@ class ProfilPersonalDetailPage extends StatelessWidget {
                   ? 'A renseigner'
                   : '${profilUser.localisation} ${(profilUser.zipCode)} - ${profilUser.country}',
               onTap: () {
-                final profilCubit = context.read<ProfilCubit>();
-                profilCubit.clearField(
-                  uid: profilUser.uid,
-                  fieldName: 'localisation',
-                );
-                profilCubit.clearField(
-                  uid: profilUser.uid,
-                  fieldName: 'country',
-                );
-                profilCubit.clearField(
-                  uid: profilUser.uid,
-                  fieldName: 'zipCode',
-                );
-                profilCubit.clearField(
-                  uid: profilUser.uid,
-                  fieldName: 'latitude',
-                );
-                profilCubit.clearField(
-                  uid: profilUser.uid,
-                  fieldName: 'longitude',
-                );
+                context.read<ProfilCubit>().clearLocation(profilUser.uid);
               },
             ),
             const Divider(height: 0),
