@@ -58,89 +58,34 @@ class _ProfilPersonalDetailWizardPageState
     super.dispose();
   }
 
-  void _onPressed({
-    required GlobalKey<FormBuilderState> formKey,
-    required TextEditingController controller,
-    required Function(String) updateUserField,
-  }) {
-    if (formKey.currentState?.saveAndValidate() ?? false) {
-      final String value = controller.text;
-      updateUserField(value);
+  void _onNextPressed() {
+    final formKeys = [
+      _formKeyPseudo,
+      _formKeyBirthdayDate,
+      _formKeyBio,
+    ];
 
-      if (_currentPage < _totalPages - 1) {
-        _onPressedNext();
+    if (_currentPage < formKeys.length) {
+      if (formKeys[_currentPage].currentState?.saveAndValidate() ?? false) {
+        final updatedUser = widget.profilUser.copyWith(
+          newUserName: Option.fromPredicate(
+              _pseudoController.text.trim(), (String v) => v.isNotEmpty),
+          newBirthdayDate: _birthdayDateController.text.isNotEmpty
+              ? Some(
+                  DateFormat('dd/MM/yyyy').parse(_birthdayDateController.text))
+              : const None(),
+          newBio: Option.fromPredicate(
+              _bioController.text.trim(), (String v) => v.isNotEmpty),
+        );
+
+        context.read<ProfilCubit>().saveProfilUser(updatedUser);
+
+        _pageController.nextPage(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeIn,
+        );
       }
     }
-  }
-
-  void _onPressedLocation() {
-    context.read<ProfilCubit>().updateLocation(widget.profilUser.uid);
-  }
-
-  Future<void> _handlePageAction(int currentPage) async {
-    switch (currentPage) {
-      case 0:
-        _onPressed(
-          formKey: _formKeyPseudo,
-          controller: _pseudoController,
-          updateUserField: (value) {
-            context.read<ProfilCubit>().saveProfilUser(
-                  widget.profilUser.copyWith(
-                    newUserName: value.trim().isEmpty
-                        ? const None()
-                        : Some(value.trim()),
-                  ),
-                );
-          },
-        );
-        break;
-      case 1:
-        _onPressed(
-          formKey: _formKeyBirthdayDate,
-          controller: _birthdayDateController,
-          updateUserField: (value) {
-            context.read<ProfilCubit>().saveProfilUser(
-                  widget.profilUser.copyWith(
-                    newUserName: _pseudoController.text.trim().isEmpty
-                        ? const None()
-                        : Some(_pseudoController.text.trim()),
-                    newBirthdayDate:
-                        Some(DateFormat('dd/MM/yyyy').parse(value)),
-                  ),
-                );
-          },
-        );
-        break;
-      case 2:
-        _onPressed(
-          formKey: _formKeyBio,
-          controller: _bioController,
-          updateUserField: (value) {
-            context.read<ProfilCubit>().saveProfilUser(
-                  widget.profilUser.copyWith(
-                    newUserName: _pseudoController.text.trim().isEmpty
-                        ? const None()
-                        : Some(_pseudoController.text.trim()),
-                    newBirthdayDate: Some(DateFormat('dd/MM/yyyy')
-                        .parse(_birthdayDateController.text)),
-                    newBio: value.trim().isEmpty
-                        ? const None()
-                        : Some(value.trim()),
-                  ),
-                );
-          },
-        );
-        break;
-      default:
-        break;
-    }
-  }
-
-  void _onPressedNext() {
-    _pageController.nextPage(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeIn,
-    );
   }
 
   void _onPressedBack() {
@@ -150,20 +95,22 @@ class _ProfilPersonalDetailWizardPageState
     );
   }
 
+  void _onPressedLocation() {
+    context.read<ProfilCubit>().updateLocation(widget.profilUser.uid);
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<ProfilCubit, ProfilState>(
-      listener: (context, state) {
-        if (state is ProfilLoaded && _currentPage == _totalPages - 1) {
-          if (Navigator.canPop(context)) {
-            Navigator.of(context).pop();
-          }
-        }
-        if (state is ProfilError) {
+      listener: (context, state) => switch (state) {
+        ProfilLoaded() when _currentPage == _totalPages - 1 =>
+          Navigator.canPop(context) ? Navigator.of(context).pop() : (),
+        ProfilLoaded() => (),
+        ProfilError(:final message) =>
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
-          );
-        }
+            SnackBar(content: Text(message)),
+          ),
+        ProfilInitial() || ProfilLoading() || ProfilImageUploading() => (),
       },
       child: Stack(
         children: [
@@ -306,7 +253,7 @@ class _ProfilPersonalDetailWizardPageState
                   if (_currentPage == _totalPages - 1) {
                     _onPressedLocation();
                   } else {
-                    await _handlePageAction(_currentPage);
+                    _onNextPressed();
                   }
                 },
                 bgColor: AppColors.greenLight,
@@ -317,17 +264,18 @@ class _ProfilPersonalDetailWizardPageState
           // Loader Overlay
           BlocBuilder<ProfilCubit, ProfilState>(
             builder: (context, state) {
-              if (state is ProfilLoading && _currentPage == _totalPages - 1) {
-                return Container(
-                  color: AppColors.black.withValues(alpha: 0.5),
-                  child: const Center(
-                    child: CircularProgressIndicator(
-                      color: AppColors.greenLight,
+              return switch (state) {
+                ProfilLoading() when _currentPage == _totalPages - 1 =>
+                  Container(
+                    color: AppColors.black.withValues(alpha: 0.5),
+                    child: const Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.greenLight,
+                      ),
                     ),
                   ),
-                );
-              }
-              return const SizedBox.shrink();
+                _ => const SizedBox.shrink(),
+              };
             },
           ),
         ],
