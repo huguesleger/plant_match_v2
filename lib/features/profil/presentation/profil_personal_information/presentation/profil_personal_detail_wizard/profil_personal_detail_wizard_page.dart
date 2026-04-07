@@ -12,6 +12,7 @@ import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
 import 'package:plant_match_v2/core/widgets/form/decoration_input.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
+import 'package:plant_match_v2/features/profil/presentation/cubit/profil_state.dart';
 import 'package:plant_match_v2/features/profil/presentation/profil_personal_information/presentation/profil_personal_detail_wizard/profil_personal_detail_wizard_item.dart';
 
 class ProfilPersonalDetailWizardPage extends StatefulWidget {
@@ -151,148 +152,185 @@ class _ProfilPersonalDetailWizardPageState
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBarTemplate(
-        title: 'Informations personnelles',
-        backgroundColor: AppColors.white,
-        surfaceTintColor: AppColors.white,
-        styleIconButton: IconButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          side: const BorderSide(color: AppColors.greyLight),
-        ),
-        centerTitle: true,
-        leading: _currentPage == 0 ? false : true,
-        onPressed: () {
-          _onPressedBack();
-        },
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: const Icon(LucideIcons.x),
-            color: AppColors.greyDark,
-          ),
-        ],
-      ),
-      body: SafeArea(
-        child: Stack(
-          children: [
-            // Progress Indicator
-            _ProgressWizard(currentPage: _currentPage, totalPages: _totalPages),
-            // PageView
-            PageView(
-              controller: _pageController,
-              physics: const NeverScrollableScrollPhysics(),
-              onPageChanged: (page) {
-                setState(() {
-                  _currentPage = page;
-                });
+    return BlocListener<ProfilCubit, ProfilState>(
+      listener: (context, state) {
+        if (state is ProfilLoaded && _currentPage == _totalPages - 1) {
+          if (Navigator.canPop(context)) {
+            Navigator.of(context).pop();
+          }
+        }
+        if (state is ProfilError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message)),
+          );
+        }
+      },
+      child: Stack(
+        children: [
+          Scaffold(
+            appBar: AppBarTemplate(
+              title: 'Informations personnelles',
+              backgroundColor: AppColors.white,
+              surfaceTintColor: AppColors.white,
+              styleIconButton: IconButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                side: const BorderSide(color: AppColors.greyLight),
+              ),
+              centerTitle: true,
+              leading: _currentPage == 0 ? false : true,
+              onPressed: () {
+                _onPressedBack();
               },
-              children: [
-                ProfilPersonalDetailWizardItem(
-                  formKey: _formKeyPseudo,
-                  title: 'Pseudo d\'affichage',
-                  description:
-                      'Choisissez votre pseudo qui sera visible par les autres utilisateurs.',
-                  child: FormBuilderTextField(
-                    name: 'userName',
-                    decoration: DecorationInput.inputDecoration(
-                      hintText: 'Entrez votre pseudo',
-                      labelText: 'Pseudo',
-                    ),
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    controller: _pseudoController,
-                  ),
-                ),
-                ProfilPersonalDetailWizardItem(
-                  formKey: _formKeyBirthdayDate,
-                  title: 'Date d\'anniversaire',
-                  description:
-                      'Renseignez votre date de naissance pour recevoir des points le jour de votre anniversaire.',
-                  child: FormBuilderDateTimePicker(
-                    name: 'dateOfBirth',
-                    inputType: InputType.date,
-                    initialDate: _birthdayDateController.text.isNotEmpty
-                        ? DateFormat('dd/MM/yyyy')
-                            .parse(_birthdayDateController.text)
-                        : widget.profilUser.birthdayDate.toNullable(),
-                    initialValue: _birthdayDateController.text.isNotEmpty
-                        ? DateFormat('dd/MM/yyyy')
-                            .parse(_birthdayDateController.text)
-                        : widget.profilUser.birthdayDate.toNullable(),
-                    format: DateFormat('dd/MM/yyyy'),
-                    lastDate: DateTime.now(),
-                    decoration: DecorationInput.inputDecoration(
-                      hintText: 'Entrez votre date de naissance',
-                      labelText: 'Date de naissance',
-                      suffixIcon: const Icon(LucideIcons.calendar),
-                    ),
-                    locale: const Locale('fr', 'FR'),
-                    controller: _birthdayDateController,
-                    validator: FormBuilderValidators.required(
-                        errorText: 'Ce champ est requis'),
-                  ),
-                ),
-                ProfilPersonalDetailWizardItem(
-                  title: 'Bio',
-                  description: 'Rédigez une courte description de vous.',
-                  formKey: _formKeyBio,
-                  child: FormBuilderTextField(
-                    name: 'bio',
-                    decoration: DecorationInput.inputDecoration(
-                      hintText: 'Ajoutez une description',
-                      labelText: 'Bio',
-                      alignLabelWithHint: true,
-                    ),
-                    minLines: 3,
-                    maxLines: 5,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    controller: _bioController,
-                    maxLength: 150,
-                  ),
-                ),
-                ProfilPersonalDetailWizardItem(
-                  title: 'Localisation',
-                  description:
-                      'Votre position sera utilisée pour vous proposer des profils proches de chez vous.',
-                  formKey: _formKeyCity,
-                  child: Column(
-                    children: [
-                      const Text('Localisation'),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      const Text('Localisation coordonnées'),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Text(widget.profilUser.localisation),
-                      Text(widget.profilUser.country),
-                      Text(widget.profilUser.zipCode),
-                    ],
-                  ),
+              actions: [
+                IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(LucideIcons.x),
+                  color: AppColors.greyDark,
                 ),
               ],
             ),
-          ],
-        ),
-      ),
-      bottomNavigationBar: BottomBar(
-        child: ButtonRounded(
-          text: _currentPage == _totalPages - 1 ? 'Me géolocaliser' : 'Suivant',
-          onPressed: () async {
-            if (_currentPage == _totalPages - 1) {
-              _onPressedLocation();
-            } else {
-              await _handlePageAction(_currentPage);
-            }
-          },
-          bgColor: AppColors.greenLight,
-          textColor: AppColors.blueGreen,
-        ),
+            body: SafeArea(
+              child: Stack(
+                children: [
+                  // Progress Indicator
+                  _ProgressWizard(
+                      currentPage: _currentPage, totalPages: _totalPages),
+                  // PageView
+                  PageView(
+                    controller: _pageController,
+                    physics: const NeverScrollableScrollPhysics(),
+                    onPageChanged: (page) {
+                      setState(() {
+                        _currentPage = page;
+                      });
+                    },
+                    children: [
+                      ProfilPersonalDetailWizardItem(
+                        formKey: _formKeyPseudo,
+                        title: 'Pseudo d\'affichage',
+                        description:
+                            'Choisissez votre pseudo qui sera visible par les autres utilisateurs.',
+                        child: FormBuilderTextField(
+                          name: 'userName',
+                          decoration: DecorationInput.inputDecoration(
+                            hintText: 'Entrez votre pseudo',
+                            labelText: 'Pseudo',
+                          ),
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          controller: _pseudoController,
+                        ),
+                      ),
+                      ProfilPersonalDetailWizardItem(
+                        formKey: _formKeyBirthdayDate,
+                        title: 'Date d\'anniversaire',
+                        description:
+                            'Renseignez votre date de naissance pour recevoir des points le jour de votre anniversaire.',
+                        child: FormBuilderDateTimePicker(
+                          name: 'dateOfBirth',
+                          inputType: InputType.date,
+                          initialDate: _birthdayDateController.text.isNotEmpty
+                              ? DateFormat('dd/MM/yyyy')
+                                  .parse(_birthdayDateController.text)
+                              : widget.profilUser.birthdayDate.toNullable(),
+                          initialValue: _birthdayDateController.text.isNotEmpty
+                              ? DateFormat('dd/MM/yyyy')
+                                  .parse(_birthdayDateController.text)
+                              : widget.profilUser.birthdayDate.toNullable(),
+                          format: DateFormat('dd/MM/yyyy'),
+                          lastDate: DateTime.now(),
+                          decoration: DecorationInput.inputDecoration(
+                            hintText: 'Entrez votre date de naissance',
+                            labelText: 'Date de naissance',
+                            suffixIcon: const Icon(LucideIcons.calendar),
+                          ),
+                          locale: const Locale('fr', 'FR'),
+                          controller: _birthdayDateController,
+                          validator: FormBuilderValidators.required(
+                              errorText: 'Ce champ est requis'),
+                        ),
+                      ),
+                      ProfilPersonalDetailWizardItem(
+                        title: 'Bio',
+                        description: 'Rédigez une courte description de vous.',
+                        formKey: _formKeyBio,
+                        child: FormBuilderTextField(
+                          name: 'bio',
+                          decoration: DecorationInput.inputDecoration(
+                            hintText: 'Ajoutez une description',
+                            labelText: 'Bio',
+                            alignLabelWithHint: true,
+                          ),
+                          minLines: 3,
+                          maxLines: 5,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          controller: _bioController,
+                          maxLength: 150,
+                        ),
+                      ),
+                      ProfilPersonalDetailWizardItem(
+                        title: 'Localisation',
+                        description:
+                            'Votre position sera utilisée pour vous proposer des profils proches de chez vous.',
+                        formKey: _formKeyCity,
+                        child: Column(
+                          children: [
+                            SizedBox(
+                                height: MediaQuery.of(context).size.height > 700
+                                    ? 45
+                                    : 25),
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height > 700
+                                  ? 300
+                                  : 200,
+                              child: Image.asset(
+                                  'assets/images/illu_location.png'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            bottomNavigationBar: BottomBar(
+              child: ButtonRounded(
+                text: _currentPage == _totalPages - 1
+                    ? 'Me géolocaliser'
+                    : 'Suivant',
+                onPressed: () async {
+                  if (_currentPage == _totalPages - 1) {
+                    _onPressedLocation();
+                  } else {
+                    await _handlePageAction(_currentPage);
+                  }
+                },
+                bgColor: AppColors.greenLight,
+                textColor: AppColors.blueGreen,
+              ),
+            ),
+          ),
+          // Loader Overlay
+          BlocBuilder<ProfilCubit, ProfilState>(
+            builder: (context, state) {
+              if (state is ProfilLoading && _currentPage == _totalPages - 1) {
+                return Container(
+                  color: AppColors.black.withValues(alpha: 0.5),
+                  child: const Center(
+                    child: CircularProgressIndicator(
+                      color: AppColors.greenLight,
+                    ),
+                  ),
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
+        ],
       ),
     );
   }

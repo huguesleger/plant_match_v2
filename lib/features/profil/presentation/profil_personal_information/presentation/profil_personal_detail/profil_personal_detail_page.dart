@@ -97,7 +97,6 @@ class ProfilPersonalDetailPage extends StatelessWidget {
                         ),
                       ),
                     );
-                  profilCubit.getProfilUser(profilUser.uid);
                 },
                 bgColor: AppColors.greenLight,
                 textColor: AppColors.blueGreen,
