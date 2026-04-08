@@ -15,5 +15,5 @@ abstract class DonationRepository {
 
   TaskEither<Failure, Unit> markAsCompleted(String donationId, String completedBy);
 
-  Stream<List<Donation>> getCompletedDonations(String uid);
+  TaskEither<Failure, List<Donation>> getCompletedDonations(String uid);
 }

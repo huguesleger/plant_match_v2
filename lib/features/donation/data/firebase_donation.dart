@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
@@ -109,20 +111,38 @@ class FirebaseDonation implements DonationRepository {
   }
 
   @override
-  Stream<List<Donation>> getCompletedDonations(String uid) {
-    return _col
-        .where(Filter.or(
-          Filter('ownerId', isEqualTo: uid),
-          Filter('requestedBy', isEqualTo: uid),
-        ))
-        .where(Filter.or(
-          Filter('status', isEqualTo: 'accepted'),
-          Filter('status', isEqualTo: 'completed'),
-          Filter('status', isEqualTo: 'rejected'),
-        ))
-        .orderBy('createdAt', descending: true)
-        .snapshots()
-        .map((snap) =>
-            snap.docs.map((d) => Donation.fromJson(d.id, d.data())).toList());
+  TaskEither<Failure, List<Donation>> getCompletedDonations(String uid) {
+    const statuses = ['accepted', 'completed', 'rejected'];
+
+    return TaskEither.tryCatch(
+      () async {
+        final results = await Future.wait([
+          _col
+              .where('ownerId', isEqualTo: uid)
+              .where('status', whereIn: statuses)
+              .orderBy('createdAt', descending: true)
+              .get(),
+          _col
+              .where('requestedBy', isEqualTo: uid)
+              .where('status', whereIn: statuses)
+              .orderBy('createdAt', descending: true)
+              .get(),
+        ]);
+
+        final uniqueDonations = results
+            .expand((snap) => snap.docs)
+            .map((doc) => Donation.fromJson(doc.id, doc.data()))
+            .fold<Map<String, Donation>>(
+              {},
+              (map, donation) => map..putIfAbsent(donation.id, () => donation),
+            )
+            .values
+            .toList()
+          ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
+        return uniqueDonations;
+      },
+      (error, _) => UnexpectedFailure('Erreur lors de la récupération des donations : $error'),
+    );
   }
 }

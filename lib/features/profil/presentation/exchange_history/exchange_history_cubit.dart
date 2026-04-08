@@ -13,9 +13,6 @@ class ExchangeHistoryCubit extends Cubit<ExchangeHistoryState> {
   final DonationRepository donationRepository;
   final String userId;
 
-  StreamSubscription<List<Exchange>>? _exchangeSub;
-  StreamSubscription<List<Donation>>? _donationSub;
-
   List<Exchange> _exchanges = [];
   List<Donation> _donations = [];
   HistoryStatusFilter _currentFilter = HistoryStatusFilter.all;
@@ -30,32 +27,21 @@ class ExchangeHistoryCubit extends Cubit<ExchangeHistoryState> {
     _currentFilter = filter;
     emit(const ExchangeHistoryLoading());
 
-    _exchangeSub?.cancel();
-    _donationSub?.cancel();
-
-    _exchangeSub = exchangeRepository.getCompletedExchanges(userId).listen(
-      (exchanges) {
-        _exchanges = exchanges;
+    exchangeRepository.getCompletedExchanges(userId).flatMap((exchanges) {
+      return donationRepository.getCompletedDonations(userId).map((donations) {
+        return (exchanges, donations);
+      });
+    }).match(
+      (failure) {
+        if (!isClosed) emit(ExchangeHistoryError(failure.message));
+      },
+      (data) {
+        if (isClosed) return;
+        _exchanges = data.$1;
+        _donations = data.$2;
         _emitLoaded();
       },
-      onError: (e) {
-        if (!isClosed) {
-          emit(ExchangeHistoryError(e.toString()));
-        }
-      },
-    );
-
-    _donationSub = donationRepository.getCompletedDonations(userId).listen(
-      (donations) {
-        _donations = donations;
-        _emitLoaded();
-      },
-      onError: (e) {
-        if (!isClosed) {
-          emit(ExchangeHistoryError(e.toString()));
-        }
-      },
-    );
+    ).run();
   }
 
   void _emitLoaded() {
@@ -92,8 +78,6 @@ class ExchangeHistoryCubit extends Cubit<ExchangeHistoryState> {
 
   @override
   Future<void> close() {
-    _exchangeSub?.cancel();
-    _donationSub?.cancel();
     return super.close();
   }
 }

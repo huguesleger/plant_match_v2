@@ -1,6 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/features/catalog/domain/repository/catalog_repository.dart';
 import 'package:plant_match_v2/features/user/domain/entities/catalog_filter.dart';
 import 'package:plant_match_v2/features/user/domain/entities/user.dart';
@@ -42,20 +41,12 @@ class UserCubit extends Cubit<UserState> {
         })
         .flatMap((data) {
           final (user, catalogs, level) = data;
-          return TaskEither.tryCatch(
-            () async {
-              // On récupère le premier élément du stream (liste des échanges complétés)
-              final exchanges = await exchangeRepository
-                  .getCompletedExchanges(user.uid)
-                  .first;
-              final completedCount = exchanges
-                  .where((e) => e.status == ExchangeStatus.completed)
-                  .length;
-              return (user, catalogs, level, completedCount);
-            },
-            (error, stackTrace) =>
-                FirebaseFailure('Erreur chargement échanges : $error'),
-          );
+          return exchangeRepository.getCompletedExchanges(user.uid).map((exchanges) {
+            final completedCount = exchanges
+                .where((e) => e.status == ExchangeStatus.completed)
+                .length;
+            return (user, catalogs, level, completedCount);
+          });
         })
         .map((data) {
           final (user, catalogs, level, exchangeCount) = data;

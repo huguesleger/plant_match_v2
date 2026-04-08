@@ -16,5 +16,5 @@ abstract class ExchangeRepository {
   TaskEither<Failure, Unit> markSeenByRequester(String exchangeId);
 
   TaskEither<Failure, Unit> markAsCompleted(String exchangeId, String completedBy);
-  Stream<List<Exchange>> getCompletedExchanges(String uid);
+  TaskEither<Failure, List<Exchange>> getCompletedExchanges(String uid);
 }
