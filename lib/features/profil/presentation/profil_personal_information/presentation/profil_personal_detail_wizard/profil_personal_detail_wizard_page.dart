@@ -2,19 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
-import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:fpdart/fpdart.dart' hide State;
 import 'package:intl/intl.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
-import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_template.dart';
 import 'package:plant_match_v2/core/widgets/bottom_bar/bottom_bar.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
-import 'package:plant_match_v2/core/widgets/form/decoration_input.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_state.dart';
-import 'package:plant_match_v2/features/profil/presentation/profil_personal_information/presentation/profil_personal_detail_wizard/profil_personal_detail_wizard_item.dart';
+import 'package:plant_match_v2/features/profil/presentation/profil_personal_information/presentation/profil_personal_detail_wizard/widgets/wizard_progress_indicator.dart';
+import 'package:plant_match_v2/features/profil/presentation/profil_personal_information/presentation/profil_personal_detail_wizard/widgets/wizard_steps.dart';
 
 class ProfilPersonalDetailWizardPage extends StatefulWidget {
   const ProfilPersonalDetailWizardPage({super.key, required this.profilUser});
@@ -152,10 +150,8 @@ class _ProfilPersonalDetailWizardPageState
             body: SafeArea(
               child: Stack(
                 children: [
-                  // Progress Indicator
-                  _ProgressWizard(
+                  WizardProgressIndicator(
                       currentPage: _currentPage, totalPages: _totalPages),
-                  // PageView
                   PageView(
                     controller: _pageController,
                     physics: const NeverScrollableScrollPhysics(),
@@ -165,124 +161,22 @@ class _ProfilPersonalDetailWizardPageState
                       });
                     },
                     children: [
-                      ProfilPersonalDetailWizardItem(
+                      WizardPseudoStep(
                         formKey: _formKeyPseudo,
-                        title: 'Pseudo d\'affichage',
-                        description:
-                            'Choisissez votre pseudo qui sera visible par les autres utilisateurs.',
-                        child: FormBuilderTextField(
-                          name: 'userName',
-                          decoration: DecorationInput.inputDecoration(
-                            hintText: 'Entrez votre pseudo',
-                            labelText: 'Pseudo',
-                          ),
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          controller: _pseudoController,
-                        ),
+                        controller: _pseudoController,
                       ),
-                      ProfilPersonalDetailWizardItem(
+                      WizardBirthdayStep(
                         formKey: _formKeyBirthdayDate,
-                        title: 'Date d\'anniversaire',
-                        description:
-                            'Renseignez votre date de naissance pour recevoir des points le jour de votre anniversaire.',
-                        child: FormBuilderDateTimePicker(
-                          name: 'dateOfBirth',
-                          inputType: InputType.date,
-                          initialDate: _birthdayDateController.text.isNotEmpty
-                              ? DateFormat('dd/MM/yyyy')
-                                  .parse(_birthdayDateController.text)
-                              : widget.profilUser.birthdayDate.toNullable(),
-                          initialValue: _birthdayDateController.text.isNotEmpty
-                              ? DateFormat('dd/MM/yyyy')
-                                  .parse(_birthdayDateController.text)
-                              : widget.profilUser.birthdayDate.toNullable(),
-                          format: DateFormat('dd/MM/yyyy'),
-                          lastDate: DateTime.now(),
-                          decoration: DecorationInput.inputDecoration(
-                            hintText: 'Entrez votre date de naissance',
-                            labelText: 'Date de naissance',
-                            suffixIcon: const Icon(LucideIcons.calendar),
-                          ),
-                          locale: const Locale('fr', 'FR'),
-                          controller: _birthdayDateController,
-                          validator: FormBuilderValidators.required(
-                              errorText: 'Ce champ est requis'),
-                        ),
+                        controller: _birthdayDateController,
+                        profilUser: widget.profilUser,
                       ),
-                      ProfilPersonalDetailWizardItem(
-                        title: 'Bio',
-                        description: 'Rédigez une courte description de vous.',
+                      WizardBioStep(
                         formKey: _formKeyBio,
-                        child: FormBuilderTextField(
-                          name: 'bio',
-                          decoration: DecorationInput.inputDecoration(
-                            hintText: 'Ajoutez une description',
-                            labelText: 'Bio',
-                            alignLabelWithHint: true,
-                          ),
-                          minLines: 3,
-                          maxLines: 5,
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          controller: _bioController,
-                          maxLength: 150,
-                        ),
+                        controller: _bioController,
                       ),
-                      ProfilPersonalDetailWizardItem(
-                        title: 'Localisation',
-                        description:
-                            'Votre position sera utilisée pour vous proposer des profils proches de chez vous.',
+                      WizardLocationStep(
                         formKey: _formKeyCity,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                                height: MediaQuery.of(context).size.height > 700
-                                    ? 45
-                                    : 25),
-                            Center(
-                              child: widget.profilUser.localisation.isEmpty
-                                  ? SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.height >
-                                                  700
-                                              ? 300
-                                              : 200,
-                                      child: Image.asset(
-                                          'assets/images/illu_location.png'),
-                                    )
-                                  : Row(
-                                      children: [
-                                        Container(
-                                          width: 53,
-                                          height: 53,
-                                          decoration: BoxDecoration(
-                                            color: AppColors.greenLight
-                                                .withValues(alpha: 0.3),
-                                            borderRadius:
-                                                BorderRadius.circular(15),
-                                          ),
-                                          child: const Center(
-                                            child: Icon(
-                                              LucideIcons.map_pin,
-                                              color: AppColors.blueGreen,
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 16),
-                                        Expanded(
-                                          child: Text(
-                                            '${widget.profilUser.localisation} ${widget.profilUser.zipCode} - ${widget.profilUser.country}',
-                                            style: const TextStyle(
-                                              fontSize: AppTypo.text,
-                                              color: AppColors.greyDark,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                            ),
-                          ],
-                        ),
+                        profilUser: widget.profilUser,
                       ),
                     ],
                   ),
@@ -306,7 +200,6 @@ class _ProfilPersonalDetailWizardPageState
               ),
             ),
           ),
-          // Loader Overlay
           BlocBuilder<ProfilCubit, ProfilState>(
             builder: (context, state) {
               return switch (state) {
@@ -328,32 +221,3 @@ class _ProfilPersonalDetailWizardPageState
   }
 }
 
-class _ProgressWizard extends StatelessWidget {
-  const _ProgressWizard({
-    required int currentPage,
-    required int totalPages,
-  })  : _currentPage = currentPage,
-        _totalPages = totalPages;
-
-  final int _currentPage;
-  final int _totalPages;
-
-  @override
-  Widget build(BuildContext context) {
-    return TweenAnimationBuilder<double>(
-      tween: Tween<double>(
-        begin: (_currentPage + 1) / _totalPages,
-        end: (_currentPage + 1) / _totalPages,
-      ),
-      duration: const Duration(milliseconds: 300),
-      builder: (context, value, child) {
-        return LinearProgressIndicator(
-          value: value,
-          backgroundColor: AppColors.greyLight,
-          color: AppColors.greenLight,
-          minHeight: 2,
-        );
-      },
-    );
-  }
-}
