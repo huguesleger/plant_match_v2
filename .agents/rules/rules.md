@@ -1,3 +1,7 @@
+---
+trigger: always_on
+---
+
 # Règles de Développement - Projet PlantMatch V2
 
 ## Architecture Propre
@@ -57,3 +61,4 @@ someRepo
 - Utiliser les ternaires au lieu de `if-else`.
 - Utiliser `match` au lieu de `fold`.
 - Utiliser `Unit` (de `fpdart`) au lieu de `void` pour les retours de `TaskEither`.
+- ne pas mettre de commentaires
