@@ -24,11 +24,12 @@ class ProfilNavigation extends StatelessWidget {
           title: 'Informations personnelles',
           icon: LucideIcons.user_cog,
           onTap: () {
+            final profilCubit = context.read<ProfilCubit>();
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (contextRoute) => BlocProvider.value(
-                  value: context.read<ProfilCubit>(),
+                  value: profilCubit,
                   child: ProfilPersonalInformationPage(
                     profilUser: profilUser,
                     userId: profilUser.uid,

@@ -30,6 +30,7 @@ class _ProfilPersonalDetailWizardPageState
   final PageController _pageController = PageController();
   int _currentPage = 0;
   final int _totalPages = 4;
+  bool _isLocating = false;
 
   final TextEditingController _pseudoController = TextEditingController();
   final TextEditingController _birthdayDateController = TextEditingController();
@@ -96,6 +97,9 @@ class _ProfilPersonalDetailWizardPageState
   }
 
   void _onPressedLocation() {
+    setState(() {
+      _isLocating = true;
+    });
     context.read<ProfilCubit>().updateLocation(widget.profilUser.uid);
   }
 
@@ -103,13 +107,17 @@ class _ProfilPersonalDetailWizardPageState
   Widget build(BuildContext context) {
     return BlocListener<ProfilCubit, ProfilState>(
       listener: (context, state) => switch (state) {
-        ProfilLoaded() when _currentPage == _totalPages - 1 =>
+        ProfilLoaded() when _isLocating =>
           Navigator.canPop(context) ? Navigator.of(context).pop() : (),
         ProfilLoaded() => (),
-        ProfilError(:final message) =>
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(message)),
-          ),
+        ProfilError(:final message) => () {
+            if (_isLocating) {
+              setState(() => _isLocating = false);
+            }
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(message)),
+            );
+          }(),
         ProfilInitial() || ProfilLoading() || ProfilImageUploading() => (),
       },
       child: Stack(
@@ -224,17 +232,20 @@ class _ProfilPersonalDetailWizardPageState
                             'Votre position sera utilisée pour vous proposer des profils proches de chez vous.',
                         formKey: _formKeyCity,
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             SizedBox(
                                 height: MediaQuery.of(context).size.height > 700
                                     ? 45
                                     : 25),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height > 700
-                                  ? 300
-                                  : 200,
-                              child: Image.asset(
-                                  'assets/images/illu_location.png'),
+                            Center(
+                              child: SizedBox(
+                                height: MediaQuery.of(context).size.height > 700
+                                    ? 300
+                                    : 200,
+                                child: Image.asset(
+                                    'assets/images/illu_location.png'),
+                              ),
                             ),
                           ],
                         ),
@@ -265,8 +276,7 @@ class _ProfilPersonalDetailWizardPageState
           BlocBuilder<ProfilCubit, ProfilState>(
             builder: (context, state) {
               return switch (state) {
-                ProfilLoading() when _currentPage == _totalPages - 1 =>
-                  Container(
+                ProfilLoading() when _isLocating => Container(
                     color: AppColors.black.withValues(alpha: 0.5),
                     child: const Center(
                       child: CircularProgressIndicator(

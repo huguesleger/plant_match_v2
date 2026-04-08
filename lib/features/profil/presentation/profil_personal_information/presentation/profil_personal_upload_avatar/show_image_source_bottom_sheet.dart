@@ -105,10 +105,11 @@ void showImageSourceBottomSheet({
             ),
             onTap: () {
               Navigator.pop(context);
+              final profilCubit = context.read<ProfilCubit>();
               showDialog(
                 context: context,
                 builder: (dialogContext) => BlocProvider.value(
-                  value: context.read<ProfilCubit>(),
+                  value: profilCubit,
                   child: AppDialog(
                     title: 'Sélectionnez un avatar',
                     child: Padding(
