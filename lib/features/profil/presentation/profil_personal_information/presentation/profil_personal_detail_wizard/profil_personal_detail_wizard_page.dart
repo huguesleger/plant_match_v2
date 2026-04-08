@@ -6,6 +6,7 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:fpdart/fpdart.dart' hide State;
 import 'package:intl/intl.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_template.dart';
 import 'package:plant_match_v2/core/widgets/bottom_bar/bottom_bar.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
@@ -239,13 +240,46 @@ class _ProfilPersonalDetailWizardPageState
                                     ? 45
                                     : 25),
                             Center(
-                              child: SizedBox(
-                                height: MediaQuery.of(context).size.height > 700
-                                    ? 300
-                                    : 200,
-                                child: Image.asset(
-                                    'assets/images/illu_location.png'),
-                              ),
+                              child: widget.profilUser.localisation.isEmpty
+                                  ? SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height >
+                                                  700
+                                              ? 300
+                                              : 200,
+                                      child: Image.asset(
+                                          'assets/images/illu_location.png'),
+                                    )
+                                  : Row(
+                                      children: [
+                                        Container(
+                                          width: 53,
+                                          height: 53,
+                                          decoration: BoxDecoration(
+                                            color: AppColors.greenLight
+                                                .withValues(alpha: 0.3),
+                                            borderRadius:
+                                                BorderRadius.circular(15),
+                                          ),
+                                          child: const Center(
+                                            child: Icon(
+                                              LucideIcons.map_pin,
+                                              color: AppColors.blueGreen,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 16),
+                                        Expanded(
+                                          child: Text(
+                                            '${widget.profilUser.localisation} ${widget.profilUser.zipCode} - ${widget.profilUser.country}',
+                                            style: const TextStyle(
+                                              fontSize: AppTypo.text,
+                                              color: AppColors.greyDark,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                             ),
                           ],
                         ),

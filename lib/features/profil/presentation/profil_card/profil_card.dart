@@ -50,7 +50,7 @@ class ProfilCard extends StatelessWidget {
         const SizedBox(width: 10),
         AppCard(
           bgColor: AppColors.greenLight,
-          textColor: AppColors.blueDark,
+          textColor: AppColors.blueGreen,
           title: 'Badges & Récompenses',
           description: 'Mes badges et mon niveau',
           icon: LucideIcons.award,
