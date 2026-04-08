@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/features/donation/domain/entities/donation.dart';
 import 'package:plant_match_v2/features/donation/domain/repository/donation_repository.dart';
@@ -76,8 +74,4 @@ class ExchangeHistoryCubit extends Cubit<ExchangeHistoryState> {
     };
   }
 
-  @override
-  Future<void> close() {
-    return super.close();
-  }
 }

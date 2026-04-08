@@ -12,7 +12,7 @@ import 'package:plant_match_v2/core/widgets/buttons/button_outlined_rounded.dart
 import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
 import 'package:plant_match_v2/features/catalog/data/firebase_catalog_repository.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
-import 'package:plant_match_v2/features/chat/presentation/widget/chat_theme.dart';
+import 'package:plant_match_v2/features/chat_plant/presentation/widgets/chat_theme.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/cubit/chat_plant_cubit.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/state/chat_plant_state.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/plant_message_card.dart';
