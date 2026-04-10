@@ -5,7 +5,8 @@ import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/features/user/domain/entities/user.dart';
 import 'package:plant_match_v2/features/user/domain/extension/user_extension.dart';
 import 'package:plant_match_v2/features/user/presentation/cubit/user_cubit.dart';
-import 'package:plant_match_v2/features/user/presentation/filters/catalog_filter_bar.dart';
+import 'package:plant_match_v2/core/widgets/filter/filter_bar.dart';
+import 'package:plant_match_v2/features/user/domain/entities/catalog_filter.dart';
 import 'package:plant_match_v2/features/user/presentation/header/user_header_with_content.dart';
 import 'package:plant_match_v2/features/user/presentation/items_count/items_count.dart';
 import 'package:plant_match_v2/features/user/presentation/list_plants/catalog_list.dart';
@@ -61,10 +62,13 @@ class UserScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                CatalogFiltersBar(
+                FilterBar<CatalogFilter>(
+                  filters: CatalogFilter.values,
                   selected: data.selectedFilter,
                   onChanged: (filter) =>
                       context.read<UserCubit>().updateFilter(filter),
+                  labelBuilder: (f) => f.label,
+                  iconBuilder: (f) => f.icon,
                 ),
                 const SizedBox(height: 16),
                 CatalogList(catalogs: filtered),

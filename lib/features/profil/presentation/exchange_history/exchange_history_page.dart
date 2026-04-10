@@ -2,12 +2,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:intl/intl.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/core/widgets/app_bar/app_bar_template.dart';
 import 'package:plant_match_v2/features/donation/data/firebase_donation.dart';
 import 'package:plant_match_v2/features/donation/domain/entities/donation.dart';
 import 'package:plant_match_v2/features/exchange/data/firebase_exchange.dart';
 import 'package:plant_match_v2/features/exchange/domain/entities/exchange.dart';
+import 'package:plant_match_v2/core/widgets/filter/filter_bar.dart';
 import 'package:plant_match_v2/features/profil/presentation/exchange_history/exchange_history_cubit.dart';
 import 'package:plant_match_v2/features/profil/presentation/exchange_history/exchange_history_state.dart';
 import 'package:plant_match_v2/features/profil/presentation/exchange_history/history_item.dart';
@@ -36,12 +39,37 @@ class _HistoryView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Historique'),
+      appBar: AppBarTemplate(
+        title: 'Historique',
+        backgroundColor: AppColors.white,
+        surfaceTintColor: AppColors.white,
+        shadowColor: AppColors.black,
+        styleIconButton: IconButton.styleFrom(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          side: const BorderSide(color: AppColors.greyLight),
+        ),
+        onPressed: () => Navigator.pop(context),
       ),
       body: Column(
         children: [
-          const _FilterChips(),
+          BlocBuilder<ExchangeHistoryCubit, ExchangeHistoryState>(
+            builder: (context, state) {
+              final currentFilter = state is ExchangeHistoryLoaded
+                  ? state.currentFilter
+                  : HistoryStatusFilter.all;
+
+              return FilterBar<HistoryStatusFilter>(
+                filters: HistoryStatusFilter.values,
+                selected: currentFilter,
+                onChanged: (filter) => context
+                    .read<ExchangeHistoryCubit>()
+                    .load(filter: filter),
+                labelBuilder: (f) => f.label,
+                iconBuilder: (f) => f.icon,
+              );
+            },
+          ),
           Expanded(
             child: BlocBuilder<ExchangeHistoryCubit, ExchangeHistoryState>(
               builder: (context, state) {
@@ -89,9 +117,10 @@ class _HistoryView extends StatelessWidget {
                     separatorBuilder: (_, __) => const SizedBox(height: 12),
                     itemBuilder: (context, index) {
                       final item = state.items[index];
-                      return item.type == HistoryItemType.exchange
-                          ? _ExchangeHistoryCard(exchange: item.exchange!)
-                          : _DonationHistoryCard(donation: item.donation!);
+                      return switch (item) {
+                        HistoryExchangeItem e => _ExchangeHistoryCard(exchange: e.exchange),
+                        HistoryDonationItem d => _DonationHistoryCard(donation: d.donation),
+                      };
                     },
                   );
                 }
@@ -101,100 +130,6 @@ class _HistoryView extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Filtres
-// ─────────────────────────────────────────────────────────────────────────────
-
-class _FilterChips extends StatelessWidget {
-  const _FilterChips();
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<ExchangeHistoryCubit, ExchangeHistoryState>(
-      builder: (context, state) {
-        final currentFilter = state is ExchangeHistoryLoaded
-            ? state.currentFilter
-            : HistoryStatusFilter.all;
-
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                _Chip(
-                  label: 'Tous',
-                  isSelected: currentFilter == HistoryStatusFilter.all,
-                  onTap: () => context
-                      .read<ExchangeHistoryCubit>()
-                      .load(filter: HistoryStatusFilter.all),
-                ),
-                const SizedBox(width: 8),
-                _Chip(
-                  label: 'Acceptés',
-                  isSelected: currentFilter == HistoryStatusFilter.accepted,
-                  onTap: () => context
-                      .read<ExchangeHistoryCubit>()
-                      .load(filter: HistoryStatusFilter.accepted),
-                ),
-                const SizedBox(width: 8),
-                _Chip(
-                  label: 'Terminés',
-                  isSelected: currentFilter == HistoryStatusFilter.completed,
-                  onTap: () => context
-                      .read<ExchangeHistoryCubit>()
-                      .load(filter: HistoryStatusFilter.completed),
-                ),
-                const SizedBox(width: 8),
-                _Chip(
-                  label: 'Refusés',
-                  isSelected: currentFilter == HistoryStatusFilter.rejected,
-                  onTap: () => context
-                      .read<ExchangeHistoryCubit>()
-                      .load(filter: HistoryStatusFilter.rejected),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _Chip extends StatelessWidget {
-  const _Chip({
-    required this.label,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: isSelected ? AppColors.greenMedium : AppColors.greyLight,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: isSelected ? Colors.white : AppColors.greyDark,
-            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-          ),
-        ),
       ),
     );
   }
@@ -290,7 +225,7 @@ class _ExchangeHistoryCard extends StatelessWidget {
     return _HistoryCardShell(
       rawStatus: exchange.status.name,
       date: exchange.createdAt,
-      completedAt: exchange.completedAt,
+      completedAt: Option.fromNullable(exchange.completedAt),
       typeLabel: 'Échange',
       typeIcon: LucideIcons.arrow_left_right,
       typeColor: AppColors.greenDark,
@@ -376,7 +311,7 @@ class _DonationHistoryCard extends StatelessWidget {
     return _HistoryCardShell(
       rawStatus: donation.status.name,
       date: donation.createdAt,
-      completedAt: donation.completedAt,
+      completedAt: Option.fromNullable(donation.completedAt),
       typeLabel: 'Donation',
       typeIcon: Icons.volunteer_activism_rounded,
       typeColor: AppColors.blueGreen,
@@ -426,7 +361,7 @@ class _HistoryCardShell extends StatelessWidget {
 
   final String rawStatus;
   final DateTime date;
-  final DateTime? completedAt;
+  final Option<DateTime> completedAt;
   final String typeLabel;
   final IconData typeIcon;
   final Color typeColor;
@@ -493,15 +428,18 @@ class _HistoryCardShell extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             content,
-            if (rawStatus == 'completed' && completedAt != null)
-              Padding(
-                padding: const EdgeInsets.only(top: 12),
-                child: Text(
-                  'Terminé le ${DateFormat('dd/MM/yyyy').format(completedAt!)}',
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: AppColors.greyDark,
-                    fontStyle: FontStyle.italic,
+            if (rawStatus == 'completed')
+              completedAt.match(
+                () => const SizedBox.shrink(),
+                (date) => Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: Text(
+                    'Terminé le ${DateFormat('dd/MM/yyyy').format(date)}',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.greyDark,
+                      fontStyle: FontStyle.italic,
+                    ),
                   ),
                 ),
               ),

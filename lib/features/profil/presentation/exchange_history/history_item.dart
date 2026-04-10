@@ -1,70 +1,70 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/features/donation/domain/entities/donation.dart';
 import 'package:plant_match_v2/features/exchange/domain/entities/exchange.dart';
 
-/// Type d'entrée dans l'historique
-enum HistoryItemType { exchange, donation }
-
-/// Filtre de statut commun échange + donation
 enum HistoryStatusFilter {
-  all,
-  accepted,
-  completed,
-  rejected,
+  all('Tous', LucideIcons.list),
+  accepted('Acceptés', LucideIcons.circle_check),
+  completed('Terminés', LucideIcons.circle_check_big),
+  rejected('Refusés', LucideIcons.circle_x);
+
+  final String label;
+  final IconData icon;
+
+  const HistoryStatusFilter(this.label, this.icon);
 }
 
-/// Modèle unifié pour l'historique : représente soit un échange, soit une donation
-class HistoryItem {
-  final HistoryItemType type;
-
-  // Champs communs
+sealed class HistoryItem {
   final String id;
   final String chatId;
   final String requestedBy;
   final String ownerId;
   final DateTime createdAt;
-  final DateTime? completedAt;
-  final String rawStatus; // 'pending' | 'accepted' | 'rejected' | 'completed'
+  final Option<DateTime> completedAt;
+  final String rawStatus;
 
-  // Champs spécifiques échange
-  final Exchange? exchange;
-
-  // Champs spécifiques donation
-  final Donation? donation;
-
-  const HistoryItem._({
-    required this.type,
+  const HistoryItem({
     required this.id,
     required this.chatId,
     required this.requestedBy,
     required this.ownerId,
     required this.createdAt,
+    required this.completedAt,
     required this.rawStatus,
-    this.completedAt,
-    this.exchange,
-    this.donation,
   });
 
-  factory HistoryItem.fromExchange(Exchange e) => HistoryItem._(
-        type: HistoryItemType.exchange,
-        id: e.id,
-        chatId: e.chatId,
-        requestedBy: e.requestedBy,
-        ownerId: e.ownerId,
-        createdAt: e.createdAt,
-        completedAt: e.completedAt,
-        rawStatus: e.status.name,
-        exchange: e,
-      );
+  factory HistoryItem.fromExchange(Exchange e) => HistoryExchangeItem(e);
+  factory HistoryItem.fromDonation(Donation d) => HistoryDonationItem(d);
+}
 
-  factory HistoryItem.fromDonation(Donation d) => HistoryItem._(
-        type: HistoryItemType.donation,
-        id: d.id,
-        chatId: d.chatId,
-        requestedBy: d.requestedBy,
-        ownerId: d.ownerId,
-        createdAt: d.createdAt,
-        completedAt: d.completedAt,
-        rawStatus: d.status.name,
-        donation: d,
-      );
+class HistoryExchangeItem extends HistoryItem {
+  final Exchange exchange;
+
+  HistoryExchangeItem(this.exchange)
+      : super(
+          id: exchange.id,
+          chatId: exchange.chatId,
+          requestedBy: exchange.requestedBy,
+          ownerId: exchange.ownerId,
+          createdAt: exchange.createdAt,
+          completedAt: Option.fromNullable(exchange.completedAt),
+          rawStatus: exchange.status.name,
+        );
+}
+
+class HistoryDonationItem extends HistoryItem {
+  final Donation donation;
+
+  HistoryDonationItem(this.donation)
+      : super(
+          id: donation.id,
+          chatId: donation.chatId,
+          requestedBy: donation.requestedBy,
+          ownerId: donation.ownerId,
+          createdAt: donation.createdAt,
+          completedAt: Option.fromNullable(donation.completedAt),
+          rawStatus: donation.status.name,
+        );
 }
