@@ -61,4 +61,4 @@ someRepo
 - Utiliser les ternaires au lieu de `if-else`.
 - Utiliser `match` au lieu de `fold`.
 - Utiliser `Unit` (de `fpdart`) au lieu de `void` pour les retours de `TaskEither`.
-- ne pas mettre de commentaires
+- Ne jamais mettre de commentaires dans le code lors des modifications ou de la création de nouveaux fichiers. Le code doit être auto-explicatif.
