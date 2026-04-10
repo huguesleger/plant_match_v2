@@ -3,23 +3,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/features/donation/data/firebase_donation.dart';
 import 'package:plant_match_v2/features/exchange/data/firebase_exchange.dart';
-import 'package:plant_match_v2/features/profil/presentation/exchange_history/exchange_history_cubit.dart';
-import 'package:plant_match_v2/features/profil/presentation/exchange_history/exchange_history_screen.dart';
+import 'package:plant_match_v2/features/history/presentation/cubit/history_cubit.dart';
+import 'package:plant_match_v2/features/history/history_screen.dart';
 
-class ExchangeHistoryPage extends StatelessWidget {
-  const ExchangeHistoryPage({super.key});
+class HistoryPage extends StatelessWidget {
+  const HistoryPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     final currentUserId = FirebaseAuth.instance.currentUser!.uid;
 
     return BlocProvider(
-      create: (context) => ExchangeHistoryCubit(
+      create: (context) => HistoryCubit(
         exchangeRepository: FirebaseExchange(),
         donationRepository: FirebaseDonation(),
         userId: currentUserId,
       )..load(),
-      child: ExchangeHistoryScreen(currentUserId: currentUserId),
+      child: HistoryScreen(currentUserId: currentUserId),
     );
   }
 }

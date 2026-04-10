@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
-import 'package:plant_match_v2/features/profil/presentation/exchange_history/history_item.dart';
+import 'package:plant_match_v2/features/history/widgets/history_item.dart';
 
 class HistoryCardData {
   final DateTime date;

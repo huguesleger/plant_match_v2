@@ -6,7 +6,7 @@ import 'package:plant_match_v2/core/widgets/buttons/button_rounded_with_icon.dar
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/features/get_started/presentation/get_started_page.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
-import 'package:plant_match_v2/features/profil/presentation/exchange_history/exchange_history_page.dart';
+import 'package:plant_match_v2/features/history/history_page.dart';
 import 'package:plant_match_v2/features/profil/presentation/profil_navigation/profil_navigation_item.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
 import 'package:plant_match_v2/features/profil/presentation/profil_personal_information/presentation/profil_personal_information_page.dart';
@@ -47,7 +47,7 @@ class ProfilNavigation extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const ExchangeHistoryPage(),
+                builder: (context) => const HistoryPage(),
               ),
             );
           },

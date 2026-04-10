@@ -3,14 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_template.dart';
 import 'package:plant_match_v2/core/widgets/filter/filter_bar.dart';
-import 'package:plant_match_v2/features/profil/presentation/exchange_history/exchange_history_cubit.dart';
-import 'package:plant_match_v2/features/profil/presentation/exchange_history/exchange_history_state.dart';
-import 'package:plant_match_v2/features/profil/presentation/exchange_history/history_item.dart';
-import 'package:plant_match_v2/features/profil/presentation/exchange_history/widgets/empty_history_view.dart';
-import 'package:plant_match_v2/features/profil/presentation/exchange_history/widgets/history_card_item.dart';
+import 'package:plant_match_v2/features/history/presentation/cubit/history_cubit.dart';
+import 'package:plant_match_v2/features/history/presentation/cubit/history_state.dart';
+import 'package:plant_match_v2/features/history/widgets/history_item.dart';
+import 'package:plant_match_v2/features/history/widgets/empty_history_view.dart';
+import 'package:plant_match_v2/features/history/widgets/history_card_item.dart';
 
-class ExchangeHistoryScreen extends StatelessWidget {
-  const ExchangeHistoryScreen({
+class HistoryScreen extends StatelessWidget {
+  const HistoryScreen({
     super.key,
     required this.currentUserId,
   });
@@ -34,32 +34,32 @@ class ExchangeHistoryScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
-          BlocBuilder<ExchangeHistoryCubit, ExchangeHistoryState>(
+          BlocBuilder<HistoryCubit, HistoryState>(
             builder: (context, state) => FilterBar<HistoryStatusFilter>(
               filters: HistoryStatusFilter.values,
               selected: switch (state) {
-                ExchangeHistoryLoaded s => s.currentFilter,
+                HistoryLoaded s => s.currentFilter,
                 _ => HistoryStatusFilter.all,
               },
               onChanged: (filter) =>
-                  context.read<ExchangeHistoryCubit>().load(filter: filter),
+                  context.read<HistoryCubit>().load(filter: filter),
               labelBuilder: (f) => f.label,
               iconBuilder: (f) => f.icon,
             ),
           ),
           Expanded(
-            child: BlocBuilder<ExchangeHistoryCubit, ExchangeHistoryState>(
+            child: BlocBuilder<HistoryCubit, HistoryState>(
               builder: (context, state) => switch (state) {
-                ExchangeHistoryInitial() ||
-                ExchangeHistoryLoading() =>
+                HistoryInitial() ||
+                HistoryLoading() =>
                   const Center(child: CircularProgressIndicator()),
-                ExchangeHistoryError s => Center(
+                HistoryError s => Center(
                     child: Text(
                       'Erreur : ${s.message}',
                       style: const TextStyle(color: Colors.red),
                     ),
                   ),
-                ExchangeHistoryLoaded s => s.items.isEmpty
+                HistoryLoaded s => s.items.isEmpty
                     ? const EmptyHistoryView()
                     : ListView.separated(
                         padding: const EdgeInsets.only(

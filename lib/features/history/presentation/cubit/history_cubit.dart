@@ -3,10 +3,10 @@ import 'package:plant_match_v2/features/donation/domain/entities/donation.dart';
 import 'package:plant_match_v2/features/donation/domain/repository/donation_repository.dart';
 import 'package:plant_match_v2/features/exchange/domain/entities/exchange.dart';
 import 'package:plant_match_v2/features/exchange/domain/repository/exchange_repository.dart';
-import 'package:plant_match_v2/features/profil/presentation/exchange_history/exchange_history_state.dart';
-import 'package:plant_match_v2/features/profil/presentation/exchange_history/history_item.dart';
+import 'package:plant_match_v2/features/history/presentation/cubit/history_state.dart';
+import 'package:plant_match_v2/features/history/widgets/history_item.dart';
 
-class ExchangeHistoryCubit extends Cubit<ExchangeHistoryState> {
+class HistoryCubit extends Cubit<HistoryState> {
   final ExchangeRepository exchangeRepository;
   final DonationRepository donationRepository;
   final String userId;
@@ -15,15 +15,15 @@ class ExchangeHistoryCubit extends Cubit<ExchangeHistoryState> {
   List<Donation> _donations = [];
   HistoryStatusFilter _currentFilter = HistoryStatusFilter.all;
 
-  ExchangeHistoryCubit({
+  HistoryCubit({
     required this.exchangeRepository,
     required this.donationRepository,
     required this.userId,
-  }) : super(const ExchangeHistoryInitial());
+  }) : super(const HistoryInitial());
 
   void load({HistoryStatusFilter filter = HistoryStatusFilter.all}) {
     _currentFilter = filter;
-    emit(const ExchangeHistoryLoading());
+    emit(const HistoryLoading());
 
     exchangeRepository.getCompletedExchanges(userId).flatMap((exchanges) {
       return donationRepository.getCompletedDonations(userId).map((donations) {
@@ -31,7 +31,7 @@ class ExchangeHistoryCubit extends Cubit<ExchangeHistoryState> {
       });
     }).match(
       (failure) {
-        if (!isClosed) emit(ExchangeHistoryError(failure.message));
+        if (!isClosed) emit(HistoryError(failure.message));
       },
       (data) {
         if (isClosed) return;
@@ -53,7 +53,7 @@ class ExchangeHistoryCubit extends Cubit<ExchangeHistoryState> {
 
     final filtered = _filterItems(all, _currentFilter);
 
-    emit(ExchangeHistoryLoaded(
+    emit(HistoryLoaded(
       items: filtered,
       currentFilter: _currentFilter,
     ));
@@ -73,5 +73,4 @@ class ExchangeHistoryCubit extends Cubit<ExchangeHistoryState> {
         items.where((i) => i.rawStatus == 'rejected').toList(),
     };
   }
-
 }
