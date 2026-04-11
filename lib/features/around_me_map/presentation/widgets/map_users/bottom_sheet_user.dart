@@ -13,7 +13,7 @@ import 'package:plant_match_v2/features/around_me_map/presentation/widgets/catal
 import 'package:plant_match_v2/features/around_me_map/presentation/widgets/map_users/user_bottom_sheet_header.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
-import 'package:plant_match_v2/features/user/presentation/user_page.dart';
+import 'package:plant_match_v2/features/user/presentation/user_page_route.dart';
 
 void bottomSheetUser({
   required BuildContext context,
@@ -103,7 +103,7 @@ class _ActionsSection extends StatelessWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => UserPage(uid: userId)),
+            MaterialPageRoute(builder: (context) => UserPageRoute(uid: userId)),
           );
         },
         borderColor: AppColors.blueGreen,
