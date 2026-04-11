@@ -5,7 +5,7 @@ import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/widgets/app_card/app_card.dart';
 import 'package:plant_match_v2/features/catalog/presentation/catalog_page_route.dart';
 import 'package:plant_match_v2/features/profil/presentation/profil_badge/presentation/profil_badge_page.dart';
-import 'package:plant_match_v2/features/profil/presentation/profil_favorite/profil_favorite_page.dart';
+import 'package:plant_match_v2/features/favorite/favorite_page_route.dart';
 
 class ProfilCard extends StatelessWidget {
   const ProfilCard({super.key});
@@ -42,7 +42,7 @@ class ProfilCard extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ProfilFavoritePage(),
+                builder: (context) => FavoritePageRoute(),
               ),
             );
           },
