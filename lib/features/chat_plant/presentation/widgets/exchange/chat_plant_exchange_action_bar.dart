@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
-import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
+import 'package:plant_match_v2/features/chat_plant/presentation/widgets/common/chat_plant_action_button.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/common/chat_plant_action_button_templates.dart';
 import 'package:plant_match_v2/features/exchange/presentation/cubit/exchange_cubit.dart';
 import 'package:plant_match_v2/features/exchange/presentation/exchange_page_route.dart';
@@ -62,64 +62,22 @@ class ChatPlantExchangeActionBar extends StatelessWidget {
                 state is! ExchangePending &&
                 state is! ExchangeAccepted &&
                 state is! ExchangeCompleted)
-            ? _ProposeExchangeButton(
-                chatId: chatId,
-                plantId: plantId,
-                plantOwnerId: plantOwnerId,
+            ? ChatPlantActionButton(
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ExchangePageRoute(
+                      chatId: chatId,
+                      targetPlantId: plantId,
+                      targetOwnerId: plantOwnerId,
+                    ),
+                  ),
+                ),
+                backgroundColor: AppColors.greenDark,
+                icon: LucideIcons.heart_handshake,
+                label: 'Proposer un échange',
               )
             : const SizedBox.shrink(),
     };
-  }
-}
-
-class _ProposeExchangeButton extends StatelessWidget {
-  const _ProposeExchangeButton({
-    required this.chatId,
-    required this.plantId,
-    required this.plantOwnerId,
-  });
-
-  final String chatId;
-  final String plantId;
-  final String plantOwnerId;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(12),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: AppColors.greyLight)),
-      ),
-      child: ElevatedButton.icon(
-        onPressed: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => ExchangePageRoute(
-              chatId: chatId,
-              targetPlantId: plantId,
-              targetOwnerId: plantOwnerId,
-            ),
-          ),
-        ),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.greenDark,
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        icon: const Icon(LucideIcons.heart_handshake, color: Colors.white),
-        label: const Text(
-          'Proposer un échange',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: AppTypo.text,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-    );
   }
 }

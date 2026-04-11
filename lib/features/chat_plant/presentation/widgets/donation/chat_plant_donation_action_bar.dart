@@ -4,6 +4,7 @@ import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/theme/inter_text_style.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
+import 'package:plant_match_v2/features/chat_plant/presentation/widgets/common/chat_plant_action_button.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/common/chat_plant_action_button_templates.dart';
 import 'package:plant_match_v2/features/donation/domain/entities/donation.dart';
 import 'package:plant_match_v2/features/donation/presentation/cubit/donation_cubit.dart';
@@ -63,7 +64,7 @@ class ChatPlantDonationActionBar extends StatelessWidget {
                 state is! DonationPending &&
                 state is! DonationAccepted &&
                 state is! DonationCompleted)
-            ? _DonationRequestButton(
+            ? ChatPlantActionButton(
                 onPressed: () => _showDonationConfirmDialog(
                   context: context,
                   chatId: chatId,
@@ -73,6 +74,9 @@ class ChatPlantDonationActionBar extends StatelessWidget {
                   plantImage: plantImage,
                   ownerId: plantOwnerId,
                 ),
+                backgroundColor: AppColors.blueGreen,
+                icon: Icons.volunteer_activism_rounded,
+                label: 'Demander cette plante',
               )
             : const SizedBox.shrink(),
     };
@@ -142,45 +146,6 @@ class ChatPlantDonationActionBar extends StatelessWidget {
             child: const Text('Envoyer la demande'),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _DonationRequestButton extends StatelessWidget {
-  const _DonationRequestButton({
-    required this.onPressed,
-  });
-
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(12),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: AppColors.greyLight)),
-      ),
-      child: ElevatedButton.icon(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.blueGreen,
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        icon: const Icon(Icons.volunteer_activism_rounded, color: Colors.white),
-        label: const Text(
-          'Demander cette plante',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: AppTypo.text,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
       ),
     );
   }
