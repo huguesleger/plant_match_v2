@@ -15,7 +15,7 @@ import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/chat_plant/data/firebase_chat_plant.dart';
-import 'package:plant_match_v2/features/chat_plant/presentation/chat_plant_page.dart';
+import 'package:plant_match_v2/features/chat_plant/presentation/chat_plant_page_route.dart';
 import 'package:plant_match_v2/features/user/presentation/detail_plant/widgets/badge_family.dart';
 import 'package:plant_match_v2/features/user/presentation/detail_plant/widgets/badge_offer_type.dart';
 import 'package:plant_match_v2/features/user/presentation/detail_plant/widgets/content_header.dart';
@@ -77,7 +77,7 @@ class DetailPlant extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => ChatPlantPage(
+                builder: (_) => ChatPlantPageRoute(
                   chatId: chatId,
                   plantId: catalog.catalogId ?? '',
                   plantOwnerName: ownerName,

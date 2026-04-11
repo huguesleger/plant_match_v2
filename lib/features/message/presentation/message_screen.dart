@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/features/chat_plant/domain/entities/chat_plant.dart';
-import 'package:plant_match_v2/features/chat_plant/presentation/chat_plant_page.dart';
+import 'package:plant_match_v2/features/chat_plant/presentation/chat_plant_page_route.dart';
 import 'package:plant_match_v2/features/message/presentation/widgets/empty_message.dart';
 import 'package:plant_match_v2/features/message/presentation/widgets/message_format_date.dart';
 
@@ -128,7 +128,7 @@ class MessagesScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => ChatPlantPage(
+                  builder: (_) => ChatPlantPageRoute(
                     chatId: chat.chatId,
                     plantId: chat.plantId,
                     plantOwnerName: chat.plantOwnerName,

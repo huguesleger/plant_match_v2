@@ -12,13 +12,6 @@ class ChatThemes {
     backgroundColor: AppColors.greyUltraLight,
     inputBackgroundColor: AppColors.white,
     inputBorderRadius: const BorderRadius.all(Radius.zero),
-/*    inputMargin: EdgeInsets.all(20),
-    inputPadding: EdgeInsets.symmetric(
-      horizontal: 16,
-      vertical: 8,
-    ),
-    inputBorderRadius: BorderRadius.vertical(
-        top: Radius.circular(40), bottom: Radius.circular(40)),*/
     inputTextColor: Colors.black,
     messageBorderRadius: 10,
     sentMessageBodyTextStyle: const TextStyle(
