@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:plant_match_v2/core/widgets/error/error_page.dart';
 import 'package:plant_match_v2/features/around_me_map/data/firebase_around_me_repository.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/around_me_screen.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/cubit/around_me_cubit.dart';
-import 'package:plant_match_v2/features/around_me_map/presentation/cubit/around_me_state.dart';
 import 'package:plant_match_v2/features/catalog/data/firebase_catalog_repository.dart';
 import 'package:plant_match_v2/features/profil/data/firebase_profil_repo.dart';
 import 'package:plant_match_v2/core/services/location/location_service.dart';
@@ -29,22 +27,7 @@ class AroundMePageRoute extends StatelessWidget {
         catalogRepository: catalogRepository,
         locationService: locationService,
       )..getAllUserProfiles(uid),
-      child: BlocBuilder<AroundMeCubit, AroundMeState>(
-        builder: (context, state) {
-          return switch (state) {
-            AroundMeInitial() || AroundMeLoading() => const Center(
-                child: CircularProgressIndicator(),
-              ),
-            AroundMeLoaded() => AroundMeScreen(uid: uid),
-            AroundMeError() => ErrorPage(
-                errorMessage: state.message,
-                onRetry: () {
-                  context.read<AroundMeCubit>().getAllUserProfiles(uid);
-                },
-              ),
-          };
-        },
-      ),
+      child: AroundMeScreen(uid: uid),
     );
   }
 }

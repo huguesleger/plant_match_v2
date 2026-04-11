@@ -15,23 +15,20 @@ class AroundMeScreen extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: BlocBuilder<AroundMeCubit, AroundMeState>(
-          builder: (context, state) {
-            return switch (state) {
-              AroundMeInitial() || AroundMeLoading() => const Center(
-                  child: CircularProgressIndicator(),
-                ),
-              AroundMeLoaded() => CheckUserLocation(
-                  currentUser: state.currentUser,
-                  users: state.users,
-                  userCatalogs: state.userCatalogs,
-                ),
-              AroundMeError() => ErrorPage(
-                  errorMessage: state.message,
-                  onRetry: () {
-                    context.read<AroundMeCubit>().getAllUserProfiles(uid);
-                  },
-                ),
-            };
+          builder: (context, state) => switch (state) {
+            AroundMeInitial() ||
+            AroundMeLoading() =>
+              const Center(child: CircularProgressIndicator()),
+            AroundMeLoaded() => CheckUserLocation(
+                currentUser: state.currentUser,
+                users: state.users,
+                userCatalogs: state.userCatalogs,
+              ),
+            AroundMeError s => ErrorPage(
+                errorMessage: s.message,
+                onRetry: () =>
+                    context.read<AroundMeCubit>().getAllUserProfiles(uid),
+              ),
           },
         ),
       ),
