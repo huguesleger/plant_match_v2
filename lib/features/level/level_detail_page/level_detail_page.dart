@@ -4,8 +4,8 @@ import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/theme/inter_text_style.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_header_image.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
-import 'package:plant_match_v2/features/profil/presentation/profil_badge/presentation/level_detail_page/utils/user_level_details.dart';
-import 'package:plant_match_v2/features/user_points/presentation/utils/user_points_utils.dart';
+import 'package:plant_match_v2/features/level/level_detail_page/utils/user_level_details.dart';
+import 'package:plant_match_v2/features/level/utils/user_points_utils.dart';
 
 class LevelDetailPage extends StatelessWidget {
   const LevelDetailPage({super.key, required this.level});
@@ -19,9 +19,7 @@ class LevelDetailPage extends StatelessWidget {
       appBar: AppBarHeaderImage(
         image: const Image(
             image: AssetImage('assets/images/bg_profil_level_detail.jpg')),
-        onPressed: () {
-          Navigator.pop(context);
-        },
+        onPressed: () => Navigator.pop(context),
         styleIconButton: IconButton.styleFrom(
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -164,15 +162,11 @@ class _ContentLevel extends StatelessWidget {
 }
 
 class _TitleLevel extends StatelessWidget {
-  const _TitleLevel({
-    required this.level,
-  });
+  const _TitleLevel({required this.level});
 
   final int level;
 
-  String _getLevelName(int level) {
-    return UserPointsUtils.getLevelName(level);
-  }
+  String _getLevelName(int level) => UserPointsUtils.getLevelName(level);
 
   @override
   Widget build(BuildContext context) {
@@ -196,15 +190,11 @@ class _TitleLevel extends StatelessWidget {
 }
 
 class _IconLevel extends StatelessWidget {
-  const _IconLevel({
-    required this.level,
-  });
+  const _IconLevel({required this.level});
 
   final int level;
 
-  IconData _getIconForLevel(int level) {
-    return UserPointsUtils.getIconForLevel(level);
-  }
+  IconData _getIconForLevel(int level) => UserPointsUtils.getIconForLevel(level);
 
   @override
   Widget build(BuildContext context) {

@@ -4,8 +4,8 @@ import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/theme/inter_text_style.dart';
 
-class ProfilBadgeCardHeader extends StatelessWidget {
-  const ProfilBadgeCardHeader({
+class LevelCardHeader extends StatelessWidget {
+  const LevelCardHeader({
     super.key,
     required this.currentPoints,
     required this.level,

@@ -9,7 +9,7 @@ import 'package:plant_match_v2/features/user/presentation/cubit/user_cubit.dart'
 import 'package:plant_match_v2/features/user/presentation/cubit/user_state.dart';
 import 'package:plant_match_v2/features/user/presentation/user_screen.dart'
     show UserScreen;
-import 'package:plant_match_v2/features/user_points/data/firebase_user_points.dart';
+import 'package:plant_match_v2/features/level/data/firebase_user_points.dart';
 
 class UserPage extends StatelessWidget {
   UserPage({super.key, required this.uid});

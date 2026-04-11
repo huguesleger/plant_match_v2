@@ -9,7 +9,6 @@ class UserPoints {
     required this.level,
   });
 
-  /// Crée une copie de UserPoints avec les champs modifiés
   UserPoints copyWith({
     int? currentPoints,
     String? uid,

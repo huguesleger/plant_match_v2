@@ -11,10 +11,10 @@ import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart'
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_state.dart';
 import 'package:plant_match_v2/features/auth/presentation/email_verification/email_verification_page_route.dart';
 import 'package:plant_match_v2/features/get_started/presentation/get_started_page.dart';
-import 'package:plant_match_v2/features/user_points/data/firebase_user_points.dart';
-import 'package:plant_match_v2/features/user_points/presentation/cubit/user_points_cubit.dart';
-import 'package:plant_match_v2/features/user_points/presentation/cubit/user_points_state.dart';
-import 'package:plant_match_v2/features/user_points/presentation/user_points_screen.dart';
+import 'package:plant_match_v2/features/level/data/firebase_user_points.dart';
+import 'package:plant_match_v2/features/level/presentation/cubit/user_points_cubit.dart';
+import 'package:plant_match_v2/features/level/presentation/cubit/user_points_state.dart';
+import 'package:plant_match_v2/features/level/presentation/level_awarded_screen.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -94,7 +94,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             BlocListener<AuthCubit, AuthState>(
               listener: (context, authState) {
                 if (authState is Authenticated && authState.isFirstTime) {
-                  // Déclenche l'ajout des 25 points initiaux
                   context.read<UserPointsCubit>().addUserPoints(
                         authState.user.uid,
                         25,
@@ -107,11 +106,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             BlocListener<UserPointsCubit, UserPointsState>(
               listener: (context, pointsState) {
                 if (pointsState is UserPointsAwarded) {
-                  // Affiche la page des points
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => UserPointsScreen(
+                      builder: (context) => LevelAwardedScreen(
                         userId: pointsState.userId,
                         userPoints: pointsState.userPoints,
                         isFromRegistration: pointsState.isFromRegistration,

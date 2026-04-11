@@ -18,7 +18,7 @@ import 'package:plant_match_v2/features/catalog/presentation/widgets/catalog_upl
 import 'package:plant_match_v2/features/catalog/presentation/widgets/grid_selectable_item.dart';
 import 'package:plant_match_v2/features/catalog/presentation/widgets/item_radio.dart';
 import 'package:plant_match_v2/features/catalog/presentation/widgets/selectable_item.dart';
-import 'package:plant_match_v2/features/user_points/presentation/cubit/user_points_cubit.dart';
+import 'package:plant_match_v2/features/level/presentation/cubit/user_points_cubit.dart';
 
 class AddPlantWizardScreen extends StatefulWidget {
   const AddPlantWizardScreen({super.key, required this.catalog});

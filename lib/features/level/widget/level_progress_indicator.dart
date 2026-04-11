@@ -3,8 +3,8 @@ import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/theme/inter_text_style.dart';
 
-class ProfilLevelProgressIndicator extends StatelessWidget {
-  const ProfilLevelProgressIndicator({
+class LevelProgressIndicator extends StatelessWidget {
+  const LevelProgressIndicator({
     super.key,
     required this.currentPoints,
     required this.maxPoints,
@@ -15,12 +15,8 @@ class ProfilLevelProgressIndicator extends StatelessWidget {
   final int maxPoints;
   final int level;
 
-  double calculateLevelProgression(int currentPoints, int maxPoints) {
-    if (maxPoints == 0) {
-      return 0.0;
-    }
-    return currentPoints / maxPoints;
-  }
+  double calculateLevelProgression(int currentPoints, int maxPoints) =>
+      maxPoints == 0 ? 0.0 : currentPoints / maxPoints;
 
   @override
   Widget build(BuildContext context) {

@@ -6,15 +6,15 @@ import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_template.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
-import 'package:plant_match_v2/features/profil/presentation/profil_badge/presentation/profil_badge_page.dart';
+import 'package:plant_match_v2/features/level/presentation/level_page_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:plant_match_v2/features/user_points/data/firebase_user_points.dart';
-import 'package:plant_match_v2/features/user_points/presentation/cubit/user_points_cubit.dart';
-import 'package:plant_match_v2/features/user_points/domain/entities/user_points.dart';
-import 'package:plant_match_v2/features/user_points/presentation/cubit/user_points_state.dart';
+import 'package:plant_match_v2/features/level/data/firebase_user_points.dart';
+import 'package:plant_match_v2/features/level/presentation/cubit/user_points_cubit.dart';
+import 'package:plant_match_v2/features/level/domain/entities/user_points.dart';
+import 'package:plant_match_v2/features/level/presentation/cubit/user_points_state.dart';
 
-class UserPointsScreen extends StatelessWidget {
-  const UserPointsScreen({
+class LevelAwardedScreen extends StatelessWidget {
+  const LevelAwardedScreen({
     super.key,
     required this.userId,
     required this.userPoints,
@@ -98,7 +98,7 @@ class UserPointsScreen extends StatelessWidget {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => ProfilBadgePage(),
+                                        builder: (context) => LevelPageRoute(),
                                       ),
                                     );
                                   }

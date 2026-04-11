@@ -7,7 +7,7 @@ import 'package:plant_match_v2/features/user/domain/repository/user_repository.d
 import 'package:plant_match_v2/features/user/presentation/cubit/user_state.dart';
 import 'package:plant_match_v2/features/exchange/domain/repository/exchange_repository.dart';
 import 'package:plant_match_v2/features/exchange/domain/entities/exchange.dart';
-import 'package:plant_match_v2/features/user_points/domain/repository/user_points_repository.dart';
+import 'package:plant_match_v2/features/level/domain/repository/user_points_repository.dart';
 
 class UserCubit extends Cubit<UserState> {
   final UserRepository userRepository;
@@ -35,7 +35,6 @@ class UserCubit extends Cubit<UserState> {
           return userPointsRepository.getPoints(user.uid).map((userPoints) {
             return (user, catalogs, userPoints.level);
           }).orElse((failure) {
-            // En cas d'erreur, on utilise le niveau par défaut 1
             return TaskEither.right((user, catalogs, 1));
           });
         })

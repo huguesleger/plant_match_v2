@@ -3,8 +3,8 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/app_card/app_card_with_icon_square.dart';
 
-class ProfilBadgeCard extends StatelessWidget {
-  const ProfilBadgeCard({super.key});
+class LevelCard extends StatelessWidget {
+  const LevelCard({super.key});
 
   @override
   Widget build(BuildContext context) {

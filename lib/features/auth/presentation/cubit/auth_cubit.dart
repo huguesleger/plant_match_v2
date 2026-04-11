@@ -6,7 +6,7 @@ import 'package:plant_match_v2/features/auth/domain/entities/user_auth.dart';
 import 'package:plant_match_v2/features/auth/domain/repository/auth_repository.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_state.dart';
 import 'package:plant_match_v2/features/emailing/email_welcome.dart';
-import 'package:plant_match_v2/features/user_points/data/firebase_user_points.dart';
+import 'package:plant_match_v2/features/level/data/firebase_user_points.dart';
 
 class AuthCubit extends Cubit<AuthState> {
   final AuthRepository authRepository;
@@ -20,8 +20,6 @@ class AuthCubit extends Cubit<AuthState> {
 
   UserAuth? get currentUser => _currentUser;
   String? get userId => _currentUser?.uid;
-
-  // ─── checkCurrentUser ─────────────────────────────────────────────────────
 
   void checkCurrentUser() {
     authRepository
@@ -39,8 +37,6 @@ class AuthCubit extends Cubit<AuthState> {
         .map(emit)
         .run();
   }
-
-  // ─── signInWithEmailAndPassword ───────────────────────────────────────────
 
   void signInWithEmailAndPassword({
     required String email,
@@ -63,8 +59,6 @@ class AuthCubit extends Cubit<AuthState> {
         .map(emit)
         .run();
   }
-
-  // ─── registerWithEmailAndPassword ─────────────────────────────────────────
 
   void registerWithEmailAndPassword({
     required String email,
@@ -89,8 +83,6 @@ class AuthCubit extends Cubit<AuthState> {
         .run();
   }
 
-  // ─── resendEmailVerification ──────────────────────────────────────────────
-
   void resendEmailVerification() {
     authRepository
         .sendEmailVerification()
@@ -107,8 +99,6 @@ class AuthCubit extends Cubit<AuthState> {
         .map(emit)
         .run();
   }
-
-  // ─── checkEmailVerified ───────────────────────────────────────────────────
 
   void checkEmailVerified({String? fullName}) {
     if (_isCheckingEmail) return;
@@ -134,7 +124,6 @@ class AuthCubit extends Cubit<AuthState> {
             fullName: resolvedName,
           );
 
-          // On émet Finalizing juste avant l'étape longue (Firestore + Email + Points)
           return TaskEither<Failure, Unit>.tryCatch(
             () async {
               emit(AuthFinalizing(userAuth));
@@ -183,8 +172,6 @@ class AuthCubit extends Cubit<AuthState> {
         .run();
   }
 
-  // ─── signInWithGoogle ─────────────────────────────────────────────────────
-
   void signInWithGoogle() {
     emit(const AuthLoading());
 
@@ -203,8 +190,6 @@ class AuthCubit extends Cubit<AuthState> {
         .map(emit)
         .run();
   }
-
-  // ─── signInWithFacebook ───────────────────────────────────────────────────
 
   void signInWithFacebook() {
     emit(const AuthLoading());
@@ -225,8 +210,6 @@ class AuthCubit extends Cubit<AuthState> {
         .run();
   }
 
-  // ─── logOut ───────────────────────────────────────────────────────────────
-
   void logOut() {
     authRepository
         .logOut()
@@ -241,20 +224,16 @@ class AuthCubit extends Cubit<AuthState> {
         .run();
   }
 
-  // ─── sendPasswordResetEmail ───────────────────────────────────────────────
-
   void sendPasswordResetEmail({required String email}) {
     authRepository
         .sendPasswordResetEmail(email: email)
         .match(
           (failure) => AuthError(failure.message),
-          (_) => state, // On garde l'état actuel ou on émet un succès si besoin
+          (_) => state,
         )
         .map(emit)
         .run();
   }
-
-  // ─── deleteUnverifiedUser ─────────────────────────────────────────────────
 
   void deleteUnverifiedUser() {
     TaskEither<Failure, Unit>.tryCatch(
@@ -286,8 +265,6 @@ class AuthCubit extends Cubit<AuthState> {
         .map(emit)
         .run();
   }
-
-  // ─── reset ────────────────────────────────────────────────────────────────
 
   void reset() => emit(const Unauthenticated());
 }

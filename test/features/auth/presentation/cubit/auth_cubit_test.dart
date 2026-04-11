@@ -7,7 +7,7 @@ import 'package:plant_match_v2/features/auth/domain/entities/user_auth.dart';
 import 'package:plant_match_v2/features/auth/domain/repository/auth_repository.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_state.dart';
-import 'package:plant_match_v2/features/user_points/data/firebase_user_points.dart';
+import 'package:plant_match_v2/features/level/data/firebase_user_points.dart';
 
 class MockAuthRepository extends Mock implements AuthRepository {}
 class MockFirebaseUserPoints extends Mock implements FirebaseUserPoints {}

@@ -1,13 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:plant_match_v2/features/user_points/domain/repository/user_points_repository.dart';
-import 'package:plant_match_v2/features/user_points/presentation/cubit/user_points_state.dart';
+import 'package:plant_match_v2/features/level/domain/repository/user_points_repository.dart';
+import 'package:plant_match_v2/features/level/presentation/cubit/user_points_state.dart';
 
 class UserPointsCubit extends Cubit<UserPointsState> {
   final UserPointsRepository repository;
 
   UserPointsCubit({required this.repository}) : super(UserPointsInitial());
-
-  // ─── fetchUserPoints ───────────────────────────────────────────────────────
 
   void fetchUserPoints(String userId) {
     emit(UserPointsLoading());
@@ -25,8 +23,6 @@ class UserPointsCubit extends Cubit<UserPointsState> {
         .map(emit)
         .run();
   }
-
-  // ─── addUserPoints ─────────────────────────────────────────────────────────
 
   void addUserPoints(
     String userId,
@@ -57,8 +53,6 @@ class UserPointsCubit extends Cubit<UserPointsState> {
         .map(emit)
         .run();
   }
-
-  // ─── updateUserPoints ──────────────────────────────────────────────────────
 
   void updateUserPoints(String userId, int pointsToAdd) {
     emit(UserPointsLoading());

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/theme/inter_text_style.dart';
-import 'package:plant_match_v2/features/profil/presentation/profil_badge/presentation/level_detail_page/level_detail_page.dart';
-import 'package:plant_match_v2/features/user_points/presentation/utils/user_points_utils.dart';
+import 'package:plant_match_v2/features/level/level_detail_page/level_detail_page.dart';
+import 'package:plant_match_v2/features/level/utils/user_points_utils.dart';
 
 class ProfilBadgeLevelItems extends StatelessWidget {
   const ProfilBadgeLevelItems({

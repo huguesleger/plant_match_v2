@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:plant_match_v2/features/user_points/domain/entities/user_points.dart';
+import 'package:plant_match_v2/features/level/domain/entities/user_points.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
-import 'package:plant_match_v2/features/user_points/domain/repository/user_points_repository.dart';
-import 'package:plant_match_v2/features/user_points/presentation/utils/user_points_utils.dart';
+import 'package:plant_match_v2/features/level/domain/repository/user_points_repository.dart';
+import 'package:plant_match_v2/features/level/utils/user_points_utils.dart';
 
 class FirebaseUserPoints implements UserPointsRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -59,7 +59,6 @@ class FirebaseUserPoints implements UserPointsRepository {
   TaskEither<Failure, Unit> updatePoints(String userId, int pointsToAdd) {
     return TaskEither.tryCatch(
       () async {
-        // Récupérer les données actuelles
         final doc = await _firestore.collection('userPoints').doc(userId).get();
 
         if (!doc.exists) {
@@ -74,13 +73,11 @@ class FirebaseUserPoints implements UserPointsRepository {
         int currentPoints = data['currentPoints'] as int;
         int level = data['level'] as int;
 
-        // Calculer les nouveaux points et niveau (système cumulatif)
         currentPoints += pointsToAdd;
         while (currentPoints >= UserPointsUtils.getMaxPointsForLevel(level)) {
           level++;
         }
 
-        // Mettre à jour dans Firebase
         await _firestore.collection('userPoints').doc(userId).update({
           'currentPoints': currentPoints,
           'level': level,
@@ -92,7 +89,6 @@ class FirebaseUserPoints implements UserPointsRepository {
     );
   }
 
-  /// Mappe les erreurs vers les types Failure appropriés
   Failure _mapErrorToFailure(Object error) {
     if (error is Failure) {
       return error;

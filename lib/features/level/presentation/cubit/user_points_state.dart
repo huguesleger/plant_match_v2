@@ -1,4 +1,4 @@
-import 'package:plant_match_v2/features/user_points/domain/entities/user_points.dart';
+import 'package:plant_match_v2/features/level/domain/entities/user_points.dart';
 
 sealed class UserPointsState {}
 

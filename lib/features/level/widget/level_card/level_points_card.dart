@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/theme/inter_text_style.dart';
-import 'package:plant_match_v2/features/profil/presentation/profil_badge/widget/profil_level_progress_indicator.dart';
-import 'package:plant_match_v2/features/user_points/presentation/utils/user_points_utils.dart';
+import 'package:plant_match_v2/features/level/widget/level_progress_indicator.dart';
+import 'package:plant_match_v2/features/level/utils/user_points_utils.dart';
 
-class ProfilBadgeLevelCard extends StatelessWidget {
-  const ProfilBadgeLevelCard({
+class LevelPointsCard extends StatelessWidget {
+  const LevelPointsCard({
     super.key,
     required this.level,
     required this.points,
@@ -17,13 +17,9 @@ class ProfilBadgeLevelCard extends StatelessWidget {
   final int points;
   final int maxPoints;
 
-  IconData _getIconForLevel(int level) {
-    return UserPointsUtils.getIconForLevel(level);
-  }
+  IconData _getIconForLevel(int level) => UserPointsUtils.getIconForLevel(level);
 
-  String _getLevelName(int level) {
-    return UserPointsUtils.getLevelName(level);
-  }
+  String _getLevelName(int level) => UserPointsUtils.getLevelName(level);
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +60,7 @@ class ProfilBadgeLevelCard extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 20),
-              ProfilLevelProgressIndicator(
+              LevelProgressIndicator(
                 currentPoints: points,
                 maxPoints: maxPoints,
                 level: level,
