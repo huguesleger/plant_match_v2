@@ -5,11 +5,13 @@ import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart' hide ChatState;
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/cubit/chat_plant_cubit.dart';
-import 'package:plant_match_v2/features/chat_plant/presentation/widgets/chat_plant_action_bars.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/chat_plant_custom_message.dart';
-import 'package:plant_match_v2/features/chat_plant/presentation/widgets/chat_plant_info_bars.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/chat_plant_text_input.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/chat_theme.dart';
+import 'package:plant_match_v2/features/chat_plant/presentation/widgets/donation/chat_plant_donation_action_bar.dart';
+import 'package:plant_match_v2/features/chat_plant/presentation/widgets/donation/chat_plant_donation_info_bar.dart';
+import 'package:plant_match_v2/features/chat_plant/presentation/widgets/exchange/chat_plant_exchange_action_bar.dart';
+import 'package:plant_match_v2/features/chat_plant/presentation/widgets/exchange/chat_plant_exchange_info_bar.dart';
 import 'package:plant_match_v2/features/donation/presentation/cubit/donation_cubit.dart';
 import 'package:plant_match_v2/features/exchange/presentation/cubit/exchange_cubit.dart';
 
@@ -43,10 +45,8 @@ class ChatPlantView extends StatelessWidget {
 
     return Column(
       children: [
-        ChatPlantInfoBars(
-          exchangeState: exchangeState,
-          donationState: donationState,
-        ),
+        ChatPlantExchangeInfoBar(state: exchangeState),
+        ChatPlantDonationInfoBar(state: donationState),
         Expanded(
           child: Chat(
             user: types.User(id: currentUser.uid),
@@ -59,7 +59,15 @@ class ChatPlantView extends StatelessWidget {
             ),
             customBottomWidget: Column(
               children: [
-                ChatPlantActionBars(
+                ChatPlantExchangeActionBar(
+                  chatId: chatId,
+                  plantId: plantId,
+                  plantOwnerId: plantOwnerId,
+                  plantOfferType: plantOfferType,
+                  currentUserId: currentUser.uid,
+                  state: exchangeState,
+                ),
+                ChatPlantDonationActionBar(
                   chatId: chatId,
                   plantId: plantId,
                   plantName: plantName,
@@ -67,8 +75,7 @@ class ChatPlantView extends StatelessWidget {
                   plantOwnerId: plantOwnerId,
                   plantOfferType: plantOfferType,
                   currentUserId: currentUser.uid,
-                  exchangeState: exchangeState,
-                  donationState: donationState,
+                  state: donationState,
                 ),
                 ChatPlantTextInput(
                   onSend: (text) => context.read<ChatPlantCubit>().send(
