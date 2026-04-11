@@ -7,7 +7,7 @@ import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/widgets/form/decoration_input.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
-import 'package:plant_match_v2/features/profil/presentation/profil_personal_information/presentation/profil_personal_detail_wizard/profil_personal_detail_wizard_item.dart';
+import 'package:plant_match_v2/features/personal_information/presentation/detail_wizard/wizard_item.dart';
 
 class WizardPseudoStep extends StatelessWidget {
   const WizardPseudoStep({
@@ -21,7 +21,7 @@ class WizardPseudoStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ProfilPersonalDetailWizardItem(
+    return DetailWizardItem(
       formKey: formKey,
       title: 'Pseudo d\'affichage',
       description: 'Choisissez votre pseudo qui sera visible par les autres utilisateurs.',
@@ -52,7 +52,7 @@ class WizardBirthdayStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ProfilPersonalDetailWizardItem(
+    return DetailWizardItem(
       formKey: formKey,
       title: 'Date d\'anniversaire',
       description: 'Renseignez votre date de naissance pour recevoir des points le jour de votre anniversaire.',
@@ -92,7 +92,7 @@ class WizardBioStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ProfilPersonalDetailWizardItem(
+    return DetailWizardItem(
       title: 'Bio',
       description: 'Rédigez une courte description de vous.',
       formKey: formKey,
@@ -125,7 +125,7 @@ class WizardLocationStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ProfilPersonalDetailWizardItem(
+    return DetailWizardItem(
       title: 'Localisation',
       description: 'Votre position sera utilisée pour vous proposer des profils proches de chez vous.',
       formKey: formKey,

@@ -5,8 +5,8 @@ import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 
-class ProfilPersonalNameAndEmail extends StatelessWidget {
-  const ProfilPersonalNameAndEmail({super.key, required this.profilUser});
+class NameAndEmail extends StatelessWidget {
+  const NameAndEmail({super.key, required this.profilUser});
 
   final ProfilUser profilUser;
 

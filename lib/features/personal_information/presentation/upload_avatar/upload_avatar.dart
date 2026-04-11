@@ -6,20 +6,20 @@ import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_state.dart';
-import 'package:plant_match_v2/features/profil/presentation/profil_personal_information/presentation/profil_personal_upload_avatar/show_image_source_bottom_sheet.dart';
+import 'package:plant_match_v2/features/personal_information/presentation/upload_avatar/show_image_source_bottom_sheet.dart';
 
-class ProfilPersonalUploadAvatar extends StatefulWidget {
-  const ProfilPersonalUploadAvatar({super.key, required this.profilUser});
+class UploadAvatar extends StatefulWidget {
+  const UploadAvatar({super.key, required this.profilUser});
 
   final ProfilUser profilUser;
 
   @override
-  State<ProfilPersonalUploadAvatar> createState() =>
-      _ProfilPersonalUploadAvatarState();
+  State<UploadAvatar> createState() =>
+      _UploadAvatarState();
 }
 
-class _ProfilPersonalUploadAvatarState
-    extends State<ProfilPersonalUploadAvatar> {
+class _UploadAvatarState
+    extends State<UploadAvatar> {
   final ImagePicker _picker = ImagePicker();
 
   Future<void> _pickImage(ImageSource source) async {

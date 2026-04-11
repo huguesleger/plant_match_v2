@@ -8,11 +8,11 @@ import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_state.dart';
-import 'package:plant_match_v2/features/profil/presentation/profil_personal_information/presentation/profil_personal_detail/profil_personal_detail_item.dart';
-import 'package:plant_match_v2/features/profil/presentation/profil_personal_information/presentation/profil_personal_detail_wizard/profil_personal_detail_wizard_page.dart';
+import 'package:plant_match_v2/features/personal_information/presentation/detail/detail_item.dart';
+import 'package:plant_match_v2/features/personal_information/presentation/detail_wizard/wizard_page.dart';
 
-class ProfilPersonalDetailPage extends StatelessWidget {
-  const ProfilPersonalDetailPage({super.key, required this.profilUser});
+class DetailPage extends StatelessWidget {
+  const DetailPage({super.key, required this.profilUser});
 
   final ProfilUser profilUser;
 
@@ -27,7 +27,7 @@ class ProfilPersonalDetailPage extends StatelessWidget {
               title: 'Détail de mon profil',
               fontSize: AppTypo.textXl,
             ),
-            ProfilPersonalDetailItem(
+            DetailItem(
               title: 'Pseudo d\'affichage',
               subtitle: profilUser.userName.match(
                 () => 'A renseigner',
@@ -40,7 +40,7 @@ class ProfilPersonalDetailPage extends StatelessWidget {
               },
             ),
             const Divider(height: 0),
-            ProfilPersonalDetailItem(
+            DetailItem(
               title: 'Date d\'anniversaire',
               subtitle: profilUser.birthdayDate.match(
                 () => 'A renseigner',
@@ -53,7 +53,7 @@ class ProfilPersonalDetailPage extends StatelessWidget {
               },
             ),
             const Divider(height: 0),
-            ProfilPersonalDetailItem(
+            DetailItem(
               title: 'Bio',
               subtitle: profilUser.bio.match(
                 () => 'A renseigner',
@@ -66,7 +66,7 @@ class ProfilPersonalDetailPage extends StatelessWidget {
               },
             ),
             const Divider(height: 0),
-            ProfilPersonalDetailItem(
+            DetailItem(
               title: 'Localisation',
               subtitle: profilUser.localisation.isEmpty
                   ? 'A renseigner'
@@ -91,7 +91,7 @@ class ProfilPersonalDetailPage extends StatelessWidget {
                       MaterialPageRoute(
                         builder: (contextRoute) => BlocProvider.value(
                           value: profilCubit,
-                          child: ProfilPersonalDetailWizardPage(
+                          child: DetailWizardPage(
                             profilUser: profilUser,
                           ),
                         ),

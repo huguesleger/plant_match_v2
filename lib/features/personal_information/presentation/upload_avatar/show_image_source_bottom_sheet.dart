@@ -9,7 +9,7 @@ import 'package:plant_match_v2/core/widgets/dialog/app_dialog.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
-import 'package:plant_match_v2/features/profil/presentation/profil_personal_information/presentation/profil_avatar/widget/avatar_selection_dialog.dart';
+import 'package:plant_match_v2/features/personal_information/presentation/avatar/avatar_selection_dialog.dart';
 
 void showImageSourceBottomSheet({
   required BuildContext context,

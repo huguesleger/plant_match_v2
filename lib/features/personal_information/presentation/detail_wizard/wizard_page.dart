@@ -11,21 +11,21 @@ import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_state.dart';
-import 'package:plant_match_v2/features/profil/presentation/profil_personal_information/presentation/profil_personal_detail_wizard/widgets/wizard_progress_indicator.dart';
-import 'package:plant_match_v2/features/profil/presentation/profil_personal_information/presentation/profil_personal_detail_wizard/widgets/wizard_steps.dart';
+import 'package:plant_match_v2/features/personal_information/presentation/detail_wizard/widgets/wizard_progress_indicator.dart';
+import 'package:plant_match_v2/features/personal_information/presentation/detail_wizard/widgets/wizard_steps.dart';
 
-class ProfilPersonalDetailWizardPage extends StatefulWidget {
-  const ProfilPersonalDetailWizardPage({super.key, required this.profilUser});
+class DetailWizardPage extends StatefulWidget {
+  const DetailWizardPage({super.key, required this.profilUser});
 
   final ProfilUser profilUser;
 
   @override
-  State<ProfilPersonalDetailWizardPage> createState() =>
-      _ProfilPersonalDetailWizardPageState();
+  State<DetailWizardPage> createState() =>
+      _DetailWizardPageState();
 }
 
-class _ProfilPersonalDetailWizardPageState
-    extends State<ProfilPersonalDetailWizardPage> {
+class _DetailWizardPageState
+    extends State<DetailWizardPage> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
   final int _totalPages = 4;

@@ -3,8 +3,8 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 
-class ProfilPersonalDetailItem extends StatelessWidget {
-  const ProfilPersonalDetailItem({
+class DetailItem extends StatelessWidget {
+  const DetailItem({
     super.key,
     required this.title,
     required this.subtitle,

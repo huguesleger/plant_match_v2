@@ -5,7 +5,7 @@ import 'package:plant_match_v2/core/widgets/buttons/button_outlined_rounded.dart
 import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
-import 'package:plant_match_v2/features/profil/presentation/profil_personal_information/presentation/profil_avatar/widget/avatar_collection_list.dart';
+import 'package:plant_match_v2/features/personal_information/presentation/avatar/avatar_collection_list.dart';
 
 List<String> generateAvatarPaths(int count) {
   return List.generate(
