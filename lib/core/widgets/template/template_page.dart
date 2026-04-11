@@ -8,7 +8,7 @@ import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart'
 import 'package:plant_match_v2/features/home/presentation/home_page.dart';
 import 'package:plant_match_v2/features/message/presentation/message_page.dart';
 import 'package:plant_match_v2/features/message/presentation/cubit/unread_messages_cubit.dart';
-import 'package:plant_match_v2/features/profil/presentation/profil_page.dart';
+import 'package:plant_match_v2/features/profil/presentation/profil_page_route.dart';
 import 'package:plant_match_v2/features/chat_plant/data/firebase_chat_plant.dart';
 import 'package:plant_match_v2/features/exchange/data/firebase_exchange.dart';
 import 'package:plant_match_v2/features/exchange/presentation/cubit/unread_exhange_cubit.dart';
@@ -45,7 +45,7 @@ class TemplatePageState extends State<TemplatePage> {
       AroundMePageRoute(uid: uid),
       const SizedBox.shrink(), // placeholder pour l'index "Ajouter"
       MessagesPage(),
-      ProfilPage(uid: uid),
+      ProfilPageRoute(uid: uid),
     ];
   }
 

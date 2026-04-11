@@ -1,56 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:plant_match_v2/core/theme/app_colors.dart';
-import 'package:plant_match_v2/core/theme/app_spacing.dart';
-import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
-import 'package:plant_match_v2/features/profil/presentation/profil_card/profil_card.dart';
-import 'package:plant_match_v2/features/profil/presentation/profil_header/profil_header.dart';
-import 'package:plant_match_v2/features/profil/presentation/profil_navigation/profil_navigation.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
+import 'package:plant_match_v2/features/profil/presentation/cubit/profil_state.dart';
+import 'package:plant_match_v2/core/widgets/error/error_page.dart';
+import 'package:plant_match_v2/features/profil/presentation/widgets/profil_view.dart';
 
 class ProfilScreen extends StatelessWidget {
   const ProfilScreen({
     super.key,
-    required this.profilUser,
     required this.userId,
   });
 
-  final ProfilUser profilUser;
   final String userId;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Padding(
-              padding: AppSpacing.paddingHorizontal,
-              child: ProfilHeader(profilUser: profilUser),
+      body: BlocBuilder<ProfilCubit, ProfilState>(
+        builder: (context, state) => switch (state) {
+          ProfilInitial() || ProfilLoading() => const Center(
+              child: CircularProgressIndicator(),
             ),
-            const SizedBox(
-              height: 50,
+          ProfilError s => ErrorPage(
+              errorMessage: s.message,
+              onRetry: () => context.read<ProfilCubit>().getProfilUser(userId),
             ),
-            const SizedBox(
-              height: 216,
-              child: ProfilCard(),
-            ),
-            const SizedBox(
-              height: 25,
-            ),
-            Expanded(
-              child: DecoratedBox(
-                decoration: const BoxDecoration(
-                  color: AppColors.greyUltraLight,
-                ),
-                child: Padding(
-                  padding: AppSpacing.paddingHorizontal +
-                      const EdgeInsets.symmetric(vertical: 30),
-                  child: ProfilNavigation(profilUser: profilUser),
-                ),
-              ),
-            ),
-          ],
-        ),
+          ProfilLoaded s => ProfilView(profilUser: s.profilUser),
+          ProfilImageUploading() => const SizedBox.shrink(),
+        },
       ),
     );
   }
