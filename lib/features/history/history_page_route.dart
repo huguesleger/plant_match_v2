@@ -6,8 +6,8 @@ import 'package:plant_match_v2/features/exchange/data/firebase_exchange.dart';
 import 'package:plant_match_v2/features/history/presentation/cubit/history_cubit.dart';
 import 'package:plant_match_v2/features/history/history_screen.dart';
 
-class HistoryPage extends StatelessWidget {
-  const HistoryPage({super.key});
+class HistoryPageRoute extends StatelessWidget {
+  const HistoryPageRoute({super.key});
 
   @override
   Widget build(BuildContext context) {
