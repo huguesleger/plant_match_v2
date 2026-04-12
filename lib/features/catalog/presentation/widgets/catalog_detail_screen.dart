@@ -14,6 +14,7 @@ import 'package:plant_match_v2/core/widgets/buttons/button_outlined_rounded_with
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catalog/presentation/cubit/catalog_cubit.dart';
 import 'package:plant_match_v2/features/catalog/presentation/edit_catalog_page_route.dart';
+import 'package:plant_match_v2/features/level/presentation/cubit/user_points_cubit.dart';
 
 class CatalogDetailScreen extends StatefulWidget {
   const CatalogDetailScreen({super.key, required this.catalog});
@@ -256,12 +257,31 @@ class _DeleteButton extends StatelessWidget {
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Annuler')),
           ElevatedButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-              context.read<CatalogCubit>().deleteCatalog(catalog.catalogId!, catalog.userId);
-              Navigator.pop(context, true);
+            onPressed: () async {
+              final navigator = Navigator.of(context);
+              final catalogCubit = context.read<CatalogCubit>();
+              final userPointsCubit = context.read<UserPointsCubit>();
+
+              final result = await catalogCubit
+                  .deleteCatalog(catalog.catalogId!, catalog.userId)
+                  .run();
+
+              result.match(
+                (failure) => null,
+                (remainingCount) {
+                  if (remainingCount == 0) {
+                    userPointsCubit.updateUserPoints(catalog.userId, -25);
+                  }
+                },
+              );
+
+              navigator.pop(); // dialog
+              navigator.pop(true); // screen
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+            ),
             child: const Text('Supprimer'),
           ),
         ],

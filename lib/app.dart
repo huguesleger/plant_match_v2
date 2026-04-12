@@ -14,7 +14,7 @@ import 'package:plant_match_v2/features/get_started/presentation/get_started_pag
 import 'package:plant_match_v2/features/level/data/firebase_user_points.dart';
 import 'package:plant_match_v2/features/level/presentation/cubit/user_points_cubit.dart';
 import 'package:plant_match_v2/features/level/presentation/cubit/user_points_state.dart';
-import 'package:plant_match_v2/features/level/presentation/level_awarded_screen.dart';
+import 'package:plant_match_v2/features/level_awarded/presentation/level_awarded_page_route.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -105,11 +105,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             ),
             BlocListener<UserPointsCubit, UserPointsState>(
               listener: (context, pointsState) {
-                if (pointsState is UserPointsAwarded) {
+                if (pointsState is UserPointsAwarded && pointsState.points > 0) {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => LevelAwardedScreen(
+                      builder: (context) => LevelAwardedPageRoute(
                         userId: pointsState.userId,
                         userPoints: pointsState.userPoints,
                         isFromRegistration: pointsState.isFromRegistration,

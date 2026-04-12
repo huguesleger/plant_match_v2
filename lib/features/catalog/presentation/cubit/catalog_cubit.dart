@@ -181,17 +181,19 @@ class CatalogCubit extends Cubit<CatalogState> {
 
   // ─── deleteCatalog ─────────────────────────────────────────────────────────
 
-  void deleteCatalog(String catalogId, String userId) {
+  TaskEither<Failure, int> deleteCatalog(String catalogId, String userId) {
     emit(const CatalogLoading());
 
-    catalogRepository
-        .deleteCatalog(catalogId)
-        .flatMap((_) => catalogRepository.getCatalogsByUserId(userId))
-        .match(
-          (failure) => CatalogError(failure.message),
-          (catalogs) => CatalogLoaded(catalogs, Catalog.empty(userId)),
-        )
-        .map(emit)
-        .run();
+    return catalogRepository.deleteCatalog(catalogId).flatMap((_) {
+      return catalogRepository.getCatalogsByUserId(userId).flatMap((catalogs) {
+        return TaskEither<Failure, int>.tryCatch(
+          () async {
+            emit(CatalogLoaded(catalogs, Catalog.empty(userId)));
+            return catalogs.length;
+          },
+          (error, stackTrace) => UnexpectedFailure(error.toString()),
+        );
+      });
+    });
   }
 }

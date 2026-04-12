@@ -74,8 +74,24 @@ class FirebaseUserPoints implements UserPointsRepository {
         int level = data['level'] as int;
 
         currentPoints += pointsToAdd;
-        while (currentPoints >= UserPointsUtils.getMaxPointsForLevel(level)) {
-          level++;
+        if (currentPoints < 0) currentPoints = 0;
+
+        level = 1;
+        final Map<int, LevelData> reversedLevels = Map.fromEntries(
+          UserPointsUtils.levelData.entries.toList().reversed,
+        );
+
+        for (final entry in reversedLevels.entries) {
+          final l = entry.key;
+          final prevLevel = l - 1;
+          final prevMaxPoints = prevLevel > 0
+              ? UserPointsUtils.getMaxPointsForLevel(prevLevel)
+              : 0;
+
+          if (currentPoints >= prevMaxPoints) {
+            level = l;
+            break;
+          }
         }
 
         await _firestore.collection('userPoints').doc(userId).update({

@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_template.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
+import 'package:plant_match_v2/core/widgets/error/error_page.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
-import 'package:plant_match_v2/features/level/presentation/level_page_route.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:plant_match_v2/features/level/data/firebase_user_points.dart';
-import 'package:plant_match_v2/features/level/presentation/cubit/user_points_cubit.dart';
 import 'package:plant_match_v2/features/level/domain/entities/user_points.dart';
-import 'package:plant_match_v2/features/level/presentation/cubit/user_points_state.dart';
+import 'package:plant_match_v2/features/level/presentation/level_page_route.dart';
+import 'package:plant_match_v2/features/level_awarded/presentation/cubit/level_awarded_cubit.dart';
+import 'package:plant_match_v2/features/level_awarded/presentation/cubit/level_awarded_state.dart';
 
 class LevelAwardedScreen extends StatelessWidget {
   const LevelAwardedScreen({
@@ -40,12 +40,16 @@ class LevelAwardedScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: BlocProvider(
-        create: (context) => UserPointsCubit(repository: FirebaseUserPoints())
-          ..fetchUserPoints(userId),
-        child: BlocBuilder<UserPointsCubit, UserPointsState>(
-          builder: (context, state) {
-            return Stack(
+      body: BlocBuilder<LevelAwardedCubit, LevelAwardedState>(
+        builder: (context, state) => switch (state) {
+          LevelAwardedInitial() || LevelAwardedLoading() => const Center(
+              child: CircularProgressIndicator(),
+            ),
+          LevelAwardedError(:final message) => ErrorPage(
+              errorMessage: message,
+              onRetry: () => context.read<LevelAwardedCubit>().load(userId),
+            ),
+          LevelAwardedLoaded(:final userPoints) => Stack(
               children: [
                 Container(
                   decoration: const BoxDecoration(
@@ -75,9 +79,7 @@ class LevelAwardedScreen extends StatelessWidget {
                               : 'Votre aventure PlantMatch progresse, vous avez remporté',
                           children: [
                             TextSpan(
-                              text: state is UserPointsLoaded
-                                  ? ' ${state.currentPoints} points'
-                                  : ' ${userPoints.currentPoints} points',
+                              text: ' ${userPoints.currentPoints} points',
                               style:
                                   const TextStyle(fontWeight: FontWeight.bold),
                             ),
@@ -93,16 +95,12 @@ class LevelAwardedScreen extends StatelessWidget {
                               width: double.infinity,
                               child: ButtonRounded(
                                 text: 'Voir ma progression',
-                                onPressed: () {
-                                  if (state is UserPointsLoaded) {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => LevelPageRoute(),
-                                      ),
-                                    );
-                                  }
-                                },
+                                onPressed: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => LevelPageRoute(),
+                                  ),
+                                ),
                                 bgColor: AppColors.white,
                                 textColor: AppColors.blueGreen,
                               ),
@@ -114,9 +112,8 @@ class LevelAwardedScreen extends StatelessWidget {
                   ),
                 ),
               ],
-            );
-          },
-        ),
+            ),
+        },
       ),
     );
   }

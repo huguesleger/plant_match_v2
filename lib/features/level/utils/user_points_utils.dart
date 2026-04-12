@@ -92,10 +92,23 @@ class UserPointsUtils {
 
   static UserPoints updatePoints(UserPoints userPoints, int pointsToAdd) {
     int newPoints = userPoints.currentPoints + pointsToAdd;
-    int newLevel = userPoints.level;
+    if (newPoints < 0) newPoints = 0;
 
-    while (newPoints >= getMaxPointsForLevel(newLevel)) {
-      newLevel++;
+    int newLevel = 1;
+    final Map<int, LevelData> reversedLevels = Map.fromEntries(
+      levelData.entries.toList().reversed,
+    );
+
+    for (final entry in reversedLevels.entries) {
+      final level = entry.key;
+      final prevLevel = level - 1;
+      final prevMaxPoints =
+          prevLevel > 0 ? getMaxPointsForLevel(prevLevel) : 0;
+
+      if (newPoints >= prevMaxPoints) {
+        newLevel = level;
+        break;
+      }
     }
 
     return UserPoints(
