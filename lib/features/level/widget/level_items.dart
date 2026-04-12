@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/theme/inter_text_style.dart';
-import 'package:plant_match_v2/features/level/level_detail_page/level_detail_page.dart';
+import 'package:plant_match_v2/features/level/level_detail/level_detail_screen.dart';
 import 'package:plant_match_v2/features/level/utils/user_points_utils.dart';
 
 class LevelItems extends StatelessWidget {
@@ -48,7 +48,7 @@ class LevelItems extends StatelessWidget {
         onTap: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => LevelDetailPage(level: level),
+              builder: (context) => LevelDetailScreen(level: level),
             ),
           );
         },
