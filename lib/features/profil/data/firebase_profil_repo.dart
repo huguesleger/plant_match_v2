@@ -23,7 +23,7 @@ class FirebaseProfilRepo implements ProfilRepository {
           if (userData != null) {
             return Some(ProfilUser.fromJson({
               ...userData,
-              'uid': uid, // On s'assure que l'UID est présent pour fromJson
+              'uid': uid, 
             }));
           }
         }
@@ -42,9 +42,7 @@ class FirebaseProfilRepo implements ProfilRepository {
 
     return TaskEither.tryCatch(
       () async {
-        // On utilise toJson() qui gère déjà la conversion Option -> null et retire position
         final data = updateProfilUser.toJson();
-        // On retire uid du body Firestore car il est en clé de document
         data.remove('uid');
         
         await _firebaseFirestore
@@ -67,7 +65,6 @@ class FirebaseProfilRepo implements ProfilRepository {
     return TaskEither.tryCatch(
       () async {
         final data = profilUser.toJson();
-        // Optionnel: garder l'uid dans le document ou non selon vos préférences Firestore
         await _firebaseFirestore.collection('users').doc(profilUser.uid).set(data);
         return unit;
       },
