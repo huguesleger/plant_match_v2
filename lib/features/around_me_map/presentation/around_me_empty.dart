@@ -8,8 +8,8 @@ import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/cubit/around_me_cubit.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 
-class AroundMeNoLocationView extends StatelessWidget {
-  const AroundMeNoLocationView({
+class AroundMeEmpty extends StatelessWidget {
+  const AroundMeEmpty({
     super.key,
     required this.profilUser,
   });

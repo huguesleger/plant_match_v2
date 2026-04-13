@@ -8,8 +8,8 @@ import 'package:plant_match_v2/core/theme/inter_text_style.dart';
 import 'package:plant_match_v2/core/widgets/avatar/avatar.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 
-class UserBottomSheetHeader extends StatelessWidget {
-  const UserBottomSheetHeader({
+class BottomSheetHeader extends StatelessWidget {
+  const BottomSheetHeader({
     super.key,
     required this.user,
     this.distance,

@@ -3,13 +3,13 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:fpdart/fpdart.dart' hide State;
 import 'package:latlong2/latlong.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
-import 'package:plant_match_v2/features/around_me_map/presentation/widgets/map_users/map_controls.dart';
-import 'package:plant_match_v2/features/around_me_map/presentation/widgets/map_users/user_marker.dart';
+import 'package:plant_match_v2/features/around_me_map/presentation/map/map_controls.dart';
+import 'package:plant_match_v2/features/around_me_map/presentation/map/map_marker.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 
-class MapUsers extends StatefulWidget {
-  const MapUsers({
+class AroundMeMap extends StatefulWidget {
+  const AroundMeMap({
     super.key,
     required this.users,
     required this.currentUser,
@@ -21,10 +21,10 @@ class MapUsers extends StatefulWidget {
   final Map<String, List<Catalog>> userCatalogs;
 
   @override
-  State<MapUsers> createState() => _MapUsersState();
+  State<AroundMeMap> createState() => _AroundMeMapState();
 }
 
-class _MapUsersState extends State<MapUsers> {
+class _AroundMeMapState extends State<AroundMeMap> {
   late final MapController _mapController;
   double _currentZoom = 12.0;
   final double _minZoom = 6.0;
@@ -89,7 +89,7 @@ class _MapUsersState extends State<MapUsers> {
                       width: 40.0,
                       height: 40.0,
                       point: _getUserPosition(user),
-                      child: UserMarker(
+                      child: MapMarker(
                         user: user,
                         isCurrentUser: user.uid == widget.currentUser.uid,
                         distance: distance,

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
-import 'package:plant_match_v2/features/around_me_map/presentation/widgets/map_users/bottom_sheet_user.dart';
+import 'package:plant_match_v2/features/around_me_map/presentation/widgets/bottom_sheet/bottom_sheet.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 
-class UserMarker extends StatelessWidget {
-  const UserMarker({
+class MapMarker extends StatelessWidget {
+  const MapMarker({
     super.key,
     required this.user,
     required this.isCurrentUser,
@@ -57,7 +57,7 @@ class UserMarker extends StatelessWidget {
   Widget _buildOtherUserMarker(BuildContext context) {
     return IconButton(
       onPressed: () {
-        bottomSheetUser(
+        bottomSheet(
           context: context,
           user: user,
           distance: distance,

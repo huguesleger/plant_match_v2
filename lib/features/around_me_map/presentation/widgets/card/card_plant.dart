@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
-import 'package:plant_match_v2/features/around_me_map/presentation/widgets/card_plant_content.dart';
-import 'package:plant_match_v2/features/around_me_map/presentation/widgets/card_plant_header.dart';
+import 'package:plant_match_v2/features/around_me_map/presentation/widgets/card/card_plant_content.dart';
+import 'package:plant_match_v2/features/around_me_map/presentation/widgets/card/card_plant_header.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 
