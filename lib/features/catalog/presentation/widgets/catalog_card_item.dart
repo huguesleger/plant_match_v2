@@ -5,7 +5,7 @@ import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/badge/badge_pill.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
-import 'package:plant_match_v2/features/catalog/presentation/catalog_detail_page_route.dart';
+import 'package:plant_match_v2/features/catalog/catalog_detail/catalog_detail_page_route.dart';
 import 'package:plant_match_v2/features/catalog/presentation/cubit/catalog_cubit.dart';
 
 class CatalogCardItem extends StatelessWidget {

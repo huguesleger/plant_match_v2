@@ -15,6 +15,10 @@ class CatalogCubit extends Cubit<CatalogState> {
     required this.storageRepository,
   }) : super(const CatalogInitial());
 
+  void emitLoaded(List<Catalog> catalogs, Catalog catalog) {
+    emit(CatalogLoaded(catalogs, catalog));
+  }
+
   // ─── getCatalogsByUserId ───────────────────────────────────────────────────
 
   void getCatalogsByUserId(String userId) {

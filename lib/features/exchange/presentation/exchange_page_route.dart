@@ -89,7 +89,11 @@ class ExchangePageRoute extends StatelessWidget {
                     },
                   ),
                 ),
-              _ => const ExchangeScreen(
+              ExchangePending() ||
+              ExchangeAccepted() ||
+              ExchangeRejected() ||
+              ExchangeCompleted() =>
+                const ExchangeScreen(
                   title: "",
                   body: SizedBox.shrink(),
                 ),

@@ -53,7 +53,13 @@ class ChatPlantScreen extends StatelessWidget {
               ExchangeAccepted(:final exchange) => exchange,
               ExchangeRejected(:final exchange) => exchange,
               ExchangeCompleted(:final exchange) => exchange,
-              _ => null,
+              ExchangeInitial() ||
+              ExchangeLoading() ||
+              ExchangePickingPlant() ||
+              ExchangeConfirming() ||
+              ExchangeSuccess() ||
+              ExchangeError() =>
+                null,
             };
             if (ex == null) return;
 
@@ -75,7 +81,10 @@ class ChatPlantScreen extends StatelessWidget {
               DonationAccepted(:final donation) => donation,
               DonationRejected(:final donation) => donation,
               DonationCompleted(:final donation) => donation,
-              _ => null,
+              DonationInitial() ||
+              DonationLoading() ||
+              DonationError() =>
+                null,
             };
             if (don == null) return;
 

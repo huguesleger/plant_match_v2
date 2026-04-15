@@ -3,11 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/features/catalog/data/firebase_catalog_repository.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catalog/presentation/cubit/catalog_cubit.dart';
-import 'package:plant_match_v2/features/catalog/presentation/widgets/catalog_detail_screen.dart';
+import 'package:plant_match_v2/features/catalog/catalog_edit/catalog_edit_screen.dart';
 import 'package:plant_match_v2/features/storage/data/firebase_storage_repository.dart';
 
-class CatalogDetailPageRoute extends StatelessWidget {
-  const CatalogDetailPageRoute({super.key, required this.catalog});
+class CatalogEditPageRoute extends StatelessWidget {
+  const CatalogEditPageRoute({super.key, required this.catalog});
 
   final Catalog catalog;
 
@@ -18,7 +18,7 @@ class CatalogDetailPageRoute extends StatelessWidget {
         catalogRepository: FirebaseCatalogRepository(),
         storageRepository: FirebaseStorageRepository(),
       ),
-      child: CatalogDetailScreen(catalog: catalog),
+      child: CatalogEditScreen(catalog: catalog),
     );
   }
 }

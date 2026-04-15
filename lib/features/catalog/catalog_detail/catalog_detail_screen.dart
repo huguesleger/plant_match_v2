@@ -11,9 +11,9 @@ import 'package:plant_match_v2/core/widgets/badge/badge_pill.dart';
 import 'package:plant_match_v2/core/widgets/bottom_bar/bottom_bar.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_rounded_with_icon.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_outlined_rounded_with_icon.dart';
+import 'package:plant_match_v2/features/catalog/catalog_edit/catalog_edit_page_route.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catalog/presentation/cubit/catalog_cubit.dart';
-import 'package:plant_match_v2/features/catalog/presentation/edit_catalog_page_route.dart';
 import 'package:plant_match_v2/features/level/presentation/cubit/user_points_cubit.dart';
 
 class CatalogDetailScreen extends StatefulWidget {
@@ -302,7 +302,7 @@ class _EditButton extends StatelessWidget {
       onPressed: () async {
         final result = await Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => EditCatalogPageRoute(catalog: catalog)),
+          MaterialPageRoute(builder: (_) => CatalogEditPageRoute(catalog: catalog)),
         );
         if (result == true && context.mounted) {
           final getResult = await context.read<CatalogCubit>().getCatalogById(catalog.catalogId!).run();

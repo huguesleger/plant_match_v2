@@ -39,7 +39,10 @@ class HistoryScreen extends StatelessWidget {
               filters: HistoryStatusFilter.values,
               selected: switch (state) {
                 HistoryLoaded s => s.currentFilter,
-                _ => HistoryStatusFilter.all,
+                HistoryInitial() ||
+                HistoryLoading() ||
+                HistoryError() =>
+                  HistoryStatusFilter.all,
               },
               onChanged: (filter) =>
                   context.read<HistoryCubit>().load(filter: filter),
