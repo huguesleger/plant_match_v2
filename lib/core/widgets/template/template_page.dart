@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/widgets/navigation_bottom_bar/navigation_bottom_bar.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
-import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/add_plant_wizard_page.dart';
+import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/add_plant_wizard_page_route.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/around_me_page_route.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/features/home/presentation/home_page.dart';

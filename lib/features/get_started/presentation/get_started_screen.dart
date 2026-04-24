@@ -5,7 +5,7 @@ import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
-import 'package:plant_match_v2/features/onboarding/presentation/onboarding_page.dart';
+import 'package:plant_match_v2/features/onboarding/presentation/onboarding_screen.dart';
 
 class GetStartedScreen extends StatelessWidget {
   const GetStartedScreen({super.key});
@@ -86,7 +86,7 @@ class _Content extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const OnboardingPage(),
+                        builder: (context) => const OnboardingScreen(),
                       ),
                     );
                   },

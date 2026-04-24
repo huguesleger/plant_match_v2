@@ -4,7 +4,7 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
-import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/add_plant_wizard_page.dart';
+import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/add_plant_wizard_page_route.dart';
 import 'package:plant_match_v2/features/catalog/presentation/cubit/catalog_cubit.dart';
 
 class AddPlantButton extends StatelessWidget {
