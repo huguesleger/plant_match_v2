@@ -1,4 +1,4 @@
-import 'package:plant_match_v2/features/history/widgets/history_item.dart';
+import 'package:plant_match_v2/features/history/presentation/widgets/history_item.dart';
 
 sealed class HistoryState {
   const HistoryState();

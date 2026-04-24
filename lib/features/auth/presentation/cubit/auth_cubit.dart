@@ -47,10 +47,7 @@ class AuthCubit extends Cubit<AuthState> {
     authRepository
         .signInWithEmailAndPassword(email: email, password: password)
         .match(
-          (failure) {
-            emit(AuthError(failure.message));
-            return const Unauthenticated();
-          },
+          (failure) => AuthError(failure.message),
           (user) {
             _currentUser = user;
             return Authenticated(user);
@@ -88,13 +85,9 @@ class AuthCubit extends Cubit<AuthState> {
         .sendEmailVerification()
         .match(
           (failure) => AuthError(failure.message),
-          (_) {
-            if (_currentUser != null) {
-              return AuthEmailVerificationSent(_currentUser!);
-            } else {
-              return const Unauthenticated();
-            }
-          },
+          (_) => _currentUser != null
+              ? AuthEmailVerificationSent(_currentUser!)
+              : const Unauthenticated(),
         )
         .map(emit)
         .run();
@@ -124,41 +117,34 @@ class AuthCubit extends Cubit<AuthState> {
             fullName: resolvedName,
           );
 
-          return TaskEither<Failure, Unit>.tryCatch(
-            () async {
-              emit(AuthFinalizing(userAuth));
-              return unit;
-            },
-            (error, _) => UnexpectedFailure(error.toString()),
-          ).flatMap((_) => authRepository
-                  .finalizeRegistration(firebaseUser, resolvedName)
-                  .flatMap((isFirst) {
-                if (isFirst) {
-                  return TaskEither<Failure, Unit>.tryCatch(
-                    () async {
-                      await welcomeEmail(userAuth.email!, resolvedName);
-                      return unit;
-                    },
-                    (error, _) => UnexpectedFailure(
-                        'Erreur lors de l’envoi de l’email de bienvenue : $error'),
-                  )
-                      .alt(() => TaskEither.right(unit))
-                      .map((_) => Authenticated(userAuth, isFirstTime: true));
-                }
-                return TaskEither.right(
-                    Authenticated(userAuth, isFirstTime: isFirst));
-              }));
+          return TaskEither<Failure, UserAuth>.right(userAuth).flatMap((u) => authRepository
+              .finalizeRegistration(firebaseUser, resolvedName)
+              .flatMap<Authenticated>((isFirst) {
+            if (isFirst) {
+              return TaskEither<Failure, Unit>.tryCatch(
+                () async {
+                  await welcomeEmail(u.email!, resolvedName);
+                  return unit;
+                },
+                (error, _) => UnexpectedFailure(
+                    'Erreur lors de l’envoi de l’email de bienvenue : $error'),
+              )
+                  .alt(() => TaskEither<Failure, Unit>.right(unit))
+                  .map((_) => Authenticated(u, isFirstTime: true));
+            }
+            return TaskEither<Failure, Authenticated>.right(
+                Authenticated(u, isFirstTime: isFirst));
+          }));
         })
         .match<AuthState>(
           (failure) {
             _isCheckingEmail = false;
-            if (failure is AuthFailure &&
-                failure.message == "Email non vérifié") {
-              return _currentUser != null
-                  ? AuthEmailVerificationSent(_currentUser!)
-                  : const Unauthenticated();
-            }
-            return AuthError(failure.message);
+            return (failure is AuthFailure &&
+                    failure.message == "Email non vérifié")
+                ? (_currentUser != null
+                    ? AuthEmailVerificationSent(_currentUser!)
+                    : const Unauthenticated())
+                : AuthError(failure.message);
           },
           (state) {
             _isCheckingEmail = false;
@@ -178,10 +164,7 @@ class AuthCubit extends Cubit<AuthState> {
     authRepository
         .signInWithGoogle()
         .match(
-          (failure) {
-            emit(AuthError(failure.message));
-            return const Unauthenticated();
-          },
+          (failure) => AuthError(failure.message),
           (user) {
             _currentUser = user;
             return Authenticated(user);
@@ -197,10 +180,7 @@ class AuthCubit extends Cubit<AuthState> {
     authRepository
         .signInWithFacebook()
         .match(
-          (failure) {
-            emit(AuthError(failure.message));
-            return const Unauthenticated();
-          },
+          (failure) => AuthError(failure.message),
           (user) {
             _currentUser = user;
             return Authenticated(user);
@@ -245,15 +225,10 @@ class AuthCubit extends Cubit<AuthState> {
         }
         return unit;
       },
-      (error, _) {
-        if (error is FirebaseAuthException &&
-            error.code == 'requires-recent-login') {
-          return const AuthFailure(
-              'Reconnexion requise pour supprimer le compte');
-        }
-        return UnexpectedFailure(
-            'Erreur lors de la suppression du compte : $error');
-      },
+      (error, _) => (error is FirebaseAuthException &&
+              error.code == 'requires-recent-login')
+          ? const AuthFailure('Reconnexion requise pour supprimer le compte')
+          : UnexpectedFailure('Erreur lors de la suppression du compte : $error'),
     )
         .match(
           (failure) => AuthError(failure.message),

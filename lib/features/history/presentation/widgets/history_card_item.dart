@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:intl/intl.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
-import 'package:plant_match_v2/features/history/widgets/history_item.dart';
-import 'package:plant_match_v2/features/history/widgets/history_card_data.dart';
-import 'package:plant_match_v2/features/history/widgets/history_card_image.dart';
-import 'package:plant_match_v2/features/history/widgets/history_status_badge.dart';
+import 'package:plant_match_v2/features/history/presentation/widgets/history_item.dart';
+import 'package:plant_match_v2/features/history/presentation/widgets/history_card_data.dart';
+import 'package:plant_match_v2/features/history/presentation/widgets/history_card_image.dart';
+import 'package:plant_match_v2/features/history/presentation/widgets/history_status_badge.dart';
 
 class HistoryCardItem extends StatelessWidget {
   const HistoryCardItem({

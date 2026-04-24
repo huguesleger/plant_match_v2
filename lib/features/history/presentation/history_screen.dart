@@ -5,9 +5,9 @@ import 'package:plant_match_v2/core/widgets/app_bar/app_bar_template.dart';
 import 'package:plant_match_v2/core/widgets/filter/filter_bar.dart';
 import 'package:plant_match_v2/features/history/presentation/cubit/history_cubit.dart';
 import 'package:plant_match_v2/features/history/presentation/cubit/history_state.dart';
-import 'package:plant_match_v2/features/history/widgets/history_item.dart';
-import 'package:plant_match_v2/features/history/widgets/empty_history_view.dart';
-import 'package:plant_match_v2/features/history/widgets/history_card_item.dart';
+import 'package:plant_match_v2/features/history/presentation/widgets/history_item.dart';
+import 'package:plant_match_v2/features/history/presentation/widgets/empty_history_view.dart';
+import 'package:plant_match_v2/features/history/presentation/widgets/history_card_item.dart';
 
 class HistoryScreen extends StatelessWidget {
   const HistoryScreen({

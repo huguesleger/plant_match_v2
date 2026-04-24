@@ -4,7 +4,7 @@ import 'package:plant_match_v2/features/donation/domain/repository/donation_repo
 import 'package:plant_match_v2/features/exchange/domain/entities/exchange.dart';
 import 'package:plant_match_v2/features/exchange/domain/repository/exchange_repository.dart';
 import 'package:plant_match_v2/features/history/presentation/cubit/history_state.dart';
-import 'package:plant_match_v2/features/history/widgets/history_item.dart';
+import 'package:plant_match_v2/features/history/presentation/widgets/history_item.dart';
 
 class HistoryCubit extends Cubit<HistoryState> {
   final ExchangeRepository exchangeRepository;
