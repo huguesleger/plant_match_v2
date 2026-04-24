@@ -7,8 +7,8 @@ import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
 import 'package:plant_match_v2/features/onboarding/presentation/onboarding_page.dart';
 
-class GetStartedPage extends StatelessWidget {
-  const GetStartedPage({super.key});
+class GetStartedScreen extends StatelessWidget {
+  const GetStartedScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

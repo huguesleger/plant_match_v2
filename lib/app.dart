@@ -10,7 +10,7 @@ import 'package:plant_match_v2/features/auth/data/firebase_auth_repository.dart'
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_state.dart';
 import 'package:plant_match_v2/features/auth/presentation/email_verification/email_verification_page_route.dart';
-import 'package:plant_match_v2/features/get_started/presentation/get_started_page.dart';
+import 'package:plant_match_v2/features/get_started/presentation/get_started_screen.dart';
 import 'package:plant_match_v2/features/level/data/firebase_user_points.dart';
 import 'package:plant_match_v2/features/level/presentation/cubit/user_points_cubit.dart';
 import 'package:plant_match_v2/features/level/presentation/cubit/user_points_state.dart';
@@ -129,7 +129,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                       child: CircularProgressIndicator(),
                     ),
                   Authenticated() => const TemplatePage(),
-                  Unauthenticated() => const GetStartedPage(),
+                  Unauthenticated() => const GetStartedScreen(),
                   AuthError() => ErrorPage(
                       errorMessage: authState.message,
                       onRetry: () {

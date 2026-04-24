@@ -4,7 +4,7 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_rounded_with_icon.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
-import 'package:plant_match_v2/features/get_started/presentation/get_started_page.dart';
+import 'package:plant_match_v2/features/get_started/presentation/get_started_screen.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/features/history/history_page_route.dart';
 import 'package:plant_match_v2/features/profil/presentation/profil_navigation/profil_navigation_item.dart';
@@ -84,7 +84,7 @@ class ProfilNavigation extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const GetStartedPage(),
+                builder: (context) => const GetStartedScreen(),
               ),
             );
           },
