@@ -5,7 +5,7 @@ import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/features/exchange/presentation/cubit/unread_exhange_cubit.dart';
 import 'package:plant_match_v2/features/exchange/presentation/state/unread_exhange_state.dart';
 import 'package:plant_match_v2/features/message/presentation/cubit/unread_messages_cubit.dart';
-import 'package:plant_match_v2/features/message/presentation/state/unread_messages_state.dart';
+import 'package:plant_match_v2/features/message/presentation/cubit/unread_messages_state.dart';
 
 class MessagesBadgeIcon extends StatelessWidget {
   const MessagesBadgeIcon({super.key});

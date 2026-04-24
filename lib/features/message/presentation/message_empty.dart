@@ -4,8 +4,8 @@ import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/theme/inter_text_style.dart';
 
-class EmptyMessage extends StatelessWidget {
-  const EmptyMessage({super.key});
+class MessageEmpty extends StatelessWidget {
+  const MessageEmpty({super.key});
 
   @override
   Widget build(BuildContext context) {

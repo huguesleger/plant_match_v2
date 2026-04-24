@@ -16,11 +16,11 @@ import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart'
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/chat_plant/data/firebase_chat_plant.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/chat_plant_page_route.dart';
-import 'package:plant_match_v2/features/user/presentation/detail_plant/widgets/badge_family.dart';
-import 'package:plant_match_v2/features/user/presentation/detail_plant/widgets/badge_offer_type.dart';
-import 'package:plant_match_v2/features/user/presentation/detail_plant/widgets/content_header.dart';
-import 'package:plant_match_v2/features/user/presentation/detail_plant/widgets/plant_characteristic.dart';
-import 'package:plant_match_v2/features/user/presentation/detail_plant/widgets/plant_environment.dart';
+import 'package:plant_match_v2/features/user/detail_plant/widgets/badge_family.dart';
+import 'package:plant_match_v2/features/user/detail_plant/widgets/badge_offer_type.dart';
+import 'package:plant_match_v2/features/user/detail_plant/widgets/content_header.dart';
+import 'package:plant_match_v2/features/user/detail_plant/widgets/plant_characteristic.dart';
+import 'package:plant_match_v2/features/user/detail_plant/widgets/plant_environment.dart';
 
 class DetailPlant extends StatelessWidget {
   const DetailPlant({super.key, required this.catalog});
@@ -53,14 +53,14 @@ class DetailPlant extends StatelessWidget {
       final chatRepository = FirebaseChatPlant();
       chatRepository
           .getOrCreatePlantChat(
-        currentUserId: currentUser.uid,
-        plantOwnerId: catalog.userId,
-        plantId: catalog.catalogId ?? '',
-        plantName: catalog.name,
-        plantDescription: catalog.description,
-        plantImage: catalog.images.first,
-        plantExchangeType: catalog.offerType.offerTypeName,
-      )
+            currentUserId: currentUser.uid,
+            plantOwnerId: catalog.userId,
+            plantId: catalog.catalogId ?? '',
+            plantName: catalog.name,
+            plantDescription: catalog.description,
+            plantImage: catalog.images.first,
+            plantExchangeType: catalog.offerType.offerTypeName,
+          )
           .run()
           .then((result) {
         result.match(
@@ -133,10 +133,14 @@ class DetailPlant extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  TitlePage(
-                    title: catalog.name.toCapitalize(),
-                    fontSize: AppTypo.textXl,
+                  Expanded(
+                    child: TitlePage(
+                      title: catalog.name.toCapitalize(),
+                      fontSize: AppTypo.textXl,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
+                  const SizedBox(width: 10),
                   BadgeOfferType(
                     offerType: catalog.offerType,
                   ),

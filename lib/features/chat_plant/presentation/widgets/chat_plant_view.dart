@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart' hide ChatState;
+import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/cubit/chat_plant_cubit.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/chat_plant_custom_message.dart';
@@ -52,6 +54,16 @@ class ChatPlantView extends StatelessWidget {
             user: types.User(id: currentUser.uid),
             messages: messages,
             theme: ChatThemes.light,
+            emptyState: const Center(
+              child: Text(
+                'Aucun message pour le moment.\nDémarrez la conversation.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: AppColors.grey,
+                  fontSize: AppTypo.text,
+                ),
+              ),
+            ),
             customMessageBuilder: (message, {required int messageWidth}) =>
                 ChatPlantCustomMessage(
               message: message,

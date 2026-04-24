@@ -4,8 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/error/error_page.dart';
 import 'package:plant_match_v2/features/message/presentation/cubit/message_cubit.dart';
-import 'package:plant_match_v2/features/message/presentation/state/message_state.dart';
-import 'package:plant_match_v2/features/message/presentation/widgets/messages_view.dart';
+import 'package:plant_match_v2/features/message/presentation/cubit/message_state.dart';
+import 'package:plant_match_v2/features/message/presentation/message_empty.dart';
+import 'package:plant_match_v2/features/message/presentation/message_item.dart';
 
 class MessagesScreen extends StatelessWidget {
   const MessagesScreen({super.key});
@@ -30,7 +31,14 @@ class MessagesScreen extends StatelessWidget {
                 }
               },
             ),
-          MessagesLoaded(:final chats) => MessagesView(chats: chats),
+          MessagesLoaded(:final chats) => chats.isEmpty
+              ? const MessageEmpty()
+              : ListView.separated(
+                  itemCount: chats.length,
+                  separatorBuilder: (_, __) => const Divider(height: 1),
+                  itemBuilder: (context, index) =>
+                      MessageItem(chat: chats[index]),
+                ),
         },
       ),
     );

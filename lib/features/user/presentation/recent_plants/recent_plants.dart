@@ -5,7 +5,7 @@ import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/widgets/title_with_icon/title_with_icon.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
-import 'package:plant_match_v2/features/user/presentation/detail_plant/detail_plant.dart';
+import 'package:plant_match_v2/features/user/detail_plant/detail_plant.dart';
 import 'package:plant_match_v2/features/user/presentation/widgets/card/recent_card.dart';
 
 class RecentPlants extends StatelessWidget {

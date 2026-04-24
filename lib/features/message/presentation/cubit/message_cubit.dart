@@ -7,7 +7,7 @@ import 'package:plant_match_v2/features/chat_plant/domain/entities/chat_plant.da
 import 'package:plant_match_v2/features/chat_plant/domain/repository/chat_plant_repository.dart';
 import 'package:plant_match_v2/features/exchange/domain/entities/exchange.dart';
 import 'package:plant_match_v2/features/exchange/domain/repository/exchange_repository.dart';
-import 'package:plant_match_v2/features/message/presentation/state/message_state.dart';
+import 'package:plant_match_v2/features/message/presentation/cubit/message_state.dart';
 import 'package:plant_match_v2/features/user/domain/repository/user_repository.dart';
 
 class MessagesCubit extends Cubit<MessagesState> {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:plant_match_v2/features/catalog/data/firebase_catalog_repository.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/plant_message_card.dart';
-import 'package:plant_match_v2/features/user/presentation/detail_plant/detail_plant.dart';
+import 'package:plant_match_v2/features/user/detail_plant/detail_plant.dart';
 
 class ChatPlantCustomMessage extends StatelessWidget {
   const ChatPlantCustomMessage({
