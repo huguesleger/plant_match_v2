@@ -43,11 +43,14 @@ class FavoriteCubit extends Cubit<FavoriteState> {
                   plants: enriched,
                   users: currentState.users,
                 ));
-              } else if (latestUsers != null) {
-                emit(FavoriteLoaded(
-                  plants: enriched,
-                  users: latestUsers!.cast(),
-                ));
+              } else {
+                Option.fromNullable(latestUsers).match(
+                  () => {},
+                  (users) => emit(FavoriteLoaded(
+                    plants: enriched,
+                    users: users.cast(),
+                  )),
+                );
               }
             },
           );
@@ -71,11 +74,14 @@ class FavoriteCubit extends Cubit<FavoriteState> {
             plants: currentState.plants,
             users: users,
           ));
-        } else if (latestPlants != null) {
-          emit(FavoriteLoaded(
-            plants: latestPlants!,
-            users: users,
-          ));
+        } else {
+          Option.fromNullable(latestPlants).match(
+            () => {},
+            (plants) => emit(FavoriteLoaded(
+              plants: plants,
+              users: users,
+            )),
+          );
         }
       },
       onError: (e) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
+import 'package:fpdart/fpdart.dart';
 
 class UserBio extends StatelessWidget {
   const UserBio({
@@ -15,7 +16,9 @@ class UserBio extends StatelessWidget {
       child: Padding(
         padding: AppSpacing.paddingHorizontal,
         child: Text(
-          (bio == null || bio!.isEmpty) ? 'Pas encore de description...' : bio!,
+          Option.fromNullable(bio)
+              .filter((b) => b.isNotEmpty)
+              .getOrElse(() => 'Pas encore de description...'),
           style: const TextStyle(color: Colors.grey),
           textAlign: TextAlign.center,
         ),

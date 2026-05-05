@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:fpdart/fpdart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -29,32 +28,39 @@ class DetailPlant extends StatelessWidget {
   final Catalog catalog;
 
   void openPlantChat(BuildContext context) {
-    final currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser == null) return;
+    final userId = context.read<AuthCubit>().userId ?? '';
+    if (userId.isEmpty) return;
 
     FirebaseFirestore.instance
         .collection('users')
         .doc(catalog.userId)
         .get()
         .then((userDoc) {
-      final data = userDoc.data();
-      final String ownerName = (data?['userName'] != null &&
-              (data!['userName'] as String).trim().isNotEmpty)
-          ? data['userName']
-          : (data?['fullName'] != null &&
-                  (data!['fullName'] as String).trim().isNotEmpty)
-              ? (data['fullName'] as String).split(' ').first
-              : 'Propriétaire';
+      final Option<Map<String, dynamic>> dataOpt =
+          Option.fromNullable(userDoc.data());
 
-      final String? ownerAvatar =
-          (data?['profilImg'] as String?)?.trim().isNotEmpty == true
-              ? data!['profilImg']
-              : null;
+      final String ownerName = dataOpt.match(
+        () => 'Propriétaire',
+        (data) {
+          final userName = Option.fromNullable(data['userName'] as String?)
+              .filter((s) => s.trim().isNotEmpty);
+          final fullName = Option.fromNullable(data['fullName'] as String?)
+              .filter((s) => s.trim().isNotEmpty)
+              .map((s) => s.split(' ').first);
+
+          return userName.alt(() => fullName).getOrElse(() => 'Propriétaire');
+        },
+      );
+
+      final String? ownerAvatar = dataOpt
+          .flatMap((data) => Option.fromNullable(data['profilImg'] as String?)
+              .filter((s) => s.trim().isNotEmpty))
+          .toNullable();
 
       final chatRepository = FirebaseChatPlant();
       chatRepository
           .getOrCreatePlantChat(
-            currentUserId: currentUser.uid,
+            currentUserId: userId,
             plantOwnerId: catalog.userId,
             plantId: catalog.catalogId.getOrElse(() => ''),
             plantName: catalog.name,

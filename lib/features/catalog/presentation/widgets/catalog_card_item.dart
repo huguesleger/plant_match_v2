@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/badge/badge_pill.dart';
@@ -75,16 +76,20 @@ class _CardImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final imageOpt =
+        Option.fromNullable(imageUrl).filter((url) => url.startsWith('http'));
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
-      child: imageUrl != null && imageUrl!.startsWith('http')
-          ? Image.network(imageUrl!, height: 100, width: 80, fit: BoxFit.cover)
-          : const Image(
-              image: AssetImage('assets/images/empty_picture.png'),
-              height: 100,
-              width: 80,
-              fit: BoxFit.cover,
-            ),
+      child: imageOpt.match(
+        () => const Image(
+          image: AssetImage('assets/images/empty_picture.png'),
+          height: 100,
+          width: 80,
+          fit: BoxFit.cover,
+        ),
+        (url) => Image.network(url, height: 100, width: 80, fit: BoxFit.cover),
+      ),
     );
   }
 }

@@ -1,7 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/cubit/chat_plant_cubit.dart';
 
 class ChatPlantDeleteButton extends StatelessWidget {
@@ -38,9 +38,10 @@ class ChatPlantDeleteButton extends StatelessWidget {
           ),
         );
         if (confirm == true && context.mounted) {
+          final uid = context.read<AuthCubit>().userId ?? '';
           context.read<ChatPlantCubit>().softDeleteChat(
                 chatId,
-                FirebaseAuth.instance.currentUser!.uid,
+                uid,
               );
           Navigator.pop(context);
         }

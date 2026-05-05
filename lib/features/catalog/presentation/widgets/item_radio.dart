@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 
 class ItemRadio extends StatelessWidget {
@@ -39,19 +40,17 @@ class ItemRadio extends StatelessWidget {
           style: const TextStyle(
               color: AppColors.greyMedium, fontSize: AppTypo.textS),
         ),
-        subtitle: subtitle == null
-            ? null
-            : Text(subtitle!,
-                style: const TextStyle(
-                  fontSize: AppTypo.textXs,
-                )),
+        subtitle: Option.fromNullable(subtitle).match(
+          () => null,
+          (text) => Text(
+            text,
+            style: const TextStyle(fontSize: AppTypo.textXs),
+          ),
+        ),
         trailing: RadioGroup<String>(
           groupValue: selectedItem,
-          onChanged: (String? newValue) {
-            if (newValue != null) {
-              onItemSelected(newValue);
-            }
-          },
+          onChanged: (String? newValue) =>
+              Option.fromNullable(newValue).map(onItemSelected),
           child: Radio<String>(
             value: value,
             activeColor: AppColors.greenDark,

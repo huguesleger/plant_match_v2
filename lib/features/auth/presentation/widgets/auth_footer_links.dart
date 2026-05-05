@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:fpdart/fpdart.dart';
 
 class AuthFooterLinks extends StatelessWidget {
   const AuthFooterLinks({
@@ -21,22 +22,27 @@ class AuthFooterLinks extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        if (forgotPasswordText != null && onForgotPasswordTap != null) ...[
-          const SizedBox(height: 10),
-          GestureDetector(
-            onTap: onForgotPasswordTap,
-            child: Center(
-              child: Text(
-                forgotPasswordText!,
-                style: const TextStyle(
-                  color: AppColors.blueGreen,
-                  decoration: TextDecoration.underline,
-                  fontSize: 11,
-                ),
-              ),
-            ),
-          ),
-        ],
+        Option.fromNullable(forgotPasswordText).match(
+          () => const SizedBox.shrink(),
+          (text) => onForgotPasswordTap != null
+              ? Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: GestureDetector(
+                    onTap: onForgotPasswordTap,
+                    child: Center(
+                      child: Text(
+                        text,
+                        style: const TextStyle(
+                          color: AppColors.blueGreen,
+                          decoration: TextDecoration.underline,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+              : const SizedBox.shrink(),
+        ),
         const SizedBox(height: 10),
         Center(
           child: GestureDetector(

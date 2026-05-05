@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
@@ -8,6 +7,7 @@ import 'package:plant_match_v2/core/util/date_formatter.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
+import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/cubit/chat_plant_cubit.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/chat_plant_custom_message.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/chat_plant_text_input.dart';
@@ -45,7 +45,7 @@ class ChatPlantView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = FirebaseAuth.instance.currentUser!;
+    final userId = context.read<AuthCubit>().userId ?? '';
     final exchangeState = context.watch<ExchangeCubit>().state;
     final donationState = context.watch<DonationCubit>().state;
 
@@ -55,7 +55,7 @@ class ChatPlantView extends StatelessWidget {
         ChatPlantDonationInfoBar(state: donationState),
         Expanded(
           child: Chat(
-            user: types.User(id: currentUser.uid),
+            user: types.User(id: userId),
             messages: messages,
             theme: ChatThemes.light,
             emptyState: const Center(
@@ -71,7 +71,7 @@ class ChatPlantView extends StatelessWidget {
             customMessageBuilder: (message, {required int messageWidth}) =>
                 ChatPlantCustomMessage(
               message: message,
-              currentUserId: currentUser.uid,
+              currentUserId: userId,
             ),
             customBottomWidget: Column(
               children: [
@@ -80,7 +80,7 @@ class ChatPlantView extends StatelessWidget {
                   plantId: plantId,
                   plantOwnerId: plantOwnerId,
                   plantOfferType: plantOfferType,
-                  currentUserId: currentUser.uid,
+                  currentUserId: userId,
                   state: exchangeState,
                 ),
                 ChatPlantDonationActionBar(
@@ -90,7 +90,7 @@ class ChatPlantView extends StatelessWidget {
                   plantImage: plantImage,
                   plantOwnerId: plantOwnerId,
                   plantOfferType: plantOfferType,
-                  currentUserId: currentUser.uid,
+                  currentUserId: userId,
                   state: donationState,
                 ),
                 isBlocked
@@ -98,7 +98,7 @@ class ChatPlantView extends StatelessWidget {
                     : ChatPlantTextInput(
                         onSend: (text) => context.read<ChatPlantCubit>().send(
                               chatId: chatId,
-                              senderId: currentUser.uid,
+                              senderId: userId,
                               text: text,
                             ),
                       ),
@@ -106,7 +106,7 @@ class ChatPlantView extends StatelessWidget {
             ),
             onSendPressed: (message) => context.read<ChatPlantCubit>().send(
                   chatId: chatId,
-                  senderId: currentUser.uid,
+                  senderId: userId,
                   text: message.text,
                 ),
             textMessageBuilder: (types.TextMessage message,
@@ -115,7 +115,7 @@ class ChatPlantView extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
                 child: Text(
                   message.text,
-                  style: message.author.id == currentUser.uid
+                  style: message.author.id == userId
                       ? ChatThemes.light.sentMessageBodyTextStyle
                       : ChatThemes.light.receivedMessageBodyTextStyle,
                 ),
@@ -137,7 +137,7 @@ class ChatPlantView extends StatelessWidget {
             dateHeaderThreshold: 86400000, // 24 hours
             bubbleBuilder: (child,
                 {required message, required nextMessageInGroup}) {
-              final isCurrentUser = message.author.id == currentUser.uid;
+              final isCurrentUser = message.author.id == userId;
 
               final time = DateFormatter.formatTime(
                 context,
@@ -234,7 +234,8 @@ class _BlockedBanner extends StatelessWidget {
 
   final String plantOwnerId;
 
-  String get _currentUserId => FirebaseAuth.instance.currentUser!.uid;
+  String _currentUserId(BuildContext context) =>
+      context.read<AuthCubit>().userId ?? '';
 
   Future<void> _onUnblock(BuildContext context) async {
     final confirm = await showDialog<bool>(
@@ -258,7 +259,7 @@ class _BlockedBanner extends StatelessWidget {
     );
     if (confirm == true && context.mounted) {
       context.read<ChatPlantCubit>().unblockUser(
-            blockerUserId: _currentUserId,
+            blockerUserId: _currentUserId(context),
             blockedUserId: plantOwnerId,
           );
     }

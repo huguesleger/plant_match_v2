@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -50,11 +49,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   Future<void> _setUserOffline() async {
     try {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
+      final userId = context.read<AuthCubit>().userId;
+      if (userId != null) {
         await FirebaseFirestore.instance
             .collection('users')
-            .doc(user.uid)
+            .doc(userId)
             .update({
           'isOnline': false,
         });

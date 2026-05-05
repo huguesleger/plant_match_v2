@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/features/chat_plant/data/firebase_chat_plant.dart';
@@ -9,6 +8,7 @@ import 'package:plant_match_v2/features/message/presentation/cubit/message_cubit
 import 'package:plant_match_v2/features/message/presentation/message_screen.dart';
 import 'package:plant_match_v2/features/user/data/firebase_user.dart';
 import 'package:plant_match_v2/features/user/domain/repository/user_repository.dart';
+import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 
 class MessagesPageRoute extends StatelessWidget {
   MessagesPageRoute({super.key});
@@ -19,9 +19,9 @@ class MessagesPageRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = FirebaseAuth.instance.currentUser;
+    final userId = context.read<AuthCubit>().userId;
 
-    if (currentUser == null) {
+    if (userId == null) {
       return const Scaffold(
         body: Center(child: Text('Utilisateur non connecté')),
       );
@@ -32,7 +32,7 @@ class MessagesPageRoute extends StatelessWidget {
         chatPlantRepository: chatPlantRepository,
         userRepository: userRepository,
         exchangeRepository: exchangeRepository,
-      )..load(currentUser.uid),
+      )..load(userId),
       child: const MessagesScreen(),
     );
   }

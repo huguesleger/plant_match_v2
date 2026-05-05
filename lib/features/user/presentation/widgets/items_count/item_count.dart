@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/theme/inter_text_style.dart';
@@ -62,7 +63,7 @@ class ItemCount extends StatelessWidget {
                     child: Transform.translate(
                       offset: const Offset(0.0, -10.0),
                       child: Text(
-                        sup != null ? sup! : '',
+                        Option.fromNullable(sup).getOrElse(() => ''),
                         style: const TextStyle(fontSize: AppTypo.textXxs),
                       ),
                     ),

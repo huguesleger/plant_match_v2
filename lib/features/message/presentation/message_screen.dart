@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -11,13 +10,14 @@ import 'package:plant_match_v2/features/message/presentation/cubit/message_cubit
 import 'package:plant_match_v2/features/message/presentation/cubit/message_state.dart';
 import 'package:plant_match_v2/features/message/presentation/message_empty.dart';
 import 'package:plant_match_v2/features/message/presentation/message_item.dart';
+import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 
 class MessagesScreen extends StatelessWidget {
   const MessagesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = FirebaseAuth.instance.currentUser;
+    final userId = context.read<AuthCubit>().userId;
 
     return Scaffold(
       backgroundColor: AppColors.white,
@@ -40,8 +40,8 @@ class MessagesScreen extends StatelessWidget {
           MessagesError(:final message) => ErrorPage(
               errorMessage: message,
               onRetry: () {
-                if (currentUser != null) {
-                  context.read<MessagesCubit>().load(currentUser.uid);
+                if (userId != null) {
+                  context.read<MessagesCubit>().load(userId);
                 }
               },
             ),

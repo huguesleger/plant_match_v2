@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/util/date_formatter.dart';
 
 class MessageTrailing extends StatelessWidget {
@@ -19,9 +20,10 @@ class MessageTrailing extends StatelessWidget {
       children: [
         const SizedBox(height: 10),
         Text(
-          lastMessageAt != null
-              ? DateFormatter.format(context, lastMessageAt!)
-              : '',
+          Option.fromNullable(lastMessageAt).match(
+            () => '',
+            (date) => DateFormatter.format(context, date),
+          ),
           style: const TextStyle(
             fontSize: 12,
             color: Colors.grey,

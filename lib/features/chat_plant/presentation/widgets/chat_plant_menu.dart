@@ -1,8 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/cubit/chat_plant_cubit.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/state/chat_plant_state.dart';
 import 'package:plant_match_v2/features/donation/presentation/cubit/donation_cubit.dart';
@@ -21,7 +21,8 @@ class ChatPlantMenu extends StatelessWidget {
   final String chatId;
   final String plantOwnerId;
 
-  String get _currentUserId => FirebaseAuth.instance.currentUser!.uid;
+  String _currentUserId(BuildContext context) =>
+      context.read<AuthCubit>().userId ?? '';
 
   Future<void> _onDeleteChat(BuildContext context) async {
     final confirm = await showDialog<bool>(
@@ -45,7 +46,9 @@ class ChatPlantMenu extends StatelessWidget {
       ),
     );
     if (confirm == true && context.mounted) {
-      context.read<ChatPlantCubit>().softDeleteChat(chatId, _currentUserId);
+      context
+          .read<ChatPlantCubit>()
+          .softDeleteChat(chatId, _currentUserId(context));
       Navigator.pop(context);
     }
   }
@@ -73,7 +76,7 @@ class ChatPlantMenu extends StatelessWidget {
     if (confirm == true && context.mounted) {
       context.read<ChatPlantCubit>().reportChat(
             chatId: chatId,
-            reporterUserId: _currentUserId,
+            reporterUserId: _currentUserId(context),
             reportedUserId: plantOwnerId,
           );
     }
@@ -145,7 +148,7 @@ class ChatPlantMenu extends StatelessWidget {
     );
     if (confirm == true && context.mounted) {
       context.read<ChatPlantCubit>().blockUser(
-            blockerUserId: _currentUserId,
+            blockerUserId: _currentUserId(context),
             blockedUserId: plantOwnerId,
           );
     }
@@ -173,7 +176,7 @@ class ChatPlantMenu extends StatelessWidget {
     );
     if (confirm == true && context.mounted) {
       context.read<ChatPlantCubit>().unblockUser(
-            blockerUserId: _currentUserId,
+            blockerUserId: _currentUserId(context),
             blockedUserId: plantOwnerId,
           );
     }

@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart' as fb_auth;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -6,6 +5,7 @@ import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/theme/inter_text_style.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_template.dart';
 import 'package:plant_match_v2/core/widgets/error/error_page.dart';
+import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/features/catalog/data/firebase_catalog_repository.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/cubit/chat_plant_cubit.dart';
@@ -33,7 +33,7 @@ class ChatPlantScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = fb_auth.FirebaseAuth.instance.currentUser!;
+    final userId = context.read<AuthCubit>().userId ?? '';
     final catalogRepo = FirebaseCatalogRepository();
 
     return MultiBlocListener(
@@ -43,7 +43,7 @@ class ChatPlantScreen extends StatelessWidget {
             if (state is ChatPlantLoaded) {
               context.read<ChatPlantCubit>().markMessagesAsRead(
                     chatId: chatId,
-                    currentUserId: currentUser.uid,
+                    currentUserId: userId,
                   );
             }
           },
@@ -67,10 +67,10 @@ class ChatPlantScreen extends StatelessWidget {
             if (ex == null) return;
 
             final cubit = context.read<ExchangeCubit>();
-            if (currentUser.uid == ex.ownerId && !ex.seenByOwner) {
+            if (userId == ex.ownerId && !ex.seenByOwner) {
               cubit.markSeenByOwner(ex.id);
             }
-            if (currentUser.uid == ex.requestedBy &&
+            if (userId == ex.requestedBy &&
                 !ex.seenByRequester &&
                 state is! ExchangePending) {
               cubit.markSeenByRequester(ex.id);
@@ -90,10 +90,10 @@ class ChatPlantScreen extends StatelessWidget {
             if (don == null) return;
 
             final cubit = context.read<DonationCubit>();
-            if (currentUser.uid == don.ownerId && !don.seenByOwner) {
+            if (userId == don.ownerId && !don.seenByOwner) {
               cubit.markSeenByOwner(don.id);
             }
-            if (currentUser.uid == don.requestedBy &&
+            if (userId == don.requestedBy &&
                 !don.seenByRequester &&
                 state is! DonationPending) {
               cubit.markSeenByRequester(don.id);
@@ -170,7 +170,7 @@ class ChatPlantScreen extends StatelessWidget {
                     errorMessage: s.message,
                     onRetry: () => context.read<ChatPlantCubit>().subscribe(
                           chatId: chatId,
-                          currentUserId: currentUser.uid,
+                          currentUserId: userId,
                         ),
                   ),
                 ChatPlantBlocked() => ChatPlantView(

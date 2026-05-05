@@ -14,13 +14,15 @@ class FirebaseUser implements UserRepository {
         final userDoc =
             await _firebaseFirestore.collection('users').doc(uid).get();
 
-        if (userDoc.exists) {
-          Map<String, dynamic> userData = userDoc.data()!;
-          userData['uid'] = userDoc.id;
-          return ProfilUser.fromJson(userData);
-        } else {
-          throw const NotFoundFailure('Pas d\'utilisateur trouvé avec cet UID');
-        }
+        return Option.fromNullable(userDoc.data()).match(
+          () => throw const NotFoundFailure(
+              'Pas d\'utilisateur trouvé avec cet UID'),
+          (data) {
+            final userData = Map<String, dynamic>.from(data);
+            userData['uid'] = userDoc.id;
+            return ProfilUser.fromJson(userData);
+          },
+        );
       },
       (error, stackTrace) {
         if (error is NotFoundFailure) {
