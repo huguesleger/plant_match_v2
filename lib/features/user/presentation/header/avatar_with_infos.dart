@@ -36,7 +36,7 @@ class AvatarWithInfos extends StatelessWidget {
               child: Avatar(
                 profilUser: user,
                 radius: 45,
-                imgSizeAvatar: 70,
+                imgSizeAvatar: 90,
                 defaultSizeAvatar: 65,
               ),
             ),

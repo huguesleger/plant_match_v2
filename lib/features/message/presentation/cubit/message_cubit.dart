@@ -124,6 +124,7 @@ class MessagesCubit extends Cubit<MessagesState> {
           hasUnreadExchange: hasUnreadExchange,
           acceptedExchangeId: acceptedExchangeId,
           isExchangeCompleted: chat.isExchangeCompleted,
+          isOtherUserOnline: user.isOnline,
         );
       });
     }).toList();

@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/theme/app_typo.dart';
+import 'package:plant_match_v2/core/theme/inter_text_style.dart';
 import 'package:plant_match_v2/features/chat_plant/domain/entities/chat_plant.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/chat_plant_page_route.dart';
 import 'package:plant_match_v2/features/message/presentation/widgets/message_leading.dart';
@@ -21,10 +23,18 @@ class MessageItem extends StatelessWidget {
     final totalUnread = unreadMessagesCount + (chat.hasUnreadExchange ? 1 : 0);
 
     return ListTile(
-      leading: MessageLeading(plantImage: chat.plantImage),
+      leading: MessageLeading(
+        plantImage: chat.plantImage,
+        isOnline: chat.isOtherUserOnline,
+      ),
       title: Text(
         chat.plantName,
-        style: const TextStyle(fontWeight: FontWeight.w600),
+        overflow: TextOverflow.ellipsis,
+        maxLines: 1,
+        style: InterTextStyle.inter(
+          AppTypo.text,
+          fontWeight: FontWeight.w600,
+        ),
       ),
       subtitle: MessageSubtitle(
         lastMessage: chat.lastMessage,

@@ -100,15 +100,20 @@ class FirebaseChatPlant implements ChatPlantRepository {
               final data = doc.data();
               final messageType = data['messageType'] as String?;
 
+              final status = data['readAt'] != null
+                  ? types.Status.seen
+                  : types.Status.sent;
+
               if (messageType == 'plant_exchange') {
                 return types.CustomMessage(
                   id: doc.id,
                   author: types.User(id: doc['senderId']),
+                  status: status,
                   createdAt: (doc['timestamp'] as Timestamp)
                       .toDate()
                       .millisecondsSinceEpoch,
                   metadata: {
-                    'readAt': doc['readAt'],
+                    'readAt': data['readAt'],
                     'messageType': 'plant_exchange',
                     'plantId': data['plantId'],
                     'plantName': data['plantName'],
@@ -120,12 +125,13 @@ class FirebaseChatPlant implements ChatPlantRepository {
               return types.TextMessage(
                 id: doc.id,
                 author: types.User(id: doc['senderId']),
+                status: status,
                 createdAt: (doc['timestamp'] as Timestamp)
                     .toDate()
                     .millisecondsSinceEpoch,
-                text: doc['text'],
+                text: data['text'],
                 metadata: {
-                  'readAt': doc['readAt'],
+                  'readAt': data['readAt'],
                 },
               );
             },
@@ -352,5 +358,79 @@ class FirebaseChatPlant implements ChatPlantRepository {
       },
       (error, _) => UnexpectedFailure('Erreur envoi message échange: $error'),
     );
+  }
+
+  @override
+  TaskEither<Failure, Unit> reportChat({
+    required String chatId,
+    required String reporterUserId,
+    required String reportedUserId,
+  }) {
+    return TaskEither.tryCatch(
+      () async {
+        await _firestore.collection('reports').add({
+          'chatId': chatId,
+          'reporterUserId': reporterUserId,
+          'reportedUserId': reportedUserId,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+        return unit;
+      },
+      (error, _) => UnexpectedFailure('Erreur signalement: $error'),
+    );
+  }
+
+  @override
+  TaskEither<Failure, Unit> blockUser({
+    required String blockerUserId,
+    required String blockedUserId,
+  }) {
+    return TaskEither.tryCatch(
+      () async {
+        await _firestore
+            .collection('users')
+            .doc(blockerUserId)
+            .collection('blocked_users')
+            .doc(blockedUserId)
+            .set({
+          'blockedAt': FieldValue.serverTimestamp(),
+        });
+        return unit;
+      },
+      (error, _) => UnexpectedFailure('Erreur blocage utilisateur: $error'),
+    );
+  }
+
+  @override
+  TaskEither<Failure, Unit> unblockUser({
+    required String blockerUserId,
+    required String blockedUserId,
+  }) {
+    return TaskEither.tryCatch(
+      () async {
+        await _firestore
+            .collection('users')
+            .doc(blockerUserId)
+            .collection('blocked_users')
+            .doc(blockedUserId)
+            .delete();
+        return unit;
+      },
+      (error, _) => UnexpectedFailure('Erreur déblocage utilisateur: $error'),
+    );
+  }
+
+  @override
+  Stream<bool> isBlockedStream({
+    required String currentUserId,
+    required String otherUserId,
+  }) {
+    return _firestore
+        .collection('users')
+        .doc(currentUserId)
+        .collection('blocked_users')
+        .doc(otherUserId)
+        .snapshots()
+        .map((doc) => doc.exists);
   }
 }

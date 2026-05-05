@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fpdart/fpdart.dart';
@@ -14,7 +15,7 @@ class FirebaseExchange implements ExchangeRepository {
     return _col
         .where('chatId', isEqualTo: chatId)
         .where('status',
-            whereIn: ['pending', 'accepted', 'rejected', 'completed'])
+            whereIn: ['pending', 'accepted', 'rejected', 'waitingValidation', 'completed'])
         .orderBy('createdAt', descending: true)
         .limit(1)
         .snapshots()
@@ -163,8 +164,48 @@ class FirebaseExchange implements ExchangeRepository {
   }
 
   @override
+  TaskEither<Failure, Unit> generateValidationCode(String exchangeId) {
+    return TaskEither.tryCatch(
+      () async {
+        final code = (100000 + Random().nextInt(900000)).toString();
+        await _col.doc(exchangeId).update({
+          'validationCode': code,
+          'status': ExchangeStatus.waitingValidation.name,
+        });
+        return unit;
+      },
+      (error, _) => UnexpectedFailure('Erreur génération code PIN: $error'),
+    );
+  }
+
+  @override
+  TaskEither<Failure, Unit> validateCode(String exchangeId, String code, String userId) {
+    return TaskEither.tryCatch(
+      () async {
+        final doc = await _col.doc(exchangeId).get();
+        if (!doc.exists) throw Exception('Échange introuvable');
+        
+        final data = doc.data();
+        if (data == null) throw Exception('Données corrompues');
+
+        if (data['validationCode'] != code) {
+          throw Exception('Code incorrect');
+        }
+
+        // Si le code est bon, on marque comme complété
+        final result = await markAsCompleted(exchangeId, userId).run();
+        return result.match(
+          (failure) => throw Exception(failure.message),
+          (_) => unit,
+        );
+      },
+      (error, _) => UnexpectedFailure(error.toString()),
+    );
+  }
+
+  @override
   TaskEither<Failure, List<Exchange>> getCompletedExchanges(String uid) {
-    const statuses = ['accepted', 'completed', 'rejected'];
+    const statuses = ['accepted', 'waitingValidation', 'completed', 'rejected'];
 
     return TaskEither.tryCatch(
       () async {

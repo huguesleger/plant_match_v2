@@ -2,13 +2,15 @@ import 'package:firebase_auth/firebase_auth.dart' as fb_auth;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/core/theme/app_typo.dart';
+import 'package:plant_match_v2/core/theme/inter_text_style.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_template.dart';
 import 'package:plant_match_v2/core/widgets/error/error_page.dart';
 import 'package:plant_match_v2/features/catalog/data/firebase_catalog_repository.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/cubit/chat_plant_cubit.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/state/chat_plant_state.dart';
-import 'package:plant_match_v2/features/chat_plant/presentation/widgets/chat_plant_delete_button.dart';
+import 'package:plant_match_v2/features/chat_plant/presentation/widgets/chat_plant_menu.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/chat_plant_view.dart';
 import 'package:plant_match_v2/features/donation/presentation/cubit/donation_cubit.dart';
 import 'package:plant_match_v2/features/donation/presentation/state/donation_state.dart';
@@ -51,6 +53,7 @@ class ChatPlantScreen extends StatelessWidget {
             final ex = switch (state) {
               ExchangePending(:final exchange) => exchange,
               ExchangeAccepted(:final exchange) => exchange,
+              ExchangeWaitingValidation(:final exchange) => exchange,
               ExchangeRejected(:final exchange) => exchange,
               ExchangeCompleted(:final exchange) => exchange,
               ExchangeInitial() ||
@@ -79,12 +82,10 @@ class ChatPlantScreen extends StatelessWidget {
             final don = switch (state) {
               DonationPending(:final donation) => donation,
               DonationAccepted(:final donation) => donation,
+              DonationWaitingValidation(:final donation) => donation,
               DonationRejected(:final donation) => donation,
               DonationCompleted(:final donation) => donation,
-              DonationInitial() ||
-              DonationLoading() ||
-              DonationError() =>
-                null,
+              DonationInitial() || DonationLoading() || DonationError() => null,
             };
             if (don == null) return;
 
@@ -118,19 +119,20 @@ class ChatPlantScreen extends StatelessWidget {
           return Scaffold(
             appBar: AppBarTemplate(
               preferredHeight: 85,
-              backgroundColor: AppColors.greenLight,
+              backgroundColor: AppColors.white,
               surfaceTintColor: Colors.white,
               onPressed: () => Navigator.pop(context),
               styleIconButton: IconButton.styleFrom(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
-                side: const BorderSide(color: AppColors.greyDark),
+                side: const BorderSide(color: AppColors.greyLight),
               ),
               titleWidget: Row(
                 children: [
                   CircleAvatar(
-                    radius: 20,
+                    radius: 24,
+                    backgroundColor: AppColors.greyLight,
                     backgroundImage: plantOwnerAvatar.isNotEmpty &&
                             plantOwnerAvatar != 'null'
                         ? NetworkImage(plantOwnerAvatar)
@@ -147,11 +149,16 @@ class ChatPlantScreen extends StatelessWidget {
                             : null,
                   ),
                   const SizedBox(width: 8),
-                  Text(plantOwnerName),
+                  Text(
+                    plantOwnerName,
+                    style: InterTextStyle.inter(
+                      AppTypo.textM,
+                    ),
+                  ),
                 ],
               ),
               actions: [
-                ChatPlantDeleteButton(chatId: chatId),
+                ChatPlantMenu(chatId: chatId, plantOwnerId: plant.userId),
               ],
             ),
             body: BlocBuilder<ChatPlantCubit, ChatPlantState>(
@@ -166,6 +173,18 @@ class ChatPlantScreen extends StatelessWidget {
                           currentUserId: currentUser.uid,
                         ),
                   ),
+                ChatPlantBlocked() => ChatPlantView(
+                    chatId: chatId,
+                    plantId: plantId,
+                    plantName: plant.name,
+                    plantImage:
+                        plant.images.isNotEmpty ? plant.images.first : '',
+                    plantOwnerId: plant.userId,
+                    plantOwnerName: plantOwnerName,
+                    plantOfferType: plant.offerType,
+                    messages: const [],
+                    isBlocked: true,
+                  ),
                 ChatPlantLoaded s => ChatPlantView(
                     chatId: chatId,
                     plantId: plantId,
@@ -176,8 +195,10 @@ class ChatPlantScreen extends StatelessWidget {
                     plantOwnerName: plantOwnerName,
                     plantOfferType: plant.offerType,
                     messages: s.messages,
+                    isBlocked: s.isBlocked,
                   ),
               },
+
             ),
           );
         },

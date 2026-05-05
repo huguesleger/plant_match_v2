@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
-import 'package:plant_match_v2/features/message/presentation/widgets/message_format_date.dart';
+import 'package:plant_match_v2/core/util/date_formatter.dart';
 
 class MessageTrailing extends StatelessWidget {
   const MessageTrailing({
@@ -20,7 +20,7 @@ class MessageTrailing extends StatelessWidget {
         const SizedBox(height: 10),
         Text(
           lastMessageAt != null
-              ? messageFormatDate(context, lastMessageAt!)
+              ? DateFormatter.format(context, lastMessageAt!)
               : '',
           style: const TextStyle(
             fontSize: 12,

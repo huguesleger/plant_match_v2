@@ -58,6 +58,11 @@ class ExchangeRejected extends ExchangeState {
   ExchangeRejected(this.exchange);
 }
 
+class ExchangeWaitingValidation extends ExchangeState {
+  final Exchange exchange;
+  ExchangeWaitingValidation(this.exchange);
+}
+
 class ExchangeCompleted extends ExchangeState {
   final Exchange exchange;
   ExchangeCompleted(this.exchange);

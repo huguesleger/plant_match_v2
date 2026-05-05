@@ -58,6 +58,7 @@ class ExchangeScreen extends StatelessWidget {
             ),
           ExchangePending() ||
           ExchangeAccepted() ||
+          ExchangeWaitingValidation() ||
           ExchangeRejected() ||
           ExchangeCompleted() =>
             ("", const SizedBox.shrink()),

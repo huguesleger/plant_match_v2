@@ -4,6 +4,7 @@ enum DonationStatus {
   pending,
   accepted,
   rejected,
+  waitingValidation,
   completed,
 }
 
@@ -23,6 +24,7 @@ class Donation {
   final bool seenByRequester;
   final DateTime? completedAt;
   final String? completedBy;
+  final String? validationCode;
 
   Donation({
     this.id = '',
@@ -38,6 +40,7 @@ class Donation {
     required this.seenByRequester,
     this.completedAt,
     this.completedBy,
+    this.validationCode,
   });
 
   factory Donation.fromJson(String id, Map<String, dynamic> json) {
@@ -60,6 +63,7 @@ class Donation {
           ? (json['completedAt'] as Timestamp).toDate()
           : null,
       completedBy: json['completedBy'],
+      validationCode: json['validationCode'],
     );
   }
 
@@ -76,5 +80,6 @@ class Donation {
         'seenByRequester': seenByRequester,
         'completedAt': completedAt,
         'completedBy': completedBy,
+        'validationCode': validationCode,
       };
 }

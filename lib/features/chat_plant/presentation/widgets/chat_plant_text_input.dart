@@ -32,42 +32,44 @@ class _ChatPlantTextInputState extends State<ChatPlantTextInput> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
-      child: Container(
-        padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          border: Border(top: BorderSide(color: AppColors.greyLight)),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: _controller,
-                minLines: 1,
-                maxLines: 4,
-                decoration: const InputDecoration(
-                  hintText: 'Écrire un message…',
-                  border: InputBorder.none,
+    return Container(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        border: Border(top: BorderSide(color: AppColors.greyLight)),
+      ),
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+          child: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _controller,
+                  minLines: 1,
+                  maxLines: 4,
+                  decoration: const InputDecoration(
+                    hintText: 'Écrire un message…',
+                    border: InputBorder.none,
+                  ),
                 ),
               ),
-            ),
-            IconButton(
-              icon: Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: AppColors.greenMedium.withValues(alpha: 0.3),
-                  shape: BoxShape.circle,
+              IconButton(
+                icon: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: AppColors.greenMedium.withValues(alpha: 0.3),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    LucideIcons.send_horizontal,
+                    color: AppColors.greenDark,
+                  ),
                 ),
-                child: const Icon(
-                  LucideIcons.send_horizontal,
-                  color: AppColors.greenDark,
-                ),
+                onPressed: _handleSend,
               ),
-              onPressed: _handleSend,
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

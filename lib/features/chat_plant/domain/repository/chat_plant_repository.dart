@@ -49,4 +49,25 @@ abstract class ChatPlantRepository {
     required String plantName,
     required String plantImage,
   });
+
+  TaskEither<Failure, Unit> reportChat({
+    required String chatId,
+    required String reporterUserId,
+    required String reportedUserId,
+  });
+
+  TaskEither<Failure, Unit> blockUser({
+    required String blockerUserId,
+    required String blockedUserId,
+  });
+
+  TaskEither<Failure, Unit> unblockUser({
+    required String blockerUserId,
+    required String blockedUserId,
+  });
+
+  Stream<bool> isBlockedStream({
+    required String currentUserId,
+    required String otherUserId,
+  });
 }

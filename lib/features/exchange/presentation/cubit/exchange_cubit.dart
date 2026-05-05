@@ -38,6 +38,8 @@ class ExchangeCubit extends Cubit<ExchangeState> {
             ExchangeStatus.pending => ExchangePending(request),
             ExchangeStatus.accepted => ExchangeAccepted(request),
             ExchangeStatus.rejected => ExchangeRejected(request),
+            ExchangeStatus.waitingValidation =>
+              ExchangeWaitingValidation(request),
             ExchangeStatus.completed => ExchangeCompleted(request),
           },
         );
@@ -161,6 +163,14 @@ class ExchangeCubit extends Cubit<ExchangeState> {
 
   void complete(String exchangeId, String completedBy) {
     repository.markAsCompleted(exchangeId, completedBy).run();
+  }
+
+  void generateCode(String exchangeId) {
+    repository.generateValidationCode(exchangeId).run();
+  }
+
+  void validateCode(String exchangeId, String code, String userId) {
+    repository.validateCode(exchangeId, code, userId).run();
   }
 
   @override

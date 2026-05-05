@@ -21,6 +21,11 @@ class DonationRejected extends DonationState {
   DonationRejected(this.donation);
 }
 
+class DonationWaitingValidation extends DonationState {
+  final Donation donation;
+  DonationWaitingValidation(this.donation);
+}
+
 class DonationCompleted extends DonationState {
   final Donation donation;
   DonationCompleted(this.donation);

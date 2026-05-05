@@ -20,6 +20,7 @@ class ChatPlant {
   final bool hasUnreadExchange;
   final String? acceptedExchangeId;
   final bool isExchangeCompleted;
+  final bool isOtherUserOnline;
 
   ChatPlant({
     required this.chatId,
@@ -39,6 +40,7 @@ class ChatPlant {
     this.hasUnreadExchange = false,
     this.acceptedExchangeId,
     this.isExchangeCompleted = false,
+    this.isOtherUserOnline = false,
   });
 
   ChatPlant copyWith({
@@ -48,6 +50,7 @@ class ChatPlant {
     bool? hasUnreadExchange,
     String? acceptedExchangeId,
     bool? isExchangeCompleted,
+    bool? isOtherUserOnline,
   }) {
     return ChatPlant(
       chatId: chatId,
@@ -67,6 +70,7 @@ class ChatPlant {
       hasUnreadExchange: hasUnreadExchange ?? this.hasUnreadExchange,
       acceptedExchangeId: acceptedExchangeId ?? this.acceptedExchangeId,
       isExchangeCompleted: isExchangeCompleted ?? this.isExchangeCompleted,
+      isOtherUserOnline: isOtherUserOnline ?? this.isOtherUserOnline,
     );
   }
 
@@ -109,6 +113,7 @@ class ChatPlant {
       hasUnreadExchange: false,
       acceptedExchangeId: json['acceptedExchangeId'],
       isExchangeCompleted: json['isExchangeCompleted'] ?? false,
+      isOtherUserOnline: json['isOtherUserOnline'] ?? false,
     );
   }
 }

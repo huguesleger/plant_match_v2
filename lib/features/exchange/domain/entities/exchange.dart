@@ -4,6 +4,7 @@ enum ExchangeStatus {
   pending,
   accepted,
   rejected,
+  waitingValidation, // En attente de saisie du code PIN
   completed, // Échange physique terminé
 }
 
@@ -27,6 +28,7 @@ class Exchange {
   final bool seenByRequester;
   final DateTime? completedAt;
   final String? completedBy;
+  final String? validationCode;
 
   Exchange({
     this.id = '',
@@ -45,6 +47,7 @@ class Exchange {
     required this.seenByRequester,
     this.completedAt,
     this.completedBy,
+    this.validationCode,
   });
 
   factory Exchange.fromJson(String id, Map<String, dynamic> json) {
@@ -70,6 +73,7 @@ class Exchange {
           ? (json['completedAt'] as Timestamp).toDate()
           : null,
       completedBy: json['completedBy'],
+      validationCode: json['validationCode'],
     );
   }
 
@@ -89,5 +93,6 @@ class Exchange {
         'seenByRequester': seenByRequester,
         'completedAt': completedAt,
         'completedBy': completedBy,
+        'validationCode': validationCode,
       };
 }

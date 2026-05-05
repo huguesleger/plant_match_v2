@@ -18,7 +18,8 @@ class ChatPlantDonationInfoBar extends StatelessWidget {
           color: Colors.orange,
           icon: Icons.volunteer_activism_rounded,
         ),
-      DonationAccepted() => const ChatPlantInfoBarTemplate(
+      DonationAccepted() || DonationWaitingValidation() =>
+        const ChatPlantInfoBarTemplate(
           text: "Donation acceptée 🎉",
           color: Colors.green,
           icon: Icons.check_circle_outline_rounded,

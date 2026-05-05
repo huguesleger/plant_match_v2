@@ -8,6 +8,8 @@ import 'package:plant_match_v2/features/chat_plant/presentation/widgets/common/c
 import 'package:plant_match_v2/features/exchange/presentation/cubit/exchange_cubit.dart';
 import 'package:plant_match_v2/features/exchange/presentation/exchange_page_route.dart';
 import 'package:plant_match_v2/features/exchange/presentation/state/exchange_state.dart';
+import 'package:plant_match_v2/features/chat_plant/presentation/widgets/validation_code_display.dart';
+import 'package:plant_match_v2/features/chat_plant/presentation/widgets/validation_code_input.dart';
 
 class ChatPlantExchangeActionBar extends StatelessWidget {
   const ChatPlantExchangeActionBar({
@@ -39,13 +41,25 @@ class ChatPlantExchangeActionBar extends StatelessWidget {
           onRefuse: () => context.read<ExchangeCubit>().reject(exchange.id),
         ),
       ExchangeAccepted(:final exchange) when isPlantOwner =>
-        ChatPlantCompleteActionBar(
-          label: "l'échange",
-          dialogTitle: "Clôturer l'échange",
-          dialogContent: 'Avez-vous effectué l\'échange physique ?',
-          onConfirm: () => context
-              .read<ExchangeCubit>()
-              .complete(exchange.id, currentUserId),
+        ValidationCodeDisplay(
+          onGenerate: () => context.read<ExchangeCubit>().generateCode(exchange.id),
+        ),
+      ExchangeWaitingValidation(:final exchange) when isPlantOwner =>
+        ValidationCodeDisplay(
+          onGenerate: () {}, // Déjà généré
+          code: exchange.validationCode,
+        ),
+      ExchangeWaitingValidation(:final exchange) when !isPlantOwner =>
+        ValidationCodeInput(
+          onValidate: (code) => context.read<ExchangeCubit>().validateCode(
+                exchange.id,
+                code,
+                currentUserId,
+              ),
+        ),
+      ExchangeAccepted() when !isPlantOwner => const ChatPlantStatusBanner(
+          message: "L'échange est accepté ! En attente de la rencontre.",
+          icon: LucideIcons.calendar_check,
         ),
       ExchangeInitial() ||
       ExchangeLoading() ||
@@ -55,6 +69,7 @@ class ChatPlantExchangeActionBar extends StatelessWidget {
       ExchangeError() ||
       ExchangePending() ||
       ExchangeAccepted() ||
+      ExchangeWaitingValidation() ||
       ExchangeRejected() ||
       ExchangeCompleted() =>
         (plantOfferType == OfferType.exchange &&

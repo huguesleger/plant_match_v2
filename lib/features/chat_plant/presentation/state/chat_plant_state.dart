@@ -8,11 +8,15 @@ class ChatPlantLoading extends ChatPlantState {}
 
 class ChatPlantLoaded extends ChatPlantState {
   final List<types.Message> messages;
+  final bool isBlocked;
 
   ChatPlantLoaded({
     required this.messages,
+    this.isBlocked = false,
   });
 }
+
+class ChatPlantBlocked extends ChatPlantState {}
 
 class ChatPlantError extends ChatPlantState {
   final String message;

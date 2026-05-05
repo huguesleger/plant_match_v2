@@ -21,19 +21,17 @@ class DonationCubit extends Cubit<DonationState> {
           return;
         }
 
-        switch (donation.status) {
-          case DonationStatus.pending:
-            emit(DonationPending(donation));
-            break;
-          case DonationStatus.accepted:
-            emit(DonationAccepted(donation));
-            break;
-          case DonationStatus.rejected:
-            emit(DonationRejected(donation));
-            break;
-          case DonationStatus.completed:
-            emit(DonationCompleted(donation));
-            break;
+        if (!isClosed) {
+          emit(
+            switch (donation.status) {
+              DonationStatus.pending => DonationPending(donation),
+              DonationStatus.accepted => DonationAccepted(donation),
+              DonationStatus.rejected => DonationRejected(donation),
+              DonationStatus.waitingValidation =>
+                DonationWaitingValidation(donation),
+              DonationStatus.completed => DonationCompleted(donation),
+            },
+          );
         }
       },
       onError: (_) => emit(DonationError('Erreur donation')),
@@ -100,6 +98,14 @@ class DonationCubit extends Cubit<DonationState> {
 
   void markSeenByRequester(String donationId) {
     repository.markSeenByRequester(donationId).run();
+  }
+
+  void generateCode(String donationId) {
+    repository.generateValidationCode(donationId).run();
+  }
+
+  void validateCode(String donationId, String code, String userId) {
+    repository.validateCode(donationId, code, userId).run();
   }
 
   @override

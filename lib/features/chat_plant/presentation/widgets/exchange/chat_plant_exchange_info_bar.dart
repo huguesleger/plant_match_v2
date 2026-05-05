@@ -18,7 +18,8 @@ class ChatPlantExchangeInfoBar extends StatelessWidget {
           color: Colors.orange,
           icon: Icons.swap_horiz_rounded,
         ),
-      ExchangeAccepted() => const ChatPlantInfoBarTemplate(
+      ExchangeAccepted() || ExchangeWaitingValidation() =>
+        const ChatPlantInfoBarTemplate(
           text: "Échange accepté 🎉",
           color: Colors.green,
           icon: Icons.check_circle_outline_rounded,

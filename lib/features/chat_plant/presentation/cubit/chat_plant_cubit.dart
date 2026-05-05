@@ -9,13 +9,14 @@ class ChatPlantCubit extends Cubit<ChatPlantState> {
   final ChatPlantRepository repository;
 
   StreamSubscription<List<types.Message>>? _messagesSub;
+  StreamSubscription<bool>? _blockedSub;
   String? _otherUserId;
+  bool _isBlocked = false;
+  List<types.Message> _currentMessages = [];
 
   ChatPlantCubit({
     required this.repository,
   }) : super(ChatPlantInitial());
-
-  // ─── subscribe ─────────────────────────────────────────────────────────────
 
   void subscribe({
     required String chatId,
@@ -38,11 +39,33 @@ class ChatPlantCubit extends Cubit<ChatPlantState> {
             }
 
             _otherUserId = otherId;
+
+            _blockedSub?.cancel();
+            _blockedSub = repository
+                .isBlockedStream(
+                  currentUserId: currentUserId,
+                  otherUserId: otherId,
+                )
+                .listen((isBlocked) {
+              if (isClosed) return;
+              _isBlocked = isBlocked;
+              if (state is ChatPlantLoaded) {
+                emit(ChatPlantLoaded(
+                  messages: _currentMessages,
+                  isBlocked: _isBlocked,
+                ));
+              }
+            });
+
             _messagesSub?.cancel();
             _messagesSub = repository.messagesStream(chatId).listen(
               (messages) {
                 if (!isClosed) {
-                  emit(ChatPlantLoaded(messages: messages));
+                  _currentMessages = messages;
+                  emit(ChatPlantLoaded(
+                    messages: messages,
+                    isBlocked: _isBlocked,
+                  ));
                 }
               },
               onError: (e) {
@@ -52,14 +75,12 @@ class ChatPlantCubit extends Cubit<ChatPlantState> {
               },
             );
 
-            return state; // On reste en loading ou on garde l'état actuel en attendant les messages
+            return state;
           },
         )
         .map((s) => emit(s))
         .run();
   }
-
-  // ─── send ──────────────────────────────────────────────────────────────────
 
   void send({
     required String chatId,
@@ -67,6 +88,7 @@ class ChatPlantCubit extends Cubit<ChatPlantState> {
     required String text,
   }) {
     if (_otherUserId == null || _otherUserId!.isEmpty) return;
+    if (_isBlocked) return;
 
     repository
         .sendMessage(
@@ -95,21 +117,16 @@ class ChatPlantCubit extends Cubit<ChatPlantState> {
         .run();
   }
 
-  // ─── softDeleteChat ────────────────────────────────────────────────────────
-
   void softDeleteChat(String chatId, String userId) {
     repository
         .softDeleteChat(chatId: chatId, userId: userId)
         .match(
-          (failure) =>
-              ChatPlantError('Impossible de supprimer la conversation'),
+          (failure) => ChatPlantError('Impossible de supprimer la conversation'),
           (_) => state,
         )
         .map((s) => emit(s))
         .run();
   }
-
-  // ─── sendPlantExchange ─────────────────────────────────────────────────────
 
   void sendPlantExchange({
     required String chatId,
@@ -119,6 +136,7 @@ class ChatPlantCubit extends Cubit<ChatPlantState> {
     required String plantImage,
   }) {
     if (_otherUserId == null || _otherUserId!.isEmpty) return;
+    if (_isBlocked) return;
 
     repository
         .sendPlantExchangeMessage(
@@ -137,9 +155,48 @@ class ChatPlantCubit extends Cubit<ChatPlantState> {
         .run();
   }
 
+  void reportChat({
+    required String chatId,
+    required String reporterUserId,
+    required String reportedUserId,
+  }) {
+    repository
+        .reportChat(
+          chatId: chatId,
+          reporterUserId: reporterUserId,
+          reportedUserId: reportedUserId,
+        )
+        .run();
+  }
+
+  void blockUser({
+    required String blockerUserId,
+    required String blockedUserId,
+  }) {
+    repository
+        .blockUser(
+          blockerUserId: blockerUserId,
+          blockedUserId: blockedUserId,
+        )
+        .run();
+  }
+
+  void unblockUser({
+    required String blockerUserId,
+    required String blockedUserId,
+  }) {
+    repository
+        .unblockUser(
+          blockerUserId: blockerUserId,
+          blockedUserId: blockedUserId,
+        )
+        .run();
+  }
+
   @override
   Future<void> close() {
     _messagesSub?.cancel();
+    _blockedSub?.cancel();
     return super.close();
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:plant_match_v2/core/util/date_formatter.dart';
 import 'package:plant_match_v2/features/catalog/data/firebase_catalog_repository.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/plant_message_card.dart';
 import 'package:plant_match_v2/features/user/detail_plant/detail_plant.dart';
@@ -23,11 +24,18 @@ class ChatPlantCustomMessage extends StatelessWidget {
       final pImage = metadata?['plantImage'] as String? ?? '';
       final isSender = message.author.id == currentUserId;
 
+      final time = DateFormatter.formatTime(
+        context,
+        DateTime.fromMillisecondsSinceEpoch(message.createdAt ?? 0),
+      );
+
       return PlantMessageCard(
         plantId: pId,
         plantName: pName,
         plantImage: pImage,
         isSender: isSender,
+        time: time,
+        status: message.status,
         onTap: () async {
           final catalogRepo = FirebaseCatalogRepository();
           try {

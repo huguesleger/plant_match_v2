@@ -16,5 +16,7 @@ abstract class ExchangeRepository {
   TaskEither<Failure, Unit> markSeenByRequester(String exchangeId);
 
   TaskEither<Failure, Unit> markAsCompleted(String exchangeId, String completedBy);
+  TaskEither<Failure, Unit> generateValidationCode(String exchangeId);
+  TaskEither<Failure, Unit> validateCode(String exchangeId, String code, String userId);
   TaskEither<Failure, List<Exchange>> getCompletedExchanges(String uid);
 }

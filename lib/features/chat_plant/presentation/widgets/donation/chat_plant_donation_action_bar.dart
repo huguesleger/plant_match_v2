@@ -9,6 +9,9 @@ import 'package:plant_match_v2/features/chat_plant/presentation/widgets/common/c
 import 'package:plant_match_v2/features/donation/domain/entities/donation.dart';
 import 'package:plant_match_v2/features/donation/presentation/cubit/donation_cubit.dart';
 import 'package:plant_match_v2/features/donation/presentation/state/donation_state.dart';
+import 'package:plant_match_v2/features/chat_plant/presentation/widgets/validation_code_display.dart';
+import 'package:plant_match_v2/features/chat_plant/presentation/widgets/validation_code_input.dart';
+import 'package:flutter_lucide/flutter_lucide.dart';
 
 class ChatPlantDonationActionBar extends StatelessWidget {
   const ChatPlantDonationActionBar({
@@ -44,18 +47,31 @@ class ChatPlantDonationActionBar extends StatelessWidget {
           onRefuse: () => context.read<DonationCubit>().reject(donation.id),
         ),
       DonationAccepted(:final donation) when isPlantOwner =>
-        ChatPlantCompleteActionBar(
-          label: 'la donation',
-          dialogTitle: 'Clôturer la donation',
-          dialogContent: 'Avez-vous remis la plante au bénéficiaire ?',
-          onConfirm: () => context
-              .read<DonationCubit>()
-              .complete(donation.id, currentUserId),
+        ValidationCodeDisplay(
+          onGenerate: () => context.read<DonationCubit>().generateCode(donation.id),
+        ),
+      DonationWaitingValidation(:final donation) when isPlantOwner =>
+        ValidationCodeDisplay(
+          onGenerate: () {}, // Déjà généré
+          code: donation.validationCode,
+        ),
+      DonationWaitingValidation(:final donation) when !isPlantOwner =>
+        ValidationCodeInput(
+          onValidate: (code) => context.read<DonationCubit>().validateCode(
+                donation.id,
+                code,
+                currentUserId,
+              ),
+        ),
+      DonationAccepted() when !isPlantOwner => const ChatPlantStatusBanner(
+          message: "La donation est acceptée ! En attente de la rencontre.",
+          icon: LucideIcons.calendar_check,
         ),
       DonationInitial() ||
       DonationLoading() ||
       DonationPending() ||
       DonationAccepted() ||
+      DonationWaitingValidation() ||
       DonationRejected() ||
       DonationCompleted() ||
       DonationError() =>

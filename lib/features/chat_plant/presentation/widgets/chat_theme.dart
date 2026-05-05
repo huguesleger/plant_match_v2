@@ -7,9 +7,9 @@ class ChatThemes {
   ChatThemes._();
 
   static final DefaultChatTheme light = DefaultChatTheme(
-    primaryColor: AppColors.white,
-    secondaryColor: AppColors.greenLight.withValues(alpha: 0.3),
-    backgroundColor: AppColors.greyUltraLight,
+    primaryColor: AppColors.greenMedium.withValues(alpha: 0.2),
+    secondaryColor: AppColors.white,
+    backgroundColor: AppColors.greenDark.withValues(alpha: 0.2),
     inputBackgroundColor: AppColors.white,
     inputBorderRadius: const BorderRadius.all(Radius.zero),
     inputTextColor: Colors.black,
@@ -35,5 +35,9 @@ class ChatThemes {
         color: AppColors.greenLight,
       ),
     ),
+    deliveredIcon: const SizedBox.shrink(),
+    seenIcon: const SizedBox.shrink(),
+    sendingIcon: const SizedBox.shrink(),
+    errorIcon: const SizedBox.shrink(),
   );
 }
