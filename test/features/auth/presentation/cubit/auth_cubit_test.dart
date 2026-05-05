@@ -32,7 +32,7 @@ void main() {
 
   final tUser = UserAuth(
     uid: '123',
-    email: 'test@example.com',
+    email: const Some('test@example.com'),
     fullName: 'John Doe',
   );
 

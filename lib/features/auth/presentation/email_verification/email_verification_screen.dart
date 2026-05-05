@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -135,7 +136,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
                     text: 'Un e-mail a été envoyé à votre adresse :\n',
                     children: [
                       TextSpan(
-                        text: widget.user.email,
+                        text: widget.user.email.getOrElse(() => ''),
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       const TextSpan(

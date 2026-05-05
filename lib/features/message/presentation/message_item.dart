@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/theme/inter_text_style.dart';
 import 'package:plant_match_v2/features/chat_plant/domain/entities/chat_plant.dart';
@@ -37,10 +38,10 @@ class MessageItem extends StatelessWidget {
         ),
       ),
       subtitle: MessageSubtitle(
-        lastMessage: chat.lastMessage,
+        lastMessage: chat.lastMessage.toNullable(),
       ),
       trailing: MessageTrailing(
-        lastMessageAt: chat.lastMessageAt,
+        lastMessageAt: chat.lastMessageAt.toNullable(),
         totalUnread: totalUnread,
       ),
       onTap: () => Navigator.push(
@@ -50,7 +51,7 @@ class MessageItem extends StatelessWidget {
             chatId: chat.chatId,
             plantId: chat.plantId,
             plantOwnerName: chat.plantOwnerName,
-            plantOwnerAvatar: chat.plantOwnerAvatar ?? '',
+            plantOwnerAvatar: chat.plantOwnerAvatar.getOrElse(() => ''),
           ),
         ),
       ),

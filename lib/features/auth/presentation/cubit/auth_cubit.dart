@@ -113,7 +113,7 @@ class AuthCubit extends Cubit<AuthState> {
           final resolvedName = fullName ?? _currentUser?.fullName ?? '';
           final userAuth = UserAuth(
             uid: firebaseUser.uid,
-            email: firebaseUser.email!,
+            email: Option.fromNullable(firebaseUser.email),
             fullName: resolvedName,
           );
 
@@ -123,7 +123,7 @@ class AuthCubit extends Cubit<AuthState> {
             if (isFirst) {
               return TaskEither<Failure, Unit>.tryCatch(
                 () async {
-                  await welcomeEmail(u.email!, resolvedName);
+                  await welcomeEmail(u.email.getOrElse(() => ''), resolvedName);
                   return unit;
                 },
                 (error, _) => UnexpectedFailure(

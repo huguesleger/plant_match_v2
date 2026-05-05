@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
@@ -26,7 +27,7 @@ class NameAndEmail extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           Text(
-            profilUser.email ?? '',
+            profilUser.email.getOrElse(() => ''),
             style: const TextStyle(
               fontSize: AppTypo.textXs,
               color: AppColors.white,

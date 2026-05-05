@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
@@ -263,7 +264,7 @@ class _DeleteButton extends StatelessWidget {
               final userPointsCubit = context.read<UserPointsCubit>();
 
               final result = await catalogCubit
-                  .deleteCatalog(catalog.catalogId!, catalog.userId)
+                  .deleteCatalog(catalog.catalogId.getOrElse(() => ''), catalog.userId)
                   .run();
 
               result.match(
@@ -305,7 +306,7 @@ class _EditButton extends StatelessWidget {
           MaterialPageRoute(builder: (_) => CatalogEditPageRoute(catalog: catalog)),
         );
         if (result == true && context.mounted) {
-          final getResult = await context.read<CatalogCubit>().getCatalogById(catalog.catalogId!).run();
+          final getResult = await context.read<CatalogCubit>().getCatalogById(catalog.catalogId.getOrElse(() => '')).run();
           getResult.match((_) => null, (updatedCatalog) => onUpdate(updatedCatalog));
         }
       },

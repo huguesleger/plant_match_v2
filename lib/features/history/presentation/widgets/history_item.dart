@@ -49,7 +49,7 @@ class HistoryExchangeItem extends HistoryItem {
           requestedBy: exchange.requestedBy,
           ownerId: exchange.ownerId,
           createdAt: exchange.createdAt,
-          completedAt: Option.fromNullable(exchange.completedAt),
+          completedAt: exchange.completedAt,
           rawStatus: exchange.status.name,
         );
 }
@@ -64,7 +64,7 @@ class HistoryDonationItem extends HistoryItem {
           requestedBy: donation.requestedBy,
           ownerId: donation.ownerId,
           createdAt: donation.createdAt,
-          completedAt: Option.fromNullable(donation.completedAt),
+          completedAt: donation.completedAt,
           rawStatus: donation.status.name,
         );
 }

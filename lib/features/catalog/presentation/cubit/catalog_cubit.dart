@@ -46,7 +46,7 @@ class CatalogCubit extends Cubit<CatalogState> {
     emit(const CatalogLoading());
 
     return catalogRepository.createCatalog(catalog).flatMap((id) {
-      final updatedCatalog = catalog.copyWith(newCatalogId: id);
+      final updatedCatalog = catalog.copyWith(newCatalogId: Option.fromNullable(id));
       return catalogRepository
           .getCatalogsByUserId(catalog.userId)
           .flatMap((catalogs) {
@@ -116,7 +116,7 @@ class CatalogCubit extends Cubit<CatalogState> {
     return TaskEither.sequenceList(uploadTasks).flatMap((uploadedUrls) {
       final newImageList = [...existingImages, ...uploadedUrls];
       final updatedCatalog = catalog.copyWith(
-        newCatalogId: catalogId,
+        newCatalogId: Option.fromNullable(catalogId),
         newImages: newImageList,
       );
 

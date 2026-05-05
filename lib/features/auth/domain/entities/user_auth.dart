@@ -1,6 +1,8 @@
+import 'package:fpdart/fpdart.dart';
+
 class UserAuth {
   final String uid;
-  final String? email;
+  final Option<String> email;
   final String fullName;
 
   UserAuth({
@@ -12,16 +14,16 @@ class UserAuth {
   Map<String, dynamic> toJson() {
     return {
       'uid': uid,
-      'email': email,
+      'email': email.toNullable(),
       'fullName': fullName,
     };
   }
 
   factory UserAuth.fromJson(Map<String, dynamic> json) {
     return UserAuth(
-      uid: json['uid'],
-      email: json['email'],
-      fullName: json['fullName'],
+      uid: json['uid'] ?? '',
+      email: Option.fromNullable(json['email'] as String?),
+      fullName: json['fullName'] ?? '',
     );
   }
 

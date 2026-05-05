@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fpdart/fpdart.dart';
 
 class ChatPlant {
   final String chatId;
@@ -10,15 +11,15 @@ class ChatPlant {
 
   final String plantOwnerId;
   final String plantOwnerName;
-  final String? plantOwnerAvatar;
+  final Option<String> plantOwnerAvatar;
 
   final List<String> participants;
-  final String? lastMessage;
-  final DateTime? lastMessageAt;
+  final Option<String> lastMessage;
+  final Option<DateTime> lastMessageAt;
   final Map<String, int> unreadCount;
   final String otherUserId;
   final bool hasUnreadExchange;
-  final String? acceptedExchangeId;
+  final Option<String> acceptedExchangeId;
   final bool isExchangeCompleted;
   final bool isOtherUserOnline;
 
@@ -33,22 +34,22 @@ class ChatPlant {
     required this.plantOwnerName,
     required this.plantOwnerAvatar,
     required this.participants,
-    this.lastMessage,
-    this.lastMessageAt,
+    required this.lastMessage,
+    required this.lastMessageAt,
     required this.unreadCount,
     required this.otherUserId,
-    this.hasUnreadExchange = false,
-    this.acceptedExchangeId,
-    this.isExchangeCompleted = false,
-    this.isOtherUserOnline = false,
+    required this.hasUnreadExchange,
+    required this.acceptedExchangeId,
+    required this.isExchangeCompleted,
+    required this.isOtherUserOnline,
   });
 
   ChatPlant copyWith({
-    String? lastMessage,
-    DateTime? lastMessageAt,
+    Option<String>? lastMessage,
+    Option<DateTime>? lastMessageAt,
     Map<String, int>? unreadCount,
     bool? hasUnreadExchange,
-    String? acceptedExchangeId,
+    Option<String>? acceptedExchangeId,
     bool? isExchangeCompleted,
     bool? isOtherUserOnline,
   }) {
@@ -83,10 +84,10 @@ class ChatPlant {
       'plantExchangeType': plantExchangeType,
       'plantOwnerId': plantOwnerId,
       'plantOwnerName': plantOwnerName,
-      'plantOwnerAvatar': plantOwnerAvatar,
+      'plantOwnerAvatar': plantOwnerAvatar.toNullable(),
       'participants': participants,
-      'lastMessage': lastMessage,
-      'lastMessageAt': lastMessageAt,
+      'lastMessage': lastMessage.toNullable(),
+      'lastMessageAt': lastMessageAt.toNullable(),
       'unreadCount': unreadCount,
       'otherUserId': otherUserId,
     };
@@ -102,16 +103,16 @@ class ChatPlant {
       plantExchangeType: json['plantExchangeType'] ?? '',
       plantOwnerId: json['plantOwnerId'] ?? '',
       plantOwnerName: json['plantOwnerName'] ?? 'Propriétaire',
-      plantOwnerAvatar: json['plantOwnerAvatar'] ?? '',
+      plantOwnerAvatar: Option.fromNullable(json['plantOwnerAvatar'] as String?),
       participants: List<String>.from(json['participants'] ?? []),
-      lastMessage: json['lastMessage'],
-      lastMessageAt: json['lastMessageAt'] != null
-          ? (json['lastMessageAt'] as Timestamp).toDate()
-          : null,
+      lastMessage: Option.fromNullable(json['lastMessage'] as String?),
+      lastMessageAt: Option.fromNullable(json['lastMessageAt']).map(
+        (t) => (t as Timestamp).toDate(),
+      ),
       unreadCount: Map<String, int>.from(json['unreadCount'] ?? {}),
       otherUserId: json['otherUserId'] ?? '',
       hasUnreadExchange: false,
-      acceptedExchangeId: json['acceptedExchangeId'],
+      acceptedExchangeId: Option.fromNullable(json['acceptedExchangeId'] as String?),
       isExchangeCompleted: json['isExchangeCompleted'] ?? false,
       isOtherUserOnline: json['isOtherUserOnline'] ?? false,
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/theme/inter_text_style.dart';
@@ -53,7 +54,7 @@ class ChatPlantDonationActionBar extends StatelessWidget {
       DonationWaitingValidation(:final donation) when isPlantOwner =>
         ValidationCodeDisplay(
           onGenerate: () {}, // Déjà généré
-          code: donation.validationCode,
+          code: donation.validationCode.toNullable(),
         ),
       DonationWaitingValidation(:final donation) when !isPlantOwner =>
         ValidationCodeInput(
@@ -152,6 +153,9 @@ class ChatPlantDonationActionBar extends StatelessWidget {
                       createdAt: DateTime.now(),
                       seenByOwner: false,
                       seenByRequester: true,
+                      completedAt: const None(),
+                      completedBy: const None(),
+                      validationCode: const None(),
                     ),
                   );
             },

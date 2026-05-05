@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fpdart/fpdart.dart';
 
 enum DonationStatus {
   pending,
@@ -22,9 +23,9 @@ class Donation {
   final DateTime createdAt;
   final bool seenByOwner;
   final bool seenByRequester;
-  final DateTime? completedAt;
-  final String? completedBy;
-  final String? validationCode;
+  final Option<DateTime> completedAt;
+  final Option<String> completedBy;
+  final Option<String> validationCode;
 
   Donation({
     this.id = '',
@@ -38,9 +39,9 @@ class Donation {
     required this.createdAt,
     required this.seenByOwner,
     required this.seenByRequester,
-    this.completedAt,
-    this.completedBy,
-    this.validationCode,
+    required this.completedAt,
+    required this.completedBy,
+    required this.validationCode,
   });
 
   factory Donation.fromJson(String id, Map<String, dynamic> json) {
@@ -59,11 +60,11 @@ class Donation {
       createdAt: (json['createdAt'] as Timestamp).toDate(),
       seenByOwner: json['seenByOwner'] ?? false,
       seenByRequester: json['seenByRequester'] ?? false,
-      completedAt: json['completedAt'] != null
-          ? (json['completedAt'] as Timestamp).toDate()
-          : null,
-      completedBy: json['completedBy'],
-      validationCode: json['validationCode'],
+      completedAt: Option.fromNullable(json['completedAt']).map(
+        (t) => (t as Timestamp).toDate(),
+      ),
+      completedBy: Option.fromNullable(json['completedBy'] as String?),
+      validationCode: Option.fromNullable(json['validationCode'] as String?),
     );
   }
 
@@ -78,8 +79,8 @@ class Donation {
         'createdAt': createdAt,
         'seenByOwner': seenByOwner,
         'seenByRequester': seenByRequester,
-        'completedAt': completedAt,
-        'completedBy': completedBy,
-        'validationCode': validationCode,
+        'completedAt': completedAt.toNullable(),
+        'completedBy': completedBy.toNullable(),
+        'validationCode': validationCode.toNullable(),
       };
 }

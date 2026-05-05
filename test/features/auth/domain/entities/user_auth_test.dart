@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plant_match_v2/features/auth/domain/entities/user_auth.dart';
+import 'package:fpdart/fpdart.dart';
 
 void main() {
   const tUid = 'testUid123';
@@ -8,14 +9,14 @@ void main() {
 
   final tUserAuth = UserAuth(
     uid: tUid,
-    email: tEmail,
+    email: const Some(tEmail),
     fullName: tFullName,
   );
 
   group('UserAuth Entity', () {
     test('devrait être instancié correctement avec les bonnes variables', () {
       expect(tUserAuth.uid, tUid);
-      expect(tUserAuth.email, tEmail);
+      expect(tUserAuth.email, const Some(tEmail));
       expect(tUserAuth.fullName, tFullName);
     });
 

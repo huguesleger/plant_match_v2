@@ -47,7 +47,7 @@ class ChatPlantExchangeActionBar extends StatelessWidget {
       ExchangeWaitingValidation(:final exchange) when isPlantOwner =>
         ValidationCodeDisplay(
           onGenerate: () {}, // Déjà généré
-          code: exchange.validationCode,
+          code: exchange.validationCode.toNullable(),
         ),
       ExchangeWaitingValidation(:final exchange) when !isPlantOwner =>
         ValidationCodeInput(

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/profil/data/firebase_favorites_repo.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
@@ -52,25 +54,28 @@ class _FavoriteBtnState extends State<FavoriteBtn>
     final uid = widget.currentUserId;
     if (uid == null || uid.isEmpty) return;
 
-    bool? result;
+    final catalogId =
+        Option.fromNullable(widget.catalog).flatMap((c) => c.catalogId);
+    final targetUid = Option.fromNullable(widget.targetUser).map((u) => u.uid);
 
-    if (widget.catalog?.catalogId != null) {
-      final resultTE = await _repo.isFavoritePlant(uid, widget.catalog!.catalogId!).run();
-      result = resultTE.getOrElse((_) => false);
-    } else if (widget.targetUser != null) {
-      final resultTE = await _repo.isFavoriteUser(uid, widget.targetUser!.uid).run();
-      result = resultTE.getOrElse((_) => false);
-    }
+    final isFavoriteTask = catalogId.match(
+      () => targetUid.match(
+        () => TaskEither<Failure, bool>.right(_isFavorite),
+        (tUid) => _repo.isFavoriteUser(uid, tUid),
+      ),
+      (id) => _repo.isFavoritePlant(uid, id),
+    );
 
-    if (result != null && mounted) {
-      setState(() => _isFavorite = result!);
-    }
+    final result = await isFavoriteTask.run();
+    result.match(
+      (failure) => {},
+      (fav) => mounted ? setState(() => _isFavorite = fav) : {},
+    );
   }
 
   Future<void> _toggleFavorite() async {
     final uid = widget.currentUserId;
 
-    // Mode legacy (sans Firebase)
     if (uid == null || uid.isEmpty) {
       setState(() => _isFavorite = !_isFavorite);
       widget.onChanged?.call(_isFavorite);
@@ -82,33 +87,36 @@ class _FavoriteBtnState extends State<FavoriteBtn>
 
     try {
       final newValue = !_isFavorite;
+      final catalogOpt = Option.fromNullable(widget.catalog);
+      final targetUserOpt = Option.fromNullable(widget.targetUser);
 
-      if (widget.catalog != null && widget.catalog!.catalogId != null) {
-        // Mode plante
-        if (newValue) {
-          final result = await _repo.addFavoritePlant(uid, widget.catalog!).run();
-          if (result.isLeft()) throw Exception('Erreur ajout plante');
-        } else {
-          final result = await _repo.removeFavoritePlant(uid, widget.catalog!.catalogId!).run();
-          if (result.isLeft()) throw Exception('Erreur suppression plante');
-        }
-      } else if (widget.targetUser != null) {
-        // Mode profil
-        if (newValue) {
-          final result = await _repo.addFavoriteUser(uid, widget.targetUser!).run();
-          if (result.isLeft()) throw Exception('Erreur ajout utilisateur');
-        } else {
-          final result = await _repo.removeFavoriteUser(uid, widget.targetUser!.uid).run();
-          if (result.isLeft()) throw Exception('Erreur suppression utilisateur');
-        }
-      }
+      final task = catalogOpt.match(
+        () => targetUserOpt.match(
+          () => TaskEither<Failure, Unit>.right(unit),
+          (user) => newValue
+              ? _repo.addFavoriteUser(uid, user)
+              : _repo.removeFavoriteUser(uid, user.uid),
+        ),
+        (catalog) => catalog.catalogId.match(
+          () => TaskEither<Failure, Unit>.right(unit),
+          (id) => newValue
+              ? _repo.addFavoritePlant(uid, catalog)
+              : _repo.removeFavoritePlant(uid, id),
+        ),
+      );
 
-      if (mounted) {
-        setState(() => _isFavorite = newValue);
-        widget.onChanged?.call(newValue);
-      }
+      final result = await task.run();
+      result.match(
+        (failure) => throw Exception(failure.message),
+        (_) {
+          if (mounted) {
+            setState(() => _isFavorite = newValue);
+            widget.onChanged?.call(newValue);
+          }
+        },
+      );
     } catch (_) {
-      // Silencieux — l'UI ne change pas en cas d'erreur
+      // Erreur silencieuse
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }

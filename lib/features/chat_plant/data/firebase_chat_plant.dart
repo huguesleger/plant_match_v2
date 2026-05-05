@@ -197,15 +197,19 @@ class FirebaseChatPlant implements ChatPlantRepository {
           plantExchangeType: data['plantExchangeType'],
           plantOwnerId: data['plantOwnerId'],
           plantOwnerName: data['plantOwnerName'],
-          plantOwnerAvatar: data['plantOwnerAvatar'],
+          plantOwnerAvatar: Option.fromNullable(data['plantOwnerAvatar'] as String?),
           participants: List<String>.from(data['participants']),
-          lastMessage: data['lastMessage'],
-          lastMessageAt: (data['lastMessageAt'] as Timestamp?)?.toDate(),
+          lastMessage: Option.fromNullable(data['lastMessage'] as String?),
+          lastMessageAt: Option.fromNullable(
+            (data['lastMessageAt'] as Timestamp?)?.toDate(),
+          ),
           unreadCount: Map<String, int>.from(data['unreadCount'] ?? {}),
           otherUserId: (List<String>.from(data['participants']))
               .firstWhere((id) => id != uid),
+          hasUnreadExchange: false,
           isExchangeCompleted: data['isExchangeCompleted'] ?? false,
-          acceptedExchangeId: data['acceptedExchangeId'],
+          acceptedExchangeId: Option.fromNullable(data['acceptedExchangeId'] as String?),
+          isOtherUserOnline: false,
         );
       }).toList();
     });

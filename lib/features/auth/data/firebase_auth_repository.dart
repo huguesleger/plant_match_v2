@@ -40,7 +40,7 @@ class FirebaseAuthRepository implements AuthRepository {
             .get();
 
         return Some(UserAuth(
-          email: firebaseUser.email!,
+          email: Option.fromNullable(firebaseUser.email),
           uid: firebaseUser.uid,
           fullName: userDoc.data()?['fullName'] ?? '',
         ));
@@ -80,7 +80,7 @@ class FirebaseAuthRepository implements AuthRepository {
 
         return UserAuth(
           uid: user.uid,
-          email: user.email!,
+          email: Option.fromNullable(user.email),
           fullName: userDoc.data()?['fullName'] ?? '',
         );
       },
@@ -106,7 +106,11 @@ class FirebaseAuthRepository implements AuthRepository {
           throw const AuthFailure("Impossible de créer l'utilisateur.");
         }
 
-        return UserAuth(email: email, uid: user.uid, fullName: fullName);
+        return UserAuth(
+          email: Option.fromNullable(email),
+          uid: user.uid,
+          fullName: fullName,
+        );
       },
       (error, _) => _mapErrorToFailure(error),
     );
@@ -161,7 +165,7 @@ class FirebaseAuthRepository implements AuthRepository {
         }
 
         final userAuth = UserAuth(
-          email: firebaseUser.email,
+          email: Option.fromNullable(firebaseUser.email),
           uid: firebaseUser.uid,
           fullName: firebaseUser.displayName ?? '',
         );
@@ -210,9 +214,9 @@ class FirebaseAuthRepository implements AuthRepository {
         }
 
         final userAuth = UserAuth(
-          email: userData['email'],
+          email: Option.fromNullable(userData['email'] as String?),
           uid: firebaseUser.uid,
-          fullName: userData['name'],
+          fullName: userData['name'] ?? '',
         );
 
         await _firebaseFirestore.collection('users').doc(userAuth.uid).set({

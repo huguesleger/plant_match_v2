@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide User;
+import 'package:fpdart/fpdart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
@@ -55,7 +56,7 @@ class DetailPlant extends StatelessWidget {
           .getOrCreatePlantChat(
             currentUserId: currentUser.uid,
             plantOwnerId: catalog.userId,
-            plantId: catalog.catalogId ?? '',
+            plantId: catalog.catalogId.getOrElse(() => ''),
             plantName: catalog.name,
             plantDescription: catalog.description,
             plantImage: catalog.images.first,
@@ -79,7 +80,7 @@ class DetailPlant extends StatelessWidget {
               MaterialPageRoute(
                 builder: (_) => ChatPlantPageRoute(
                   chatId: chatId,
-                  plantId: catalog.catalogId ?? '',
+                  plantId: catalog.catalogId.getOrElse(() => ''),
                   plantOwnerName: ownerName,
                   plantOwnerAvatar: ownerAvatar ?? '',
                 ),

@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:google_sign_in_mocks/google_sign_in_mocks.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:plant_match_v2/features/auth/data/firebase_auth_repository.dart';
@@ -61,7 +62,7 @@ void main() {
       result.fold(
         (l) => fail('Devrait réussir'),
         (r) {
-          expect(r.email, isNotNull);
+          expect(r.email.isSome(), true);
           expect(r.uid, isNotNull);
         },
       );
@@ -97,7 +98,7 @@ void main() {
       result.fold(
         (l) => fail('Devrait réussir: ${l.message}'),
         (r) {
-          expect(r.email, tEmail);
+          expect(r.email, const Some(tEmail));
         },
       );
     });
@@ -111,7 +112,7 @@ void main() {
       result.fold(
         (l) => fail('Devrait réussir'),
         (r) {
-          expect(r.email, tEmail);
+          expect(r.email, const Some(tEmail));
           expect(r.uid, isNotNull);
           expect(r.fullName, tFullName);
         },
@@ -135,7 +136,7 @@ void main() {
       result.fold(
         (l) => fail('Devrait réussir: ${l.message}'),
         (r) {
-          expect(r.email, tEmail);
+          expect(r.email, const Some(tEmail));
           expect(r.uid, realUid);
         },
       );

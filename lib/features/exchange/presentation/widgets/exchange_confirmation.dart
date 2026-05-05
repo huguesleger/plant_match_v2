@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/exchange/domain/entities/exchange.dart';
 import 'package:plant_match_v2/features/exchange/presentation/cubit/exchange_cubit.dart';
@@ -56,11 +57,11 @@ class ExchangeConfirmation extends StatelessWidget {
                   chatId: state.chatId,
                   requestedBy: userId,
                   ownerId: targetPlant.userId,
-                  targetPlantId: targetPlant.catalogId ?? '',
+                  targetPlantId: targetPlant.catalogId.getOrElse(() => ''),
                   targetPlantName: targetPlant.name,
                   targetPlantImage:
                       targetPlant.images.isNotEmpty ? targetPlant.images.first : '',
-                  offeredPlantId: offeredPlant.catalogId!,
+                  offeredPlantId: offeredPlant.catalogId.getOrElse(() => ''),
                   offeredPlantName: offeredPlant.name,
                   offeredPlantImage:
                       offeredPlant.images.isNotEmpty ? offeredPlant.images.first : '',
@@ -68,6 +69,9 @@ class ExchangeConfirmation extends StatelessWidget {
                   createdAt: DateTime.now(),
                   seenByOwner: false,
                   seenByRequester: true,
+                  completedAt: const None(),
+                  completedBy: const None(),
+                  validationCode: const None(),
                 );
 
                 exchangeCubit.propose(exchange);

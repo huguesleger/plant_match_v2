@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fpdart/fpdart.dart';
 
 enum ExchangeStatus {
   pending,
@@ -26,9 +27,9 @@ class Exchange {
   final DateTime createdAt;
   final bool seenByOwner;
   final bool seenByRequester;
-  final DateTime? completedAt;
-  final String? completedBy;
-  final String? validationCode;
+  final Option<DateTime> completedAt;
+  final Option<String> completedBy;
+  final Option<String> validationCode;
 
   Exchange({
     this.id = '',
@@ -45,9 +46,9 @@ class Exchange {
     required this.createdAt,
     required this.seenByOwner,
     required this.seenByRequester,
-    this.completedAt,
-    this.completedBy,
-    this.validationCode,
+    required this.completedAt,
+    required this.completedBy,
+    required this.validationCode,
   });
 
   factory Exchange.fromJson(String id, Map<String, dynamic> json) {
@@ -69,11 +70,11 @@ class Exchange {
       createdAt: (json['createdAt'] as Timestamp).toDate(),
       seenByOwner: json['seenByOwner'] ?? false,
       seenByRequester: json['seenByRequester'] ?? false,
-      completedAt: json['completedAt'] != null
-          ? (json['completedAt'] as Timestamp).toDate()
-          : null,
-      completedBy: json['completedBy'],
-      validationCode: json['validationCode'],
+      completedAt: Option.fromNullable(json['completedAt']).map(
+        (t) => (t as Timestamp).toDate(),
+      ),
+      completedBy: Option.fromNullable(json['completedBy'] as String?),
+      validationCode: Option.fromNullable(json['validationCode'] as String?),
     );
   }
 
@@ -91,8 +92,8 @@ class Exchange {
         'createdAt': createdAt,
         'seenByOwner': seenByOwner,
         'seenByRequester': seenByRequester,
-        'completedAt': completedAt,
-        'completedBy': completedBy,
-        'validationCode': validationCode,
+        'completedAt': completedAt.toNullable(),
+        'completedBy': completedBy.toNullable(),
+        'validationCode': validationCode.toNullable(),
       };
 }

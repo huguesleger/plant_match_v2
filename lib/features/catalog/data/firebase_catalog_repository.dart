@@ -12,23 +12,20 @@ class FirebaseCatalogRepository implements CatalogRepository {
 
   @override
   TaskEither<Failure, Unit> updateCatalog(Catalog catalog) {
-    if (catalog.catalogId == null) {
-      return TaskEither.left(
-          const UnexpectedFailure('catalogId is required to update a catalog'));
-    }
+    return catalog.catalogId.match(
+      () => TaskEither.left(
+        const UnexpectedFailure('catalogId is required to update a catalog'),
+      ),
+      (id) => TaskEither.tryCatch(
+        () async {
+          final data = catalog.toJson();
+          data.remove('createdAt');
 
-    return TaskEither.tryCatch(
-      () async {
-        final data = catalog.toJson();
-        data.remove('createdAt');
-
-        await firestore
-            .collection('catalogs')
-            .doc(catalog.catalogId)
-            .update(data);
-        return unit;
-      },
-      (error, _) => _mapErrorToFailure(error),
+          await firestore.collection('catalogs').doc(id).update(data);
+          return unit;
+        },
+        (error, _) => _mapErrorToFailure(error),
+      ),
     );
   }
 

@@ -100,6 +100,9 @@ class MessagesCubit extends Cubit<MessagesState> {
             createdAt: DateTime.now(),
             seenByOwner: false,
             seenByRequester: false,
+            completedAt: const None(),
+            completedBy: const None(),
+            validationCode: const None(),
           ),
         );
 
@@ -116,13 +119,13 @@ class MessagesCubit extends Cubit<MessagesState> {
           plantOwnerId: chat.plantOwnerId,
           otherUserId: otherUserId,
           plantOwnerName: displayName,
-          plantOwnerAvatar: displayAvatar,
+          plantOwnerAvatar: Option.fromNullable(displayAvatar.isEmpty ? null : displayAvatar),
           participants: chat.participants,
           lastMessage: chat.lastMessage,
           lastMessageAt: chat.lastMessageAt,
           unreadCount: chat.unreadCount,
           hasUnreadExchange: hasUnreadExchange,
-          acceptedExchangeId: acceptedExchangeId,
+          acceptedExchangeId: Option.fromNullable(acceptedExchangeId),
           isExchangeCompleted: chat.isExchangeCompleted,
           isOtherUserOnline: user.isOnline,
         );

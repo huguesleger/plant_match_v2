@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 
@@ -30,7 +31,7 @@ extension CatalogStatusExtension on CatalogStatus {
 
 class Catalog {
   final String userId;
-  final String? catalogId;
+  final Option<String> catalogId;
   final String name;
   final String description;
   final List<String> images;
@@ -45,7 +46,7 @@ class Catalog {
 
   Catalog({
     required this.userId,
-    this.catalogId,
+    required this.catalogId,
     required this.name,
     required this.description,
     required this.images,
@@ -61,7 +62,7 @@ class Catalog {
 
   Catalog copyWith({
     String? newUserId,
-    String? newCatalogId,
+    Option<String>? newCatalogId,
     String? newName,
     String? newDescription,
     List<String>? newImages,
@@ -94,7 +95,7 @@ class Catalog {
   factory Catalog.empty(String userId) {
     return Catalog(
       userId: userId,
-      catalogId: null,
+      catalogId: const None(),
       name: '',
       description: '',
       images: [],
@@ -122,7 +123,7 @@ class Catalog {
 
     return Catalog(
       userId: json['userId'] ?? '',
-      catalogId: id,
+      catalogId: Option.fromNullable(id),
       name: json['name'] ?? '',
       description: json['description'] ?? '',
       images: json['images'] != null ? List<String>.from(json['images']) : [],

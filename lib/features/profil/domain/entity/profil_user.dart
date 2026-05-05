@@ -58,12 +58,12 @@ class ProfilUser extends UserAuth {
       isOnline: newIsOnline ?? isOnline,
     );
   }
-
+  
   @override
   Map<String, dynamic> toJson() {
     return {
       'uid': uid,
-      'email': email,
+      'email': email.toNullable(),
       'fullName': fullName,
       'bio': bio.toNullable(),
       'profilImg': profilImg,
@@ -90,7 +90,7 @@ class ProfilUser extends UserAuth {
 
     return ProfilUser(
       uid: json['uid'] ?? '',
-      email: json['email'] ?? '',
+      email: Option.fromNullable(json['email'] as String?),
       fullName: json['fullName'] ?? '',
       bio: stringToOption(json['bio']),
       profilImg: json['profilImg'] ?? '',

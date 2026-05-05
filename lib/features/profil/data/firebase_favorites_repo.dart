@@ -20,7 +20,7 @@ class FirebaseFavoritesRepo implements FavoritesRepository {
   TaskEither<Failure, Unit> addFavoritePlant(String uid, Catalog catalog) {
     return TaskEither.tryCatch(
       () async {
-        final id = catalog.catalogId;
+        final id = catalog.catalogId.toNullable();
         if (id == null) throw Exception('ID catalogue manquant');
         await _plantsRef(uid).doc(id).set({
           'catalogId': id,
@@ -122,11 +122,11 @@ class FirebaseFavoritesRepo implements FavoritesRepository {
               final data = d.data() as Map<String, dynamic>;
               return ProfilUser(
                 uid: data['uid'] ?? '',
-                email: '',
+                email: Option.fromNullable(data['email'] as String?),
                 fullName: data['fullName'] ?? '',
                 bio: const None(),
                 profilImg: data['profilImg'] ?? '',
-                userName: data['userName'] ?? '',
+                userName: Option.fromNullable(data['userName'] as String?),
                 localisation: data['localisation'] ?? '',
                 country: '',
                 zipCode: data['zipCode'] ?? '',
