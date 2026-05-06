@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
@@ -15,7 +16,7 @@ class PlantEnvironment extends StatelessWidget {
     return Row(
       children: [
         Text(
-          'plante ${environment.envName}',
+          t.user.detail_plant.env_prefix(env: environment.envName),
           style: InterTextStyle.inter(
             AppTypo.textS,
             color: AppColors.grey,

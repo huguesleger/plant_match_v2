@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:intl/intl.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
@@ -149,7 +150,7 @@ class UserPlantCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Ajouté le ${date.format(createdDate)}',
+                      t.user.card.added_on(date: date.format(createdDate)),
                       style: InterTextStyle.inter(
                         AppTypo.textXs,
                         color: AppColors.greyMedium,

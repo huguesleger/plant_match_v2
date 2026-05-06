@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
@@ -40,7 +41,7 @@ class DetailPlant extends StatelessWidget {
           Option.fromNullable(userDoc.data());
 
       final String ownerName = dataOpt.match(
-        () => 'Propriétaire',
+        () => t.user.detail_plant.owner_placeholder,
         (data) {
           final userName = Option.fromNullable(data['userName'] as String?)
               .filter((s) => s.trim().isNotEmpty);
@@ -48,7 +49,7 @@ class DetailPlant extends StatelessWidget {
               .filter((s) => s.trim().isNotEmpty)
               .map((s) => s.split(' ').first);
 
-          return userName.alt(() => fullName).getOrElse(() => 'Propriétaire');
+          return userName.alt(() => fullName).getOrElse(() => t.user.detail_plant.owner_placeholder);
         },
       );
 
@@ -178,7 +179,7 @@ class DetailPlant extends StatelessWidget {
         child: SizedBox(
           width: double.infinity,
           child: ButtonRoundedWithIcon(
-            text: 'Envoyer un message',
+            text: t.user.detail_plant.send_message,
             bgColor: AppColors.greenDark,
             textColor: AppColors.white,
             icon: const Icon(

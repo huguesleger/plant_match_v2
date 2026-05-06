@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/gen/fonts.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
@@ -22,7 +23,7 @@ class RecentPlants extends StatelessWidget {
     return Column(
       children: [
         const SizedBox(height: 30),
-        const Padding(
+        Padding(
           padding: AppSpacing.paddingHorizontal,
           child: Row(
             children: [
@@ -30,7 +31,7 @@ class RecentPlants extends StatelessWidget {
                 icon: LucideIcons.calendar_clock,
                 iconColor: AppColors.greenLight,
                 bgColor: AppColors.blueGreen,
-                title: 'Ajouts Récents',
+                title: t.user.recent_plants.title,
                 fontSize: AppTypo.textM,
                 fontColor: AppColors.blueGreen,
                 fontFamily: FontFamily.chillax,

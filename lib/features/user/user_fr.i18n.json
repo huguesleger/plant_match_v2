@@ -1,0 +1,35 @@
+{
+  "bio": {
+    "empty": "Pas encore de description..."
+  },
+  "stats": {
+    "plants(n)": {
+      "one": "plante",
+      "other": "plantes"
+    },
+    "matches": "plantMatch",
+    "level": "niveau",
+    "level_suffix(n)": {
+      "one": "er",
+      "other": "ème"
+    }
+  },
+  "card": {
+    "added_on": "Ajouté le $date",
+    "added_prefix": "Ajouté le"
+  },
+  "recent_plants": {
+    "title": "Ajouts Récents"
+  },
+  "catalog_list": {
+    "empty": "Aucune plante"
+  },
+  "detail_plant": {
+    "owner_placeholder": "Propriétaire",
+    "send_message": "Envoyer un message",
+    "env_prefix": "plante $env",
+    "lighting": "lumière",
+    "watering": "arrosage",
+    "maintenance": "entretien"
+  }
+}

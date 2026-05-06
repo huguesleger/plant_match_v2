@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/user/presentation/widgets/items_count/item_count.dart';
@@ -24,21 +25,21 @@ class ItemsCount extends StatelessWidget {
         children: [
           ItemCount(
             count: catalog.length.toString(),
-            text: catalog.length > 1 ? 'plantes' : 'plante',
+            text: t.user.stats.plants(n: catalog.length),
             icon: LucideIcons.flower_2,
           ),
           const SizedBox(width: 10),
           ItemCount(
             count: exchangeCount.toString(),
-            text: 'plantMatch',
+            text: t.user.stats.matches,
             icon: LucideIcons.heart_handshake,
           ),
           const SizedBox(width: 10),
           ItemCount(
             count: level.toString(),
-            text: 'niveau',
+            text: t.user.stats.level,
             isLevel: true,
-            sup: level <= 1 ? 'er' : 'ème',
+            sup: t.user.stats.level_suffix(n: level),
             icon: LucideIcons.award,
           ),
         ],

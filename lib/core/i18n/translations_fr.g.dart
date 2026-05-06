@@ -42,6 +42,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	// Translations
 	late final TranslationsGetStartedFr getStarted = TranslationsGetStartedFr.internal(_root);
 	late final TranslationsOnboardingFr onboarding = TranslationsOnboardingFr.internal(_root);
+	late final TranslationsUserFr user = TranslationsUserFr.internal(_root);
 }
 
 // Path: getStarted
@@ -81,6 +82,21 @@ class TranslationsOnboardingFr {
 	String get login => 'S\'identifier';
 }
 
+// Path: user
+class TranslationsUserFr {
+	TranslationsUserFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+	late final TranslationsUserBioFr bio = TranslationsUserBioFr.internal(_root);
+	late final TranslationsUserStatsFr stats = TranslationsUserStatsFr.internal(_root);
+	late final TranslationsUserCardFr card = TranslationsUserCardFr.internal(_root);
+	late final TranslationsUserRecentPlantsFr recent_plants = TranslationsUserRecentPlantsFr.internal(_root);
+	late final TranslationsUserCatalogListFr catalog_list = TranslationsUserCatalogListFr.internal(_root);
+	late final TranslationsUserDetailPlantFr detail_plant = TranslationsUserDetailPlantFr.internal(_root);
+}
+
 // Path: onboarding.items
 class TranslationsOnboardingItemsFr {
 	TranslationsOnboardingItemsFr.internal(this._root);
@@ -92,6 +108,111 @@ class TranslationsOnboardingItemsFr {
 	late final TranslationsOnboardingItemsMapFr map = TranslationsOnboardingItemsMapFr.internal(_root);
 	late final TranslationsOnboardingItemsChatFr chat = TranslationsOnboardingItemsChatFr.internal(_root);
 	late final TranslationsOnboardingItemsAdviceFr advice = TranslationsOnboardingItemsAdviceFr.internal(_root);
+}
+
+// Path: user.bio
+class TranslationsUserBioFr {
+	TranslationsUserBioFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Pas encore de description...'
+	String get empty => 'Pas encore de description...';
+}
+
+// Path: user.stats
+class TranslationsUserStatsFr {
+	TranslationsUserStatsFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '(one) {plante} (other) {plantes}'
+	String plants({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'plante',
+		other: 'plantes',
+	);
+
+	/// fr: 'plantMatch'
+	String get matches => 'plantMatch';
+
+	/// fr: 'niveau'
+	String get level => 'niveau';
+
+	/// fr: '(one) {er} (other) {ème}'
+	String level_suffix({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'er',
+		other: 'ème',
+	);
+}
+
+// Path: user.card
+class TranslationsUserCardFr {
+	TranslationsUserCardFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ajouté le $date'
+	String added_on({required Object date}) => 'Ajouté le ${date}';
+
+	/// fr: 'Ajouté le'
+	String get added_prefix => 'Ajouté le';
+}
+
+// Path: user.recent_plants
+class TranslationsUserRecentPlantsFr {
+	TranslationsUserRecentPlantsFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ajouts Récents'
+	String get title => 'Ajouts Récents';
+}
+
+// Path: user.catalog_list
+class TranslationsUserCatalogListFr {
+	TranslationsUserCatalogListFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aucune plante'
+	String get empty => 'Aucune plante';
+}
+
+// Path: user.detail_plant
+class TranslationsUserDetailPlantFr {
+	TranslationsUserDetailPlantFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Propriétaire'
+	String get owner_placeholder => 'Propriétaire';
+
+	/// fr: 'Envoyer un message'
+	String get send_message => 'Envoyer un message';
+
+	/// fr: 'plante $env'
+	String env_prefix({required Object env}) => 'plante ${env}';
+
+	/// fr: 'lumière'
+	String get lighting => 'lumière';
+
+	/// fr: 'arrosage'
+	String get watering => 'arrosage';
+
+	/// fr: 'entretien'
+	String get maintenance => 'entretien';
 }
 
 // Path: onboarding.items.catalog
@@ -176,6 +297,21 @@ extension on Translations {
 			'onboarding.skip' => 'Passer',
 			'onboarding.register' => 'S\'enregistrer',
 			'onboarding.login' => 'S\'identifier',
+			'user.bio.empty' => 'Pas encore de description...',
+			'user.stats.plants' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'plante', other: 'plantes', ), 
+			'user.stats.matches' => 'plantMatch',
+			'user.stats.level' => 'niveau',
+			'user.stats.level_suffix' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'er', other: 'ème', ), 
+			'user.card.added_on' => ({required Object date}) => 'Ajouté le ${date}',
+			'user.card.added_prefix' => 'Ajouté le',
+			'user.recent_plants.title' => 'Ajouts Récents',
+			'user.catalog_list.empty' => 'Aucune plante',
+			'user.detail_plant.owner_placeholder' => 'Propriétaire',
+			'user.detail_plant.send_message' => 'Envoyer un message',
+			'user.detail_plant.env_prefix' => ({required Object env}) => 'plante ${env}',
+			'user.detail_plant.lighting' => 'lumière',
+			'user.detail_plant.watering' => 'arrosage',
+			'user.detail_plant.maintenance' => 'entretien',
 			_ => null,
 		};
 	}

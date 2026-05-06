@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
@@ -57,9 +58,9 @@ class PlantCharacteristic extends StatelessWidget {
                     style: const TextStyle(
                         fontSize: AppTypo.textXs, fontWeight: FontWeight.bold),
                   ),
-                  const Text(
-                    'lumière',
-                    style: TextStyle(
+                  Text(
+                    t.user.detail_plant.lighting,
+                    style: const TextStyle(
                         fontSize: AppTypo.textXs, color: AppColors.grey),
                   ),
                 ],
@@ -91,9 +92,9 @@ class PlantCharacteristic extends StatelessWidget {
                         fontSize: AppTypo.textXs,
                         fontWeight: FontWeight.bold,
                       )),
-                  const Text(
-                    'arrosage',
-                    style: TextStyle(
+                  Text(
+                    t.user.detail_plant.watering,
+                    style: const TextStyle(
                       fontSize: AppTypo.textXs,
                       color: AppColors.grey,
                     ),
@@ -129,8 +130,8 @@ class PlantCharacteristic extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const Text('entretien',
-                      style: TextStyle(
+                  Text(t.user.detail_plant.maintenance,
+                      style: const TextStyle(
                         fontSize: AppTypo.textXs,
                         color: AppColors.grey,
                       )),

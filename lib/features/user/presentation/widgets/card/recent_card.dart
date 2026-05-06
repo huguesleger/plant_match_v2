@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
@@ -125,7 +126,7 @@ class RecentCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    "Ajouté le",
+                    t.user.card.added_prefix,
                     style: InterTextStyle.inter(
                       AppTypo.textXs,
                       color: AppColors.greyMedium,

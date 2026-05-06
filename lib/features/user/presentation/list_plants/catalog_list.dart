@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
@@ -24,7 +25,7 @@ class CatalogList extends StatelessWidget {
           ? Padding(
               padding: const EdgeInsets.symmetric(vertical: 40),
               child: Text(
-                "Aucune plante",
+                t.user.catalog_list.empty,
                 style: InterTextStyle.inter(
                   AppTypo.text,
                   color: AppColors.greyMedium,
