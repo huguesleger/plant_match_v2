@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 
@@ -49,7 +49,7 @@ class SignInWithSocial extends StatelessWidget {
             onPressed: () {
               context.read<AuthCubit>().signInWithGoogle();
             },
-            icon: SvgPicture.asset('res/logo/google_logo.svg'),
+            icon: Assets.res.logo.googleLogo.svg(),
             label: const Text(
               'S\'identifier avec Google',
               style: TextStyle(
@@ -75,7 +75,7 @@ class SignInWithSocial extends StatelessWidget {
             onPressed: () {
               context.read<AuthCubit>().signInWithFacebook();
             },
-            icon: SvgPicture.asset('res/logo/facebook_logo.svg'),
+            icon: Assets.res.logo.facebookLogo.svg(),
             label: const Text(
               'S\'identifier avec Facebook',
               style: TextStyle(

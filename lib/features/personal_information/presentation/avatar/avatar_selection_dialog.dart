@@ -1,18 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_outlined_rounded.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
 import 'package:plant_match_v2/features/personal_information/presentation/avatar/avatar_collection_list.dart';
-
-List<String> generateAvatarPaths(int count) {
-  return List.generate(
-    count,
-    (index) => 'res/images/avatar/avatar_${index + 1}.png',
-  );
-}
 
 class AvatarSelectionDialog extends StatefulWidget {
   final ProfilUser profilUser;
@@ -26,12 +20,12 @@ class AvatarSelectionDialog extends StatefulWidget {
 class _AvatarSelectionDialogState extends State<AvatarSelectionDialog> {
   int selectedIndex = -1;
 
-  late final List<String> avatarPaths;
+  late final List<AssetGenImage> avatars;
 
   @override
   void initState() {
     super.initState();
-    avatarPaths = generateAvatarPaths(16);
+    avatars = Assets.res.images.avatar.values;
   }
 
   @override
@@ -39,11 +33,11 @@ class _AvatarSelectionDialogState extends State<AvatarSelectionDialog> {
     return Column(
       children: [
         AvatarCollectionList(
-          avatarPaths: avatarPaths,
+          avatars: avatars,
           selectedIndex: selectedIndex,
-          onAvatarSelected: (path) {
+          onAvatarSelected: (avatar) {
             setState(() {
-              selectedIndex = avatarPaths.indexOf(path);
+              selectedIndex = avatars.indexOf(avatar);
             });
           },
         ),
@@ -76,13 +70,13 @@ class _AvatarSelectionDialogState extends State<AvatarSelectionDialog> {
                 ),
                 onPressed: selectedIndex != -1
                     ? () async {
-                        final selectedPath = avatarPaths[selectedIndex];
+                        final selectedAvatar = avatars[selectedIndex];
                         final profilCubit = context.read<ProfilCubit>();
                         final navigator = Navigator.of(context);
 
                         profilCubit.updateProfilImage(
                           uid: widget.profilUser.uid,
-                          imagePath: selectedPath,
+                          imagePath: selectedAvatar.path,
                           isAsset: true,
                         );
                         if (mounted) {

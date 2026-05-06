@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/badge/badge_pill.dart';
@@ -82,8 +83,7 @@ class _CardImage extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
       child: imageOpt.match(
-        () => const Image(
-          image: AssetImage('res/images/empty_picture.png'),
+        () => Assets.res.images.emptyPicture.image(
           height: 100,
           width: 80,
           fit: BoxFit.cover,

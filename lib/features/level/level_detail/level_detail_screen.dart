@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_header_image.dart';
 import 'package:plant_match_v2/features/level/level_detail/utils/user_level_details.dart';
@@ -16,8 +17,7 @@ class LevelDetailScreen extends StatelessWidget {
     final levelData = UserLevelDetails.getLevelDetails(level);
     return Scaffold(
       appBar: AppBarHeaderImage(
-        image: const Image(
-          image: AssetImage('res/images/bg_profil_level_detail.jpg'),
+        image: Assets.res.images.bgProfilLevelDetail.image(
           fit: BoxFit.cover,
         ),
         onPressed: () => Navigator.pop(context),

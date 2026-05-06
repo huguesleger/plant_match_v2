@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/gen/fonts.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
@@ -14,7 +15,7 @@ class CarouselItem extends StatelessWidget {
 
   final String title;
   final String description;
-  final String image;
+  final AssetGenImage image;
 
   static const double defaultHeightImg = 315;
 
@@ -27,7 +28,7 @@ class CarouselItem extends StatelessWidget {
         SizedBox(height: screenHeight * 0.08),
         SizedBox(
           height: screenHeight * 0.32,
-          child: Image.asset(image, fit: BoxFit.contain),
+          child: image.image(fit: BoxFit.contain),
         ),
         const SizedBox(height: 20),
         Padding(

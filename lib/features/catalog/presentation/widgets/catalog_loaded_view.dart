@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_header_image.dart';
@@ -42,8 +43,7 @@ class _CatalogLoadedViewState extends State<CatalogLoadedView>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarHeaderImage(
-        image: const Image(
-            image: AssetImage('res/images/header_catalog.jpg')),
+        image: Assets.res.images.headerCatalog.image(),
         onPressed: () => Navigator.pop(context),
         styleIconButton: IconButton.styleFrom(
           shape:

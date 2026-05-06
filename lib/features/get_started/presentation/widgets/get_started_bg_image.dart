@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/gen/assets.gen.dart';
 
 class GetStartedBgImage extends StatelessWidget {
   const GetStartedBgImage({super.key});
@@ -8,9 +9,9 @@ class GetStartedBgImage extends StatelessWidget {
     return Opacity(
       opacity: 0.7,
       child: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('res/images/bg_intro.jpg'),
+            image: Assets.res.images.bgIntro.provider(),
             fit: BoxFit.cover,
           ),
         ),

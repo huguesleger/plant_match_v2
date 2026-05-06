@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/theme/inter_text_style.dart';
@@ -15,8 +16,7 @@ class MessageEmpty extends StatelessWidget {
           bottom: 0,
           left: 0,
           right: 0,
-          child: Image.asset(
-            'res/images/empty_tchat.png',
+          child: Assets.res.images.emptyTchat.image(
             width: MediaQuery.of(context).size.width,
             fit: BoxFit.fitWidth,
           ),

@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:fpdart/fpdart.dart' hide State;
 import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -80,8 +81,7 @@ class _CatalogDetailScreenState extends State<CatalogDetailScreen> {
     );
   }
 
-  Widget _buildEmptyPicture() => const Image(
-        image: AssetImage('res/images/empty_picture.png'),
+  Widget _buildEmptyPicture() => Assets.res.images.emptyPicture.image(
         fit: BoxFit.cover,
         width: double.infinity,
       );

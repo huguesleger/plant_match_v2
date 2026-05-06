@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
@@ -52,7 +53,7 @@ class _UploadAvatarState
         final ImageProvider profilImage =
             avatarUrl.isNotEmpty && avatarUrl.contains('http')
                 ? NetworkImage(avatarUrl)
-                : const AssetImage('res/images/avatar.png');
+                : Assets.res.images.avatarPng.provider();
 
         return Row(
           mainAxisAlignment: MainAxisAlignment.center,

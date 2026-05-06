@@ -30,22 +30,22 @@ class _CarouselState extends State<Carousel> {
             CarouselItem(
               title: t.onboarding.items.catalog.title,
               description: t.onboarding.items.catalog.description,
-              image: Assets.res.images.onboarding.onboardingCatalog.path,
+              image: Assets.res.images.onboarding.onboardingCatalog,
             ),
             CarouselItem(
               title: t.onboarding.items.map.title,
               description: t.onboarding.items.map.description,
-              image: Assets.res.images.onboarding.onboardingMap.path,
+              image: Assets.res.images.onboarding.onboardingMap,
             ),
             CarouselItem(
               title: t.onboarding.items.chat.title,
               description: t.onboarding.items.chat.description,
-              image: Assets.res.images.onboarding.onboardingChat.path,
+              image: Assets.res.images.onboarding.onboardingChat,
                 ),
             CarouselItem(
               title: t.onboarding.items.advice.title,
               description: t.onboarding.items.advice.description,
-              image: Assets.res.images.onboarding.onboardingAdvice.path,
+              image: Assets.res.images.onboarding.onboardingAdvice,
             ),
           ],
         ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 
@@ -71,8 +72,7 @@ class CatalogCardIsEmpty extends StatelessWidget {
           top: -50,
           child: SizedBox(
             height: 174,
-            child: Image.asset(
-              'res/images/empty_catalog.png',
+            child: Assets.res.images.emptyCatalog.image(
               fit: BoxFit.cover,
             ),
           ),
@@ -139,8 +139,7 @@ class CatalogCardIsEmpty extends StatelessWidget {
           top: -40, // Décalage vers le haut
           child: SizedBox(
             height: 172,
-            child: Image.asset(
-              'res/images/empty_catalog.png',
+            child: Assets.res.images.emptyCatalog.image(
               fit: BoxFit.cover,
             ),
           ),

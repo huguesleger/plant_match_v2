@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
@@ -30,7 +31,7 @@ class ErrorPage extends StatelessWidget {
 /*                 Center(
                   child: Padding(
                     padding: const EdgeInsets.only(top: 10),
-                    child: SvgPicture.asset('res/logo/logo_color.svg'),
+                    child: Assets.res.logo.logoColor.svg(),
                   ),
                 ), */
                 const SizedBox(height: 20),
@@ -50,8 +51,7 @@ class ErrorPage extends StatelessWidget {
                     constraints: BoxConstraints(
                       maxHeight: MediaQuery.of(context).size.height * 0.4,
                     ),
-                    child: Image.asset(
-                      'res/images/auth/error.png',
+                    child: Assets.res.images.auth.error.image(
                       fit: BoxFit.contain,
                     ),
                   ),

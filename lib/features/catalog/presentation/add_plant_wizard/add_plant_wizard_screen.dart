@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_template.dart';
 import 'package:plant_match_v2/core/widgets/bottom_bar/bottom_bar.dart';
@@ -221,8 +222,8 @@ class _AddPlantWizardScreenState extends State<AddPlantWizardScreen> {
   void _onExit() async {
     final shouldExit = await showDialog<bool>(
       context: context,
-      builder: (_) => const DialogWithImage(
-        imagePath: 'res/images/empty_catalog_filter.png',
+      builder: (_) => DialogWithImage(
+        image: Assets.res.images.emptyCatalogFilter,
         title: 'Quitter sans enregistrer ?',
         text: 'Les informations saisies seront perdues.',
       ),

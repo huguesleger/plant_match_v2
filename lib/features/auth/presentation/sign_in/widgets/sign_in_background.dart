@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import '../sign_in_screen.dart';
 
 class SignInBackground extends StatelessWidget {
@@ -24,8 +25,7 @@ class SignInBackground extends StatelessWidget {
         curveHeight: curveHeight,
         progress: tCurve,
       ),
-      child: Image.asset(
-        'res/images/auth/login.jpg',
+      child: Assets.res.images.auth.login.image(
         fit: BoxFit.cover,
       ),
     );

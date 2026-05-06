@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
@@ -22,9 +23,9 @@ class LevelAwardedSuccessView extends StatelessWidget {
     return Stack(
       children: [
         Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             image: DecorationImage(
-              image: AssetImage('res/images/visu_level_badge.png'),
+              image: Assets.res.images.visuLevelBadge.provider(),
               fit: BoxFit.cover,
             ),
           ),

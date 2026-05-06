@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/gen/fonts.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
@@ -10,12 +11,12 @@ class DialogWithImage extends StatelessWidget {
     super.key,
     required this.title,
     required this.text,
-    required this.imagePath,
+    required this.image,
   });
 
   final String title;
   final String text;
-  final String imagePath;
+  final AssetGenImage image;
 
   @override
   Widget build(BuildContext context) {
@@ -29,8 +30,7 @@ class DialogWithImage extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset(
-              imagePath,
+            image.image(
               height: 150,
               width: 150,
             ),

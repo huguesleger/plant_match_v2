@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:plant_match_v2/core/gen/assets.gen.dart';
 
 class GetStartedLogo extends StatelessWidget {
   const GetStartedLogo({super.key});
@@ -9,7 +9,7 @@ class GetStartedLogo extends StatelessWidget {
     return Center(
       child: Padding(
         padding: const EdgeInsets.only(top: 70),
-        child: SvgPicture.asset('res/logo/logo_white.svg'),
+        child: Assets.res.logo.logoWhite.svg(),
       ),
     );
   }

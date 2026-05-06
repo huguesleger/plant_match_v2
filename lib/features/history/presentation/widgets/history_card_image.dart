@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:plant_match_v2/core/gen/assets.gen.dart';
 
 class HistoryCardImage extends StatelessWidget {
   const HistoryCardImage({
@@ -21,8 +22,7 @@ class HistoryCardImage extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(8),
       child: imageOpt.match(
-        () => Image(
-          image: const AssetImage('res/images/empty_picture.png'),
+        () => Assets.res.images.emptyPicture.image(
           height: height,
           width: width,
           fit: BoxFit.cover,

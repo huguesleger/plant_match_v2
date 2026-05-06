@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart' hide State;
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
@@ -120,7 +120,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
               Center(
                 child: Padding(
                   padding: const EdgeInsets.only(top: 10),
-                  child: SvgPicture.asset('res/logo/logo_color.svg'),
+                  child: Assets.res.logo.logoColor.svg(),
                 ),
               ),
               const SizedBox(height: 20),
@@ -151,8 +151,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
               const SizedBox(height: 20),
               Expanded(
                 child: Center(
-                  child: Image.asset(
-                    'res/images/auth/verify_email.png',
+                  child: Assets.res.images.auth.verifyEmail.image(
                     fit: BoxFit.contain,
                   ),
                 ),

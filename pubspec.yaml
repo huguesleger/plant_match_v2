@@ -168,3 +168,5 @@ flutter:
 flutter_gen:
   output: lib/core/gen/
   line_length: 80
+  integrations:
+    flutter_svg: true

@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 
 class AvatarCollectionList extends StatelessWidget {
-  final List<String> avatarPaths;
+  final List<AssetGenImage> avatars;
   final int selectedIndex;
-  final ValueChanged<String> onAvatarSelected;
+  final ValueChanged<AssetGenImage> onAvatarSelected;
 
   const AvatarCollectionList({
     super.key,
-    required this.avatarPaths,
+    required this.avatars,
     required this.selectedIndex,
     required this.onAvatarSelected,
   });
@@ -23,13 +24,13 @@ class AvatarCollectionList extends StatelessWidget {
         mainAxisSpacing: 20,
         crossAxisSpacing: 20,
       ),
-      itemCount: avatarPaths.length,
+      itemCount: avatars.length,
       itemBuilder: (context, index) {
         final isSelected = selectedIndex == index;
-        final path = avatarPaths[index];
+        final avatar = avatars[index];
 
         return GestureDetector(
-          onTap: () => onAvatarSelected(path),
+          onTap: () => onAvatarSelected(avatar),
           child: Stack(
             alignment: Alignment.center,
             children: [
@@ -50,9 +51,7 @@ class AvatarCollectionList extends StatelessWidget {
                 child: ClipOval(
                   child: Transform.scale(
                     scale: 0.8,
-                    child: Image(
-                      image: AssetImage(path),
-                    ),
+                    child: avatar.image(),
                   ),
                 ),
               ),

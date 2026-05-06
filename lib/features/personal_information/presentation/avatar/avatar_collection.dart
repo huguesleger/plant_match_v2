@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 
 class AvatarCollection extends StatelessWidget {
   const AvatarCollection({
     super.key,
-    required this.avatarPath,
+    required this.avatar,
     this.avatarSize = 60,
     this.isSelected = false,
   });
 
-  final String avatarPath;
+  final AssetGenImage avatar;
   final double avatarSize;
   final bool isSelected;
 
@@ -27,10 +28,9 @@ class AvatarCollection extends StatelessWidget {
       child: CircleAvatar(
         backgroundColor: backgroundColor,
         radius: 40,
-        child: Image(
+        child: avatar.image(
           width: avatarSize,
           height: avatarSize,
-          image: AssetImage(avatarPath),
         ),
       ),
     );

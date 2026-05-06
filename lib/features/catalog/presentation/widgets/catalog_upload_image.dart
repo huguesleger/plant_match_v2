@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobkit_dashed_border/mobkit_dashed_border.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -116,8 +117,7 @@ class _CatalogUploadImageState extends State<CatalogUploadImage> {
               padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
-                  const Image(
-                    image: AssetImage('res/images/upload_images.png'),
+                  Assets.res.images.uploadImages.image(
                     height: 130,
                   ),
                   const SizedBox(height: 10),

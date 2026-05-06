@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/badge/badge_pill.dart';
 
@@ -59,8 +60,7 @@ class _ContentHeaderState extends State<ContentHeader> {
                   );
                 },
               )
-            : const Image(
-                image: AssetImage('res/images/empty_picture.png'),
+            : Assets.res.images.emptyPicture.image(
                 fit: BoxFit.cover,
                 width: double.infinity,
               ),

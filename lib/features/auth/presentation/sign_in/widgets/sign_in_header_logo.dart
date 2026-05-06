@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:plant_match_v2/core/gen/assets.gen.dart';
 
 class SignInHeaderLogo extends StatelessWidget {
   const SignInHeaderLogo({super.key});
@@ -36,12 +36,11 @@ class SignInHeaderLogo extends StatelessWidget {
               children: [
                 Opacity(
                   opacity: opacityExpanded,
-                  child: SvgPicture.asset('res/logo/logo_white.svg'),
+                  child: Assets.res.logo.logoWhite.svg(),
                 ),
                 Opacity(
                   opacity: opacityShrink,
-                  child: SvgPicture.asset(
-                    'res/logo/logo_color.svg',
+                  child: Assets.res.logo.logoColor.svg(
                     width: 60,
                   ),
                 ),

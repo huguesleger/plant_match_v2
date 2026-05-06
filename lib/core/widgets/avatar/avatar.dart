@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 
@@ -20,16 +21,12 @@ class Avatar extends StatelessWidget {
   Widget build(BuildContext context) {
     String imageUrl = profilUser.profilImg;
 
-    if (imageUrl.isEmpty) {
-      imageUrl = 'res/images/avatar.png';
-    }
-
-    const String defaultAvatar = 'res/images/avatar.png';
+    final String defaultAvatarPath = Assets.res.images.avatarPng.path;
     final bool isNetworkImage = imageUrl.contains('http');
-    final bool isDefaultAvatar = imageUrl == defaultAvatar;
-    final bool isSelectedAvatar = imageUrl.isNotEmpty &&
-        !isDefaultAvatar &&
-        imageUrl.contains('avatar');
+    final bool isDefaultAvatar =
+        imageUrl.isEmpty || imageUrl == defaultAvatarPath;
+    final bool isSelectedAvatar =
+        imageUrl.isNotEmpty && !isDefaultAvatar && imageUrl.contains('avatar');
 
     if (isSelectedAvatar) {
       return _buildSelectedAvatar(imageUrl);
@@ -41,7 +38,11 @@ class Avatar extends StatelessWidget {
       child: ClipOval(
         child: isNetworkImage
             ? _buildNetworkImage(imageUrl)
-            : _buildDefaultAvatar(defaultAvatar),
+            : Assets.res.images.avatarPng.image(
+                width: defaultSizeAvatar,
+                height: defaultSizeAvatar,
+                alignment: Alignment.bottomCenter,
+              ),
       ),
     );
   }
@@ -70,17 +71,6 @@ class Avatar extends StatelessWidget {
       fit: BoxFit.cover,
       width: imgSizeAvatar,
       height: imgSizeAvatar,
-    );
-  }
-
-  Widget _buildDefaultAvatar(String url) {
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: Image.asset(
-        url,
-        width: defaultSizeAvatar,
-        height: defaultSizeAvatar,
-      ),
     );
   }
 }

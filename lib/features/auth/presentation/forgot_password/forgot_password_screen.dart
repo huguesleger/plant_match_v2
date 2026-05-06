@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
@@ -87,7 +87,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       Center(
                         child: Padding(
                           padding: const EdgeInsets.only(top: 10),
-                          child: SvgPicture.asset('res/logo/logo_color.svg'),
+                          child: Assets.res.logo.logoColor.svg(),
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -108,8 +108,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         constraints: BoxConstraints(
                           maxHeight: MediaQuery.of(context).size.height * 0.35,
                         ),
-                        child: Image.asset(
-                          'res/images/auth/forgot_password.png',
+                        child: Assets.res.images.auth.forgotPassword.image(
                           fit: BoxFit.contain,
                         ),
                       ),

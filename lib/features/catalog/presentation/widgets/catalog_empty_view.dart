@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
 import 'package:plant_match_v2/features/catalog/presentation/widgets/catalog_card_is_empty.dart';
@@ -24,16 +25,15 @@ class CatalogEmptyView extends StatelessWidget {
           child: CatalogCardIsEmpty(),
         ),
         const SizedBox(height: 30),
-        const Padding(
+        Padding(
           padding: AppSpacing.paddingHorizontal,
           child: Column(
             children: [
-              Image(
-                image: AssetImage('res/images/empty_catalog_filter.png'),
+              Assets.res.images.emptyCatalogFilter.image(
                 height: 200,
               ),
-              SizedBox(height: 20),
-              Text(
+              const SizedBox(height: 20),
+              const Text(
                 'Ton catalogue est vide. Ajoute ta première plante pour commencer.',
                 textAlign: TextAlign.center,
               ),
