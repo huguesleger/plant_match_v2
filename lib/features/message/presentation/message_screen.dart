@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
@@ -21,9 +22,9 @@ class MessagesScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.white,
-      appBar: const AppBarTemplate(
+      appBar: AppBarTemplate(
         titleWidget: TitlePage(
-          title: 'Mes messages',
+          title: t.message.screen.title,
           fontSize: AppTypo.textXl,
         ),
         backgroundColor: AppColors.white,

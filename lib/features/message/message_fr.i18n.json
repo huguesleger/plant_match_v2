@@ -1,0 +1,12 @@
+{
+  "screen": {
+    "title": "Mes messages"
+  },
+  "empty": {
+    "title": "Aucune conversation",
+    "subtitle": "Commencez à discuter avec vos futurs partenaires d'échange !"
+  },
+  "errors": {
+    "not_connected": "Utilisateur non connecté"
+  }
+}

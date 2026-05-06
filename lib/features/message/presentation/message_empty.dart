@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -43,7 +44,7 @@ class MessageEmpty extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Aucune conversation',
+                  t.message.empty.title,
                   style: InterTextStyle.inter(
                     AppTypo.textM,
                     fontWeight: FontWeight.w700,
@@ -53,7 +54,7 @@ class MessageEmpty extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Commencez à discuter avec vos futurs partenaires d\'échange !',
+                  t.message.empty.subtitle,
                   style: InterTextStyle.inter(
                     AppTypo.textXs,
                     color: AppColors.greyDark,

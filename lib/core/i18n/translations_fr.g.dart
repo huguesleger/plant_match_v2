@@ -41,6 +41,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	// Translations
 	late final TranslationsGetStartedFr getStarted = TranslationsGetStartedFr.internal(_root);
+	late final TranslationsMessageFr message = TranslationsMessageFr.internal(_root);
 	late final TranslationsOnboardingFr onboarding = TranslationsOnboardingFr.internal(_root);
 	late final TranslationsPersonalInformationFr personalInformation = TranslationsPersonalInformationFr.internal(_root);
 	late final TranslationsProfilFr profil = TranslationsProfilFr.internal(_root);
@@ -63,6 +64,18 @@ class TranslationsGetStartedFr {
 
 	/// fr: 'C'est parti !'
 	String get button => 'C\'est parti !';
+}
+
+// Path: message
+class TranslationsMessageFr {
+	TranslationsMessageFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+	late final TranslationsMessageScreenFr screen = TranslationsMessageScreenFr.internal(_root);
+	late final TranslationsMessageEmptyFr empty = TranslationsMessageEmptyFr.internal(_root);
+	late final TranslationsMessageErrorsFr errors = TranslationsMessageErrorsFr.internal(_root);
 }
 
 // Path: onboarding
@@ -121,6 +134,45 @@ class TranslationsUserFr {
 	late final TranslationsUserRecentPlantsFr recent_plants = TranslationsUserRecentPlantsFr.internal(_root);
 	late final TranslationsUserCatalogListFr catalog_list = TranslationsUserCatalogListFr.internal(_root);
 	late final TranslationsUserDetailPlantFr detail_plant = TranslationsUserDetailPlantFr.internal(_root);
+}
+
+// Path: message.screen
+class TranslationsMessageScreenFr {
+	TranslationsMessageScreenFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Mes messages'
+	String get title => 'Mes messages';
+}
+
+// Path: message.empty
+class TranslationsMessageEmptyFr {
+	TranslationsMessageEmptyFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aucune conversation'
+	String get title => 'Aucune conversation';
+
+	/// fr: 'Commencez à discuter avec vos futurs partenaires d'échange !'
+	String get subtitle => 'Commencez à discuter avec vos futurs partenaires d\'échange !';
+}
+
+// Path: message.errors
+class TranslationsMessageErrorsFr {
+	TranslationsMessageErrorsFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Utilisateur non connecté'
+	String get not_connected => 'Utilisateur non connecté';
 }
 
 // Path: onboarding.items
@@ -584,6 +636,10 @@ extension on Translations {
 			'getStarted.title' => 'Échangez, adoptez et cultivez ensemble.',
 			'getStarted.subtitle' => 'Rejoignez la communauté des amoureux des plantes près de chez vous.',
 			'getStarted.button' => 'C\'est parti !',
+			'message.screen.title' => 'Mes messages',
+			'message.empty.title' => 'Aucune conversation',
+			'message.empty.subtitle' => 'Commencez à discuter avec vos futurs partenaires d\'échange !',
+			'message.errors.not_connected' => 'Utilisateur non connecté',
 			'onboarding.items.catalog.title' => 'Catalogue de Plantes\nPersonnalisé',
 			'onboarding.items.catalog.description' => 'Créez et gérez votre propre collection de plantes. Ajoutez des photos, des descriptions, et recevez des rappels pour l’entretien de vos plantes.',
 			'onboarding.items.map.title' => 'Échange de Plantes\net Boutures',
