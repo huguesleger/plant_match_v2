@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/gen/fonts.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 
@@ -32,7 +33,7 @@ class TitlePage extends StatelessWidget {
                 title,
                 style: TextStyle(
                   fontSize: fontSize,
-                  fontFamily: 'Chillax',
+                  fontFamily: FontFamily.chillax,
                   color: color,
                   fontWeight: fontWeight,
                 ),
@@ -52,7 +53,7 @@ class TitlePage extends StatelessWidget {
             title,
             style: TextStyle(
               fontSize: fontSize,
-              fontFamily: 'Chillax',
+              fontFamily: FontFamily.chillax,
               color: color,
               fontWeight: fontWeight,
               overflow: overflow,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:plant_match_v2/core/gen/fonts.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
@@ -54,7 +55,7 @@ class AppBarHeaderImage extends StatelessWidget implements PreferredSizeWidget {
                 color: titleColor,
                 fontSize: AppTypo.textM,
                 fontWeight: FontWeight.w600,
-                fontFamily: 'Chillax',
+                fontFamily: FontFamily.chillax,
               ),
             )
           : null,

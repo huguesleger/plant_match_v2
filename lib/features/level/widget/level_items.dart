@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/gen/fonts.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/theme/inter_text_style.dart';
@@ -81,7 +82,7 @@ class LevelItems extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 17,
                     color: AppColors.greyDark,
-                    fontFamily: 'Chillax',
+                    fontFamily: FontFamily.chillax,
                     fontWeight: FontWeight.w300,
                     height: 1.2,
                   ),

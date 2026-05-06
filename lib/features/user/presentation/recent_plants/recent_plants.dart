@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:plant_match_v2/core/gen/fonts.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
@@ -32,7 +33,7 @@ class RecentPlants extends StatelessWidget {
                 title: 'Ajouts Récents',
                 fontSize: AppTypo.textM,
                 fontColor: AppColors.blueGreen,
-                fontFamily: 'Chillax',
+                fontFamily: FontFamily.chillax,
                 fontWeight: FontWeight.w600,
               ),
             ],

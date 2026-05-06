@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/gen/fonts.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
@@ -37,7 +38,7 @@ class CarouselItem extends StatelessWidget {
             style: const TextStyle(
               fontSize: AppTypo.textXl,
               fontWeight: FontWeight.w600,
-              fontFamily: 'Chillax',
+              fontFamily: FontFamily.chillax,
               color: AppColors.blueGreen,
             ),
           ),
