@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
@@ -106,7 +107,7 @@ class _WizardViewState extends State<WizardView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarTemplate(
-        title: 'Informations personnelles',
+        title: t.personalInformation.screen.title,
         backgroundColor: AppColors.white,
         surfaceTintColor: AppColors.white,
         styleIconButton: IconButton.styleFrom(
@@ -162,7 +163,7 @@ class _WizardViewState extends State<WizardView> {
       ),
       bottomNavigationBar: BottomBar(
         child: ButtonRounded(
-          text: _currentPage == _totalPages - 1 ? 'Me géolocaliser' : 'Suivant',
+          text: _currentPage == _totalPages - 1 ? t.personalInformation.wizard.common.geolocate : t.personalInformation.wizard.common.next,
           onPressed: () => _currentPage == _totalPages - 1
               ? _onPressedLocation()
               : _onNextPressed(),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -49,7 +50,7 @@ class _AvatarSelectionDialogState extends State<AvatarSelectionDialog> {
                 onPressed: () {
                   Navigator.of(context).pop(false);
                 },
-                text: 'Annuler',
+                text: t.personalInformation.avatar.cancel,
                 borderColor: AppColors.greyLight,
                 textColor: AppColors.greyMedium,
                 padding: const EdgeInsets.symmetric(
@@ -61,7 +62,7 @@ class _AvatarSelectionDialogState extends State<AvatarSelectionDialog> {
             const SizedBox(width: 15),
             Expanded(
               child: ButtonRounded(
-                text: 'Valider',
+                text: t.personalInformation.avatar.validate,
                 bgColor: AppColors.greenLight,
                 textColor: AppColors.blueGreen,
                 padding: const EdgeInsets.symmetric(

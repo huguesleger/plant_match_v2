@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_header_image_with_content.dart';
@@ -33,7 +34,7 @@ class PersonalInformationScreen extends StatelessWidget {
         return Scaffold(
           appBar: AppBarHeaderImageWithContent(
             headerHeight: 350,
-            title: 'Informations personnelles',
+            title: t.personalInformation.screen.title,
             titleColor: AppColors.white,
             image: Assets.res.images.bgHeaderProfil.image(),
             onPressed: () => Navigator.pop(context),

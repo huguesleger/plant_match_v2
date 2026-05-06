@@ -1,0 +1,53 @@
+{
+  "screen": {
+    "title": "Informations personnelles"
+  },
+  "detail": {
+    "title": "Détail de mon profil",
+    "pseudo": "Pseudo d'affichage",
+    "birthday": "Date d'anniversaire",
+    "bio": "Bio",
+    "location": "Localisation",
+    "empty_field": "À renseigner",
+    "edit_button": "Modifier mon profil"
+  },
+  "wizard": {
+    "pseudo": {
+      "title": "Pseudo d'affichage",
+      "description": "Choisissez votre pseudo qui sera visible par les autres utilisateurs.",
+      "hint": "Entrez votre pseudo",
+      "label": "Pseudo"
+    },
+    "birthday": {
+      "title": "Date d'anniversaire",
+      "description": "Renseignez votre date de naissance pour recevoir des points le jour de votre anniversaire.",
+      "hint": "Entrez votre date de naissance",
+      "label": "Date de naissance"
+    },
+    "bio": {
+      "title": "Bio",
+      "description": "Rédigez une courte description de vous.",
+      "hint": "Ajoutez une description",
+      "label": "Bio"
+    },
+    "location": {
+      "title": "Localisation",
+      "description": "Votre position sera utilisée pour vous proposer des profils proches de chez vous."
+    },
+    "common": {
+      "required": "Ce champ est requis",
+      "next": "Suivant",
+      "geolocate": "Me géolocaliser"
+    }
+  },
+  "avatar": {
+    "sheet_title": "Photo de profil",
+    "gallery": "Choisir depuis la galerie",
+    "camera": "Prendre une photo",
+    "choose_avatar": "Choisir un avatar",
+    "none": "Aucune photo",
+    "cancel": "Annuler",
+    "validate": "Valider",
+    "dialog_title": "Sélectionnez un avatar"
+  }
+}

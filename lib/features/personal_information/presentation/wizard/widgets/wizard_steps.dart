@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/gen/assets.gen.dart';
@@ -24,13 +25,13 @@ class WizardPseudoStep extends StatelessWidget {
   Widget build(BuildContext context) {
     return DetailWizardItem(
       formKey: formKey,
-      title: 'Pseudo d\'affichage',
-      description: 'Choisissez votre pseudo qui sera visible par les autres utilisateurs.',
+      title: t.personalInformation.wizard.pseudo.title,
+      description: t.personalInformation.wizard.pseudo.description,
       child: FormBuilderTextField(
         name: 'userName',
         decoration: DecorationInput.inputDecoration(
-          hintText: 'Entrez votre pseudo',
-          labelText: 'Pseudo',
+          hintText: t.personalInformation.wizard.pseudo.hint,
+          labelText: t.personalInformation.wizard.pseudo.label,
         ),
         autovalidateMode: AutovalidateMode.onUserInteraction,
         controller: controller,
@@ -55,8 +56,8 @@ class WizardBirthdayStep extends StatelessWidget {
   Widget build(BuildContext context) {
     return DetailWizardItem(
       formKey: formKey,
-      title: 'Date d\'anniversaire',
-      description: 'Renseignez votre date de naissance pour recevoir des points le jour de votre anniversaire.',
+      title: t.personalInformation.wizard.birthday.title,
+      description: t.personalInformation.wizard.birthday.description,
       child: FormBuilderDateTimePicker(
         name: 'dateOfBirth',
         inputType: InputType.date,
@@ -69,13 +70,13 @@ class WizardBirthdayStep extends StatelessWidget {
         format: DateFormat('dd/MM/yyyy'),
         lastDate: DateTime.now(),
         decoration: DecorationInput.inputDecoration(
-          hintText: 'Entrez votre date de naissance',
-          labelText: 'Date de naissance',
+          hintText: t.personalInformation.wizard.birthday.hint,
+          labelText: t.personalInformation.wizard.birthday.label,
           suffixIcon: const Icon(LucideIcons.calendar),
         ),
         locale: const Locale('fr', 'FR'),
         controller: controller,
-        validator: FormBuilderValidators.required(errorText: 'Ce champ est requis'),
+        validator: FormBuilderValidators.required(errorText: t.personalInformation.wizard.common.required),
       ),
     );
   }
@@ -94,14 +95,14 @@ class WizardBioStep extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DetailWizardItem(
-      title: 'Bio',
-      description: 'Rédigez une courte description de vous.',
+      title: t.personalInformation.wizard.bio.title,
+      description: t.personalInformation.wizard.bio.description,
       formKey: formKey,
       child: FormBuilderTextField(
         name: 'bio',
         decoration: DecorationInput.inputDecoration(
-          hintText: 'Ajoutez une description',
-          labelText: 'Bio',
+          hintText: t.personalInformation.wizard.bio.hint,
+          labelText: t.personalInformation.wizard.bio.label,
           alignLabelWithHint: true,
         ),
         minLines: 3,
@@ -127,8 +128,8 @@ class WizardLocationStep extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DetailWizardItem(
-      title: 'Localisation',
-      description: 'Votre position sera utilisée pour vous proposer des profils proches de chez vous.',
+      title: t.personalInformation.wizard.location.title,
+      description: t.personalInformation.wizard.location.description,
       formKey: formKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,

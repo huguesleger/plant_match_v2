@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:image_picker/image_picker.dart';
@@ -31,11 +32,11 @@ void showImageSourceBottomSheet({
                 ),
               ),
             ),
-            child: const Center(
+            child: Center(
               child: Padding(
-                padding: EdgeInsets.only(bottom: 20),
+                padding: const EdgeInsets.only(bottom: 20),
                 child: TitlePage(
-                  title: 'Photo de profil',
+                  title: t.personalInformation.avatar.sheet_title,
                   fontSize: 18,
                   color: AppColors.greyDark,
                 ),
@@ -55,9 +56,9 @@ void showImageSourceBottomSheet({
               ),
               child: const Icon(LucideIcons.image, color: AppColors.blueGreen),
             ),
-            title: const Text(
-              'Choisir depuis la galerie',
-              style: TextStyle(color: AppColors.greyMedium),
+            title: Text(
+              t.personalInformation.avatar.gallery,
+              style: const TextStyle(color: AppColors.greyMedium),
             ),
             onTap: () async {
               Navigator.pop(context);
@@ -77,9 +78,9 @@ void showImageSourceBottomSheet({
               ),
               child: const Icon(LucideIcons.camera, color: AppColors.blueGreen),
             ),
-            title: const Text(
-              'Prendre une photo',
-              style: TextStyle(color: AppColors.greyMedium),
+            title: Text(
+              t.personalInformation.avatar.camera,
+              style: const TextStyle(color: AppColors.greyMedium),
             ),
             onTap: () async {
               Navigator.pop(context);
@@ -99,9 +100,9 @@ void showImageSourceBottomSheet({
               ),
               child: const Icon(LucideIcons.users, color: AppColors.blueGreen),
             ),
-            title: const Text(
-              'Choisir un avatar',
-              style: TextStyle(color: AppColors.greyMedium),
+            title: Text(
+              t.personalInformation.avatar.choose_avatar,
+              style: const TextStyle(color: AppColors.greyMedium),
             ),
             onTap: () {
               Navigator.pop(context);
@@ -111,7 +112,7 @@ void showImageSourceBottomSheet({
                 builder: (dialogContext) => BlocProvider.value(
                   value: profilCubit,
                   child: AppDialog(
-                    title: 'Sélectionnez un avatar',
+                    title: t.personalInformation.avatar.dialog_title,
                     child: Padding(
                       padding: const EdgeInsets.all(20),
                       child: SingleChildScrollView(
@@ -139,9 +140,9 @@ void showImageSourceBottomSheet({
               child:
                   const Icon(LucideIcons.image_off, color: AppColors.blueGreen),
             ),
-            title: const Text(
-              'Aucune photo',
-              style: TextStyle(color: AppColors.greyMedium),
+            title: Text(
+              t.personalInformation.avatar.none,
+              style: const TextStyle(color: AppColors.greyMedium),
             ),
             onTap: () {
               Navigator.pop(context);
@@ -156,7 +157,7 @@ void showImageSourceBottomSheet({
             child: SizedBox(
               width: double.infinity,
               child: ButtonOutlinedRounded(
-                text: 'Annuler',
+                text: t.personalInformation.avatar.cancel,
                 onPressed: () {
                   Navigator.pop(context);
                 },

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -20,15 +21,15 @@ class DetailView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const TitlePage(
-          title: 'Détail de mon profil',
+        TitlePage(
+          title: t.personalInformation.detail.title,
           fontSize: AppTypo.textXl,
         ),
         DetailItem(
-          title: 'Pseudo d\'affichage',
+          title: t.personalInformation.detail.pseudo,
           subtitle: profilUser.userName.match(
-            () => 'A renseigner',
-            (userName) => userName.isEmpty ? 'A renseigner' : userName,
+            () => t.personalInformation.detail.empty_field,
+            (userName) => userName.isEmpty ? t.personalInformation.detail.empty_field : userName,
           ),
           onTap: () => context
               .read<ProfilCubit>()
@@ -36,9 +37,9 @@ class DetailView extends StatelessWidget {
         ),
         const Divider(height: 0),
         DetailItem(
-          title: 'Date d\'anniversaire',
+          title: t.personalInformation.detail.birthday,
           subtitle: profilUser.birthdayDate.match(
-            () => 'A renseigner',
+            () => t.personalInformation.detail.empty_field,
             (date) => DateFormat('dd/MM/yyyy').format(date),
           ),
           onTap: () => context
@@ -47,10 +48,10 @@ class DetailView extends StatelessWidget {
         ),
         const Divider(height: 0),
         DetailItem(
-          title: 'Bio',
+          title: t.personalInformation.detail.bio,
           subtitle: profilUser.bio.match(
-            () => 'A renseigner',
-            (bio) => bio.isEmpty ? 'A renseigner' : bio,
+            () => t.personalInformation.detail.empty_field,
+            (bio) => bio.isEmpty ? t.personalInformation.detail.empty_field : bio,
           ),
           onTap: () => context
               .read<ProfilCubit>()
@@ -58,9 +59,9 @@ class DetailView extends StatelessWidget {
         ),
         const Divider(height: 0),
         DetailItem(
-          title: 'Localisation',
+          title: t.personalInformation.detail.location,
           subtitle: profilUser.localisation.isEmpty
-              ? 'A renseigner'
+              ? t.personalInformation.detail.empty_field
               : '${profilUser.localisation} ${(profilUser.zipCode)} - ${profilUser.country}',
           onTap: () =>
               context.read<ProfilCubit>().clearLocation(profilUser.uid),
@@ -70,7 +71,7 @@ class DetailView extends StatelessWidget {
         SizedBox(
           width: double.infinity,
           child: ButtonRounded(
-            text: 'Modifier mon profil',
+            text: t.personalInformation.detail.edit_button,
             onPressed: () async {
               final profilCubit = context.read<ProfilCubit>();
               profilCubit.getProfilUser(profilUser.uid);
