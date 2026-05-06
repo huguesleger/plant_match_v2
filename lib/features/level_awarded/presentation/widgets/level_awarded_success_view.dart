@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
@@ -35,7 +36,7 @@ class LevelAwardedSuccessView extends StatelessWidget {
           child: Column(
             children: [
               TitlePage(
-                title: isFromRegistration ? 'Bienvenue !' : 'Félicitations !',
+                title: isFromRegistration ? t.levelAwarded.success.welcome_title : t.levelAwarded.success.congrats_title,
                 fontSize: AppTypo.textXl,
                 fontWeight: FontWeight.bold,
                 color: AppColors.blueGreen,
@@ -44,11 +45,11 @@ class LevelAwardedSuccessView extends StatelessWidget {
               Text.rich(
                 TextSpan(
                   text: isFromRegistration
-                      ? 'Nous sommes ravis de vous accueillir sur PlantMatch, vous avez remporté'
-                      : 'Votre aventure PlantMatch progresse, vous avez remporté',
+                       ? t.levelAwarded.success.welcome_desc
+                       : t.levelAwarded.success.congrats_desc,
                   children: [
                     TextSpan(
-                      text: ' ${userPoints.currentPoints} points',
+                      text: t.levelAwarded.success.points(n: userPoints.currentPoints),
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ],
@@ -62,7 +63,7 @@ class LevelAwardedSuccessView extends StatelessWidget {
                     SizedBox(
                       width: double.infinity,
                       child: ButtonRounded(
-                        text: 'Voir ma progression',
+                        text: t.levelAwarded.success.view_progression,
                         onPressed: () => Navigator.push(
                           context,
                           MaterialPageRoute(

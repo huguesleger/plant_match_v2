@@ -1,0 +1,13 @@
+{
+  "success": {
+    "welcome_title": "Bienvenue !",
+    "congrats_title": "Félicitations !",
+    "welcome_desc": "Nous sommes ravis de vous accueillir sur PlantMatch, vous avez remporté",
+    "congrats_desc": "Votre aventure PlantMatch progresse, vous avez remporté",
+    "points": {
+      "one": " $n point",
+      "other": " $n points"
+    },
+    "view_progression": "Voir ma progression"
+  }
+}

@@ -41,6 +41,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	// Translations
 	late final TranslationsGetStartedFr getStarted = TranslationsGetStartedFr.internal(_root);
+	late final TranslationsLevelAwardedFr levelAwarded = TranslationsLevelAwardedFr.internal(_root);
 	late final TranslationsMessageFr message = TranslationsMessageFr.internal(_root);
 	late final TranslationsOnboardingFr onboarding = TranslationsOnboardingFr.internal(_root);
 	late final TranslationsPersonalInformationFr personalInformation = TranslationsPersonalInformationFr.internal(_root);
@@ -64,6 +65,16 @@ class TranslationsGetStartedFr {
 
 	/// fr: 'C'est parti !'
 	String get button => 'C\'est parti !';
+}
+
+// Path: levelAwarded
+class TranslationsLevelAwardedFr {
+	TranslationsLevelAwardedFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+	late final TranslationsLevelAwardedSuccessFr success = TranslationsLevelAwardedSuccessFr.internal(_root);
 }
 
 // Path: message
@@ -134,6 +145,36 @@ class TranslationsUserFr {
 	late final TranslationsUserRecentPlantsFr recent_plants = TranslationsUserRecentPlantsFr.internal(_root);
 	late final TranslationsUserCatalogListFr catalog_list = TranslationsUserCatalogListFr.internal(_root);
 	late final TranslationsUserDetailPlantFr detail_plant = TranslationsUserDetailPlantFr.internal(_root);
+}
+
+// Path: levelAwarded.success
+class TranslationsLevelAwardedSuccessFr {
+	TranslationsLevelAwardedSuccessFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Bienvenue !'
+	String get welcome_title => 'Bienvenue !';
+
+	/// fr: 'Félicitations !'
+	String get congrats_title => 'Félicitations !';
+
+	/// fr: 'Nous sommes ravis de vous accueillir sur PlantMatch, vous avez remporté'
+	String get welcome_desc => 'Nous sommes ravis de vous accueillir sur PlantMatch, vous avez remporté';
+
+	/// fr: 'Votre aventure PlantMatch progresse, vous avez remporté'
+	String get congrats_desc => 'Votre aventure PlantMatch progresse, vous avez remporté';
+
+	/// fr: '(one) { $n point} (other) { $n points}'
+	String points({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: ' ${n} point',
+		other: ' ${n} points',
+	);
+
+	/// fr: 'Voir ma progression'
+	String get view_progression => 'Voir ma progression';
 }
 
 // Path: message.screen
@@ -636,6 +677,12 @@ extension on Translations {
 			'getStarted.title' => 'Échangez, adoptez et cultivez ensemble.',
 			'getStarted.subtitle' => 'Rejoignez la communauté des amoureux des plantes près de chez vous.',
 			'getStarted.button' => 'C\'est parti !',
+			'levelAwarded.success.welcome_title' => 'Bienvenue !',
+			'levelAwarded.success.congrats_title' => 'Félicitations !',
+			'levelAwarded.success.welcome_desc' => 'Nous sommes ravis de vous accueillir sur PlantMatch, vous avez remporté',
+			'levelAwarded.success.congrats_desc' => 'Votre aventure PlantMatch progresse, vous avez remporté',
+			'levelAwarded.success.points' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: ' ${n} point', other: ' ${n} points', ), 
+			'levelAwarded.success.view_progression' => 'Voir ma progression',
 			'message.screen.title' => 'Mes messages',
 			'message.empty.title' => 'Aucune conversation',
 			'message.empty.subtitle' => 'Commencez à discuter avec vos futurs partenaires d\'échange !',
