@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:plant_match_v2/app.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/firebase_options.dart';
 
 Future<void> main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  LocaleSettings.useDeviceLocale();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -16,5 +18,9 @@ Future<void> main() async {
     FlutterNativeSplash.remove();
   });
   await dotenv.load(fileName: ".env");
-  runApp(const MyApp());
+  runApp(
+    TranslationProvider(
+      child: const MyApp(),
+    ),
+  );
 }

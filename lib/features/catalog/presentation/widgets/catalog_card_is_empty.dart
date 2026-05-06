@@ -72,7 +72,7 @@ class CatalogCardIsEmpty extends StatelessWidget {
           child: SizedBox(
             height: 174,
             child: Image.asset(
-              'assets/images/empty_catalog.png',
+              'res/images/empty_catalog.png',
               fit: BoxFit.cover,
             ),
           ),
@@ -140,7 +140,7 @@ class CatalogCardIsEmpty extends StatelessWidget {
           child: SizedBox(
             height: 172,
             child: Image.asset(
-              'assets/images/empty_catalog.png',
+              'res/images/empty_catalog.png',
               fit: BoxFit.cover,
             ),
           ),

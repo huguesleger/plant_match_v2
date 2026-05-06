@@ -83,7 +83,7 @@ class _CardImage extends StatelessWidget {
       borderRadius: BorderRadius.circular(12),
       child: imageOpt.match(
         () => const Image(
-          image: AssetImage('assets/images/empty_picture.png'),
+          image: AssetImage('res/images/empty_picture.png'),
           height: 100,
           width: 80,
           fit: BoxFit.cover,

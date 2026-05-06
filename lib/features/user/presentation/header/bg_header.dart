@@ -6,7 +6,7 @@ class BgHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Image.asset(
-      'assets/images/bg_user_screen.jpg',
+      'res/images/bg_user_screen.jpg',
       fit: BoxFit.cover,
     );
   }

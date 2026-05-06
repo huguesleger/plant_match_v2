@@ -87,7 +87,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       Center(
                         child: Padding(
                           padding: const EdgeInsets.only(top: 10),
-                          child: SvgPicture.asset('assets/logo/logo_color.svg'),
+                          child: SvgPicture.asset('res/logo/logo_color.svg'),
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -109,7 +109,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           maxHeight: MediaQuery.of(context).size.height * 0.35,
                         ),
                         child: Image.asset(
-                          'assets/images/auth/forgot_password.png',
+                          'res/images/auth/forgot_password.png',
                           fit: BoxFit.contain,
                         ),
                       ),

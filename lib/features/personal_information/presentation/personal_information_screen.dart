@@ -35,7 +35,7 @@ class PersonalInformationScreen extends StatelessWidget {
             title: 'Informations personnelles',
             titleColor: AppColors.white,
             image: const Image(
-              image: AssetImage('assets/images/bg_header_profil.jpg'),
+              image: AssetImage('res/images/bg_header_profil.jpg'),
             ),
             onPressed: () => Navigator.pop(context),
             styleIconButton: IconButton.styleFrom(

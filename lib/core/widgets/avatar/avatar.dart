@@ -21,10 +21,10 @@ class Avatar extends StatelessWidget {
     String imageUrl = profilUser.profilImg;
 
     if (imageUrl.isEmpty) {
-      imageUrl = 'assets/images/avatar.png';
+      imageUrl = 'res/images/avatar.png';
     }
 
-    const String defaultAvatar = 'assets/images/avatar.png';
+    const String defaultAvatar = 'res/images/avatar.png';
     final bool isNetworkImage = imageUrl.contains('http');
     final bool isDefaultAvatar = imageUrl == defaultAvatar;
     final bool isSelectedAvatar = imageUrl.isNotEmpty &&

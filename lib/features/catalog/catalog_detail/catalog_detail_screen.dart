@@ -81,7 +81,7 @@ class _CatalogDetailScreenState extends State<CatalogDetailScreen> {
   }
 
   Widget _buildEmptyPicture() => const Image(
-        image: AssetImage('assets/images/empty_picture.png'),
+        image: AssetImage('res/images/empty_picture.png'),
         fit: BoxFit.cover,
         width: double.infinity,
       );

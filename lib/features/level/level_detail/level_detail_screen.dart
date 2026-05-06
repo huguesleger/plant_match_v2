@@ -17,7 +17,7 @@ class LevelDetailScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBarHeaderImage(
         image: const Image(
-          image: AssetImage('assets/images/bg_profil_level_detail.jpg'),
+          image: AssetImage('res/images/bg_profil_level_detail.jpg'),
           fit: BoxFit.cover,
         ),
         onPressed: () => Navigator.pop(context),

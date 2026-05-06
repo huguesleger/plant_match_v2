@@ -60,7 +60,7 @@ class _ContentHeaderState extends State<ContentHeader> {
                 },
               )
             : const Image(
-                image: AssetImage('assets/images/empty_picture.png'),
+                image: AssetImage('res/images/empty_picture.png'),
                 fit: BoxFit.cover,
                 width: double.infinity,
               ),

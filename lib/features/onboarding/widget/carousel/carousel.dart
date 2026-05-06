@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:plant_match_v2/core/gen/assets.gen.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_outlined_rounded.dart';
@@ -24,30 +26,26 @@ class _CarouselState extends State<Carousel> {
       children: [
         PageView(
           controller: _controller,
-          children: const [
+          children: [
             CarouselItem(
-              title: 'Catalogue de Plantes\nPersonnalisé',
-              description:
-                  'Créez et gérez votre propre collection de plantes. Ajoutez des photos, des descriptions, et recevez des rappels pour l’entretien de vos plantes.',
-              image: 'assets/images/onboarding/onboarding_1.png',
+              title: t.onboarding.title_1,
+              description: t.onboarding.description_1,
+              image: Assets.res.images.onboarding.onboarding1.path,
             ),
             CarouselItem(
-              title: 'Échange de Plantes\net Boutures',
-              description:
-                  'Découvrez et échangez des plantes ou boutures avec d\'autres passionnés près de chez vous. Utilisez la géolocalisation pour trouver facilement des échanges.',
-              image: 'assets/images/onboarding/onboarding_2.png',
+              title: t.onboarding.title_2,
+              description: t.onboarding.description_2,
+              image: Assets.res.images.onboarding.onboarding2.path,
             ),
             CarouselItem(
-              title: 'Messagerie\nIntégrée',
-              description:
-                  'Communiquez facilement avec d\'autres utilisateurs pour organiser des échanges de plantes, poser des questions, ou simplement partager des conseils.',
-              image: 'assets/images/onboarding/onboarding_3.png',
+              title: t.onboarding.title_3,
+              description: t.onboarding.description_3,
+              image: Assets.res.images.onboarding.onboarding3.path,
             ),
             CarouselItem(
-              title: 'Aide et Conseils\nCommunautaires',
-              description:
-                  'Posez des questions et obtenez des conseils personnalisés de la part de la communauté pour mieux prendre soin de vos plantes ou résoudre des problèmes.',
-              image: 'assets/images/onboarding/onboarding_4.png',
+              title: t.onboarding.title_4,
+              description: t.onboarding.description_4,
+              image: Assets.res.images.onboarding.onboarding4.path,
             ),
           ],
         ),
@@ -64,7 +62,7 @@ class _CarouselState extends State<Carousel> {
                   ),
                 );
               },
-              label: const Text('Passer'),
+              label: Text(t.onboarding.skip),
               iconAlignment: IconAlignment.end,
               icon: const Icon(LucideIcons.chevron_right,
                   color: AppColors.blueGreen),
@@ -98,7 +96,7 @@ class _CarouselState extends State<Carousel> {
                         ),
                       );
                     },
-                    child: const Text('S\'enregistrer'),
+                    child: Text(t.onboarding.register),
                   ),
                 ),
               ),
@@ -120,7 +118,7 @@ class _CarouselState extends State<Carousel> {
                       },
                       borderColor: AppColors.greyLight,
                       textColor: AppColors.blueGreen,
-                      text: 'S\'identifier',
+                      text: t.onboarding.login,
                     ),
                   ),
                 ),

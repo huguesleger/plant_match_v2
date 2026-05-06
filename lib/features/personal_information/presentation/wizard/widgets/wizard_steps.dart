@@ -137,7 +137,7 @@ class WizardLocationStep extends StatelessWidget {
             child: profilUser.localisation.isEmpty
                 ? SizedBox(
                     height: MediaQuery.of(context).size.height > 700 ? 300 : 200,
-                    child: Image.asset('assets/images/illu_location.png'),
+                    child: Image.asset('res/images/illu_location.png'),
                   )
                 : Row(
                     children: [

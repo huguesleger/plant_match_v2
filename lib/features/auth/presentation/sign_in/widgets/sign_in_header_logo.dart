@@ -36,12 +36,12 @@ class SignInHeaderLogo extends StatelessWidget {
               children: [
                 Opacity(
                   opacity: opacityExpanded,
-                  child: SvgPicture.asset('assets/logo/logo_white.svg'),
+                  child: SvgPicture.asset('res/logo/logo_white.svg'),
                 ),
                 Opacity(
                   opacity: opacityShrink,
                   child: SvgPicture.asset(
-                    'assets/logo/logo_color.svg',
+                    'res/logo/logo_color.svg',
                     width: 60,
                   ),
                 ),

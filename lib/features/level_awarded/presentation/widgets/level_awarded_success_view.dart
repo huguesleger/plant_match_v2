@@ -24,7 +24,7 @@ class LevelAwardedSuccessView extends StatelessWidget {
         Container(
           decoration: const BoxDecoration(
             image: DecorationImage(
-              image: AssetImage('assets/images/visu_level_badge.png'),
+              image: AssetImage('res/images/visu_level_badge.png'),
               fit: BoxFit.cover,
             ),
           ),

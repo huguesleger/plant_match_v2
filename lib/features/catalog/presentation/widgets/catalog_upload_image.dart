@@ -117,7 +117,7 @@ class _CatalogUploadImageState extends State<CatalogUploadImage> {
               child: Column(
                 children: [
                   const Image(
-                    image: AssetImage('assets/images/upload_images.png'),
+                    image: AssetImage('res/images/upload_images.png'),
                     height: 130,
                   ),
                   const SizedBox(height: 10),

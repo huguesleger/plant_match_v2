@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_theme.dart';
 import 'package:plant_match_v2/core/widgets/error/error_page.dart';
 import 'package:plant_match_v2/core/widgets/template/template_page.dart';
@@ -82,12 +83,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         title: 'Plant Match',
         theme: AppTheme.defaultTheme,
         color: AppTheme.defaultTheme.primaryColor,
-        localizationsDelegates: const [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: const [Locale('fr')],
+        locale: TranslationProvider.of(context).locale.flutterLocale,
+        supportedLocales: AppLocaleUtils.supportedLocales,
+        localizationsDelegates: GlobalMaterialLocalizations.delegates,
         home: MultiBlocListener(
           listeners: [
             BlocListener<AuthCubit, AuthState>(

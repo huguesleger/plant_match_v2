@@ -10,7 +10,7 @@ class GetStartedBgImage extends StatelessWidget {
       child: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/images/bg_intro.jpg'),
+            image: AssetImage('res/images/bg_intro.jpg'),
             fit: BoxFit.cover,
           ),
         ),

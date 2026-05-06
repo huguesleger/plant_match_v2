@@ -43,7 +43,7 @@ class _CatalogLoadedViewState extends State<CatalogLoadedView>
     return Scaffold(
       appBar: AppBarHeaderImage(
         image: const Image(
-            image: AssetImage('assets/images/header_catalog.jpg')),
+            image: AssetImage('res/images/header_catalog.jpg')),
         onPressed: () => Navigator.pop(context),
         styleIconButton: IconButton.styleFrom(
           shape:

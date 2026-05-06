@@ -22,7 +22,7 @@ class HistoryCardImage extends StatelessWidget {
       borderRadius: BorderRadius.circular(8),
       child: imageOpt.match(
         () => Image(
-          image: const AssetImage('assets/images/empty_picture.png'),
+          image: const AssetImage('res/images/empty_picture.png'),
           height: height,
           width: width,
           fit: BoxFit.cover,

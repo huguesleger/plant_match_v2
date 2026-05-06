@@ -25,7 +25,7 @@ class SignInBackground extends StatelessWidget {
         progress: tCurve,
       ),
       child: Image.asset(
-        'assets/images/auth/login.jpg',
+        'res/images/auth/login.jpg',
         fit: BoxFit.cover,
       ),
     );

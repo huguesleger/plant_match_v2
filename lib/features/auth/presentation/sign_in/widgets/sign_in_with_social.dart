@@ -49,7 +49,7 @@ class SignInWithSocial extends StatelessWidget {
             onPressed: () {
               context.read<AuthCubit>().signInWithGoogle();
             },
-            icon: SvgPicture.asset('assets/logo/google_logo.svg'),
+            icon: SvgPicture.asset('res/logo/google_logo.svg'),
             label: const Text(
               'S\'identifier avec Google',
               style: TextStyle(
@@ -75,7 +75,7 @@ class SignInWithSocial extends StatelessWidget {
             onPressed: () {
               context.read<AuthCubit>().signInWithFacebook();
             },
-            icon: SvgPicture.asset('assets/logo/facebook_logo.svg'),
+            icon: SvgPicture.asset('res/logo/facebook_logo.svg'),
             label: const Text(
               'S\'identifier avec Facebook',
               style: TextStyle(

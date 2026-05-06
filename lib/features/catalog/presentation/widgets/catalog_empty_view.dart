@@ -29,7 +29,7 @@ class CatalogEmptyView extends StatelessWidget {
           child: Column(
             children: [
               Image(
-                image: AssetImage('assets/images/empty_catalog_filter.png'),
+                image: AssetImage('res/images/empty_catalog_filter.png'),
                 height: 200,
               ),
               SizedBox(height: 20),

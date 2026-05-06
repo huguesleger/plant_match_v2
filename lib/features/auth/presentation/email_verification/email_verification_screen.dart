@@ -120,7 +120,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
               Center(
                 child: Padding(
                   padding: const EdgeInsets.only(top: 10),
-                  child: SvgPicture.asset('assets/logo/logo_color.svg'),
+                  child: SvgPicture.asset('res/logo/logo_color.svg'),
                 ),
               ),
               const SizedBox(height: 20),
@@ -152,7 +152,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
               Expanded(
                 child: Center(
                   child: Image.asset(
-                    'assets/images/auth/verify_email.png',
+                    'res/images/auth/verify_email.png',
                     fit: BoxFit.contain,
                   ),
                 ),

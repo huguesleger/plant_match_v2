@@ -222,7 +222,7 @@ class _AddPlantWizardScreenState extends State<AddPlantWizardScreen> {
     final shouldExit = await showDialog<bool>(
       context: context,
       builder: (_) => const DialogWithImage(
-        imagePath: 'assets/images/empty_catalog_filter.png',
+        imagePath: 'res/images/empty_catalog_filter.png',
         title: 'Quitter sans enregistrer ?',
         text: 'Les informations saisies seront perdues.',
       ),

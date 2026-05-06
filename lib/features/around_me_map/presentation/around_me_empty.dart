@@ -37,7 +37,7 @@ class AroundMeEmpty extends StatelessWidget {
           SizedBox(height: MediaQuery.of(context).size.height > 700 ? 45 : 25),
           SizedBox(
             height: MediaQuery.of(context).size.height > 700 ? 373 : 280,
-            child: Image.asset('assets/images/illu_location.png'),
+            child: Image.asset('res/images/illu_location.png'),
           ),
           SizedBox(height: MediaQuery.of(context).size.height > 700 ? 45 : 25),
           SizedBox(

@@ -10,7 +10,7 @@ import 'package:plant_match_v2/features/personal_information/presentation/avatar
 List<String> generateAvatarPaths(int count) {
   return List.generate(
     count,
-    (index) => 'assets/images/avatar/avatar_${index + 1}.png',
+    (index) => 'res/images/avatar/avatar_${index + 1}.png',
   );
 }
 

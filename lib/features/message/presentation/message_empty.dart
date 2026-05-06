@@ -16,7 +16,7 @@ class MessageEmpty extends StatelessWidget {
           left: 0,
           right: 0,
           child: Image.asset(
-            'assets/images/empty_tchat.png',
+            'res/images/empty_tchat.png',
             width: MediaQuery.of(context).size.width,
             fit: BoxFit.fitWidth,
           ),

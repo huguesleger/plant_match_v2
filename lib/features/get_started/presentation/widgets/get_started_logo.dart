@@ -9,7 +9,7 @@ class GetStartedLogo extends StatelessWidget {
     return Center(
       child: Padding(
         padding: const EdgeInsets.only(top: 70),
-        child: SvgPicture.asset('assets/logo/logo_white.svg'),
+        child: SvgPicture.asset('res/logo/logo_white.svg'),
       ),
     );
   }

@@ -30,7 +30,7 @@ class ErrorPage extends StatelessWidget {
 /*                 Center(
                   child: Padding(
                     padding: const EdgeInsets.only(top: 10),
-                    child: SvgPicture.asset('assets/logo/logo_color.svg'),
+                    child: SvgPicture.asset('res/logo/logo_color.svg'),
                   ),
                 ), */
                 const SizedBox(height: 20),
@@ -51,7 +51,7 @@ class ErrorPage extends StatelessWidget {
                       maxHeight: MediaQuery.of(context).size.height * 0.4,
                     ),
                     child: Image.asset(
-                      'assets/images/auth/error.png',
+                      'res/images/auth/error.png',
                       fit: BoxFit.contain,
                     ),
                   ),
