@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
@@ -19,8 +20,8 @@ class ProfilCard extends StatelessWidget {
         AppCard(
           bgColor: AppColors.greenDark,
           textColor: AppColors.white,
-          title: 'Plantes & Boutures',
-          description: 'Mon catalogue de ce que j’ai à partager',
+          title: t.profil.cards.catalog.title,
+          description: t.profil.cards.catalog.description,
           icon: LucideIcons.flower_2,
           onPressed: () {
             Navigator.push(
@@ -35,8 +36,8 @@ class ProfilCard extends StatelessWidget {
         AppCard(
           bgColor: AppColors.greenMedium,
           textColor: AppColors.white,
-          title: 'Mes\nFavoris',
-          description: 'Mes plantes et profils préférés',
+          title: t.profil.cards.favorites.title,
+          description: t.profil.cards.favorites.description,
           icon: LucideIcons.heart,
           onPressed: () {
             Navigator.push(
@@ -51,8 +52,8 @@ class ProfilCard extends StatelessWidget {
         AppCard(
           bgColor: AppColors.greenLight,
           textColor: AppColors.blueGreen,
-          title: 'Badges & Récompenses',
-          description: 'Mes badges et mon niveau',
+          title: t.profil.cards.awards.title,
+          description: t.profil.cards.awards.description,
           icon: LucideIcons.award,
           onPressed: () {
             Navigator.push(

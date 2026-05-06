@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -21,7 +22,7 @@ class ProfilNavigation extends StatelessWidget {
     return ListView(
       children: [
         ProfilNavigationItem(
-          title: 'Informations personnelles',
+          title: t.profil.navigation.personal_info,
           icon: LucideIcons.user_cog,
           onTap: () {
             final profilCubit = context.read<ProfilCubit>();
@@ -41,7 +42,7 @@ class ProfilNavigation extends StatelessWidget {
         ),
         const SizedBox(height: 20),
         ProfilNavigationItem(
-          title: 'Historique d’échanges',
+          title: t.profil.navigation.history,
           icon: LucideIcons.history,
           onTap: () {
             Navigator.push(
@@ -54,31 +55,31 @@ class ProfilNavigation extends StatelessWidget {
         ),
         const SizedBox(height: 20),
         ProfilNavigationItem(
-          title: 'Paramètres de compte',
+          title: t.profil.navigation.settings,
           icon: LucideIcons.settings,
           onTap: () {},
         ),
         const SizedBox(height: 20),
         ProfilNavigationItem(
-          title: 'Aide',
+          title: t.profil.navigation.help,
           icon: LucideIcons.message_circle_question,
           onTap: () {},
         ),
         const SizedBox(height: 20),
         ProfilNavigationItem(
-          title: 'Informations juridiques',
+          title: t.profil.navigation.legal,
           icon: LucideIcons.file_text,
           onTap: () {},
         ),
         const SizedBox(height: 20),
         ProfilNavigationItem(
-          title: 'A propos',
+          title: t.profil.navigation.about,
           icon: LucideIcons.info,
           onTap: () {},
         ),
         const SizedBox(height: 30),
         ButtonRoundedWithIcon(
-          text: 'Se déconnecter',
+          text: t.profil.navigation.logout,
           onPressed: () {
             context.read<AuthCubit>().logOut();
             Navigator.push(

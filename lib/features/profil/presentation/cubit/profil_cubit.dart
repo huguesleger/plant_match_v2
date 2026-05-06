@@ -72,7 +72,8 @@ class ProfilCubit extends Cubit<ProfilState> {
                                 newLocalisation ?? currentUser.localisation,
                             newCountry: newCountry ?? currentUser.country,
                             newZipCode: newZipCode ?? currentUser.zipCode,
-                            newBirthdayDate: Option.fromNullable(newBirthdayDate),
+                            newBirthdayDate:
+                                Option.fromNullable(newBirthdayDate),
                             newLatitude: Option.fromNullable(newLatitude),
                             newLongitude: Option.fromNullable(newLongitude),
                           ))
@@ -208,7 +209,8 @@ class ProfilCubit extends Cubit<ProfilState> {
                   newZipCode: fieldName == 'zipCode' ? '' : null,
                   newLatitude: fieldName == 'latitude' ? const None() : null,
                   newLongitude: fieldName == 'longitude' ? const None() : null,
-                  newBirthdayDate: fieldName == 'birthdayDate' ? const None() : null,
+                  newBirthdayDate:
+                      fieldName == 'birthdayDate' ? const None() : null,
                 );
 
                 return profilRepository

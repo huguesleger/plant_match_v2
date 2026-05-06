@@ -1,0 +1,25 @@
+{
+  "navigation": {
+    "personal_info": "Informations personnelles",
+    "history": "Historique d’échanges",
+    "settings": "Paramètres de compte",
+    "help": "Aide",
+    "legal": "Informations juridiques",
+    "about": "À propos",
+    "logout": "Se déconnecter"
+  },
+  "cards": {
+    "catalog": {
+      "title": "Plantes & Boutures",
+      "description": "Mon catalogue de ce que j’ai à partager"
+    },
+    "favorites": {
+      "title": "Mes\nFavoris",
+      "description": "Mes plantes et profils préférés"
+    },
+    "awards": {
+      "title": "Badges & Récompenses",
+      "description": "Mes badges et mon niveau"
+    }
+  }
+}

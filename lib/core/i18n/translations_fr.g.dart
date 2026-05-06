@@ -42,6 +42,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	// Translations
 	late final TranslationsGetStartedFr getStarted = TranslationsGetStartedFr.internal(_root);
 	late final TranslationsOnboardingFr onboarding = TranslationsOnboardingFr.internal(_root);
+	late final TranslationsProfilFr profil = TranslationsProfilFr.internal(_root);
 	late final TranslationsUserFr user = TranslationsUserFr.internal(_root);
 }
 
@@ -82,6 +83,17 @@ class TranslationsOnboardingFr {
 	String get login => 'S\'identifier';
 }
 
+// Path: profil
+class TranslationsProfilFr {
+	TranslationsProfilFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+	late final TranslationsProfilNavigationFr navigation = TranslationsProfilNavigationFr.internal(_root);
+	late final TranslationsProfilCardsFr cards = TranslationsProfilCardsFr.internal(_root);
+}
+
 // Path: user
 class TranslationsUserFr {
 	TranslationsUserFr.internal(this._root);
@@ -108,6 +120,48 @@ class TranslationsOnboardingItemsFr {
 	late final TranslationsOnboardingItemsMapFr map = TranslationsOnboardingItemsMapFr.internal(_root);
 	late final TranslationsOnboardingItemsChatFr chat = TranslationsOnboardingItemsChatFr.internal(_root);
 	late final TranslationsOnboardingItemsAdviceFr advice = TranslationsOnboardingItemsAdviceFr.internal(_root);
+}
+
+// Path: profil.navigation
+class TranslationsProfilNavigationFr {
+	TranslationsProfilNavigationFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Informations personnelles'
+	String get personal_info => 'Informations personnelles';
+
+	/// fr: 'Historique d’échanges'
+	String get history => 'Historique d’échanges';
+
+	/// fr: 'Paramètres de compte'
+	String get settings => 'Paramètres de compte';
+
+	/// fr: 'Aide'
+	String get help => 'Aide';
+
+	/// fr: 'Informations juridiques'
+	String get legal => 'Informations juridiques';
+
+	/// fr: 'À propos'
+	String get about => 'À propos';
+
+	/// fr: 'Se déconnecter'
+	String get logout => 'Se déconnecter';
+}
+
+// Path: profil.cards
+class TranslationsProfilCardsFr {
+	TranslationsProfilCardsFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+	late final TranslationsProfilCardsCatalogFr catalog = TranslationsProfilCardsCatalogFr.internal(_root);
+	late final TranslationsProfilCardsFavoritesFr favorites = TranslationsProfilCardsFavoritesFr.internal(_root);
+	late final TranslationsProfilCardsAwardsFr awards = TranslationsProfilCardsAwardsFr.internal(_root);
 }
 
 // Path: user.bio
@@ -275,6 +329,51 @@ class TranslationsOnboardingItemsAdviceFr {
 	String get description => 'Posez des questions et obtenez des conseils personnalisés de la part de la communauté pour mieux prendre soin de vos plantes ou résoudre des problèmes.';
 }
 
+// Path: profil.cards.catalog
+class TranslationsProfilCardsCatalogFr {
+	TranslationsProfilCardsCatalogFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Plantes & Boutures'
+	String get title => 'Plantes & Boutures';
+
+	/// fr: 'Mon catalogue de ce que j’ai à partager'
+	String get description => 'Mon catalogue de ce que j’ai à partager';
+}
+
+// Path: profil.cards.favorites
+class TranslationsProfilCardsFavoritesFr {
+	TranslationsProfilCardsFavoritesFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Mes Favoris'
+	String get title => 'Mes\nFavoris';
+
+	/// fr: 'Mes plantes et profils préférés'
+	String get description => 'Mes plantes et profils préférés';
+}
+
+// Path: profil.cards.awards
+class TranslationsProfilCardsAwardsFr {
+	TranslationsProfilCardsAwardsFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Badges & Récompenses'
+	String get title => 'Badges & Récompenses';
+
+	/// fr: 'Mes badges et mon niveau'
+	String get description => 'Mes badges et mon niveau';
+}
+
 /// The flat map containing all translations for locale <fr>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -297,6 +396,19 @@ extension on Translations {
 			'onboarding.skip' => 'Passer',
 			'onboarding.register' => 'S\'enregistrer',
 			'onboarding.login' => 'S\'identifier',
+			'profil.navigation.personal_info' => 'Informations personnelles',
+			'profil.navigation.history' => 'Historique d’échanges',
+			'profil.navigation.settings' => 'Paramètres de compte',
+			'profil.navigation.help' => 'Aide',
+			'profil.navigation.legal' => 'Informations juridiques',
+			'profil.navigation.about' => 'À propos',
+			'profil.navigation.logout' => 'Se déconnecter',
+			'profil.cards.catalog.title' => 'Plantes & Boutures',
+			'profil.cards.catalog.description' => 'Mon catalogue de ce que j’ai à partager',
+			'profil.cards.favorites.title' => 'Mes\nFavoris',
+			'profil.cards.favorites.description' => 'Mes plantes et profils préférés',
+			'profil.cards.awards.title' => 'Badges & Récompenses',
+			'profil.cards.awards.description' => 'Mes badges et mon niveau',
 			'user.bio.empty' => 'Pas encore de description...',
 			'user.stats.plants' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'plante', other: 'plantes', ), 
 			'user.stats.matches' => 'plantMatch',
