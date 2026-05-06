@@ -1,12 +1,22 @@
 {
-  "title_1": "Catalogue de Plantes\nPersonnalisé",
-  "description_1": "Créez et gérez votre propre collection de plantes. Ajoutez des photos, des descriptions, et recevez des rappels pour l’entretien de vos plantes.",
-  "title_2": "Échange de Plantes\net Boutures",
-  "description_2": "Découvrez et échangez des plantes ou boutures avec d'autres passionnés près de chez vous. Utilisez la géolocalisation pour trouver facilement des échanges.",
-  "title_3": "Messagerie\nIntégrée",
-  "description_3": "Communiquez facilement avec d'autres utilisateurs pour organiser des échanges de plantes, poser des questions, ou simplement partager des conseils.",
-  "title_4": "Aide et Conseils\nCommunautaires",
-  "description_4": "Posez des questions et obtenez des conseils personnalisés de la part de la communauté pour mieux prendre soin de vos plantes ou résoudre des problèmes.",
+  "items": {
+    "catalog": {
+      "title": "Catalogue de Plantes\nPersonnalisé",
+      "description": "Créez et gérez votre propre collection de plantes. Ajoutez des photos, des descriptions, et recevez des rappels pour l’entretien de vos plantes."
+    },
+    "map": {
+      "title": "Échange de Plantes\net Boutures",
+      "description": "Découvrez et échangez des plantes ou boutures avec d'autres passionnés près de chez vous. Utilisez la géolocalisation pour trouver facilement des échanges."
+    },
+    "chat": {
+      "title": "Messagerie\nIntégrée",
+      "description": "Communiquez facilement avec d'autres utilisateurs pour organiser des échanges de plantes, poser des questions, ou simplement partager des conseils."
+    },
+    "advice": {
+      "title": "Aide et Conseils\nCommunautaires",
+      "description": "Posez des questions et obtenez des conseils personnalisés de la part de la communauté pour mieux prendre soin de vos plantes ou résoudre des problèmes."
+    }
+  },
   "skip": "Passer",
   "register": "S'enregistrer",
   "login": "S'identifier"

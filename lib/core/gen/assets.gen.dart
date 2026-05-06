@@ -291,25 +291,25 @@ class $ResImagesAvatarGen {
 class $ResImagesOnboardingGen {
   const $ResImagesOnboardingGen();
 
-  /// File path: res/images/onboarding/onboarding_1.png
-  AssetGenImage get onboarding1 =>
-      const AssetGenImage('res/images/onboarding/onboarding_1.png');
+  /// File path: res/images/onboarding/onboarding_advice.png
+  AssetGenImage get onboardingAdvice =>
+      const AssetGenImage('res/images/onboarding/onboarding_advice.png');
 
-  /// File path: res/images/onboarding/onboarding_2.png
-  AssetGenImage get onboarding2 =>
-      const AssetGenImage('res/images/onboarding/onboarding_2.png');
+  /// File path: res/images/onboarding/onboarding_catalog.png
+  AssetGenImage get onboardingCatalog =>
+      const AssetGenImage('res/images/onboarding/onboarding_catalog.png');
 
-  /// File path: res/images/onboarding/onboarding_3.png
-  AssetGenImage get onboarding3 =>
-      const AssetGenImage('res/images/onboarding/onboarding_3.png');
+  /// File path: res/images/onboarding/onboarding_chat.png
+  AssetGenImage get onboardingChat =>
+      const AssetGenImage('res/images/onboarding/onboarding_chat.png');
 
-  /// File path: res/images/onboarding/onboarding_4.png
-  AssetGenImage get onboarding4 =>
-      const AssetGenImage('res/images/onboarding/onboarding_4.png');
+  /// File path: res/images/onboarding/onboarding_map.png
+  AssetGenImage get onboardingMap =>
+      const AssetGenImage('res/images/onboarding/onboarding_map.png');
 
   /// List of all assets
   List<AssetGenImage> get values =>
-      [onboarding1, onboarding2, onboarding3, onboarding4];
+      [onboardingAdvice, onboardingCatalog, onboardingChat, onboardingMap];
 }
 
 class Assets {

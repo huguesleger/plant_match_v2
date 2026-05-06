@@ -50,30 +50,7 @@ class TranslationsOnboardingFr {
 	final Translations _root; // ignore: unused_field
 
 	// Translations
-
-	/// fr: 'Catalogue de Plantes Personnalisé'
-	String get title_1 => 'Catalogue de Plantes\nPersonnalisé';
-
-	/// fr: 'Créez et gérez votre propre collection de plantes. Ajoutez des photos, des descriptions, et recevez des rappels pour l’entretien de vos plantes.'
-	String get description_1 => 'Créez et gérez votre propre collection de plantes. Ajoutez des photos, des descriptions, et recevez des rappels pour l’entretien de vos plantes.';
-
-	/// fr: 'Échange de Plantes et Boutures'
-	String get title_2 => 'Échange de Plantes\net Boutures';
-
-	/// fr: 'Découvrez et échangez des plantes ou boutures avec d'autres passionnés près de chez vous. Utilisez la géolocalisation pour trouver facilement des échanges.'
-	String get description_2 => 'Découvrez et échangez des plantes ou boutures avec d\'autres passionnés près de chez vous. Utilisez la géolocalisation pour trouver facilement des échanges.';
-
-	/// fr: 'Messagerie Intégrée'
-	String get title_3 => 'Messagerie\nIntégrée';
-
-	/// fr: 'Communiquez facilement avec d'autres utilisateurs pour organiser des échanges de plantes, poser des questions, ou simplement partager des conseils.'
-	String get description_3 => 'Communiquez facilement avec d\'autres utilisateurs pour organiser des échanges de plantes, poser des questions, ou simplement partager des conseils.';
-
-	/// fr: 'Aide et Conseils Communautaires'
-	String get title_4 => 'Aide et Conseils\nCommunautaires';
-
-	/// fr: 'Posez des questions et obtenez des conseils personnalisés de la part de la communauté pour mieux prendre soin de vos plantes ou résoudre des problèmes.'
-	String get description_4 => 'Posez des questions et obtenez des conseils personnalisés de la part de la communauté pour mieux prendre soin de vos plantes ou résoudre des problèmes.';
+	late final TranslationsOnboardingItemsFr items = TranslationsOnboardingItemsFr.internal(_root);
 
 	/// fr: 'Passer'
 	String get skip => 'Passer';
@@ -85,6 +62,79 @@ class TranslationsOnboardingFr {
 	String get login => 'S\'identifier';
 }
 
+// Path: onboarding.items
+class TranslationsOnboardingItemsFr {
+	TranslationsOnboardingItemsFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+	late final TranslationsOnboardingItemsCatalogFr catalog = TranslationsOnboardingItemsCatalogFr.internal(_root);
+	late final TranslationsOnboardingItemsMapFr map = TranslationsOnboardingItemsMapFr.internal(_root);
+	late final TranslationsOnboardingItemsChatFr chat = TranslationsOnboardingItemsChatFr.internal(_root);
+	late final TranslationsOnboardingItemsAdviceFr advice = TranslationsOnboardingItemsAdviceFr.internal(_root);
+}
+
+// Path: onboarding.items.catalog
+class TranslationsOnboardingItemsCatalogFr {
+	TranslationsOnboardingItemsCatalogFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Catalogue de Plantes Personnalisé'
+	String get title => 'Catalogue de Plantes\nPersonnalisé';
+
+	/// fr: 'Créez et gérez votre propre collection de plantes. Ajoutez des photos, des descriptions, et recevez des rappels pour l’entretien de vos plantes.'
+	String get description => 'Créez et gérez votre propre collection de plantes. Ajoutez des photos, des descriptions, et recevez des rappels pour l’entretien de vos plantes.';
+}
+
+// Path: onboarding.items.map
+class TranslationsOnboardingItemsMapFr {
+	TranslationsOnboardingItemsMapFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Échange de Plantes et Boutures'
+	String get title => 'Échange de Plantes\net Boutures';
+
+	/// fr: 'Découvrez et échangez des plantes ou boutures avec d'autres passionnés près de chez vous. Utilisez la géolocalisation pour trouver facilement des échanges.'
+	String get description => 'Découvrez et échangez des plantes ou boutures avec d\'autres passionnés près de chez vous. Utilisez la géolocalisation pour trouver facilement des échanges.';
+}
+
+// Path: onboarding.items.chat
+class TranslationsOnboardingItemsChatFr {
+	TranslationsOnboardingItemsChatFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Messagerie Intégrée'
+	String get title => 'Messagerie\nIntégrée';
+
+	/// fr: 'Communiquez facilement avec d'autres utilisateurs pour organiser des échanges de plantes, poser des questions, ou simplement partager des conseils.'
+	String get description => 'Communiquez facilement avec d\'autres utilisateurs pour organiser des échanges de plantes, poser des questions, ou simplement partager des conseils.';
+}
+
+// Path: onboarding.items.advice
+class TranslationsOnboardingItemsAdviceFr {
+	TranslationsOnboardingItemsAdviceFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aide et Conseils Communautaires'
+	String get title => 'Aide et Conseils\nCommunautaires';
+
+	/// fr: 'Posez des questions et obtenez des conseils personnalisés de la part de la communauté pour mieux prendre soin de vos plantes ou résoudre des problèmes.'
+	String get description => 'Posez des questions et obtenez des conseils personnalisés de la part de la communauté pour mieux prendre soin de vos plantes ou résoudre des problèmes.';
+}
+
 /// The flat map containing all translations for locale <fr>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -93,14 +143,14 @@ class TranslationsOnboardingFr {
 extension on Translations {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
-			'onboarding.title_1' => 'Catalogue de Plantes\nPersonnalisé',
-			'onboarding.description_1' => 'Créez et gérez votre propre collection de plantes. Ajoutez des photos, des descriptions, et recevez des rappels pour l’entretien de vos plantes.',
-			'onboarding.title_2' => 'Échange de Plantes\net Boutures',
-			'onboarding.description_2' => 'Découvrez et échangez des plantes ou boutures avec d\'autres passionnés près de chez vous. Utilisez la géolocalisation pour trouver facilement des échanges.',
-			'onboarding.title_3' => 'Messagerie\nIntégrée',
-			'onboarding.description_3' => 'Communiquez facilement avec d\'autres utilisateurs pour organiser des échanges de plantes, poser des questions, ou simplement partager des conseils.',
-			'onboarding.title_4' => 'Aide et Conseils\nCommunautaires',
-			'onboarding.description_4' => 'Posez des questions et obtenez des conseils personnalisés de la part de la communauté pour mieux prendre soin de vos plantes ou résoudre des problèmes.',
+			'onboarding.items.catalog.title' => 'Catalogue de Plantes\nPersonnalisé',
+			'onboarding.items.catalog.description' => 'Créez et gérez votre propre collection de plantes. Ajoutez des photos, des descriptions, et recevez des rappels pour l’entretien de vos plantes.',
+			'onboarding.items.map.title' => 'Échange de Plantes\net Boutures',
+			'onboarding.items.map.description' => 'Découvrez et échangez des plantes ou boutures avec d\'autres passionnés près de chez vous. Utilisez la géolocalisation pour trouver facilement des échanges.',
+			'onboarding.items.chat.title' => 'Messagerie\nIntégrée',
+			'onboarding.items.chat.description' => 'Communiquez facilement avec d\'autres utilisateurs pour organiser des échanges de plantes, poser des questions, ou simplement partager des conseils.',
+			'onboarding.items.advice.title' => 'Aide et Conseils\nCommunautaires',
+			'onboarding.items.advice.description' => 'Posez des questions et obtenez des conseils personnalisés de la part de la communauté pour mieux prendre soin de vos plantes ou résoudre des problèmes.',
 			'onboarding.skip' => 'Passer',
 			'onboarding.register' => 'S\'enregistrer',
 			'onboarding.login' => 'S\'identifier',
