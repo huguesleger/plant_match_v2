@@ -40,7 +40,26 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	Translations $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => Translations(meta: meta ?? this.$meta);
 
 	// Translations
+	late final TranslationsGetStartedFr getStarted = TranslationsGetStartedFr.internal(_root);
 	late final TranslationsOnboardingFr onboarding = TranslationsOnboardingFr.internal(_root);
+}
+
+// Path: getStarted
+class TranslationsGetStartedFr {
+	TranslationsGetStartedFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Échangez, adoptez et cultivez ensemble.'
+	String get title => 'Échangez, adoptez et cultivez ensemble.';
+
+	/// fr: 'Rejoignez la communauté des amoureux des plantes près de chez vous.'
+	String get subtitle => 'Rejoignez la communauté des amoureux des plantes près de chez vous.';
+
+	/// fr: 'C'est parti !'
+	String get button => 'C\'est parti !';
 }
 
 // Path: onboarding
@@ -143,6 +162,9 @@ class TranslationsOnboardingItemsAdviceFr {
 extension on Translations {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'getStarted.title' => 'Échangez, adoptez et cultivez ensemble.',
+			'getStarted.subtitle' => 'Rejoignez la communauté des amoureux des plantes près de chez vous.',
+			'getStarted.button' => 'C\'est parti !',
 			'onboarding.items.catalog.title' => 'Catalogue de Plantes\nPersonnalisé',
 			'onboarding.items.catalog.description' => 'Créez et gérez votre propre collection de plantes. Ajoutez des photos, des descriptions, et recevez des rappels pour l’entretien de vos plantes.',
 			'onboarding.items.map.title' => 'Échange de Plantes\net Boutures',

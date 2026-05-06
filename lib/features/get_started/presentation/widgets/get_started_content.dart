@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
@@ -12,17 +13,17 @@ class GetStartedContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const TitlePage(
-          title: 'Échangez, adoptez et cultivez ensemble.',
+        TitlePage(
+          title: t.getStarted.title,
           fontSize: AppTypo.textXxl,
           fontWeight: FontWeight.bold,
           color: AppColors.greenLight,
         ),
-        const Padding(
-          padding: EdgeInsets.only(bottom: 20),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 20),
           child: Text(
-            'Rejoignez la communauté des amoureux des plantes près de chez vous.',
-            style: TextStyle(
+            t.getStarted.subtitle,
+            style: const TextStyle(
               fontSize: AppTypo.textS,
               color: AppColors.white,
             ),
@@ -34,7 +35,7 @@ class GetStartedContent extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: ButtonRounded(
-                  text: 'C\'est parti !',
+                  text: t.getStarted.button,
                   onPressed: () {
                     Navigator.push(
                       context,
