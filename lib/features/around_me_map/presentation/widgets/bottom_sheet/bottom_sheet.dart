@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
 import 'package:plant_match_v2/core/extension/first_word_before_space/first_word_after_space.dart';
@@ -62,8 +63,8 @@ class _CatalogSection extends StatelessWidget {
                 AppCard(
                   bgColor: AppColors.greenDark,
                   textColor: AppColors.white,
-                  title: 'Plantes & Boutures',
-                  description: 'Mon catalogue de ce que j’ai à partager',
+                  title: t.aroundMeMap.bottomSheet.title,
+                  description: t.aroundMeMap.bottomSheet.description,
                   icon: LucideIcons.flower_2,
                   onPressed: () {},
                 ),
@@ -73,10 +74,13 @@ class _CatalogSection extends StatelessWidget {
             )
           : Center(
               child: Text(
-                "${user.userName.match(
-                  () => user.fullName.getFirstWordBeforeSpace().toCapitalize(),
-                  (userName) => userName.toCapitalize(),
-                )} n'a pas encore de catalogue.",
+                t.aroundMeMap.catalogUsers.userNoCatalog(
+                  name: user.userName.match(
+                    () =>
+                        user.fullName.getFirstWordBeforeSpace().toCapitalize(),
+                    (userName) => userName.toCapitalize(),
+                  ),
+                ),
                 textAlign: TextAlign.center,
                 style: InterTextStyle.inter(
                   AppTypo.textM,

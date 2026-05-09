@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
@@ -15,7 +16,7 @@ class BottomSheetAction extends StatelessWidget {
     return Padding(
       padding: AppSpacing.paddingAll,
       child: ButtonOutlinedRoundedWithIcon(
-        text: 'Voir le profil',
+        text: t.aroundMeMap.bottomSheet.viewProfile,
         onPressed: () {
           Navigator.push(
             context,

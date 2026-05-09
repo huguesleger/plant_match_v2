@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
@@ -8,21 +9,20 @@ class AroundMeHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Column(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
+        Padding(
           padding: AppSpacing.paddingHorizontal,
           child: TitlePage(
-            title: 'A proximité',
+            title: t.aroundMeMap.header.title,
             fontSize: AppTypo.textXl,
           ),
         ),
         Padding(
           padding: AppSpacing.paddingHorizontal +
               const EdgeInsets.symmetric(vertical: 10),
-          child: const Text(
-              'Trouvez des utilisateurs autour de vous pour partager, échanger ...'),
+          child: Text(t.aroundMeMap.header.subtitle),
         ),
       ],
     );

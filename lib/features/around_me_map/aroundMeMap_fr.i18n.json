@@ -1,0 +1,28 @@
+{
+  "header": {
+    "title": "A proximité",
+    "subtitle": "Trouvez des utilisateurs autour de vous pour partager, échanger ..."
+  },
+  "empty": {
+    "title": "Oups ! vous n'êtes pas localisé",
+    "description": "Veuillez activer votre localisation pour voir les utilisateurs autour de vous",
+    "button": "Me géolocaliser"
+  },
+  "bottomSheet": {
+    "title": "Plantes & Boutures",
+    "description": "Mon catalogue de ce que j’ai à partager",
+    "viewProfile": "Voir le profil"
+  },
+  "card": {
+    "plantEnv": "plante ${env}"
+  },
+  "catalogUsers": {
+    "empty": "Aucun catalogue disponible",
+    "userNoCatalog": "${name} n'a pas encore de catalogue."
+  },
+  "status": {
+    "online": "En ligne",
+    "offline": "Hors ligne"
+  },
+  "distance": "${value} km"
+}

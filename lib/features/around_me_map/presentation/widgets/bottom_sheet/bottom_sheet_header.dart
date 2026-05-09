@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
 import 'package:plant_match_v2/core/extension/first_word_before_space/first_word_after_space.dart';
@@ -64,7 +65,7 @@ class BottomSheetHeader extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(top: 4),
           child: Text(
-            "$distance km",
+            t.aroundMeMap.distance(value: distance.toString()),
             style: InterTextStyle.inter(
               AppTypo.textS,
               color: AppColors.greyDark,
@@ -97,7 +98,7 @@ class _OnlineStatusBadge extends StatelessWidget {
             const SizedBox(width: 2),
           ],
           Text(
-            isOnline ? "En ligne" : "Hors ligne",
+            isOnline ? t.aroundMeMap.status.online : t.aroundMeMap.status.offline,
             style: TextStyle(
               color: isOnline ? AppColors.white : AppColors.greyDark,
               fontSize: 8,

@@ -40,6 +40,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	Translations $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => Translations(meta: meta ?? this.$meta);
 
 	// Translations
+	late final TranslationsAroundMeMapFr aroundMeMap = TranslationsAroundMeMapFr.internal(_root);
 	late final TranslationsAuthFr auth = TranslationsAuthFr.internal(_root);
 	late final TranslationsCatalogFr catalog = TranslationsCatalogFr.internal(_root);
 	late final TranslationsChatPlantFr chatPlant = TranslationsChatPlantFr.internal(_root);
@@ -54,6 +55,24 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final TranslationsPersonalInformationFr personalInformation = TranslationsPersonalInformationFr.internal(_root);
 	late final TranslationsProfilFr profil = TranslationsProfilFr.internal(_root);
 	late final TranslationsUserFr user = TranslationsUserFr.internal(_root);
+}
+
+// Path: aroundMeMap
+class TranslationsAroundMeMapFr {
+	TranslationsAroundMeMapFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+	late final TranslationsAroundMeMapHeaderFr header = TranslationsAroundMeMapHeaderFr.internal(_root);
+	late final TranslationsAroundMeMapEmptyFr empty = TranslationsAroundMeMapEmptyFr.internal(_root);
+	late final TranslationsAroundMeMapBottomSheetFr bottomSheet = TranslationsAroundMeMapBottomSheetFr.internal(_root);
+	late final TranslationsAroundMeMapCardFr card = TranslationsAroundMeMapCardFr.internal(_root);
+	late final TranslationsAroundMeMapCatalogUsersFr catalogUsers = TranslationsAroundMeMapCatalogUsersFr.internal(_root);
+	late final TranslationsAroundMeMapStatusFr status = TranslationsAroundMeMapStatusFr.internal(_root);
+
+	/// fr: '${value} km'
+	String distance({required Object value}) => '${value} km';
 }
 
 // Path: auth
@@ -255,6 +274,99 @@ class TranslationsUserFr {
 	late final TranslationsUserRecentPlantsFr recent_plants = TranslationsUserRecentPlantsFr.internal(_root);
 	late final TranslationsUserCatalogListFr catalog_list = TranslationsUserCatalogListFr.internal(_root);
 	late final TranslationsUserDetailPlantFr detail_plant = TranslationsUserDetailPlantFr.internal(_root);
+}
+
+// Path: aroundMeMap.header
+class TranslationsAroundMeMapHeaderFr {
+	TranslationsAroundMeMapHeaderFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'A proximité'
+	String get title => 'A proximité';
+
+	/// fr: 'Trouvez des utilisateurs autour de vous pour partager, échanger ...'
+	String get subtitle => 'Trouvez des utilisateurs autour de vous pour partager, échanger ...';
+}
+
+// Path: aroundMeMap.empty
+class TranslationsAroundMeMapEmptyFr {
+	TranslationsAroundMeMapEmptyFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Oups ! vous n'êtes pas localisé'
+	String get title => 'Oups ! vous n\'êtes pas localisé';
+
+	/// fr: 'Veuillez activer votre localisation pour voir les utilisateurs autour de vous'
+	String get description => 'Veuillez activer votre localisation pour voir les utilisateurs autour de vous';
+
+	/// fr: 'Me géolocaliser'
+	String get button => 'Me géolocaliser';
+}
+
+// Path: aroundMeMap.bottomSheet
+class TranslationsAroundMeMapBottomSheetFr {
+	TranslationsAroundMeMapBottomSheetFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Plantes & Boutures'
+	String get title => 'Plantes & Boutures';
+
+	/// fr: 'Mon catalogue de ce que j’ai à partager'
+	String get description => 'Mon catalogue de ce que j’ai à partager';
+
+	/// fr: 'Voir le profil'
+	String get viewProfile => 'Voir le profil';
+}
+
+// Path: aroundMeMap.card
+class TranslationsAroundMeMapCardFr {
+	TranslationsAroundMeMapCardFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'plante ${env}'
+	String plantEnv({required Object env}) => 'plante ${env}';
+}
+
+// Path: aroundMeMap.catalogUsers
+class TranslationsAroundMeMapCatalogUsersFr {
+	TranslationsAroundMeMapCatalogUsersFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aucun catalogue disponible'
+	String get empty => 'Aucun catalogue disponible';
+
+	/// fr: '${name} n'a pas encore de catalogue.'
+	String userNoCatalog({required Object name}) => '${name} n\'a pas encore de catalogue.';
+}
+
+// Path: aroundMeMap.status
+class TranslationsAroundMeMapStatusFr {
+	TranslationsAroundMeMapStatusFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'En ligne'
+	String get online => 'En ligne';
+
+	/// fr: 'Hors ligne'
+	String get offline => 'Hors ligne';
 }
 
 // Path: auth.common
@@ -2564,6 +2676,20 @@ class TranslationsLevelLevelsK2ActionsFr {
 extension on Translations {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'aroundMeMap.header.title' => 'A proximité',
+			'aroundMeMap.header.subtitle' => 'Trouvez des utilisateurs autour de vous pour partager, échanger ...',
+			'aroundMeMap.empty.title' => 'Oups ! vous n\'êtes pas localisé',
+			'aroundMeMap.empty.description' => 'Veuillez activer votre localisation pour voir les utilisateurs autour de vous',
+			'aroundMeMap.empty.button' => 'Me géolocaliser',
+			'aroundMeMap.bottomSheet.title' => 'Plantes & Boutures',
+			'aroundMeMap.bottomSheet.description' => 'Mon catalogue de ce que j’ai à partager',
+			'aroundMeMap.bottomSheet.viewProfile' => 'Voir le profil',
+			'aroundMeMap.card.plantEnv' => ({required Object env}) => 'plante ${env}',
+			'aroundMeMap.catalogUsers.empty' => 'Aucun catalogue disponible',
+			'aroundMeMap.catalogUsers.userNoCatalog' => ({required Object name}) => '${name} n\'a pas encore de catalogue.',
+			'aroundMeMap.status.online' => 'En ligne',
+			'aroundMeMap.status.offline' => 'Hors ligne',
+			'aroundMeMap.distance' => ({required Object value}) => '${value} km',
 			'auth.common.email.label' => 'E-mail',
 			'auth.common.email.hint' => 'Entrez votre e-mail',
 			'auth.common.email.required' => 'Ce champ est requis',
