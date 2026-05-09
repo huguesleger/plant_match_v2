@@ -55,6 +55,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final TranslationsPersonalInformationFr personalInformation = TranslationsPersonalInformationFr.internal(_root);
 	late final TranslationsProfilFr profil = TranslationsProfilFr.internal(_root);
 	late final TranslationsUserFr user = TranslationsUserFr.internal(_root);
+	late final TranslationsWidgetsFr widgets = TranslationsWidgetsFr.internal(_root);
 }
 
 // Path: aroundMeMap
@@ -274,6 +275,18 @@ class TranslationsUserFr {
 	late final TranslationsUserRecentPlantsFr recent_plants = TranslationsUserRecentPlantsFr.internal(_root);
 	late final TranslationsUserCatalogListFr catalog_list = TranslationsUserCatalogListFr.internal(_root);
 	late final TranslationsUserDetailPlantFr detail_plant = TranslationsUserDetailPlantFr.internal(_root);
+}
+
+// Path: widgets
+class TranslationsWidgetsFr {
+	TranslationsWidgetsFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+	late final TranslationsWidgetsNavigationFr navigation = TranslationsWidgetsNavigationFr.internal(_root);
+	late final TranslationsWidgetsErrorFr error = TranslationsWidgetsErrorFr.internal(_root);
+	late final TranslationsWidgetsCommonFr common = TranslationsWidgetsCommonFr.internal(_root);
 }
 
 // Path: aroundMeMap.header
@@ -1542,6 +1555,66 @@ class TranslationsUserDetailPlantFr {
 
 	/// fr: 'entretien'
 	String get maintenance => 'entretien';
+}
+
+// Path: widgets.navigation
+class TranslationsWidgetsNavigationFr {
+	TranslationsWidgetsNavigationFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Explorer'
+	String get explorer => 'Explorer';
+
+	/// fr: 'À proximité'
+	String get aroundMe => 'À proximité';
+
+	/// fr: 'Ajouter'
+	String get add => 'Ajouter';
+
+	/// fr: 'Messages'
+	String get messages => 'Messages';
+
+	/// fr: 'Mon profil'
+	String get profile => 'Mon profil';
+}
+
+// Path: widgets.error
+class TranslationsWidgetsErrorFr {
+	TranslationsWidgetsErrorFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Oups ! une erreur est survenue'
+	String get title => 'Oups ! une erreur est survenue';
+
+	/// fr: 'Retour'
+	String get back => 'Retour';
+
+	/// fr: 'Essayer à nouveau'
+	String get retry => 'Essayer à nouveau';
+}
+
+// Path: widgets.common
+class TranslationsWidgetsCommonFr {
+	TranslationsWidgetsCommonFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'En voir +'
+	String get viewMore => 'En voir +';
+
+	/// fr: 'Annuler'
+	String get cancel => 'Annuler';
+
+	/// fr: 'Confirmer'
+	String get confirm => 'Confirmer';
 }
 
 // Path: auth.common.email
@@ -3070,6 +3143,17 @@ extension on Translations {
 			'user.detail_plant.lighting' => 'lumière',
 			'user.detail_plant.watering' => 'arrosage',
 			'user.detail_plant.maintenance' => 'entretien',
+			'widgets.navigation.explorer' => 'Explorer',
+			'widgets.navigation.aroundMe' => 'À proximité',
+			'widgets.navigation.add' => 'Ajouter',
+			'widgets.navigation.messages' => 'Messages',
+			'widgets.navigation.profile' => 'Mon profil',
+			'widgets.error.title' => 'Oups ! une erreur est survenue',
+			'widgets.error.back' => 'Retour',
+			'widgets.error.retry' => 'Essayer à nouveau',
+			'widgets.common.viewMore' => 'En voir +',
+			'widgets.common.cancel' => 'Annuler',
+			'widgets.common.confirm' => 'Confirmer',
 			_ => null,
 		};
 	}

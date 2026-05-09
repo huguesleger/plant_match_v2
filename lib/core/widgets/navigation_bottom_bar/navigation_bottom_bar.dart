@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
@@ -32,26 +33,26 @@ class NavigationBottomBar extends StatelessWidget {
         child: BottomNavigationBar(
           currentIndex: currentIndex,
           onTap: onTap,
-          items: const [
+          items: [
             BottomNavigationBarItem(
-              icon: Icon(LucideIcons.heart_handshake),
-              label: 'Explorer',
+              icon: const Icon(LucideIcons.heart_handshake),
+              label: t.widgets.navigation.explorer,
             ),
             BottomNavigationBarItem(
-              icon: Icon(LucideIcons.map_pin),
-              label: 'A promixité',
+              icon: const Icon(LucideIcons.map_pin),
+              label: t.widgets.navigation.aroundMe,
             ),
             BottomNavigationBarItem(
-              icon: Icon(LucideIcons.circle_plus),
-              label: 'Ajouter',
+              icon: const Icon(LucideIcons.circle_plus),
+              label: t.widgets.navigation.add,
             ),
             BottomNavigationBarItem(
-              icon: MessagesBadgeIcon(),
-              label: 'Messages',
+              icon: const MessagesBadgeIcon(),
+              label: t.widgets.navigation.messages,
             ),
             BottomNavigationBarItem(
-              icon: Icon(LucideIcons.user),
-              label: 'Mon profil',
+              icon: const Icon(LucideIcons.user),
+              label: t.widgets.navigation.profile,
             ),
           ],
           type: BottomNavigationBarType.fixed,

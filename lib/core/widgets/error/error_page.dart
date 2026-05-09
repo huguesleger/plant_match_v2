@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -28,22 +29,14 @@ class ErrorPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-/*                 Center(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Assets.res.logo.logoColor.svg(),
-                  ),
-                ), */
                 const SizedBox(height: 20),
-                const TitlePage(
-                  title: 'Oups ! une erreur est survenue',
+                TitlePage(
+                  title: t.widgets.error.title,
                   fontSize: AppTypo.textXl,
-                  //textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 5),
                 Text(
                   errorMessage,
-                  //textAlign: TextAlign.left,
                 ),
                 const SizedBox(height: 30),
                 Center(
@@ -68,9 +61,9 @@ class ErrorPage extends StatelessWidget {
                       LucideIcons.arrow_left,
                       color: AppColors.blueGreen,
                     ),
-                    label: const Text(
-                      'Retour',
-                      style: TextStyle(
+                    label: Text(
+                      t.widgets.error.back,
+                      style: const TextStyle(
                         color: AppColors.blueGreen,
                       ),
                     ),
@@ -80,7 +73,7 @@ class ErrorPage extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   child: ButtonRounded(
-                    text: 'Essayer à nouveau',
+                    text: t.widgets.error.retry,
                     bgColor: AppColors.blueGreen,
                     textColor: AppColors.white,
                     onPressed: onRetry,

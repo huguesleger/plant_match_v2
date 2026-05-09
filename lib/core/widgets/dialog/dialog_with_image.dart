@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/gen/fonts.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -65,7 +66,7 @@ class DialogWithImage extends StatelessWidget {
                     onPressed: () {
                       Navigator.of(context).pop(false);
                     },
-                    text: cancelLabel ?? 'Annuler',
+                    text: cancelLabel ?? t.widgets.common.cancel,
                     borderColor: AppColors.greyLight,
                     textColor: AppColors.greyMedium,
                     padding: const EdgeInsets.symmetric(
@@ -80,7 +81,7 @@ class DialogWithImage extends StatelessWidget {
                     onPressed: () {
                       Navigator.of(context).pop(true);
                     },
-                    text: confirmLabel ?? 'Confirmer',
+                    text: confirmLabel ?? t.widgets.common.confirm,
                     bgColor: AppColors.greenLight,
                     textColor: AppColors.blueGreen,
                     padding: const EdgeInsets.symmetric(

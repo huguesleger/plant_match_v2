@@ -1,0 +1,19 @@
+{
+  "navigation": {
+    "explorer": "Explorer",
+    "aroundMe": "À proximité",
+    "add": "Ajouter",
+    "messages": "Messages",
+    "profile": "Mon profil"
+  },
+  "error": {
+    "title": "Oups ! une erreur est survenue",
+    "back": "Retour",
+    "retry": "Essayer à nouveau"
+  },
+  "common": {
+    "viewMore": "En voir +",
+    "cancel": "Annuler",
+    "confirm": "Confirmer"
+  }
+}

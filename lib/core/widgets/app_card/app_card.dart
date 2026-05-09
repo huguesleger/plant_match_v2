@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
@@ -70,7 +71,7 @@ class AppCard extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: ButtonRounded(
-                  text: 'En voir +',
+                  text: t.widgets.common.viewMore,
                   onPressed: onPressed,
                   bgColor: AppColors.blueGreen,
                   textColor: AppColors.white,
