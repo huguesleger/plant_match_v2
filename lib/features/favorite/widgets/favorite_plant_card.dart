@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
@@ -106,7 +107,7 @@ class FavoritePlantCard extends StatelessWidget {
                         if (!isAvailable)
                           BadgePill(
                             text: Text(
-                              'Non disponible',
+                              t.favorite.card.not_available,
                               style: InterTextStyle.inter(
                                 AppTypo.textXxs,
                                 color: AppColors.white,
@@ -147,7 +148,7 @@ class FavoritePlantCard extends StatelessWidget {
                     if (environment != null) ...[
                       const SizedBox(height: 4),
                       Text(
-                        'Plante ${environment.envName}',
+                        t.favorite.card.env_prefix(env: environment.envName),
                         style: InterTextStyle.inter(
                           AppTypo.textXs,
                           color: AppColors.greyMedium,
@@ -168,7 +169,7 @@ class FavoritePlantCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            'Retirer',
+                            t.favorite.card.remove,
                             style: InterTextStyle.inter(
                               AppTypo.textXs,
                               color: AppColors.greenMedium,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/features/favorite/cubit/favorite_cubit.dart';
 import 'package:plant_match_v2/features/favorite/widgets/favorite_empty_state.dart';
@@ -17,10 +18,10 @@ class FavoritePlantsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (plants.isEmpty) {
-      return const FavoriteEmptyState(
+      return FavoriteEmptyState(
         icon: Icons.eco_rounded,
-        message: 'Aucune plante en favoris',
-        subtitle: 'Appuyez sur ❤️ sur une plante pour l\'ajouter',
+        message: t.favorite.empty.plants.title,
+        subtitle: t.favorite.empty.plants.subtitle,
       );
     }
 

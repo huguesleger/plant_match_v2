@@ -40,6 +40,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	Translations $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => Translations(meta: meta ?? this.$meta);
 
 	// Translations
+	late final TranslationsFavoriteFr favorite = TranslationsFavoriteFr.internal(_root);
 	late final TranslationsGetStartedFr getStarted = TranslationsGetStartedFr.internal(_root);
 	late final TranslationsHistoryFr history = TranslationsHistoryFr.internal(_root);
 	late final TranslationsLevelFr level = TranslationsLevelFr.internal(_root);
@@ -49,6 +50,18 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final TranslationsPersonalInformationFr personalInformation = TranslationsPersonalInformationFr.internal(_root);
 	late final TranslationsProfilFr profil = TranslationsProfilFr.internal(_root);
 	late final TranslationsUserFr user = TranslationsUserFr.internal(_root);
+}
+
+// Path: favorite
+class TranslationsFavoriteFr {
+	TranslationsFavoriteFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+	late final TranslationsFavoriteScreenFr screen = TranslationsFavoriteScreenFr.internal(_root);
+	late final TranslationsFavoriteEmptyFr empty = TranslationsFavoriteEmptyFr.internal(_root);
+	late final TranslationsFavoriteCardFr card = TranslationsFavoriteCardFr.internal(_root);
 }
 
 // Path: getStarted
@@ -176,6 +189,53 @@ class TranslationsUserFr {
 	late final TranslationsUserRecentPlantsFr recent_plants = TranslationsUserRecentPlantsFr.internal(_root);
 	late final TranslationsUserCatalogListFr catalog_list = TranslationsUserCatalogListFr.internal(_root);
 	late final TranslationsUserDetailPlantFr detail_plant = TranslationsUserDetailPlantFr.internal(_root);
+}
+
+// Path: favorite.screen
+class TranslationsFavoriteScreenFr {
+	TranslationsFavoriteScreenFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Mes Favoris'
+	String get title => 'Mes Favoris';
+
+	/// fr: 'Plantes ($count)'
+	String plants_tab({required Object count}) => 'Plantes (${count})';
+
+	/// fr: 'Profils ($count)'
+	String users_tab({required Object count}) => 'Profils (${count})';
+}
+
+// Path: favorite.empty
+class TranslationsFavoriteEmptyFr {
+	TranslationsFavoriteEmptyFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+	late final TranslationsFavoriteEmptyPlantsFr plants = TranslationsFavoriteEmptyPlantsFr.internal(_root);
+	late final TranslationsFavoriteEmptyUsersFr users = TranslationsFavoriteEmptyUsersFr.internal(_root);
+}
+
+// Path: favorite.card
+class TranslationsFavoriteCardFr {
+	TranslationsFavoriteCardFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Non disponible'
+	String get not_available => 'Non disponible';
+
+	/// fr: 'Plante $env'
+	String env_prefix({required Object env}) => 'Plante ${env}';
+
+	/// fr: 'Retirer'
+	String get remove => 'Retirer';
 }
 
 // Path: history.screen
@@ -694,6 +754,36 @@ class TranslationsUserDetailPlantFr {
 	String get maintenance => 'entretien';
 }
 
+// Path: favorite.empty.plants
+class TranslationsFavoriteEmptyPlantsFr {
+	TranslationsFavoriteEmptyPlantsFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aucune plante en favoris'
+	String get title => 'Aucune plante en favoris';
+
+	/// fr: 'Appuyez sur ❤️ sur une plante pour l'ajouter'
+	String get subtitle => 'Appuyez sur ❤️ sur une plante pour l\'ajouter';
+}
+
+// Path: favorite.empty.users
+class TranslationsFavoriteEmptyUsersFr {
+	TranslationsFavoriteEmptyUsersFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aucun profil en favoris'
+	String get title => 'Aucun profil en favoris';
+
+	/// fr: 'Appuyez sur ❤️ sur un profil pour l'ajouter'
+	String get subtitle => 'Appuyez sur ❤️ sur un profil pour l\'ajouter';
+}
+
 // Path: level.cards.challenges
 class TranslationsLevelCardsChallengesFr {
 	TranslationsLevelCardsChallengesFr.internal(this._root);
@@ -1042,6 +1132,16 @@ class TranslationsLevelLevelsK2ActionsFr {
 extension on Translations {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'favorite.screen.title' => 'Mes Favoris',
+			'favorite.screen.plants_tab' => ({required Object count}) => 'Plantes (${count})',
+			'favorite.screen.users_tab' => ({required Object count}) => 'Profils (${count})',
+			'favorite.empty.plants.title' => 'Aucune plante en favoris',
+			'favorite.empty.plants.subtitle' => 'Appuyez sur ❤️ sur une plante pour l\'ajouter',
+			'favorite.empty.users.title' => 'Aucun profil en favoris',
+			'favorite.empty.users.subtitle' => 'Appuyez sur ❤️ sur un profil pour l\'ajouter',
+			'favorite.card.not_available' => 'Non disponible',
+			'favorite.card.env_prefix' => ({required Object env}) => 'Plante ${env}',
+			'favorite.card.remove' => 'Retirer',
 			'getStarted.title' => 'Échangez, adoptez et cultivez ensemble.',
 			'getStarted.subtitle' => 'Rejoignez la communauté des amoureux des plantes près de chez vous.',
 			'getStarted.button' => 'C\'est parti !',

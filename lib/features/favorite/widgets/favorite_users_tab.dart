@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/features/favorite/cubit/favorite_cubit.dart';
@@ -18,10 +19,10 @@ class FavoriteUsersTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (users.isEmpty) {
-      return const FavoriteEmptyState(
+      return FavoriteEmptyState(
         icon: Icons.person_search_rounded,
-        message: 'Aucun profil en favoris',
-        subtitle: 'Appuyez sur ❤️ sur un profil pour l\'ajouter',
+        message: t.favorite.empty.users.title,
+        subtitle: t.favorite.empty.users.subtitle,
       );
     }
 

@@ -1,0 +1,22 @@
+{
+  "screen": {
+    "title": "Mes Favoris",
+    "plants_tab": "Plantes ($count)",
+    "users_tab": "Profils ($count)"
+  },
+  "empty": {
+    "plants": {
+      "title": "Aucune plante en favoris",
+      "subtitle": "Appuyez sur ❤️ sur une plante pour l'ajouter"
+    },
+    "users": {
+      "title": "Aucun profil en favoris",
+      "subtitle": "Appuyez sur ❤️ sur un profil pour l'ajouter"
+    }
+  },
+  "card": {
+    "not_available": "Non disponible",
+    "env_prefix": "Plante $env",
+    "remove": "Retirer"
+  }
+}

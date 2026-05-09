@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
@@ -22,7 +23,7 @@ class FavoriteScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarTemplate(
-        title: 'Mes Favoris',
+        title: t.favorite.screen.title,
         centerTitle: true,
         backgroundColor: AppColors.white,
         surfaceTintColor: AppColors.white,
@@ -77,7 +78,7 @@ class FavoriteScreen extends StatelessWidget {
                             children: [
                               const Icon(Icons.eco_rounded, size: 16),
                               const SizedBox(width: 6),
-                              Text('Plantes (${s.plants.length})'),
+                              Text(t.favorite.screen.plants_tab(count: s.plants.length)),
                             ],
                           ),
                         ),
@@ -87,7 +88,7 @@ class FavoriteScreen extends StatelessWidget {
                             children: [
                               const Icon(Icons.person_rounded, size: 16),
                               const SizedBox(width: 6),
-                              Text('Profils (${s.users.length})'),
+                              Text(t.favorite.screen.users_tab(count: s.users.length)),
                             ],
                           ),
                         ),
