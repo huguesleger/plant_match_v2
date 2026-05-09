@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
@@ -35,7 +36,7 @@ class LevelHeader extends StatelessWidget {
                     const Icon(LucideIcons.star, color: AppColors.white),
                     const SizedBox(width: 10),
                     Text(
-                      'Points',
+                      t.level.header.points,
                       style: InterTextStyle.inter(
                         AppTypo.textS,
                         color: AppColors.white,
@@ -56,7 +57,7 @@ class LevelHeader extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'Niveau $level',
+                      t.level.header.level(level: level),
                       style: InterTextStyle.inter(
                         11,
                         color: AppColors.white,

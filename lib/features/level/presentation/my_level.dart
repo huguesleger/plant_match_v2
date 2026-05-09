@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
@@ -29,8 +30,8 @@ class MyLevel extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.max,
           children: [
-            const TitlePage(
-              title: 'Mon niveau',
+            TitlePage(
+              title: t.level.screen.my_level,
               fontSize: AppTypo.textXl,
             ),
             const SizedBox(height: 20),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/theme/inter_text_style.dart';
@@ -18,7 +19,7 @@ class LevelDetailContent extends StatelessWidget {
       children: [
         RichText(
           text: TextSpan(
-            text: 'Conditions : ',
+            text: t.level.detail.conditions,
             style: InterTextStyle.inter(
               AppTypo.textS,
               fontWeight: FontWeight.w600,
@@ -39,7 +40,7 @@ class LevelDetailContent extends StatelessWidget {
         const SizedBox(height: 20),
         RichText(
           text: TextSpan(
-            text: 'Description : ',
+            text: t.level.detail.description,
             style: InterTextStyle.inter(
               AppTypo.textS,
               fontWeight: FontWeight.w600,
@@ -60,7 +61,7 @@ class LevelDetailContent extends StatelessWidget {
         const SizedBox(height: 20),
         RichText(
           text: TextSpan(
-            text: 'Points nécessaires : ',
+            text: t.level.detail.required_points,
             style: InterTextStyle.inter(
               AppTypo.textS,
               fontWeight: FontWeight.w600,
@@ -68,7 +69,7 @@ class LevelDetailContent extends StatelessWidget {
             ),
             children: <TextSpan>[
               TextSpan(
-                text: '${levelData['requiredPoints']} points',
+                text: t.level.detail.points(n: levelData['requiredPoints'] as int),
                 style: InterTextStyle.inter(
                   AppTypo.textS,
                   fontWeight: FontWeight.w400,
@@ -79,9 +80,9 @@ class LevelDetailContent extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 20),
-        const Text(
-          "Actions principales récompensées :",
-          style: TextStyle(
+        Text(
+          t.level.detail.rewarded_actions_title,
+          style: const TextStyle(
             fontSize: AppTypo.textS,
             fontWeight: FontWeight.bold,
           ),
@@ -103,7 +104,7 @@ class LevelDetailContent extends StatelessWidget {
                         ),
                         children: <TextSpan>[
                           TextSpan(
-                            text: "+${entry.value} points",
+                            text: "+${t.level.detail.points(n: entry.value)}",
                             style: InterTextStyle.inter(
                               AppTypo.textS,
                               fontWeight: FontWeight.w400,

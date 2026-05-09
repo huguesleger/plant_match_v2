@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/app_card/app_card_with_icon_square.dart';
@@ -13,30 +14,30 @@ class LevelCard extends StatelessWidget {
         Expanded(
           child: AppCardWithIconSquare(
             icon: LucideIcons.trophy,
-            title: 'Défis et récompenses',
-            description: 'Participer à des défis, gagner des récompenses',
+            title: t.level.cards.challenges.title,
+            description: t.level.cards.challenges.description,
             bgColor: AppColors.greenMedium.withValues(alpha: 0.3),
             textColor: AppColors.greyDark,
             onPressed: () {},
             bgColorIcon: AppColors.greyUltraLight.withValues(alpha: 0.3),
             titleColor: AppColors.blueGreen,
             iconColor: AppColors.greyDark,
-            textBtn: 'Découvrir',
+            textBtn: t.level.cards.discover,
           ),
         ),
         const SizedBox(width: 20),
         Expanded(
           child: AppCardWithIconSquare(
             icon: LucideIcons.gift,
-            title: 'Choisir mes cadeaux',
-            description: 'Transformer vos points en cadeaux',
+            title: t.level.cards.gifts.title,
+            description: t.level.cards.gifts.description,
             bgColor: AppColors.greenMedium.withValues(alpha: 0.3),
             textColor: AppColors.greyDark,
             onPressed: () {},
             bgColorIcon: AppColors.greyUltraLight.withValues(alpha: 0.3),
             titleColor: AppColors.blueGreen,
             iconColor: AppColors.greyDark,
-            textBtn: 'Découvrir',
+            textBtn: t.level.cards.discover,
           ),
         ),
       ],

@@ -41,6 +41,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	// Translations
 	late final TranslationsGetStartedFr getStarted = TranslationsGetStartedFr.internal(_root);
+	late final TranslationsLevelFr level = TranslationsLevelFr.internal(_root);
 	late final TranslationsLevelAwardedFr levelAwarded = TranslationsLevelAwardedFr.internal(_root);
 	late final TranslationsMessageFr message = TranslationsMessageFr.internal(_root);
 	late final TranslationsOnboardingFr onboarding = TranslationsOnboardingFr.internal(_root);
@@ -65,6 +66,21 @@ class TranslationsGetStartedFr {
 
 	/// fr: 'C'est parti !'
 	String get button => 'C\'est parti !';
+}
+
+// Path: level
+class TranslationsLevelFr {
+	TranslationsLevelFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+	late final TranslationsLevelScreenFr screen = TranslationsLevelScreenFr.internal(_root);
+	late final TranslationsLevelHeaderFr header = TranslationsLevelHeaderFr.internal(_root);
+	late final TranslationsLevelCardsFr cards = TranslationsLevelCardsFr.internal(_root);
+	late final TranslationsLevelProgressFr progress = TranslationsLevelProgressFr.internal(_root);
+	late final TranslationsLevelDetailFr detail = TranslationsLevelDetailFr.internal(_root);
+	late final TranslationsLevelLevelsFr levels = TranslationsLevelLevelsFr.internal(_root);
 }
 
 // Path: levelAwarded
@@ -145,6 +161,111 @@ class TranslationsUserFr {
 	late final TranslationsUserRecentPlantsFr recent_plants = TranslationsUserRecentPlantsFr.internal(_root);
 	late final TranslationsUserCatalogListFr catalog_list = TranslationsUserCatalogListFr.internal(_root);
 	late final TranslationsUserDetailPlantFr detail_plant = TranslationsUserDetailPlantFr.internal(_root);
+}
+
+// Path: level.screen
+class TranslationsLevelScreenFr {
+	TranslationsLevelScreenFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Mes badges'
+	String get title => 'Mes badges';
+
+	/// fr: 'Mon niveau'
+	String get my_level => 'Mon niveau';
+
+	/// fr: 'Mes badges'
+	String get my_badges => 'Mes badges';
+}
+
+// Path: level.header
+class TranslationsLevelHeaderFr {
+	TranslationsLevelHeaderFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Points'
+	String get points => 'Points';
+
+	/// fr: 'Niveau $level'
+	String level({required Object level}) => 'Niveau ${level}';
+}
+
+// Path: level.cards
+class TranslationsLevelCardsFr {
+	TranslationsLevelCardsFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+	late final TranslationsLevelCardsChallengesFr challenges = TranslationsLevelCardsChallengesFr.internal(_root);
+	late final TranslationsLevelCardsGiftsFr gifts = TranslationsLevelCardsGiftsFr.internal(_root);
+
+	/// fr: 'Découvrir'
+	String get discover => 'Découvrir';
+}
+
+// Path: level.progress
+class TranslationsLevelProgressFr {
+	TranslationsLevelProgressFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Niveau '
+	String get level_prefix => 'Niveau ';
+
+	/// fr: 'pts'
+	String get pts_suffix => 'pts';
+}
+
+// Path: level.detail
+class TranslationsLevelDetailFr {
+	TranslationsLevelDetailFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Niveau $level'
+	String level_title({required Object level}) => 'Niveau ${level}';
+
+	/// fr: 'Conditions : '
+	String get conditions => 'Conditions : ';
+
+	/// fr: 'Description : '
+	String get description => 'Description : ';
+
+	/// fr: 'Points nécessaires : '
+	String get required_points => 'Points nécessaires : ';
+
+	/// fr: 'Actions principales récompensées :'
+	String get rewarded_actions_title => 'Actions principales récompensées :';
+
+	/// fr: '(one) { $n point} (other) { $n points}'
+	String points({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: ' ${n} point',
+		other: ' ${n} points',
+	);
+}
+
+// Path: level.levels
+class TranslationsLevelLevelsFr {
+	TranslationsLevelLevelsFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+	late final TranslationsLevelLevelsK1Fr k1 = TranslationsLevelLevelsK1Fr.internal(_root);
+	late final TranslationsLevelLevelsK2Fr k2 = TranslationsLevelLevelsK2Fr.internal(_root);
+	late final TranslationsLevelLevelsUnknownFr unknown = TranslationsLevelLevelsUnknownFr.internal(_root);
+	late final TranslationsLevelLevelsNamesFr names = TranslationsLevelLevelsNamesFr.internal(_root);
 }
 
 // Path: levelAwarded.success
@@ -465,6 +586,115 @@ class TranslationsUserDetailPlantFr {
 	String get maintenance => 'entretien';
 }
 
+// Path: level.cards.challenges
+class TranslationsLevelCardsChallengesFr {
+	TranslationsLevelCardsChallengesFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Défis et récompenses'
+	String get title => 'Défis et récompenses';
+
+	/// fr: 'Participer à des défis, gagner des récompenses'
+	String get description => 'Participer à des défis, gagner des récompenses';
+}
+
+// Path: level.cards.gifts
+class TranslationsLevelCardsGiftsFr {
+	TranslationsLevelCardsGiftsFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Choisir mes cadeaux'
+	String get title => 'Choisir mes cadeaux';
+
+	/// fr: 'Transformer vos points en cadeaux'
+	String get description => 'Transformer vos points en cadeaux';
+}
+
+// Path: level.levels.k1
+class TranslationsLevelLevelsK1Fr {
+	TranslationsLevelLevelsK1Fr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Inscription et ajout de la première plante dans le catalogue.'
+	String get condition => 'Inscription et ajout de la première plante dans le catalogue.';
+
+	/// fr: 'Bienvenue dans la communauté ! Tu viens de planter ta première graine.'
+	String get description => 'Bienvenue dans la communauté ! Tu viens de planter ta première graine.';
+
+	late final TranslationsLevelLevelsK1ActionsFr actions = TranslationsLevelLevelsK1ActionsFr.internal(_root);
+}
+
+// Path: level.levels.k2
+class TranslationsLevelLevelsK2Fr {
+	TranslationsLevelLevelsK2Fr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Réaliser 4 échanges ou dons.'
+	String get condition => 'Réaliser 4 échanges ou dons.';
+
+	/// fr: 'Tu commences à échanger tes plantes et à partager ta passion !'
+	String get description => 'Tu commences à échanger tes plantes et à partager ta passion !';
+
+	late final TranslationsLevelLevelsK2ActionsFr actions = TranslationsLevelLevelsK2ActionsFr.internal(_root);
+}
+
+// Path: level.levels.unknown
+class TranslationsLevelLevelsUnknownFr {
+	TranslationsLevelLevelsUnknownFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Non défini'
+	String get condition => 'Non défini';
+
+	/// fr: 'Niveau inconnu.'
+	String get description => 'Niveau inconnu.';
+}
+
+// Path: level.levels.names
+class TranslationsLevelLevelsNamesFr {
+	TranslationsLevelLevelsNamesFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Novice des plantes'
+	String get k1 => 'Novice des plantes';
+
+	/// fr: 'Amoureux des feuilles'
+	String get k2 => 'Amoureux des feuilles';
+
+	/// fr: 'Cultivateur actif'
+	String get k3 => 'Cultivateur actif';
+
+	/// fr: 'Jardinier confirmé'
+	String get k4 => 'Jardinier confirmé';
+
+	/// fr: 'Expert des plantes'
+	String get k5 => 'Expert des plantes';
+
+	/// fr: 'Maître du jardinage'
+	String get k6 => 'Maître du jardinage';
+
+	/// fr: 'Gardien de la nature'
+	String get k7 => 'Gardien de la nature';
+}
+
 // Path: onboarding.items.catalog
 class TranslationsOnboardingItemsCatalogFr {
 	TranslationsOnboardingItemsCatalogFr.internal(this._root);
@@ -666,6 +896,36 @@ class TranslationsProfilCardsAwardsFr {
 	String get description => 'Mes badges et mon niveau';
 }
 
+// Path: level.levels.k1.actions
+class TranslationsLevelLevelsK1ActionsFr {
+	TranslationsLevelLevelsK1ActionsFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Inscription'
+	String get registration => 'Inscription';
+
+	/// fr: 'Ajout d’une première plante'
+	String get first_plant => 'Ajout d’une première plante';
+}
+
+// Path: level.levels.k2.actions
+class TranslationsLevelLevelsK2ActionsFr {
+	TranslationsLevelLevelsK2ActionsFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '1 échange ou dons réussi'
+	String get first_exchange => '1 échange ou dons réussi';
+
+	/// fr: 'Chaque échange ou dons supplémentaire'
+	String get extra_exchange => 'Chaque échange ou dons supplémentaire';
+}
+
 /// The flat map containing all translations for locale <fr>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -677,6 +937,41 @@ extension on Translations {
 			'getStarted.title' => 'Échangez, adoptez et cultivez ensemble.',
 			'getStarted.subtitle' => 'Rejoignez la communauté des amoureux des plantes près de chez vous.',
 			'getStarted.button' => 'C\'est parti !',
+			'level.screen.title' => 'Mes badges',
+			'level.screen.my_level' => 'Mon niveau',
+			'level.screen.my_badges' => 'Mes badges',
+			'level.header.points' => 'Points',
+			'level.header.level' => ({required Object level}) => 'Niveau ${level}',
+			'level.cards.challenges.title' => 'Défis et récompenses',
+			'level.cards.challenges.description' => 'Participer à des défis, gagner des récompenses',
+			'level.cards.gifts.title' => 'Choisir mes cadeaux',
+			'level.cards.gifts.description' => 'Transformer vos points en cadeaux',
+			'level.cards.discover' => 'Découvrir',
+			'level.progress.level_prefix' => 'Niveau ',
+			'level.progress.pts_suffix' => 'pts',
+			'level.detail.level_title' => ({required Object level}) => 'Niveau ${level}',
+			'level.detail.conditions' => 'Conditions : ',
+			'level.detail.description' => 'Description : ',
+			'level.detail.required_points' => 'Points nécessaires : ',
+			'level.detail.rewarded_actions_title' => 'Actions principales récompensées :',
+			'level.detail.points' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: ' ${n} point', other: ' ${n} points', ), 
+			'level.levels.k1.condition' => 'Inscription et ajout de la première plante dans le catalogue.',
+			'level.levels.k1.description' => 'Bienvenue dans la communauté ! Tu viens de planter ta première graine.',
+			'level.levels.k1.actions.registration' => 'Inscription',
+			'level.levels.k1.actions.first_plant' => 'Ajout d’une première plante',
+			'level.levels.k2.condition' => 'Réaliser 4 échanges ou dons.',
+			'level.levels.k2.description' => 'Tu commences à échanger tes plantes et à partager ta passion !',
+			'level.levels.k2.actions.first_exchange' => '1 échange ou dons réussi',
+			'level.levels.k2.actions.extra_exchange' => 'Chaque échange ou dons supplémentaire',
+			'level.levels.unknown.condition' => 'Non défini',
+			'level.levels.unknown.description' => 'Niveau inconnu.',
+			'level.levels.names.k1' => 'Novice des plantes',
+			'level.levels.names.k2' => 'Amoureux des feuilles',
+			'level.levels.names.k3' => 'Cultivateur actif',
+			'level.levels.names.k4' => 'Jardinier confirmé',
+			'level.levels.names.k5' => 'Expert des plantes',
+			'level.levels.names.k6' => 'Maître du jardinage',
+			'level.levels.names.k7' => 'Gardien de la nature',
 			'levelAwarded.success.welcome_title' => 'Bienvenue !',
 			'levelAwarded.success.congrats_title' => 'Félicitations !',
 			'levelAwarded.success.welcome_desc' => 'Nous sommes ravis de vous accueillir sur PlantMatch, vous avez remporté',

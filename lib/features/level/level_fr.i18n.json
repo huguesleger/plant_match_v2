@@ -1,0 +1,68 @@
+{
+  "screen": {
+    "title": "Mes badges",
+    "my_level": "Mon niveau",
+    "my_badges": "Mes badges"
+  },
+  "header": {
+    "points": "Points",
+    "level": "Niveau $level"
+  },
+  "cards": {
+    "challenges": {
+      "title": "Défis et récompenses",
+      "description": "Participer à des défis, gagner des récompenses"
+    },
+    "gifts": {
+      "title": "Choisir mes cadeaux",
+      "description": "Transformer vos points en cadeaux"
+    },
+    "discover": "Découvrir"
+  },
+  "progress": {
+    "level_prefix": "Niveau ",
+    "pts_suffix": "pts"
+  },
+  "detail": {
+    "level_title": "Niveau $level",
+    "conditions": "Conditions : ",
+    "description": "Description : ",
+    "required_points": "Points nécessaires : ",
+    "rewarded_actions_title": "Actions principales récompensées :",
+    "points": {
+      "one": " $n point",
+      "other": " $n points"
+    }
+  },
+  "levels": {
+    "1": {
+      "condition": "Inscription et ajout de la première plante dans le catalogue.",
+      "description": "Bienvenue dans la communauté ! Tu viens de planter ta première graine.",
+      "actions": {
+        "registration": "Inscription",
+        "first_plant": "Ajout d’une première plante"
+      }
+    },
+    "2": {
+      "condition": "Réaliser 4 échanges ou dons.",
+      "description": "Tu commences à échanger tes plantes et à partager ta passion !",
+      "actions": {
+        "first_exchange": "1 échange ou dons réussi",
+        "extra_exchange": "Chaque échange ou dons supplémentaire"
+      }
+    },
+    "unknown": {
+      "condition": "Non défini",
+      "description": "Niveau inconnu."
+    },
+    "names": {
+      "1": "Novice des plantes",
+      "2": "Amoureux des feuilles",
+      "3": "Cultivateur actif",
+      "4": "Jardinier confirmé",
+      "5": "Expert des plantes",
+      "6": "Maître du jardinage",
+      "7": "Gardien de la nature"
+    }
+  }
+}

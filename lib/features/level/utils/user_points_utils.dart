@@ -1,51 +1,52 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/features/level/domain/entities/user_points.dart';
 
 class UserPointsUtils {
-  static const Map<int, LevelData> levelData = {
-    1: LevelData(
-      maxPoints: 50,
-      name: 'Novice des plantes',
-      icon: LucideIcons.sprout,
-    ),
-    2: LevelData(
-      maxPoints: 150,
-      name: 'Amoureux des feuilles',
-      icon: LucideIcons.leaf,
-    ),
-    3: LevelData(
-      maxPoints: 400,
-      name: 'Cultivateur actif',
-      icon: LucideIcons.wheat,
-    ),
-    4: LevelData(
-      maxPoints: 800,
-      name: 'Jardinier confirmer',
-      icon: LucideIcons.shovel,
-    ),
-    5: LevelData(
-      maxPoints: 1500,
-      name: 'Expert des plantes',
-      icon: LucideIcons.flower,
-    ),
-    6: LevelData(
-      maxPoints: 3000,
-      name: 'Maître du jardinage',
-      icon: LucideIcons.tree_pine,
-    ),
-    7: LevelData(
-      maxPoints: 6000,
-      name: 'Gardien de la nature',
-      icon: LucideIcons.trees,
-    ),
-  };
+  static Map<int, LevelData> get levelData => {
+        1: LevelData(
+          maxPoints: 50,
+          name: t.level.levels.names.k1,
+          icon: LucideIcons.sprout,
+        ),
+        2: LevelData(
+          maxPoints: 150,
+          name: t.level.levels.names.k2,
+          icon: LucideIcons.leaf,
+        ),
+        3: LevelData(
+          maxPoints: 400,
+          name: t.level.levels.names.k3,
+          icon: LucideIcons.wheat,
+        ),
+        4: LevelData(
+          maxPoints: 800,
+          name: t.level.levels.names.k4,
+          icon: LucideIcons.shovel,
+        ),
+        5: LevelData(
+          maxPoints: 1500,
+          name: t.level.levels.names.k5,
+          icon: LucideIcons.flower,
+        ),
+        6: LevelData(
+          maxPoints: 3000,
+          name: t.level.levels.names.k6,
+          icon: LucideIcons.tree_pine,
+        ),
+        7: LevelData(
+          maxPoints: 6000,
+          name: t.level.levels.names.k7,
+          icon: LucideIcons.trees,
+        ),
+      };
 
-  static const LevelData defaultLevel = LevelData(
-    maxPoints: 50,
-    name: 'Novice des plantes',
-    icon: LucideIcons.sprout,
-  );
+  static LevelData get defaultLevel => LevelData(
+        maxPoints: 50,
+        name: t.level.levels.names.k1,
+        icon: LucideIcons.sprout,
+      );
 
   static int getMaxPointsForLevel(int level) {
     return levelData[level]?.maxPoints ?? defaultLevel.maxPoints;

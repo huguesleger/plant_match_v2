@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
@@ -22,8 +23,8 @@ class MyBadges extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const TitlePage(
-            title: 'Mes badges',
+          TitlePage(
+            title: t.level.screen.my_badges,
             fontSize: AppTypo.textXl,
           ),
           BadgePill(

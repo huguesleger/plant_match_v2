@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/theme/inter_text_style.dart';
@@ -30,7 +31,7 @@ class LevelProgressIndicator extends StatelessWidget {
           children: [
             RichText(
               text: TextSpan(
-                text: 'Niveau ',
+                text: t.level.progress.level_prefix,
                 style: const TextStyle(
                   fontSize: AppTypo.textS,
                   color: AppColors.greenMedium,
@@ -49,7 +50,7 @@ class LevelProgressIndicator extends StatelessWidget {
             ),
             RichText(
               text: TextSpan(
-                text: 'Niveau ',
+                text: t.level.progress.level_prefix,
                 style: const TextStyle(
                   fontSize: AppTypo.textS,
                   color: AppColors.greenMedium,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/gen/fonts.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
@@ -90,7 +91,7 @@ class LevelItems extends StatelessWidget {
                 ),
                 const SizedBox(height: 5),
                 Text(
-                  '$maxPoints pts',
+                  '$maxPoints ${t.level.progress.pts_suffix}',
                   style: InterTextStyle.inter(
                     AppTypo.textXs,
                     color: AppColors.greyDark,

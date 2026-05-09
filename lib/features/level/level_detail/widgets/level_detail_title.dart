@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
@@ -17,7 +18,7 @@ class LevelDetailTitle extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TitlePage(
-          title: 'Niveau $level',
+          title: t.level.detail.level_title(level: level),
           fontSize: AppTypo.textXl,
         ),
         Text(
