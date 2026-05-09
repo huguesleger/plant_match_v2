@@ -58,7 +58,7 @@ class ProfilUser extends UserAuth {
       isOnline: newIsOnline ?? isOnline,
     );
   }
-  
+
   @override
   Map<String, dynamic> toJson() {
     return {

@@ -4,6 +4,7 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:plant_match_v2/features/catalog/catalog_edit/form/form_section.dart';
+import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catalog/presentation/widgets/selectable_item.dart';
 
 class EnvironmentField extends StatelessWidget {
@@ -34,8 +35,8 @@ class EnvironmentField extends StatelessWidget {
                   child: SelectableItem(
                     icon: LucideIcons.house,
                     label: t.catalog.wizard.steps.category.indoor,
-                    value: "indoor",
-                    isSelected: selectedEnvironment == "indoor",
+                    value: Environment.indoor.name,
+                    isSelected: selectedEnvironment == Environment.indoor.name,
                     onTap: (val) {
                       onChanged(val);
                       field.didChange(val);
@@ -48,8 +49,8 @@ class EnvironmentField extends StatelessWidget {
                   child: SelectableItem(
                     icon: LucideIcons.trees,
                     label: t.catalog.wizard.steps.category.outdoor,
-                    value: "outdoor",
-                    isSelected: selectedEnvironment == "outdoor",
+                    value: Environment.outdoor.name,
+                    isSelected: selectedEnvironment == Environment.outdoor.name,
                     onTap: (val) {
                       onChanged(val);
                       field.didChange(val);

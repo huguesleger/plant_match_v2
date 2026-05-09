@@ -261,16 +261,4 @@ extension OfferTypeExtension on OfferType {
         OfferType.exchange => t.catalog.enums.offer_type.exchange,
         OfferType.donation => t.catalog.enums.offer_type.donation,
       };
-
-  static OfferType fromString(String value) {
-    final normalized = value.toLowerCase().trim();
-
-    if (normalized == t.catalog.enums.offer_type.exchange.toLowerCase()) {
-      return OfferType.exchange;
-    }
-    if (normalized == t.catalog.enums.offer_type.donation.toLowerCase()) {
-      return OfferType.donation;
-    }
-    return OfferType.donation;
-  }
 }

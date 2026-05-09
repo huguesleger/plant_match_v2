@@ -3,6 +3,7 @@ import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/widgets/add_plant_wizard_item.dart';
 import 'package:plant_match_v2/features/catalog/presentation/widgets/selectable_item.dart';
 
@@ -38,8 +39,8 @@ class StepOfferType extends StatelessWidget {
                     child: SelectableItem(
                       icon: LucideIcons.gift,
                       label: t.catalog.wizard.steps.offer_type.donation,
-                      value: 'donation',
-                      isSelected: controller.text == 'donation',
+                      value: OfferType.donation.name,
+                      isSelected: controller.text == OfferType.donation.name,
                       onTap: (v) {
                         onSelect(v);
                         field.didChange(v);
@@ -52,8 +53,8 @@ class StepOfferType extends StatelessWidget {
                     child: SelectableItem(
                       icon: LucideIcons.heart_handshake,
                       label: t.catalog.wizard.steps.offer_type.exchange,
-                      value: 'exchange',
-                      isSelected: controller.text == 'exchange',
+                      value: OfferType.exchange.name,
+                      isSelected: controller.text == OfferType.exchange.name,
                       onTap: (v) {
                         onSelect(v);
                         field.didChange(v);

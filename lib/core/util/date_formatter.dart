@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:intl/intl.dart';
 
 class DateFormatter {
@@ -11,25 +12,25 @@ class DateFormatter {
 
     if (messageDay == today) {
       return isHeader
-          ? "Aujourd'hui"
+          ? t.widgets.date.today
           : TimeOfDay.fromDateTime(date).format(context);
     }
 
     if (messageDay == yesterday) {
-      return 'Hier';
+      return t.widgets.date.yesterday;
     }
 
     if (now.difference(date).inDays < 7) {
-      const days = [
-        'Lundi',
-        'Mardi',
-        'Mercredi',
-        'Jeudi',
-        'Vendredi',
-        'Samedi',
-        'Dimanche'
-      ];
-      return days[date.weekday - 1];
+      return switch (date.weekday) {
+        DateTime.monday => t.widgets.date.days.monday,
+        DateTime.tuesday => t.widgets.date.days.tuesday,
+        DateTime.wednesday => t.widgets.date.days.wednesday,
+        DateTime.thursday => t.widgets.date.days.thursday,
+        DateTime.friday => t.widgets.date.days.friday,
+        DateTime.saturday => t.widgets.date.days.saturday,
+        DateTime.sunday => t.widgets.date.days.sunday,
+        _ => '',
+      };
     }
 
     return DateFormat('dd/MM/yyyy').format(date);

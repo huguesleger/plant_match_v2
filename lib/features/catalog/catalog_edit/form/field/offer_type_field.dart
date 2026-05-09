@@ -4,6 +4,7 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:plant_match_v2/features/catalog/catalog_edit/form/form_section.dart';
+import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catalog/presentation/widgets/selectable_item.dart';
 
 class OfferTypeField extends StatelessWidget {
@@ -34,8 +35,8 @@ class OfferTypeField extends StatelessWidget {
                   child: SelectableItem(
                     icon: LucideIcons.gift,
                     label: t.catalog.wizard.steps.offer_type.donation,
-                    value: "donation",
-                    isSelected: selectedOfferType == "donation",
+                    value: OfferType.donation.name,
+                    isSelected: selectedOfferType == OfferType.donation.name,
                     onTap: (val) {
                       onChanged(val);
                       field.didChange(val);
@@ -48,8 +49,8 @@ class OfferTypeField extends StatelessWidget {
                   child: SelectableItem(
                     icon: LucideIcons.heart_handshake,
                     label: t.catalog.wizard.steps.offer_type.exchange,
-                    value: "exchange",
-                    isSelected: selectedOfferType == "exchange",
+                    value: OfferType.exchange.name,
+                    isSelected: selectedOfferType == OfferType.exchange.name,
                     onTap: (val) {
                       onChanged(val);
                       field.didChange(val);

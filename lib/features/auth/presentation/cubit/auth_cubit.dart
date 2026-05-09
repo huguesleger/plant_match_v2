@@ -101,7 +101,7 @@ class AuthCubit extends Cubit<AuthState> {
         .isEmailVerified()
         .flatMap((verified) {
           if (!verified) {
-            return TaskEither.left(const AuthFailure("Email non vérifié"));
+            return TaskEither.left(const AuthEmailNotVerifiedFailure());
           }
 
           final firebaseUser = FirebaseAuth.instance.currentUser;
@@ -139,8 +139,7 @@ class AuthCubit extends Cubit<AuthState> {
         .match<AuthState>(
           (failure) {
             _isCheckingEmail = false;
-            return (failure is AuthFailure &&
-                    failure.message == "Email non vérifié")
+            return (failure is AuthEmailNotVerifiedFailure)
                 ? (_currentUser != null
                     ? AuthEmailVerificationSent(_currentUser!)
                     : const Unauthenticated())

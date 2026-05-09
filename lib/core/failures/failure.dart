@@ -28,6 +28,11 @@ class AuthFailure extends Failure {
   const AuthFailure(super.message);
 }
 
+/// Erreur spécifique quand l'email n'est pas vérifié
+class AuthEmailNotVerifiedFailure extends AuthFailure {
+  const AuthEmailNotVerifiedFailure() : super("Email non vérifié");
+}
+
 /// Erreur spécifique à la localisation
 class LocationFailure extends Failure {
   const LocationFailure(super.message);

@@ -197,7 +197,8 @@ class FirebaseChatPlant implements ChatPlantRepository {
           plantExchangeType: data['plantExchangeType'],
           plantOwnerId: data['plantOwnerId'],
           plantOwnerName: data['plantOwnerName'],
-          plantOwnerAvatar: Option.fromNullable(data['plantOwnerAvatar'] as String?),
+          plantOwnerAvatar:
+              Option.fromNullable(data['plantOwnerAvatar'] as String?),
           participants: List<String>.from(data['participants']),
           lastMessage: Option.fromNullable(data['lastMessage'] as String?),
           lastMessageAt: Option.fromNullable(
@@ -208,7 +209,8 @@ class FirebaseChatPlant implements ChatPlantRepository {
               .firstWhere((id) => id != uid),
           hasUnreadExchange: false,
           isExchangeCompleted: data['isExchangeCompleted'] ?? false,
-          acceptedExchangeId: Option.fromNullable(data['acceptedExchangeId'] as String?),
+          acceptedExchangeId:
+              Option.fromNullable(data['acceptedExchangeId'] as String?),
           isOtherUserOnline: false,
         );
       }).toList();
@@ -302,7 +304,8 @@ class FirebaseChatPlant implements ChatPlantRepository {
 
         return List<String>.from(data['participants']);
       },
-      (error, _) => UnexpectedFailure('Erreur récupération participants: $error'),
+      (error, _) =>
+          UnexpectedFailure('Erreur récupération participants: $error'),
     );
   }
 

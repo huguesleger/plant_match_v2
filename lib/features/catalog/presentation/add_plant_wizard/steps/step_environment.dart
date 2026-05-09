@@ -3,6 +3,7 @@ import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/widgets/add_plant_wizard_item.dart';
 import 'package:plant_match_v2/features/catalog/presentation/widgets/selectable_item.dart';
 
@@ -36,8 +37,8 @@ class StepEnvironment extends StatelessWidget {
                     child: SelectableItem(
                       icon: LucideIcons.house,
                       label: t.catalog.wizard.steps.category.indoor,
-                      value: 'indoor',
-                      isSelected: controller.text == 'indoor',
+                      value: Environment.indoor.name,
+                      isSelected: controller.text == Environment.indoor.name,
                       onTap: (v) {
                         controller.text = v;
                         field.didChange(v);
@@ -50,8 +51,8 @@ class StepEnvironment extends StatelessWidget {
                     child: SelectableItem(
                       icon: LucideIcons.trees,
                       label: t.catalog.wizard.steps.category.outdoor,
-                      value: 'outdoor',
-                      isSelected: controller.text == 'outdoor',
+                      value: Environment.outdoor.name,
+                      isSelected: controller.text == Environment.outdoor.name,
                       onTap: (v) {
                         controller.text = v;
                         field.didChange(v);

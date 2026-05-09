@@ -299,6 +299,7 @@ class TranslationsWidgetsFr {
 	late final TranslationsWidgetsNavigationFr navigation = TranslationsWidgetsNavigationFr.internal(_root);
 	late final TranslationsWidgetsErrorFr error = TranslationsWidgetsErrorFr.internal(_root);
 	late final TranslationsWidgetsCommonFr common = TranslationsWidgetsCommonFr.internal(_root);
+	late final TranslationsWidgetsDateFr date = TranslationsWidgetsDateFr.internal(_root);
 }
 
 // Path: aroundMeMap.header
@@ -1617,6 +1618,23 @@ class TranslationsWidgetsCommonFr {
 	String get confirm => 'Confirmer';
 }
 
+// Path: widgets.date
+class TranslationsWidgetsDateFr {
+	TranslationsWidgetsDateFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aujourd'hui'
+	String get today => 'Aujourd\'hui';
+
+	/// fr: 'Hier'
+	String get yesterday => 'Hier';
+
+	late final TranslationsWidgetsDateDaysFr days = TranslationsWidgetsDateDaysFr.internal(_root);
+}
+
 // Path: auth.common.email
 class TranslationsAuthCommonEmailFr {
 	TranslationsAuthCommonEmailFr.internal(this._root);
@@ -2504,6 +2522,36 @@ class TranslationsProfilCardsAwardsFr {
 	String get description => 'Mes badges et mon niveau';
 }
 
+// Path: widgets.date.days
+class TranslationsWidgetsDateDaysFr {
+	TranslationsWidgetsDateDaysFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Lundi'
+	String get monday => 'Lundi';
+
+	/// fr: 'Mardi'
+	String get tuesday => 'Mardi';
+
+	/// fr: 'Mercredi'
+	String get wednesday => 'Mercredi';
+
+	/// fr: 'Jeudi'
+	String get thursday => 'Jeudi';
+
+	/// fr: 'Vendredi'
+	String get friday => 'Vendredi';
+
+	/// fr: 'Samedi'
+	String get saturday => 'Samedi';
+
+	/// fr: 'Dimanche'
+	String get sunday => 'Dimanche';
+}
+
 // Path: catalog.wizard.steps.name
 class TranslationsCatalogWizardStepsNameFr {
 	TranslationsCatalogWizardStepsNameFr.internal(this._root);
@@ -3154,6 +3202,15 @@ extension on Translations {
 			'widgets.common.viewMore' => 'En voir +',
 			'widgets.common.cancel' => 'Annuler',
 			'widgets.common.confirm' => 'Confirmer',
+			'widgets.date.today' => 'Aujourd\'hui',
+			'widgets.date.yesterday' => 'Hier',
+			'widgets.date.days.monday' => 'Lundi',
+			'widgets.date.days.tuesday' => 'Mardi',
+			'widgets.date.days.wednesday' => 'Mercredi',
+			'widgets.date.days.thursday' => 'Jeudi',
+			'widgets.date.days.friday' => 'Vendredi',
+			'widgets.date.days.saturday' => 'Samedi',
+			'widgets.date.days.sunday' => 'Dimanche',
 			_ => null,
 		};
 	}

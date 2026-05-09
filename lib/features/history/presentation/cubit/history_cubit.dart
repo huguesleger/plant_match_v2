@@ -66,11 +66,11 @@ class HistoryCubit extends Cubit<HistoryState> {
     return switch (filter) {
       HistoryStatusFilter.all => items,
       HistoryStatusFilter.accepted =>
-        items.where((i) => i.rawStatus == 'accepted').toList(),
+        items.where((i) => i.rawStatus == ExchangeStatus.accepted.name).toList(),
       HistoryStatusFilter.completed =>
-        items.where((i) => i.rawStatus == 'completed').toList(),
+        items.where((i) => i.rawStatus == ExchangeStatus.completed.name).toList(),
       HistoryStatusFilter.rejected =>
-        items.where((i) => i.rawStatus == 'rejected').toList(),
+        items.where((i) => i.rawStatus == ExchangeStatus.rejected.name).toList(),
     };
   }
 }

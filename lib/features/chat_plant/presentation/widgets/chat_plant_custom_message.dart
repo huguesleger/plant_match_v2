@@ -55,8 +55,7 @@ class ChatPlantCustomMessage extends StatelessWidget {
           } catch (e) {
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                    content: Text(t.chatPlant.plant_card.error_loading)),
+                SnackBar(content: Text(t.chatPlant.plant_card.error_loading)),
               );
             }
           }
