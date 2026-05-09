@@ -40,6 +40,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	Translations $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => Translations(meta: meta ?? this.$meta);
 
 	// Translations
+	late final TranslationsCatalogFr catalog = TranslationsCatalogFr.internal(_root);
 	late final TranslationsChatPlantFr chatPlant = TranslationsChatPlantFr.internal(_root);
 	late final TranslationsExchangeFr exchange = TranslationsExchangeFr.internal(_root);
 	late final TranslationsFavoriteFr favorite = TranslationsFavoriteFr.internal(_root);
@@ -52,6 +53,25 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final TranslationsPersonalInformationFr personalInformation = TranslationsPersonalInformationFr.internal(_root);
 	late final TranslationsProfilFr profil = TranslationsProfilFr.internal(_root);
 	late final TranslationsUserFr user = TranslationsUserFr.internal(_root);
+}
+
+// Path: catalog
+class TranslationsCatalogFr {
+	TranslationsCatalogFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+	late final TranslationsCatalogScreenFr screen = TranslationsCatalogScreenFr.internal(_root);
+	late final TranslationsCatalogTabsFr tabs = TranslationsCatalogTabsFr.internal(_root);
+	late final TranslationsCatalogEmptyFr empty = TranslationsCatalogEmptyFr.internal(_root);
+	late final TranslationsCatalogCardFr card = TranslationsCatalogCardFr.internal(_root);
+	late final TranslationsCatalogStatusFr status = TranslationsCatalogStatusFr.internal(_root);
+	late final TranslationsCatalogDetailFr detail = TranslationsCatalogDetailFr.internal(_root);
+	late final TranslationsCatalogEditFr edit = TranslationsCatalogEditFr.internal(_root);
+	late final TranslationsCatalogWizardFr wizard = TranslationsCatalogWizardFr.internal(_root);
+	late final TranslationsCatalogFamiliesFr families = TranslationsCatalogFamiliesFr.internal(_root);
+	late final TranslationsCatalogEnumsFr enums = TranslationsCatalogEnumsFr.internal(_root);
 }
 
 // Path: chatPlant
@@ -220,6 +240,255 @@ class TranslationsUserFr {
 	late final TranslationsUserRecentPlantsFr recent_plants = TranslationsUserRecentPlantsFr.internal(_root);
 	late final TranslationsUserCatalogListFr catalog_list = TranslationsUserCatalogListFr.internal(_root);
 	late final TranslationsUserDetailPlantFr detail_plant = TranslationsUserDetailPlantFr.internal(_root);
+}
+
+// Path: catalog.screen
+class TranslationsCatalogScreenFr {
+	TranslationsCatalogScreenFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Mes plantes'
+	String get title => 'Mes plantes';
+
+	/// fr: 'Mon catalogue de plantes à partager'
+	String get subtitle => 'Mon catalogue de plantes à partager';
+
+	/// fr: 'Ton catalogue est vide. Ajoute ta première plante pour commencer.'
+	String get empty_message => 'Ton catalogue est vide. Ajoute ta première plante pour commencer.';
+}
+
+// Path: catalog.tabs
+class TranslationsCatalogTabsFr {
+	TranslationsCatalogTabsFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Publié (${count})'
+	String published({required Object count}) => 'Publié (${count})';
+
+	/// fr: 'Brouillon (${count})'
+	String draft({required Object count}) => 'Brouillon (${count})';
+
+	/// fr: 'Archivé (${count})'
+	String archived({required Object count}) => 'Archivé (${count})';
+}
+
+// Path: catalog.empty
+class TranslationsCatalogEmptyFr {
+	TranslationsCatalogEmptyFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aucune plante archivée'
+	String get no_archived => 'Aucune plante archivée';
+
+	/// fr: 'Aucun brouillon'
+	String get no_draft => 'Aucun brouillon';
+
+	/// fr: 'Aucune plante publiée'
+	String get no_published => 'Aucune plante publiée';
+
+	/// fr: 'Aucune description'
+	String get no_description => 'Aucune description';
+}
+
+// Path: catalog.card
+class TranslationsCatalogCardFr {
+	TranslationsCatalogCardFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Plantes & boutures'
+	String get title => 'Plantes & boutures';
+
+	/// fr: 'Mon catalogue de ce que j’ai à partager'
+	String get subtitle => 'Mon catalogue de ce que j’ai à partager';
+}
+
+// Path: catalog.status
+class TranslationsCatalogStatusFr {
+	TranslationsCatalogStatusFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Brouillon'
+	String get draft => 'Brouillon';
+
+	/// fr: 'Publié'
+	String get published => 'Publié';
+
+	/// fr: 'Archivé'
+	String get archived => 'Archivé';
+}
+
+// Path: catalog.detail
+class TranslationsCatalogDetailFr {
+	TranslationsCatalogDetailFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'plante ${env}'
+	String plant_env({required Object env}) => 'plante ${env}';
+
+	/// fr: 'Description'
+	String get description => 'Description';
+
+	/// fr: 'lumière'
+	String get lighting => 'lumière';
+
+	/// fr: 'arrosage'
+	String get watering => 'arrosage';
+
+	/// fr: 'entretien'
+	String get maintenance => 'entretien';
+
+	/// fr: 'Supprimer'
+	String get delete => 'Supprimer';
+
+	/// fr: 'Modifier'
+	String get edit => 'Modifier';
+
+	late final TranslationsCatalogDetailDeleteDialogFr delete_dialog = TranslationsCatalogDetailDeleteDialogFr.internal(_root);
+}
+
+// Path: catalog.edit
+class TranslationsCatalogEditFr {
+	TranslationsCatalogEditFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Modifier ma plante'
+	String get title => 'Modifier ma plante';
+
+	/// fr: 'Modifier ${name}'
+	String modifier_with_name({required Object name}) => 'Modifier ${name}';
+
+	/// fr: 'Enregistrer les modifications'
+	String get save => 'Enregistrer les modifications';
+
+	/// fr: 'Erreur upload: ${error}'
+	String upload_error({required Object error}) => 'Erreur upload: ${error}';
+
+	late final TranslationsCatalogEditNameFr name = TranslationsCatalogEditNameFr.internal(_root);
+	late final TranslationsCatalogEditDescriptionFr description = TranslationsCatalogEditDescriptionFr.internal(_root);
+	late final TranslationsCatalogEditFamilyFr family = TranslationsCatalogEditFamilyFr.internal(_root);
+	late final TranslationsCatalogEditOfferTypeFr offer_type = TranslationsCatalogEditOfferTypeFr.internal(_root);
+	late final TranslationsCatalogEditMaintenanceFr maintenance = TranslationsCatalogEditMaintenanceFr.internal(_root);
+	late final TranslationsCatalogEditLightingFr lighting = TranslationsCatalogEditLightingFr.internal(_root);
+
+	/// fr: 'Publier la plante'
+	String get publish_label => 'Publier la plante';
+
+	late final TranslationsCatalogEditWateringFr watering = TranslationsCatalogEditWateringFr.internal(_root);
+	late final TranslationsCatalogEditEnvironmentFr environment = TranslationsCatalogEditEnvironmentFr.internal(_root);
+	late final TranslationsCatalogEditImageFr image = TranslationsCatalogEditImageFr.internal(_root);
+}
+
+// Path: catalog.wizard
+class TranslationsCatalogWizardFr {
+	TranslationsCatalogWizardFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ajouter une plante'
+	String get title => 'Ajouter une plante';
+
+	/// fr: 'Création...'
+	String get loading => 'Création...';
+
+	/// fr: 'Erreur lors de la sélection d’image.'
+	String get error_image => 'Erreur lors de la sélection d’image.';
+
+	/// fr: 'Sélectionner des images'
+	String get select_images => 'Sélectionner des images';
+
+	/// fr: 'Image ${index}'
+	String image_count({required Object index}) => 'Image ${index}';
+
+	/// fr: 'Ce champ est requis'
+	String get required_field => 'Ce champ est requis';
+
+	/// fr: 'Publier la plante'
+	String get publish_label => 'Publier la plante';
+
+	/// fr: 'Terminer'
+	String get finish => 'Terminer';
+
+	/// fr: 'Suivant'
+	String get next => 'Suivant';
+
+	/// fr: 'Erreur: ${error}'
+	String error_generic({required Object error}) => 'Erreur: ${error}';
+
+	late final TranslationsCatalogWizardQuitDialogFr quit_dialog = TranslationsCatalogWizardQuitDialogFr.internal(_root);
+	late final TranslationsCatalogWizardStepsFr steps = TranslationsCatalogWizardStepsFr.internal(_root);
+}
+
+// Path: catalog.families
+class TranslationsCatalogFamiliesFr {
+	TranslationsCatalogFamiliesFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Tropicale'
+	String get tropical => 'Tropicale';
+
+	/// fr: 'Succulente'
+	String get succulent => 'Succulente';
+
+	/// fr: 'Aquatique'
+	String get aquatic => 'Aquatique';
+
+	/// fr: 'Grimpante'
+	String get climbing => 'Grimpante';
+
+	/// fr: 'Bonsaï'
+	String get bonsai => 'Bonsaï';
+
+	/// fr: 'Fleurie'
+	String get flower => 'Fleurie';
+
+	/// fr: 'Aromatique'
+	String get aromatic => 'Aromatique';
+
+	/// fr: 'Médicinale'
+	String get medical => 'Médicinale';
+
+	/// fr: 'Carnivore'
+	String get carnivorous => 'Carnivore';
+}
+
+// Path: catalog.enums
+class TranslationsCatalogEnumsFr {
+	TranslationsCatalogEnumsFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+	late final TranslationsCatalogEnumsLightingFr lighting = TranslationsCatalogEnumsLightingFr.internal(_root);
+	late final TranslationsCatalogEnumsEnvironmentFr environment = TranslationsCatalogEnumsEnvironmentFr.internal(_root);
+	late final TranslationsCatalogEnumsMaintenanceFr maintenance = TranslationsCatalogEnumsMaintenanceFr.internal(_root);
+	late final TranslationsCatalogEnumsWateringFr watering = TranslationsCatalogEnumsWateringFr.internal(_root);
+	late final TranslationsCatalogEnumsOfferTypeFr offer_type = TranslationsCatalogEnumsOfferTypeFr.internal(_root);
 }
 
 // Path: chatPlant.screen
@@ -1021,6 +1290,274 @@ class TranslationsUserDetailPlantFr {
 	String get maintenance => 'entretien';
 }
 
+// Path: catalog.detail.delete_dialog
+class TranslationsCatalogDetailDeleteDialogFr {
+	TranslationsCatalogDetailDeleteDialogFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Supprimer la plante'
+	String get title => 'Supprimer la plante';
+
+	/// fr: 'Êtes-vous sûr de vouloir supprimer "${name}" ? Cette action est irréversible.'
+	String content({required Object name}) => 'Êtes-vous sûr de vouloir supprimer "${name}" ?\n\nCette action est irréversible.';
+
+	/// fr: 'Annuler'
+	String get cancel => 'Annuler';
+}
+
+// Path: catalog.edit.name
+class TranslationsCatalogEditNameFr {
+	TranslationsCatalogEditNameFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Nom de la plante'
+	String get hint => 'Nom de la plante';
+
+	/// fr: 'Nom'
+	String get label => 'Nom';
+}
+
+// Path: catalog.edit.description
+class TranslationsCatalogEditDescriptionFr {
+	TranslationsCatalogEditDescriptionFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ajouter une brève description'
+	String get title => 'Ajouter une brève description';
+
+	/// fr: 'Description de la plante'
+	String get hint => 'Description de la plante';
+
+	/// fr: 'Description'
+	String get label => 'Description';
+
+	/// fr: 'Maximum 150 caractères'
+	String get max_length => 'Maximum 150 caractères';
+}
+
+// Path: catalog.edit.family
+class TranslationsCatalogEditFamilyFr {
+	TranslationsCatalogEditFamilyFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Sélectionner une ou des catégorie(s)'
+	String get title => 'Sélectionner une ou des catégorie(s)';
+}
+
+// Path: catalog.edit.offer_type
+class TranslationsCatalogEditOfferTypeFr {
+	TranslationsCatalogEditOfferTypeFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Que souhaitez-vous faire de votre plante ?'
+	String get title => 'Que souhaitez-vous faire de votre plante ?';
+}
+
+// Path: catalog.edit.maintenance
+class TranslationsCatalogEditMaintenanceFr {
+	TranslationsCatalogEditMaintenanceFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Sélectionner un niveau de difficulté'
+	String get title => 'Sélectionner un niveau de difficulté';
+
+	/// fr: 'Très résistante, peu d'arrosage'
+	String get low_subtitle => 'Très résistante, peu d\'arrosage';
+
+	/// fr: 'Quelques soins réguliers'
+	String get medium_subtitle => 'Quelques soins réguliers';
+
+	/// fr: 'Sensible, besoin de conditions spécifiques.'
+	String get high_subtitle => 'Sensible, besoin de conditions spécifiques.';
+}
+
+// Path: catalog.edit.lighting
+class TranslationsCatalogEditLightingFr {
+	TranslationsCatalogEditLightingFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Sélectionner le besoin en lumière'
+	String get title => 'Sélectionner le besoin en lumière';
+}
+
+// Path: catalog.edit.watering
+class TranslationsCatalogEditWateringFr {
+	TranslationsCatalogEditWateringFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Sélectionner le besoin en eau'
+	String get title => 'Sélectionner le besoin en eau';
+}
+
+// Path: catalog.edit.environment
+class TranslationsCatalogEditEnvironmentFr {
+	TranslationsCatalogEditEnvironmentFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Sélectionner une catégorie pour votre plante'
+	String get title => 'Sélectionner une catégorie pour votre plante';
+}
+
+// Path: catalog.edit.image
+class TranslationsCatalogEditImageFr {
+	TranslationsCatalogEditImageFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Sélectionner une à trois photos de votre plante'
+	String get title => 'Sélectionner une à trois photos de votre plante';
+}
+
+// Path: catalog.wizard.quit_dialog
+class TranslationsCatalogWizardQuitDialogFr {
+	TranslationsCatalogWizardQuitDialogFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Quitter sans enregistrer ?'
+	String get title => 'Quitter sans enregistrer ?';
+
+	/// fr: 'Les informations saisies seront perdues.'
+	String get content => 'Les informations saisies seront perdues.';
+
+	/// fr: 'Annuler'
+	String get cancel => 'Annuler';
+
+	/// fr: 'Quitter'
+	String get quit => 'Quitter';
+}
+
+// Path: catalog.wizard.steps
+class TranslationsCatalogWizardStepsFr {
+	TranslationsCatalogWizardStepsFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+	late final TranslationsCatalogWizardStepsNameFr name = TranslationsCatalogWizardStepsNameFr.internal(_root);
+	late final TranslationsCatalogWizardStepsCategoryFr category = TranslationsCatalogWizardStepsCategoryFr.internal(_root);
+	late final TranslationsCatalogWizardStepsFamilyFr family = TranslationsCatalogWizardStepsFamilyFr.internal(_root);
+	late final TranslationsCatalogWizardStepsDescriptionFr description = TranslationsCatalogWizardStepsDescriptionFr.internal(_root);
+	late final TranslationsCatalogWizardStepsImageFr image = TranslationsCatalogWizardStepsImageFr.internal(_root);
+	late final TranslationsCatalogWizardStepsWateringFr watering = TranslationsCatalogWizardStepsWateringFr.internal(_root);
+	late final TranslationsCatalogWizardStepsLightingFr lighting = TranslationsCatalogWizardStepsLightingFr.internal(_root);
+	late final TranslationsCatalogWizardStepsMaintenanceFr maintenance = TranslationsCatalogWizardStepsMaintenanceFr.internal(_root);
+	late final TranslationsCatalogWizardStepsOfferTypeFr offer_type = TranslationsCatalogWizardStepsOfferTypeFr.internal(_root);
+	late final TranslationsCatalogWizardStepsPublishFr publish = TranslationsCatalogWizardStepsPublishFr.internal(_root);
+}
+
+// Path: catalog.enums.lighting
+class TranslationsCatalogEnumsLightingFr {
+	TranslationsCatalogEnumsLightingFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Soleil'
+	String get sun => 'Soleil';
+
+	/// fr: 'Indirecte'
+	String get indirect => 'Indirecte';
+
+	/// fr: 'Ombre'
+	String get shade => 'Ombre';
+}
+
+// Path: catalog.enums.environment
+class TranslationsCatalogEnumsEnvironmentFr {
+	TranslationsCatalogEnumsEnvironmentFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Intérieur'
+	String get indoor => 'Intérieur';
+
+	/// fr: 'Extérieur'
+	String get outdoor => 'Extérieur';
+}
+
+// Path: catalog.enums.maintenance
+class TranslationsCatalogEnumsMaintenanceFr {
+	TranslationsCatalogEnumsMaintenanceFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Facile'
+	String get low => 'Facile';
+
+	/// fr: 'Moyen'
+	String get medium => 'Moyen';
+
+	/// fr: 'Difficile'
+	String get high => 'Difficile';
+}
+
+// Path: catalog.enums.watering
+class TranslationsCatalogEnumsWateringFr {
+	TranslationsCatalogEnumsWateringFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Peu d'eau'
+	String get little => 'Peu d\'eau';
+
+	/// fr: 'Régulier'
+	String get regularly => 'Régulier';
+}
+
+// Path: catalog.enums.offer_type
+class TranslationsCatalogEnumsOfferTypeFr {
+	TranslationsCatalogEnumsOfferTypeFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Échange'
+	String get exchange => 'Échange';
+
+	/// fr: 'Donation'
+	String get donation => 'Donation';
+}
+
 // Path: chatPlant.view.unblock_dialog
 class TranslationsChatPlantViewUnblockDialogFr {
 	TranslationsChatPlantViewUnblockDialogFr.internal(this._root);
@@ -1502,6 +2039,213 @@ class TranslationsProfilCardsAwardsFr {
 	String get description => 'Mes badges et mon niveau';
 }
 
+// Path: catalog.wizard.steps.name
+class TranslationsCatalogWizardStepsNameFr {
+	TranslationsCatalogWizardStepsNameFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Nom de la plante'
+	String get title => 'Nom de la plante';
+
+	/// fr: 'Entrez le nom de la plante'
+	String get description => 'Entrez le nom de la plante';
+
+	/// fr: 'Nom'
+	String get label => 'Nom';
+
+	/// fr: 'Nom'
+	String get hint => 'Nom';
+}
+
+// Path: catalog.wizard.steps.category
+class TranslationsCatalogWizardStepsCategoryFr {
+	TranslationsCatalogWizardStepsCategoryFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Quel environnement ?'
+	String get title => 'Quel environnement ?';
+
+	/// fr: 'Sélectionnez une catégorie'
+	String get description => 'Sélectionnez une catégorie';
+
+	/// fr: 'Intérieur'
+	String get indoor => 'Intérieur';
+
+	/// fr: 'Extérieur'
+	String get outdoor => 'Extérieur';
+}
+
+// Path: catalog.wizard.steps.family
+class TranslationsCatalogWizardStepsFamilyFr {
+	TranslationsCatalogWizardStepsFamilyFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Choisir une famille'
+	String get title => 'Choisir une famille';
+
+	/// fr: 'Sélectionnez une ou des catégorie(s)'
+	String get description => 'Sélectionnez une ou des catégorie(s)';
+}
+
+// Path: catalog.wizard.steps.description
+class TranslationsCatalogWizardStepsDescriptionFr {
+	TranslationsCatalogWizardStepsDescriptionFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Description'
+	String get title => 'Description';
+
+	/// fr: 'Ajouter une brève description'
+	String get description => 'Ajouter une brève description';
+
+	/// fr: 'Description'
+	String get label => 'Description';
+
+	/// fr: 'Description'
+	String get hint => 'Description';
+}
+
+// Path: catalog.wizard.steps.image
+class TranslationsCatalogWizardStepsImageFr {
+	TranslationsCatalogWizardStepsImageFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ajouter une photo'
+	String get title => 'Ajouter une photo';
+
+	/// fr: 'Sélectionner une à trois photos de votre plante'
+	String get description => 'Sélectionner une à trois photos de votre plante';
+}
+
+// Path: catalog.wizard.steps.watering
+class TranslationsCatalogWizardStepsWateringFr {
+	TranslationsCatalogWizardStepsWateringFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Arrosage'
+	String get title => 'Arrosage';
+
+	/// fr: 'Besoin en eau'
+	String get description => 'Besoin en eau';
+
+	/// fr: 'Eau'
+	String get label => 'Eau';
+
+	/// fr: 'Peu d'eau'
+	String get little => 'Peu d\'eau';
+
+	/// fr: 'Régulier'
+	String get regularly => 'Régulier';
+}
+
+// Path: catalog.wizard.steps.lighting
+class TranslationsCatalogWizardStepsLightingFr {
+	TranslationsCatalogWizardStepsLightingFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Lumière'
+	String get title => 'Lumière';
+
+	/// fr: 'Besoin en lumière'
+	String get description => 'Besoin en lumière';
+
+	/// fr: 'Lumière'
+	String get label => 'Lumière';
+
+	/// fr: 'Soleil'
+	String get sun => 'Soleil';
+
+	/// fr: 'Indirecte'
+	String get indirect => 'Indirecte';
+
+	/// fr: 'Ombre'
+	String get shade => 'Ombre';
+}
+
+// Path: catalog.wizard.steps.maintenance
+class TranslationsCatalogWizardStepsMaintenanceFr {
+	TranslationsCatalogWizardStepsMaintenanceFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Entretien'
+	String get title => 'Entretien';
+
+	/// fr: 'Niveau de difficulté'
+	String get description => 'Niveau de difficulté';
+
+	/// fr: 'Difficulté'
+	String get label => 'Difficulté';
+
+	/// fr: 'Facile'
+	String get low => 'Facile';
+
+	/// fr: 'Moyen'
+	String get medium => 'Moyen';
+
+	/// fr: 'Difficile'
+	String get high => 'Difficile';
+}
+
+// Path: catalog.wizard.steps.offer_type
+class TranslationsCatalogWizardStepsOfferTypeFr {
+	TranslationsCatalogWizardStepsOfferTypeFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Offre'
+	String get title => 'Offre';
+
+	/// fr: 'Que faire de votre plante ?'
+	String get description => 'Que faire de votre plante ?';
+
+	/// fr: 'Donation'
+	String get donation => 'Donation';
+
+	/// fr: 'Echange'
+	String get exchange => 'Echange';
+}
+
+// Path: catalog.wizard.steps.publish
+class TranslationsCatalogWizardStepsPublishFr {
+	TranslationsCatalogWizardStepsPublishFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Publication'
+	String get title => 'Publication';
+
+	/// fr: 'Publier maintenant ?'
+	String get description => 'Publier maintenant ?';
+}
+
 // Path: level.levels.k1.actions
 class TranslationsLevelLevelsK1ActionsFr {
 	TranslationsLevelLevelsK1ActionsFr.internal(this._root);
@@ -1540,6 +2284,126 @@ class TranslationsLevelLevelsK2ActionsFr {
 extension on Translations {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'catalog.screen.title' => 'Mes plantes',
+			'catalog.screen.subtitle' => 'Mon catalogue de plantes à partager',
+			'catalog.screen.empty_message' => 'Ton catalogue est vide. Ajoute ta première plante pour commencer.',
+			'catalog.tabs.published' => ({required Object count}) => 'Publié (${count})',
+			'catalog.tabs.draft' => ({required Object count}) => 'Brouillon (${count})',
+			'catalog.tabs.archived' => ({required Object count}) => 'Archivé (${count})',
+			'catalog.empty.no_archived' => 'Aucune plante archivée',
+			'catalog.empty.no_draft' => 'Aucun brouillon',
+			'catalog.empty.no_published' => 'Aucune plante publiée',
+			'catalog.empty.no_description' => 'Aucune description',
+			'catalog.card.title' => 'Plantes & boutures',
+			'catalog.card.subtitle' => 'Mon catalogue de ce que j’ai à partager',
+			'catalog.status.draft' => 'Brouillon',
+			'catalog.status.published' => 'Publié',
+			'catalog.status.archived' => 'Archivé',
+			'catalog.detail.plant_env' => ({required Object env}) => 'plante ${env}',
+			'catalog.detail.description' => 'Description',
+			'catalog.detail.lighting' => 'lumière',
+			'catalog.detail.watering' => 'arrosage',
+			'catalog.detail.maintenance' => 'entretien',
+			'catalog.detail.delete' => 'Supprimer',
+			'catalog.detail.edit' => 'Modifier',
+			'catalog.detail.delete_dialog.title' => 'Supprimer la plante',
+			'catalog.detail.delete_dialog.content' => ({required Object name}) => 'Êtes-vous sûr de vouloir supprimer "${name}" ?\n\nCette action est irréversible.',
+			'catalog.detail.delete_dialog.cancel' => 'Annuler',
+			'catalog.edit.title' => 'Modifier ma plante',
+			'catalog.edit.modifier_with_name' => ({required Object name}) => 'Modifier ${name}',
+			'catalog.edit.save' => 'Enregistrer les modifications',
+			'catalog.edit.upload_error' => ({required Object error}) => 'Erreur upload: ${error}',
+			'catalog.edit.name.hint' => 'Nom de la plante',
+			'catalog.edit.name.label' => 'Nom',
+			'catalog.edit.description.title' => 'Ajouter une brève description',
+			'catalog.edit.description.hint' => 'Description de la plante',
+			'catalog.edit.description.label' => 'Description',
+			'catalog.edit.description.max_length' => 'Maximum 150 caractères',
+			'catalog.edit.family.title' => 'Sélectionner une ou des catégorie(s)',
+			'catalog.edit.offer_type.title' => 'Que souhaitez-vous faire de votre plante ?',
+			'catalog.edit.maintenance.title' => 'Sélectionner un niveau de difficulté',
+			'catalog.edit.maintenance.low_subtitle' => 'Très résistante, peu d\'arrosage',
+			'catalog.edit.maintenance.medium_subtitle' => 'Quelques soins réguliers',
+			'catalog.edit.maintenance.high_subtitle' => 'Sensible, besoin de conditions spécifiques.',
+			'catalog.edit.lighting.title' => 'Sélectionner le besoin en lumière',
+			'catalog.edit.publish_label' => 'Publier la plante',
+			'catalog.edit.watering.title' => 'Sélectionner le besoin en eau',
+			'catalog.edit.environment.title' => 'Sélectionner une catégorie pour votre plante',
+			'catalog.edit.image.title' => 'Sélectionner une à trois photos de votre plante',
+			'catalog.wizard.title' => 'Ajouter une plante',
+			'catalog.wizard.loading' => 'Création...',
+			'catalog.wizard.error_image' => 'Erreur lors de la sélection d’image.',
+			'catalog.wizard.select_images' => 'Sélectionner des images',
+			'catalog.wizard.image_count' => ({required Object index}) => 'Image ${index}',
+			'catalog.wizard.required_field' => 'Ce champ est requis',
+			'catalog.wizard.publish_label' => 'Publier la plante',
+			'catalog.wizard.finish' => 'Terminer',
+			'catalog.wizard.next' => 'Suivant',
+			'catalog.wizard.error_generic' => ({required Object error}) => 'Erreur: ${error}',
+			'catalog.wizard.quit_dialog.title' => 'Quitter sans enregistrer ?',
+			'catalog.wizard.quit_dialog.content' => 'Les informations saisies seront perdues.',
+			'catalog.wizard.quit_dialog.cancel' => 'Annuler',
+			'catalog.wizard.quit_dialog.quit' => 'Quitter',
+			'catalog.wizard.steps.name.title' => 'Nom de la plante',
+			'catalog.wizard.steps.name.description' => 'Entrez le nom de la plante',
+			'catalog.wizard.steps.name.label' => 'Nom',
+			'catalog.wizard.steps.name.hint' => 'Nom',
+			'catalog.wizard.steps.category.title' => 'Quel environnement ?',
+			'catalog.wizard.steps.category.description' => 'Sélectionnez une catégorie',
+			'catalog.wizard.steps.category.indoor' => 'Intérieur',
+			'catalog.wizard.steps.category.outdoor' => 'Extérieur',
+			'catalog.wizard.steps.family.title' => 'Choisir une famille',
+			'catalog.wizard.steps.family.description' => 'Sélectionnez une ou des catégorie(s)',
+			'catalog.wizard.steps.description.title' => 'Description',
+			'catalog.wizard.steps.description.description' => 'Ajouter une brève description',
+			'catalog.wizard.steps.description.label' => 'Description',
+			'catalog.wizard.steps.description.hint' => 'Description',
+			'catalog.wizard.steps.image.title' => 'Ajouter une photo',
+			'catalog.wizard.steps.image.description' => 'Sélectionner une à trois photos de votre plante',
+			'catalog.wizard.steps.watering.title' => 'Arrosage',
+			'catalog.wizard.steps.watering.description' => 'Besoin en eau',
+			'catalog.wizard.steps.watering.label' => 'Eau',
+			'catalog.wizard.steps.watering.little' => 'Peu d\'eau',
+			'catalog.wizard.steps.watering.regularly' => 'Régulier',
+			'catalog.wizard.steps.lighting.title' => 'Lumière',
+			'catalog.wizard.steps.lighting.description' => 'Besoin en lumière',
+			'catalog.wizard.steps.lighting.label' => 'Lumière',
+			'catalog.wizard.steps.lighting.sun' => 'Soleil',
+			'catalog.wizard.steps.lighting.indirect' => 'Indirecte',
+			'catalog.wizard.steps.lighting.shade' => 'Ombre',
+			'catalog.wizard.steps.maintenance.title' => 'Entretien',
+			'catalog.wizard.steps.maintenance.description' => 'Niveau de difficulté',
+			'catalog.wizard.steps.maintenance.label' => 'Difficulté',
+			'catalog.wizard.steps.maintenance.low' => 'Facile',
+			'catalog.wizard.steps.maintenance.medium' => 'Moyen',
+			'catalog.wizard.steps.maintenance.high' => 'Difficile',
+			'catalog.wizard.steps.offer_type.title' => 'Offre',
+			'catalog.wizard.steps.offer_type.description' => 'Que faire de votre plante ?',
+			'catalog.wizard.steps.offer_type.donation' => 'Donation',
+			'catalog.wizard.steps.offer_type.exchange' => 'Echange',
+			'catalog.wizard.steps.publish.title' => 'Publication',
+			'catalog.wizard.steps.publish.description' => 'Publier maintenant ?',
+			'catalog.families.tropical' => 'Tropicale',
+			'catalog.families.succulent' => 'Succulente',
+			'catalog.families.aquatic' => 'Aquatique',
+			'catalog.families.climbing' => 'Grimpante',
+			'catalog.families.bonsai' => 'Bonsaï',
+			'catalog.families.flower' => 'Fleurie',
+			'catalog.families.aromatic' => 'Aromatique',
+			'catalog.families.medical' => 'Médicinale',
+			'catalog.families.carnivorous' => 'Carnivore',
+			'catalog.enums.lighting.sun' => 'Soleil',
+			'catalog.enums.lighting.indirect' => 'Indirecte',
+			'catalog.enums.lighting.shade' => 'Ombre',
+			'catalog.enums.environment.indoor' => 'Intérieur',
+			'catalog.enums.environment.outdoor' => 'Extérieur',
+			'catalog.enums.maintenance.low' => 'Facile',
+			'catalog.enums.maintenance.medium' => 'Moyen',
+			'catalog.enums.maintenance.high' => 'Difficile',
+			'catalog.enums.watering.little' => 'Peu d\'eau',
+			'catalog.enums.watering.regularly' => 'Régulier',
+			'catalog.enums.offer_type.exchange' => 'Échange',
+			'catalog.enums.offer_type.donation' => 'Donation',
 			'chatPlant.screen.error_loading' => 'Erreur lors du chargement du chat',
 			'chatPlant.view.empty_messages' => 'Aucun message pour le moment.\nDémarrez la conversation.',
 			'chatPlant.view.blocked_user_banner' => 'Vous avez bloqué cet utilisateur',

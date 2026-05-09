@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
@@ -22,28 +23,28 @@ class StepMaintenance extends StatelessWidget {
   @override
   Widget build(BuildContext context) => AddPlantWizardItem(
         formKey: formKey,
-        title: 'Entretien',
-        description: 'Niveau de difficulté',
+        title: t.catalog.wizard.steps.maintenance.title,
+        description: t.catalog.wizard.steps.maintenance.description,
         child: FormBuilderField(
           name: 'maintenance',
           initialValue: selected,
           validator: FormBuilderValidators.required(
-            errorText: 'Ce champ est requis',
+            errorText: t.catalog.wizard.required_field,
           ),
           builder: (field) => Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Column(
                 children: [
-                  const TitleWithIcon(
+                  TitleWithIcon(
                     icon: LucideIcons.shovel,
-                    title: 'Difficulté',
+                    title: t.catalog.wizard.steps.maintenance.label,
                     bgColor: AppColors.greenDark,
                     iconColor: AppColors.greenLight,
                   ),
                   const SizedBox(height: 10),
                   ItemRadio(
-                    title: 'Facile',
+                    title: t.catalog.wizard.steps.maintenance.low,
                     value: 'low',
                     selectedItem: selected,
                     onItemSelected: (v) {
@@ -54,7 +55,7 @@ class StepMaintenance extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                   ItemRadio(
-                    title: 'Moyen',
+                    title: t.catalog.wizard.steps.maintenance.medium,
                     value: 'medium',
                     selectedItem: selected,
                     onItemSelected: (v) {
@@ -65,7 +66,7 @@ class StepMaintenance extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                   ItemRadio(
-                    title: 'Difficile',
+                    title: t.catalog.wizard.steps.maintenance.high,
                     value: 'high',
                     selectedItem: selected,
                     onItemSelected: (v) {

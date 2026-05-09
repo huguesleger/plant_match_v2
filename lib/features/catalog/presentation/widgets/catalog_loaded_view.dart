@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
@@ -60,9 +61,9 @@ class _CatalogLoadedViewState extends State<CatalogLoadedView>
                 Padding(
                   padding: AppSpacing.paddingHorizontal +
                       const EdgeInsets.only(top: 16),
-                  child: const TitlePage(
-                    title: 'Mes plantes',
-                    subtitle: 'Mon catalogue de plantes à partager',
+                  child: TitlePage(
+                    title: t.catalog.screen.title,
+                    subtitle: t.catalog.screen.subtitle,
                   ),
                 ),
                 Padding(
@@ -72,14 +73,17 @@ class _CatalogLoadedViewState extends State<CatalogLoadedView>
                     controller: _tabController,
                     tabs: [
                       Tab(
-                          text:
-                              'Publié (${_count(widget.catalogs, CatalogStatus.published)})'),
+                          text: t.catalog.tabs.published(
+                              count: _count(
+                                  widget.catalogs, CatalogStatus.published))),
                       Tab(
-                          text:
-                              'Brouillon (${_count(widget.catalogs, CatalogStatus.draft)})'),
+                          text: t.catalog.tabs.draft(
+                              count: _count(
+                                  widget.catalogs, CatalogStatus.draft))),
                       Tab(
-                          text:
-                              'Archivé (${_count(widget.catalogs, CatalogStatus.archived)})'),
+                          text: t.catalog.tabs.archived(
+                              count: _count(
+                                  widget.catalogs, CatalogStatus.archived))),
                     ],
                   ),
                 ),

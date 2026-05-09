@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:plant_match_v2/core/widgets/form/decoration_input.dart';
@@ -17,8 +18,8 @@ class StepDescription extends StatelessWidget {
   @override
   Widget build(BuildContext context) => AddPlantWizardItem(
         formKey: formKey,
-        title: 'Description',
-        description: 'Ajouter une brève description',
+        title: t.catalog.wizard.steps.description.title,
+        description: t.catalog.wizard.steps.description.description,
         child: FormBuilderTextField(
           name: 'description',
           controller: controller,
@@ -26,12 +27,12 @@ class StepDescription extends StatelessWidget {
           maxLines: 4,
           maxLength: 150,
           decoration: DecorationInput.inputDecoration(
-            hintText: 'Description',
-            labelText: 'Description',
+            hintText: t.catalog.wizard.steps.description.hint,
+            labelText: t.catalog.wizard.steps.description.label,
             alignLabelWithHint: true,
           ),
           validator: FormBuilderValidators.required(
-            errorText: 'Ce champ est requis',
+            errorText: t.catalog.wizard.required_field,
           ),
         ),
       );

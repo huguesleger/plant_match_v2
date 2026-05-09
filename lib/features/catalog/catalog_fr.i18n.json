@@ -1,0 +1,196 @@
+{
+  "screen": {
+    "title": "Mes plantes",
+    "subtitle": "Mon catalogue de plantes à partager",
+    "empty_message": "Ton catalogue est vide. Ajoute ta première plante pour commencer."
+  },
+  "tabs": {
+    "published": "Publié (${count})",
+    "draft": "Brouillon (${count})",
+    "archived": "Archivé (${count})"
+  },
+  "empty": {
+    "no_archived": "Aucune plante archivée",
+    "no_draft": "Aucun brouillon",
+    "no_published": "Aucune plante publiée",
+    "no_description": "Aucune description"
+  },
+  "card": {
+    "title": "Plantes & boutures",
+    "subtitle": "Mon catalogue de ce que j’ai à partager"
+  },
+  "status": {
+    "draft": "Brouillon",
+    "published": "Publié",
+    "archived": "Archivé"
+  },
+  "detail": {
+    "plant_env": "plante ${env}",
+    "description": "Description",
+    "lighting": "lumière",
+    "watering": "arrosage",
+    "maintenance": "entretien",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "delete_dialog": {
+      "title": "Supprimer la plante",
+      "content": "Êtes-vous sûr de vouloir supprimer \"${name}\" ?\n\nCette action est irréversible.",
+      "cancel": "Annuler"
+    }
+  },
+  "edit": {
+    "title": "Modifier ma plante",
+    "modifier_with_name": "Modifier ${name}",
+    "save": "Enregistrer les modifications",
+    "upload_error": "Erreur upload: ${error}",
+    "name": {
+      "hint": "Nom de la plante",
+      "label": "Nom"
+    },
+    "description": {
+      "title": "Ajouter une brève description",
+      "hint": "Description de la plante",
+      "label": "Description",
+      "max_length": "Maximum 150 caractères"
+    },
+    "family": {
+      "title": "Sélectionner une ou des catégorie(s)"
+    },
+    "offer_type": {
+      "title": "Que souhaitez-vous faire de votre plante ?"
+    },
+    "maintenance": {
+      "title": "Sélectionner un niveau de difficulté",
+      "low_subtitle": "Très résistante, peu d'arrosage",
+      "medium_subtitle": "Quelques soins réguliers",
+      "high_subtitle": "Sensible, besoin de conditions spécifiques."
+    },
+    "lighting": {
+      "title": "Sélectionner le besoin en lumière"
+    },
+    "publish_label": "Publier la plante",
+    "watering": {
+      "title": "Sélectionner le besoin en eau"
+    },
+    "environment": {
+      "title": "Sélectionner une catégorie pour votre plante"
+    },
+    "image": {
+      "title": "Sélectionner une à trois photos de votre plante"
+    }
+  },
+  "wizard": {
+    "title": "Ajouter une plante",
+    "loading": "Création...",
+    "error_image": "Erreur lors de la sélection d’image.",
+    "select_images": "Sélectionner des images",
+    "image_count": "Image ${index}",
+    "required_field": "Ce champ est requis",
+    "publish_label": "Publier la plante",
+    "finish": "Terminer",
+    "next": "Suivant",
+    "error_generic": "Erreur: ${error}",
+    "quit_dialog": {
+      "title": "Quitter sans enregistrer ?",
+      "content": "Les informations saisies seront perdues.",
+      "cancel": "Annuler",
+      "quit": "Quitter"
+    },
+    "steps": {
+      "name": {
+        "title": "Nom de la plante",
+        "description": "Entrez le nom de la plante",
+        "label": "Nom",
+        "hint": "Nom"
+      },
+      "category": {
+        "title": "Quel environnement ?",
+        "description": "Sélectionnez une catégorie",
+        "indoor": "Intérieur",
+        "outdoor": "Extérieur"
+      },
+      "family": {
+        "title": "Choisir une famille",
+        "description": "Sélectionnez une ou des catégorie(s)"
+      },
+      "description": {
+        "title": "Description",
+        "description": "Ajouter une brève description",
+        "label": "Description",
+        "hint": "Description"
+      },
+      "image": {
+        "title": "Ajouter une photo",
+        "description": "Sélectionner une à trois photos de votre plante"
+      },
+      "watering": {
+        "title": "Arrosage",
+        "description": "Besoin en eau",
+        "label": "Eau",
+        "little": "Peu d'eau",
+        "regularly": "Régulier"
+      },
+      "lighting": {
+        "title": "Lumière",
+        "description": "Besoin en lumière",
+        "label": "Lumière",
+        "sun": "Soleil",
+        "indirect": "Indirecte",
+        "shade": "Ombre"
+      },
+      "maintenance": {
+        "title": "Entretien",
+        "description": "Niveau de difficulté",
+        "label": "Difficulté",
+        "low": "Facile",
+        "medium": "Moyen",
+        "high": "Difficile"
+      },
+      "offer_type": {
+        "title": "Offre",
+        "description": "Que faire de votre plante ?",
+        "donation": "Donation",
+        "exchange": "Echange"
+      },
+      "publish": {
+        "title": "Publication",
+        "description": "Publier maintenant ?"
+      }
+    }
+  },
+  "families": {
+    "tropical": "Tropicale",
+    "succulent": "Succulente",
+    "aquatic": "Aquatique",
+    "climbing": "Grimpante",
+    "bonsai": "Bonsaï",
+    "flower": "Fleurie",
+    "aromatic": "Aromatique",
+    "medical": "Médicinale",
+    "carnivorous": "Carnivore"
+  },
+  "enums": {
+    "lighting": {
+      "sun": "Soleil",
+      "indirect": "Indirecte",
+      "shade": "Ombre"
+    },
+    "environment": {
+      "indoor": "Intérieur",
+      "outdoor": "Extérieur"
+    },
+    "maintenance": {
+      "low": "Facile",
+      "medium": "Moyen",
+      "high": "Difficile"
+    },
+    "watering": {
+      "little": "Peu d'eau",
+      "regularly": "Régulier"
+    },
+    "offer_type": {
+      "exchange": "Échange",
+      "donation": "Donation"
+    }
+  }
+}

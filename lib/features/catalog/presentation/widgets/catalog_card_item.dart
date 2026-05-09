@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/gen/assets.gen.dart';
@@ -34,7 +35,10 @@ class CatalogCardItem extends StatelessWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _CardImage(imageUrl: catalog.images.isNotEmpty ? catalog.images.first : null),
+                  _CardImage(
+                      imageUrl: catalog.images.isNotEmpty
+                          ? catalog.images.first
+                          : null),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
@@ -59,7 +63,8 @@ class CatalogCardItem extends StatelessWidget {
   Future<void> _onTap(BuildContext context) async {
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => CatalogDetailPageRoute(catalog: catalog)),
+      MaterialPageRoute(
+          builder: (_) => CatalogDetailPageRoute(catalog: catalog)),
     );
 
     if (result == true && context.mounted) {
@@ -130,7 +135,7 @@ class _CardDescription extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      description.isNotEmpty ? description : 'Aucune description',
+      description.isNotEmpty ? description : t.catalog.empty.no_description,
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
       style: const TextStyle(fontSize: 12, color: Colors.grey),

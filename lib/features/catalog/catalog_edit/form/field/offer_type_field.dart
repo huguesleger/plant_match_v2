@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
@@ -18,11 +19,12 @@ class OfferTypeField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FormSection(
-      title: 'Que souhaitez-vous faire de votre plante ?',
+      title: t.catalog.edit.offer_type.title,
       child: FormBuilderField<String>(
         name: 'offerType',
         initialValue: selectedOfferType,
-        validator: FormBuilderValidators.required(errorText: 'Ce champ est requis'),
+        validator: FormBuilderValidators.required(
+            errorText: t.catalog.wizard.required_field),
         builder: (field) => Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -31,7 +33,7 @@ class OfferTypeField extends StatelessWidget {
                 Expanded(
                   child: SelectableItem(
                     icon: LucideIcons.gift,
-                    label: "Donation",
+                    label: t.catalog.wizard.steps.offer_type.donation,
                     value: "donation",
                     isSelected: selectedOfferType == "donation",
                     onTap: (val) {
@@ -45,7 +47,7 @@ class OfferTypeField extends StatelessWidget {
                 Expanded(
                   child: SelectableItem(
                     icon: LucideIcons.heart_handshake,
-                    label: "Echange",
+                    label: t.catalog.wizard.steps.offer_type.exchange,
                     value: "exchange",
                     isSelected: selectedOfferType == "exchange",
                     onTap: (val) {

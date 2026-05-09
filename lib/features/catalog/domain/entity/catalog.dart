@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 
 enum CatalogStatus {
@@ -11,9 +12,9 @@ enum CatalogStatus {
 
 extension CatalogStatusExtension on CatalogStatus {
   String get label => switch (this) {
-        CatalogStatus.draft => 'Brouillon',
-        CatalogStatus.published => 'Publié',
-        CatalogStatus.archived => 'Archivé',
+        CatalogStatus.draft => t.catalog.status.draft,
+        CatalogStatus.published => t.catalog.status.published,
+        CatalogStatus.archived => t.catalog.status.archived,
       };
 
   Color get badgeColor => switch (this) {
@@ -213,61 +214,61 @@ enum OfferType {
 
 extension LightingExtension on Lighting {
   String get lightingName => switch (this) {
-        Lighting.sun => 'Soleil',
-        Lighting.indirectLight => 'Indirecte',
-        Lighting.shade => 'Ombre',
+        Lighting.sun => t.catalog.enums.lighting.sun,
+        Lighting.indirectLight => t.catalog.enums.lighting.indirect,
+        Lighting.shade => t.catalog.enums.lighting.shade,
       };
 }
 
 extension EnvironmentExtension on Environment {
   String get envName => switch (this) {
-        Environment.indoor => 'Intérieur',
-        Environment.outdoor => 'Extérieur',
+        Environment.indoor => t.catalog.enums.environment.indoor,
+        Environment.outdoor => t.catalog.enums.environment.outdoor,
       };
 }
 
 extension FamilyExtension on Family {
   String get familyName => switch (this) {
-        Family.tropical => 'Tropicale',
-        Family.succulent => 'Succulente',
-        Family.aquatic => 'Aquatique',
-        Family.climbing => 'Grimpante',
-        Family.bonsai => 'Bonsaï',
-        Family.flower => 'Fleurie',
-        Family.aromatic => 'Aromatique',
-        Family.medical => 'Médicinale',
-        Family.carnivorous => 'Carnivore',
+        Family.tropical => t.catalog.families.tropical,
+        Family.succulent => t.catalog.families.succulent,
+        Family.aquatic => t.catalog.families.aquatic,
+        Family.climbing => t.catalog.families.climbing,
+        Family.bonsai => t.catalog.families.bonsai,
+        Family.flower => t.catalog.families.flower,
+        Family.aromatic => t.catalog.families.aromatic,
+        Family.medical => t.catalog.families.medical,
+        Family.carnivorous => t.catalog.families.carnivorous,
       };
 }
 
 extension LevelMaintenanceExtension on LevelMaintenance {
   String get levelName => switch (this) {
-        LevelMaintenance.low => 'Facile',
-        LevelMaintenance.medium => 'Moyen',
-        LevelMaintenance.high => 'Difficile',
+        LevelMaintenance.low => t.catalog.enums.maintenance.low,
+        LevelMaintenance.medium => t.catalog.enums.maintenance.medium,
+        LevelMaintenance.high => t.catalog.enums.maintenance.high,
       };
 }
 
 extension WateringExtension on Watering {
   String get wateringName => switch (this) {
-        Watering.little => 'Peu d\'eau',
-        Watering.regularly => 'Régulier',
+        Watering.little => t.catalog.enums.watering.little,
+        Watering.regularly => t.catalog.enums.watering.regularly,
       };
 }
 
 extension OfferTypeExtension on OfferType {
   String get offerTypeName => switch (this) {
-        OfferType.exchange => 'Échange',
-        OfferType.donation => 'Donation',
+        OfferType.exchange => t.catalog.enums.offer_type.exchange,
+        OfferType.donation => t.catalog.enums.offer_type.donation,
       };
 
   static OfferType fromString(String value) {
     final normalized = value.toLowerCase().trim();
 
-    if (normalized == 'échange') {
+    if (normalized == t.catalog.enums.offer_type.exchange.toLowerCase()) {
       return OfferType.exchange;
     }
-    if (normalized == 'donation') {
+    if (normalized == t.catalog.enums.offer_type.donation.toLowerCase()) {
       return OfferType.donation;
     }
     return OfferType.donation;

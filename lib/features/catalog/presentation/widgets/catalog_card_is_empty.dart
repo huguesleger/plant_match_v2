@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -39,9 +40,9 @@ class CatalogCardIsEmpty extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      const Text(
-                        'Plantes & boutures',
-                        style: TextStyle(
+                      Text(
+                        t.catalog.card.title,
+                        style: const TextStyle(
                           fontSize: AppTypo.textM,
                           fontWeight: FontWeight.w600,
                           color: AppColors.white,
@@ -49,11 +50,11 @@ class CatalogCardIsEmpty extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      const SizedBox(
+                      SizedBox(
                         //width: 220,
                         child: Text(
-                          'Mon catalogue de ce que j’ai à partager',
-                          style: TextStyle(
+                          t.catalog.card.subtitle,
+                          style: const TextStyle(
                             fontSize: AppTypo.textXs,
                             color: AppColors.white,
                           ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
@@ -22,28 +23,28 @@ class StepWatering extends StatelessWidget {
   @override
   Widget build(BuildContext context) => AddPlantWizardItem(
         formKey: formKey,
-        title: 'Arrosage',
-        description: 'Besoin en eau',
+        title: t.catalog.wizard.steps.watering.title,
+        description: t.catalog.wizard.steps.watering.description,
         child: FormBuilderField(
           name: 'watering',
           initialValue: selected,
           validator: FormBuilderValidators.required(
-            errorText: 'Ce champ est requis',
+            errorText: t.catalog.wizard.required_field,
           ),
           builder: (field) => Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Column(
                 children: [
-                  const TitleWithIcon(
+                  TitleWithIcon(
                     icon: LucideIcons.droplet,
-                    title: 'Eau',
+                    title: t.catalog.wizard.steps.watering.label,
                     bgColor: AppColors.greenDark,
                     iconColor: AppColors.greenLight,
                   ),
                   const SizedBox(height: 10),
                   ItemRadio(
-                    title: 'Peu d\'eau',
+                    title: t.catalog.wizard.steps.watering.little,
                     value: 'little',
                     selectedItem: selected,
                     onItemSelected: (v) {
@@ -54,7 +55,7 @@ class StepWatering extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                   ItemRadio(
-                    title: 'Régulier',
+                    title: t.catalog.wizard.steps.watering.regularly,
                     value: 'regularly',
                     selectedItem: selected,
                     onItemSelected: (v) {

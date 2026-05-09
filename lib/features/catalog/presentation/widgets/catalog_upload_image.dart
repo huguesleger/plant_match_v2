@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:image_picker/image_picker.dart';
@@ -70,7 +71,7 @@ class _CatalogUploadImageState extends State<CatalogUploadImage> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Erreur lors de la sélection d’image.')),
+          SnackBar(content: Text(t.catalog.wizard.error_image)),
         );
       }
     }
@@ -122,7 +123,7 @@ class _CatalogUploadImageState extends State<CatalogUploadImage> {
                   ),
                   const SizedBox(height: 10),
                   ButtonRounded(
-                    text: 'Sélectionner des images',
+                    text: t.catalog.wizard.select_images,
                     onPressed:
                         catalogImages.length < maxImages ? _pickImages : null,
                     bgColor: AppColors.blueGreen,
@@ -148,7 +149,7 @@ class _CatalogUploadImageState extends State<CatalogUploadImage> {
                     child: _buildImage(imagePath),
                   ),
                   title: Text(
-                    "Image ${index + 1}",
+                    t.catalog.wizard.image_count(index: index + 1),
                     style: InterTextStyle.inter(
                       AppTypo.textS,
                       color: AppColors.greyDark,

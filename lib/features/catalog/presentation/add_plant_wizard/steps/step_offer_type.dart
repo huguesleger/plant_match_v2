@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
@@ -20,13 +21,13 @@ class StepOfferType extends StatelessWidget {
   @override
   Widget build(BuildContext context) => AddPlantWizardItem(
         formKey: formKey,
-        title: 'Offre',
-        description: 'Que faire de votre plante ?',
+        title: t.catalog.wizard.steps.offer_type.title,
+        description: t.catalog.wizard.steps.offer_type.description,
         child: FormBuilderField(
           name: 'offerType',
           initialValue: controller.text,
           validator: FormBuilderValidators.required(
-            errorText: 'Ce champ est requis',
+            errorText: t.catalog.wizard.required_field,
           ),
           builder: (field) => Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -36,7 +37,7 @@ class StepOfferType extends StatelessWidget {
                   Expanded(
                     child: SelectableItem(
                       icon: LucideIcons.gift,
-                      label: 'Donation',
+                      label: t.catalog.wizard.steps.offer_type.donation,
                       value: 'donation',
                       isSelected: controller.text == 'donation',
                       onTap: (v) {
@@ -50,7 +51,7 @@ class StepOfferType extends StatelessWidget {
                   Expanded(
                     child: SelectableItem(
                       icon: LucideIcons.heart_handshake,
-                      label: 'Echange',
+                      label: t.catalog.wizard.steps.offer_type.exchange,
                       value: 'exchange',
                       isSelected: controller.text == 'exchange',
                       onTap: (v) {

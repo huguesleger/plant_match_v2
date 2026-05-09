@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
@@ -14,9 +15,9 @@ class CatalogEmptyView extends StatelessWidget {
       children: [
         Padding(
           padding: AppSpacing.paddingHorizontal + const EdgeInsets.only(top: 16),
-          child: const TitlePage(
-            title: 'Mes plantes',
-            subtitle: 'Mon catalogue de plantes à partager',
+          child: TitlePage(
+            title: t.catalog.screen.title,
+            subtitle: t.catalog.screen.subtitle,
           ),
         ),
         const SizedBox(height: 90),
@@ -33,8 +34,8 @@ class CatalogEmptyView extends StatelessWidget {
                 height: 200,
               ),
               const SizedBox(height: 20),
-              const Text(
-                'Ton catalogue est vide. Ajoute ta première plante pour commencer.',
+              Text(
+                t.catalog.screen.empty_message,
                 textAlign: TextAlign.center,
               ),
             ],

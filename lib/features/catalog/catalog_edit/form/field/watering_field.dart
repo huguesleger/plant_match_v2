@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:plant_match_v2/features/catalog/catalog_edit/form/form_section.dart';
@@ -17,18 +18,19 @@ class WateringField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FormSection(
-      title: 'Sélectionner le besoin en eau',
+      title: t.catalog.edit.watering.title,
       child: FormBuilderField<String>(
         name: 'watering',
         initialValue: selectedWatering,
-        validator: FormBuilderValidators.required(errorText: 'Ce champ est requis'),
+        validator: FormBuilderValidators.required(
+            errorText: t.catalog.wizard.required_field),
         builder: (field) => Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Column(
               children: [
                 ItemRadio(
-                  title: 'Peu d\'eau',
+                  title: t.catalog.wizard.steps.watering.little,
                   value: 'little',
                   selectedItem: selectedWatering,
                   onItemSelected: (val) {
@@ -39,7 +41,7 @@ class WateringField extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
                 ItemRadio(
-                  title: 'Arrosage régulier',
+                  title: t.catalog.wizard.steps.watering.regularly,
                   value: 'regularly',
                   selectedItem: selectedWatering,
                   onItemSelected: (val) {

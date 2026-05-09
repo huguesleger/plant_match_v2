@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/widgets/add_plant_wizard_item.dart';
@@ -19,14 +20,14 @@ class StepFamily extends StatelessWidget {
   @override
   Widget build(BuildContext context) => AddPlantWizardItem(
         formKey: formKey,
-        title: 'Choisir une famille',
-        description: 'Sélectionnez une ou des catégorie(s)',
+        title: t.catalog.wizard.steps.family.title,
+        description: t.catalog.wizard.steps.family.description,
         child: FormBuilderField(
           name: 'family',
           initialValue: selectedValues,
           validator: FormBuilderValidators.minLength(
             1,
-            errorText: 'Ce champ est requis',
+            errorText: t.catalog.wizard.required_field,
           ),
           builder: (field) => Column(
             crossAxisAlignment: CrossAxisAlignment.start,

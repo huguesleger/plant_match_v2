@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
@@ -18,13 +19,13 @@ class StepEnvironment extends StatelessWidget {
   @override
   Widget build(BuildContext context) => AddPlantWizardItem(
         formKey: formKey,
-        title: 'Quel environnement ?',
-        description: 'Sélectionnez une catégorie',
+        title: t.catalog.wizard.steps.category.title,
+        description: t.catalog.wizard.steps.category.description,
         child: FormBuilderField(
           name: 'category',
           initialValue: controller.text,
           validator: FormBuilderValidators.required(
-            errorText: 'Ce champ est requis',
+            errorText: t.catalog.wizard.required_field,
           ),
           builder: (field) => Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -34,7 +35,7 @@ class StepEnvironment extends StatelessWidget {
                   Expanded(
                     child: SelectableItem(
                       icon: LucideIcons.house,
-                      label: 'Intérieur',
+                      label: t.catalog.wizard.steps.category.indoor,
                       value: 'indoor',
                       isSelected: controller.text == 'indoor',
                       onTap: (v) {
@@ -48,7 +49,7 @@ class StepEnvironment extends StatelessWidget {
                   Expanded(
                     child: SelectableItem(
                       icon: LucideIcons.trees,
-                      label: 'Extérieur',
+                      label: t.catalog.wizard.steps.category.outdoor,
                       value: 'outdoor',
                       isSelected: controller.text == 'outdoor',
                       onTap: (v) {

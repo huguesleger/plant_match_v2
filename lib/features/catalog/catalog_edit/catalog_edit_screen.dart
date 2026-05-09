@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart' hide State;
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -84,7 +85,8 @@ class _CatalogEditScreenState extends State<CatalogEditScreen> {
             ),
           CatalogInitial() || CatalogLoaded() => Scaffold(
               appBar: AppBarTemplate(
-                title: 'Modifier ${widget.catalog.name}',
+                title: t.catalog.edit
+                    .modifier_with_name(name: widget.catalog.name),
                 centerTitle: true,
                 backgroundColor: AppColors.white,
                 surfaceTintColor: AppColors.white,
@@ -186,8 +188,9 @@ class _CatalogEditScreenState extends State<CatalogEditScreen> {
             .run();
 
         final uploaded = res.match((failure) {
-          ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("Erreur upload: ${failure.message}")));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content:
+                  Text(t.catalog.edit.upload_error(error: failure.message))));
           return null;
         }, (c) => c);
         if (uploaded == null) return;

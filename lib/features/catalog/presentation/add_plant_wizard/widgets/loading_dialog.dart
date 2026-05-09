@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 
 class LoadingDialog extends StatelessWidget {
@@ -8,16 +9,16 @@ class LoadingDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: const Padding(
-        padding: EdgeInsets.all(24),
+      child: Padding(
+        padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            CircularProgressIndicator(color: AppColors.greenLight),
-            SizedBox(height: 24),
+            const CircularProgressIndicator(color: AppColors.greenLight),
+            const SizedBox(height: 24),
             Text(
-              'Création...',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              t.catalog.wizard.loading,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
           ],
         ),

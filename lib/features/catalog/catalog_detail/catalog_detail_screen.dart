@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/gen/assets.gen.dart';
@@ -132,7 +133,10 @@ class _CatalogDetailScreenState extends State<CatalogDetailScreen> {
           Text(_catalog.name.toCapitalize(), style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
           Row(
             children: [
-              Text('plante ${_catalog.environment.envName}', style: const TextStyle(fontSize: 14, color: Colors.grey)),
+              Text(
+                  t.catalog.detail
+                      .plant_env(env: _catalog.environment.envName),
+                  style: const TextStyle(fontSize: 14, color: Colors.grey)),
               const SizedBox(width: 5),
               _buildEnvironmentIcon(),
             ],
@@ -161,10 +165,14 @@ class _CatalogDetailScreenState extends State<CatalogDetailScreen> {
             const SizedBox(height: 40),
             _buildCharacteristicsCard(),
             const SizedBox(height: 40),
-            const Text('Description',
-                style: TextStyle(fontSize: AppTypo.textXl, fontWeight: FontWeight.bold, color: AppColors.greyDark)),
+            Text(t.catalog.detail.description,
+                style: const TextStyle(
+                    fontSize: AppTypo.textXl,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.greyDark)),
             const SizedBox(height: 15),
-            Text(_catalog.description, style: const TextStyle(fontSize: 16, color: Colors.black87)),
+            Text(_catalog.description,
+                style: const TextStyle(fontSize: 16, color: Colors.black87)),
           ],
         ),
       );
@@ -180,9 +188,18 @@ class _CatalogDetailScreenState extends State<CatalogDetailScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _CardDetailItem(icon: LucideIcons.sun, label: 'lumière', value: _catalog.lighting.lightingName),
-            _CardDetailItem(icon: LucideIcons.droplet, label: 'arrosage', value: _catalog.watering.wateringName),
-            _CardDetailItem(icon: LucideIcons.shovel, label: 'entretien', value: _catalog.levelMaintenance.levelName),
+            _CardDetailItem(
+                icon: LucideIcons.sun,
+                label: t.catalog.detail.lighting,
+                value: _catalog.lighting.lightingName),
+            _CardDetailItem(
+                icon: LucideIcons.droplet,
+                label: t.catalog.detail.watering,
+                value: _catalog.watering.wateringName),
+            _CardDetailItem(
+                icon: LucideIcons.shovel,
+                label: t.catalog.detail.maintenance,
+                value: _catalog.levelMaintenance.levelName),
           ],
         ),
       );
@@ -240,7 +257,7 @@ class _DeleteButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ButtonOutlinedRoundedWithIcon(
-      text: 'Supprimer',
+      text: t.catalog.detail.delete,
       onPressed: () => _showDeleteDialog(context),
       borderColor: AppColors.blueGreen,
       textColor: AppColors.blueGreen,
@@ -253,10 +270,12 @@ class _DeleteButton extends StatelessWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Supprimer la plante'),
-        content: Text('Êtes-vous sûr de vouloir supprimer "${catalog.name}" ?\n\nCette action est irréversible.'),
+        title: Text(t.catalog.detail.delete_dialog.title),
+        content: Text(t.catalog.detail.delete_dialog.content(name: catalog.name)),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Annuler')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(t.catalog.detail.delete_dialog.cancel)),
           ElevatedButton(
             onPressed: () async {
               final navigator = Navigator.of(context);
@@ -283,7 +302,7 @@ class _DeleteButton extends StatelessWidget {
               backgroundColor: Colors.red,
               foregroundColor: Colors.white,
             ),
-            child: const Text('Supprimer'),
+            child: Text(t.catalog.detail.delete),
           ),
         ],
       ),
@@ -299,7 +318,7 @@ class _EditButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ButtonRoundedWithIcon(
-      text: 'Modifier',
+      text: t.catalog.detail.edit,
       onPressed: () async {
         final result = await Navigator.push(
           context,

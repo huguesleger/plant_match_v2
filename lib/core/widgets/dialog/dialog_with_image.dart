@@ -12,11 +12,15 @@ class DialogWithImage extends StatelessWidget {
     required this.title,
     required this.text,
     required this.image,
+    this.confirmLabel,
+    this.cancelLabel,
   });
 
   final String title;
   final String text;
   final AssetGenImage image;
+  final String? confirmLabel;
+  final String? cancelLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +65,7 @@ class DialogWithImage extends StatelessWidget {
                     onPressed: () {
                       Navigator.of(context).pop(false);
                     },
-                    text: 'Annuler',
+                    text: cancelLabel ?? 'Annuler',
                     borderColor: AppColors.greyLight,
                     textColor: AppColors.greyMedium,
                     padding: const EdgeInsets.symmetric(
@@ -76,7 +80,7 @@ class DialogWithImage extends StatelessWidget {
                     onPressed: () {
                       Navigator.of(context).pop(true);
                     },
-                    text: 'Confirmer',
+                    text: confirmLabel ?? 'Confirmer',
                     bgColor: AppColors.greenLight,
                     textColor: AppColors.blueGreen,
                     padding: const EdgeInsets.symmetric(

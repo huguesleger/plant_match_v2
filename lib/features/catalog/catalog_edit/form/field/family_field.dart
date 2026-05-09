@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:plant_match_v2/features/catalog/catalog_edit/form/form_section.dart';
@@ -17,11 +18,12 @@ class FamilyField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FormSection(
-      title: 'Sélectionner une ou des catégorie(s)',
+      title: t.catalog.edit.family.title,
       child: FormBuilderField<List<String>>(
         name: 'family',
         initialValue: selectedFamilies,
-        validator: FormBuilderValidators.required(errorText: 'Ce champ est requis'),
+        validator: FormBuilderValidators.required(
+            errorText: t.catalog.wizard.required_field),
         builder: (field) => Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

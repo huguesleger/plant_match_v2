@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
@@ -22,28 +23,28 @@ class StepLighting extends StatelessWidget {
   @override
   Widget build(BuildContext context) => AddPlantWizardItem(
         formKey: formKey,
-        title: 'Lumière',
-        description: 'Besoin en lumière',
+        title: t.catalog.wizard.steps.lighting.title,
+        description: t.catalog.wizard.steps.lighting.description,
         child: FormBuilderField(
           name: 'lighting',
           initialValue: selected,
           validator: FormBuilderValidators.required(
-            errorText: 'Ce champ est requis',
+            errorText: t.catalog.wizard.required_field,
           ),
           builder: (field) => Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Column(
                 children: [
-                  const TitleWithIcon(
+                  TitleWithIcon(
                     icon: LucideIcons.sun,
-                    title: 'Lumière',
+                    title: t.catalog.wizard.steps.lighting.label,
                     bgColor: AppColors.greenDark,
                     iconColor: AppColors.greenLight,
                   ),
                   const SizedBox(height: 10),
                   ItemRadio(
-                    title: 'Soleil',
+                    title: t.catalog.wizard.steps.lighting.sun,
                     value: 'sun',
                     selectedItem: selected,
                     onItemSelected: (v) {
@@ -53,7 +54,7 @@ class StepLighting extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                   ItemRadio(
-                    title: 'Indirecte',
+                    title: t.catalog.wizard.steps.lighting.indirect,
                     value: 'indirectLight',
                     selectedItem: selected,
                     onItemSelected: (v) {
@@ -64,7 +65,7 @@ class StepLighting extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                   ItemRadio(
-                    title: 'Ombre',
+                    title: t.catalog.wizard.steps.lighting.shade,
                     value: 'shade',
                     selectedItem: selected,
                     onItemSelected: (v) {

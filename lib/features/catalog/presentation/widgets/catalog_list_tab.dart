@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
@@ -62,8 +63,8 @@ class CatalogListTab extends StatelessWidget {
   }
 
   String _getEmptyMessage() => switch (status) {
-        CatalogStatus.archived => 'Aucune plante archivée',
-        CatalogStatus.draft => 'Aucun brouillon',
-        CatalogStatus.published => 'Aucune plante publiée',
+        CatalogStatus.archived => t.catalog.empty.no_archived,
+        CatalogStatus.draft => t.catalog.empty.no_draft,
+        CatalogStatus.published => t.catalog.empty.no_published,
       };
 }

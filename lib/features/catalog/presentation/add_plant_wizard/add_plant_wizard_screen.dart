@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
@@ -82,7 +83,7 @@ class _AddPlantWizardScreenState extends State<AddPlantWizardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarTemplate(
-        title: 'Ajouter une plante',
+        title: t.catalog.wizard.title,
         backgroundColor: AppColors.white,
         surfaceTintColor: AppColors.white,
         onPressed: _onBack,
@@ -117,7 +118,9 @@ class _AddPlantWizardScreenState extends State<AddPlantWizardScreen> {
       ),
       bottomNavigationBar: BottomBar(
         child: ButtonRounded(
-          text: _currentPage == _totalPages - 1 ? 'Terminer' : 'Suivant',
+          text: _currentPage == _totalPages - 1
+              ? t.catalog.wizard.finish
+              : t.catalog.wizard.next,
           onPressed: _onNextPressed,
           bgColor: AppColors.greenLight,
           textColor: AppColors.blueGreen,
@@ -224,8 +227,10 @@ class _AddPlantWizardScreenState extends State<AddPlantWizardScreen> {
       context: context,
       builder: (_) => DialogWithImage(
         image: Assets.res.images.emptyCatalogFilter,
-        title: 'Quitter sans enregistrer ?',
-        text: 'Les informations saisies seront perdues.',
+        title: t.catalog.wizard.quit_dialog.title,
+        text: t.catalog.wizard.quit_dialog.content,
+        confirmLabel: t.catalog.wizard.quit_dialog.quit,
+        cancelLabel: t.catalog.wizard.quit_dialog.cancel,
       ),
     );
     if (shouldExit == true && mounted) Navigator.pop(context);
@@ -282,8 +287,8 @@ class _AddPlantWizardScreenState extends State<AddPlantWizardScreen> {
     } catch (e) {
       if (mounted) {
         Navigator.pop(context);
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Erreur: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(t.catalog.wizard.error_generic(error: e))));
       }
     }
   }

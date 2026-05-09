@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:plant_match_v2/features/catalog/catalog_edit/form/form_section.dart';
@@ -17,19 +18,20 @@ class MaintenanceField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FormSection(
-      title: 'Sélectionner un niveau de difficulté',
+      title: t.catalog.edit.maintenance.title,
       child: FormBuilderField<String>(
         name: 'maintenance',
         initialValue: selectedMaintenance,
-        validator: FormBuilderValidators.required(errorText: 'Ce champ est requis'),
+        validator: FormBuilderValidators.required(
+            errorText: t.catalog.wizard.required_field),
         builder: (field) => Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Column(
               children: [
                 ItemRadio(
-                  title: 'Facile',
-                  subtitle: 'Très résistante, peu d\'arrosage',
+                  title: t.catalog.wizard.steps.maintenance.low,
+                  subtitle: t.catalog.edit.maintenance.low_subtitle,
                   value: 'low',
                   selectedItem: selectedMaintenance,
                   onItemSelected: (val) {
@@ -40,8 +42,8 @@ class MaintenanceField extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
                 ItemRadio(
-                  title: 'Moyen',
-                  subtitle: 'Quelques soins réguliers',
+                  title: t.catalog.wizard.steps.maintenance.medium,
+                  subtitle: t.catalog.edit.maintenance.medium_subtitle,
                   value: 'medium',
                   selectedItem: selectedMaintenance,
                   onItemSelected: (val) {
@@ -52,8 +54,8 @@ class MaintenanceField extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
                 ItemRadio(
-                  title: 'Difficile',
-                  subtitle: 'Sensible, besoin de conditions spécifiques.',
+                  title: t.catalog.wizard.steps.maintenance.high,
+                  subtitle: t.catalog.edit.maintenance.high_subtitle,
                   value: 'high',
                   selectedItem: selectedMaintenance,
                   onItemSelected: (val) {

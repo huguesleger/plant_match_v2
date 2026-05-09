@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:plant_match_v2/core/widgets/form/decoration_input.dart';
@@ -15,7 +16,7 @@ class DescriptionField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FormSection(
-      title: 'Ajouter une brève description',
+      title: t.catalog.edit.description.title,
       child: FormBuilderTextField(
         maxLines: 4,
         maxLength: 150,
@@ -23,13 +24,15 @@ class DescriptionField extends StatelessWidget {
         controller: controller,
         autovalidateMode: AutovalidateMode.onUserInteraction,
         decoration: DecorationInput.inputDecoration(
-          hintText: 'Description de la plante',
-          labelText: 'Description',
+          hintText: t.catalog.edit.description.hint,
+          labelText: t.catalog.edit.description.label,
           alignLabelWithHint: true,
         ),
         validator: FormBuilderValidators.compose([
-          FormBuilderValidators.required(errorText: 'Ce champ est requis'),
-          FormBuilderValidators.maxLength(150, errorText: 'Maximum 150 caractères'),
+          FormBuilderValidators.required(
+              errorText: t.catalog.wizard.required_field),
+          FormBuilderValidators.maxLength(150,
+              errorText: t.catalog.edit.description.max_length),
         ]),
       ),
     );
