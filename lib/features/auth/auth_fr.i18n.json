@@ -1,0 +1,75 @@
+{
+  "common": {
+    "email": {
+      "label": "E-mail",
+      "hint": "Entrez votre e-mail",
+      "required": "Ce champ est requis",
+      "invalid": "Entrez un e-mail valide"
+    },
+    "password": {
+      "label": "Mot de passe",
+      "hint": "Entrez votre mot de passe",
+      "required": "Ce champ est requis"
+    },
+    "fullName": {
+      "label": "Prénom et nom",
+      "hint": "Entrez votre prénom et nom",
+      "required": "Ce champ est requis"
+    },
+    "back": "Retour",
+    "confirm": "Confirmer",
+    "ok": "Ok",
+    "error_title": "Oups !\nune erreur est survénue 🫤"
+  },
+  "signIn": {
+    "title": "Hey! Bienvenue",
+    "forgotPassword": "Mot de passe oublié ?",
+    "noAccount": "Pas encore de compte ?",
+    "createAccount": "Créer un compte",
+    "social": {
+      "title": "Ou s’identifier avec",
+      "google": "S'identifier avec Google",
+      "facebook": "S'identifier avec Facebook"
+    }
+  },
+  "register": {
+    "title": "Créer un compte",
+    "welcome": "Commencez !",
+    "description": "Il semblerait que vous soyez nouveau ici. Créons votre profil.",
+    "confirmPassword": {
+      "label": "Confirmez le mot de passe",
+      "hint": "Entrez le mot de passe",
+      "mismatch": "Les mots de passe ne correspondent pas"
+    },
+    "alreadyHaveAccount": "Vous avez déjà un compte ?",
+    "passwordRules": {
+      "minChars": "Au moins 8 caractères",
+      "oneNumber": "Un chiffre",
+      "oneUpper": "Une majuscule",
+      "oneSpecial": "Un caractère spécial"
+    },
+    "cgu": {
+      "accept": "J’accepte les ",
+      "terms": "Conditions d’utilisation",
+      "and": " et je confirme avoir lu la ",
+      "privacy": "Politique de confidentialité",
+      "of": " de PlantMatch."
+    }
+  },
+  "forgotPassword": {
+    "title": "Mot de passe oublié ?",
+    "description": "Entrez votre e-mail pour réinitialiser le mot de passe",
+    "emailSent": "Un e-mail de réinitialisation a été envoyé sur ${email}",
+    "send": "Envoyer"
+  },
+  "emailVerification": {
+    "title": "Validez votre compte",
+    "description": "Un e-mail a été envoyé à votre adresse :\n",
+    "instruction": "\nCliquez sur le lien pour vérifier votre e-mail avant de continuer.",
+    "resendEmailSent": "Un nouvel e-mail de vérification a été envoyé.",
+    "error": "Erreur : ${error}",
+    "finalizing": "Finalisation de votre inscription...",
+    "resendBtn": "Renvoyer l'e-mail",
+    "retryLabel": "Réessayez dans ${count} s"
+  }
+}

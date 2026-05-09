@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
@@ -45,18 +46,18 @@ class _FormSignInState extends State<FormSignIn> {
             width: double.infinity,
             child: FilledButton(
               onPressed: _onPressedSignIn,
-              child: const Text("S'identifier"),
+              child: Text(t.auth.common.confirm),
             ),
           ),
           AuthFooterLinks(
-            forgotPasswordText: 'Mot de passe oublié ?',
+            forgotPasswordText: t.auth.signIn.forgotPassword,
             onForgotPasswordTap: () => Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => const ForgotPasswordPageRoute(),
               ),
             ),
-            mainText: 'Pas encore de compte ?',
-            actionText: 'Créer un compte',
+            mainText: t.auth.signIn.noAccount,
+            actionText: t.auth.signIn.createAccount,
             onActionTap: widget.toggleSignInOrRegister,
           ),
           const SignInWithSocial(),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
@@ -23,7 +24,8 @@ class _FormRegisterState extends State<FormRegister> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
   final _formKey = GlobalKey<FormBuilderState>();
 
   bool _isPasswordVisible = true;
@@ -63,16 +65,20 @@ class _FormRegisterState extends State<FormRegister> {
             PasswordField(
               controller: _passwordController,
               obscureText: _isPasswordVisible,
-              onPressed: () => setState(() => _isPasswordVisible = !_isPasswordVisible),
+              onPressed: () =>
+                  setState(() => _isPasswordVisible = !_isPasswordVisible),
             ),
             const SizedBox(height: 20),
             AuthPasswordField(
               controller: _confirmPasswordController,
-              labelText: 'Confirmez le mot de passe',
-              hintText: 'Entrez le mot de passe',
+              labelText: t.auth.register.confirmPassword.label,
+              hintText: t.auth.register.confirmPassword.hint,
               validator: FormBuilderValidators.compose([
-                FormBuilderValidators.required(errorText: 'Ce champ est requis'),
-                (val) => val != _passwordController.text ? 'Les mots de passe ne correspondent pas' : null,
+                FormBuilderValidators.required(
+                    errorText: t.auth.common.password.required),
+                (val) => val != _passwordController.text
+                    ? t.auth.register.confirmPassword.mismatch
+                    : null,
               ]),
             ),
             const SizedBox(height: 20),
@@ -85,15 +91,16 @@ class _FormRegisterState extends State<FormRegister> {
               width: double.infinity,
               child: FilledButton(
                 onPressed: _onPressedRegister,
-                child: const Text("Créer un compte"),
+                child: Text(t.auth.register.title),
               ),
             ),
             AuthFooterLinks(
-              mainText: 'Vous avez déjà un compte ?',
-              actionText: "S'identifier",
+              mainText: t.auth.register.alreadyHaveAccount,
+              actionText: t.auth.common.confirm,
               onActionTap: () => Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const SignInOrRegister()),
+                MaterialPageRoute(
+                    builder: (context) => const SignInOrRegister()),
               ),
             ),
           ],

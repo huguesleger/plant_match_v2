@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -12,20 +13,20 @@ class SignInWithSocial extends StatelessWidget {
     return Column(
       children: [
         const SizedBox(height: 40),
-        const Row(
+        Row(
           children: [
-            Expanded(
+            const Expanded(
               child: Divider(
                 thickness: 0.5,
               ),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Text(
-                'Ou s’identifier avec',
+                t.auth.signIn.social.title,
               ),
             ),
-            Expanded(
+            const Expanded(
               child: Divider(
                 thickness: 0.5,
               ),
@@ -50,9 +51,9 @@ class SignInWithSocial extends StatelessWidget {
               context.read<AuthCubit>().signInWithGoogle();
             },
             icon: Assets.res.logo.googleLogo.svg(),
-            label: const Text(
-              'S\'identifier avec Google',
-              style: TextStyle(
+            label: Text(
+              t.auth.signIn.social.google,
+              style: const TextStyle(
                 color: AppColors.blueGreen,
               ),
             ),
@@ -76,9 +77,9 @@ class SignInWithSocial extends StatelessWidget {
               context.read<AuthCubit>().signInWithFacebook();
             },
             icon: Assets.res.logo.facebookLogo.svg(),
-            label: const Text(
-              'S\'identifier avec Facebook',
-              style: TextStyle(
+            label: Text(
+              t.auth.signIn.social.facebook,
+              style: const TextStyle(
                 color: AppColors.blueGreen,
               ),
             ),

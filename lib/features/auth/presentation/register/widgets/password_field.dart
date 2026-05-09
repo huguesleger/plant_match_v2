@@ -1,5 +1,6 @@
 import 'package:fancy_password_field/fancy_password_field.dart';
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 
@@ -22,20 +23,21 @@ class PasswordField extends StatelessWidget {
       autovalidateMode: AutovalidateMode.onUserInteraction,
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'Ce champ est requis';
+          return t.auth.common.password.required;
         }
         return null;
       },
       validationRules: {
-        MinCharactersValidationRule(8, customText: 'Au moins 8 caractères'),
+        MinCharactersValidationRule(8,
+            customText: t.auth.register.passwordRules.minChars),
         DigitValidationRule(
-          customText: 'Un chiffre',
+          customText: t.auth.register.passwordRules.oneNumber,
         ),
         UppercaseValidationRule(
-          customText: 'Une majuscule',
+          customText: t.auth.register.passwordRules.oneUpper,
         ),
         SpecialCharacterValidationRule(
-          customText: 'Un caractère spécial',
+          customText: t.auth.register.passwordRules.oneSpecial,
         ),
       },
       validationRuleBuilder: (rules, value) {
@@ -88,7 +90,7 @@ class PasswordField extends StatelessWidget {
           color: AppColors.error,
         ),
         isDense: true,
-        labelText: 'Mot de passe',
+        labelText: t.auth.common.password.label,
         border: const OutlineInputBorder(
           borderRadius: BorderRadius.all(
             Radius.circular(8),

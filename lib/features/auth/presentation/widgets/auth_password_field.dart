@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
@@ -9,14 +10,14 @@ class AuthPasswordField extends StatefulWidget {
   const AuthPasswordField({
     super.key,
     required this.controller,
-    this.labelText = 'Mot de passe',
-    this.hintText = 'Entrez votre mot de passe',
+    this.labelText,
+    this.hintText,
     this.validator,
   });
 
   final TextEditingController controller;
-  final String labelText;
-  final String hintText;
+  final String? labelText;
+  final String? hintText;
   final String? Function(String?)? validator;
 
   @override
@@ -28,11 +29,14 @@ class _AuthPasswordFieldState extends State<AuthPasswordField> {
 
   @override
   Widget build(BuildContext context) {
+    final effectiveLabelText = widget.labelText ?? t.auth.common.password.label;
+    final effectiveHintText = widget.hintText ?? t.auth.common.password.hint;
+
     return FormBuilderTextField(
-      name: widget.labelText.toLowerCase().replaceAll(' ', '_'),
+      name: effectiveLabelText.toLowerCase().replaceAll(' ', '_'),
       decoration: DecorationInput.inputDecoration(
-        hintText: widget.hintText,
-        labelText: widget.labelText,
+        hintText: effectiveHintText,
+        labelText: effectiveLabelText,
         suffixIcon: IconButton(
           icon: Icon(
             _obscureText ? LucideIcons.eye : LucideIcons.eye_off,
@@ -46,7 +50,8 @@ class _AuthPasswordFieldState extends State<AuthPasswordField> {
       obscureText: _obscureText,
       validator: widget.validator ??
           FormBuilderValidators.compose([
-            FormBuilderValidators.required(errorText: 'Ce champ est requis'),
+            FormBuilderValidators.required(
+                errorText: t.auth.common.password.required),
           ]),
     );
   }

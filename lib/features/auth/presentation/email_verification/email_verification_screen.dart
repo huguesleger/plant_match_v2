@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:fpdart/fpdart.dart' hide State;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/gen/assets.gen.dart';
@@ -90,14 +91,15 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Un nouvel e-mail de vérification a été envoyé."),
+        SnackBar(
+          content: Text(t.auth.emailVerification.resendEmailSent),
         ),
       );
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Erreur : ${e.toString()}")),
+        SnackBar(
+            content: Text(t.auth.emailVerification.error(error: e.toString()))),
       );
     } finally {
       for (var i = 60; i > 0; i--) {
@@ -124,8 +126,8 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
                 ),
               ),
               const SizedBox(height: 20),
-              const TitlePage(
-                title: 'Validez votre compte',
+              TitlePage(
+                title: t.auth.emailVerification.title,
                 fontSize: AppTypo.textXl,
                 textAlign: TextAlign.center,
               ),
@@ -133,15 +135,14 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
               Center(
                 child: Text.rich(
                   TextSpan(
-                    text: 'Un e-mail a été envoyé à votre adresse :\n',
+                    text: t.auth.emailVerification.description,
                     children: [
                       TextSpan(
                         text: widget.user.email.getOrElse(() => ''),
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      const TextSpan(
-                        text:
-                            '\nCliquez sur le lien pour vérifier votre e-mail avant de continuer.',
+                      TextSpan(
+                        text: t.auth.emailVerification.instruction,
                       ),
                     ],
                   ),
@@ -163,15 +164,16 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
                     onPressed: _cooldown ? null : _resendVerification,
                     child: Text(
                       _cooldown
-                          ? "Réessayez dans $_remainingSeconds s"
-                          : "Renvoyer l'e-mail",
+                          ? t.auth.emailVerification
+                              .retryLabel(count: _remainingSeconds)
+                          : t.auth.emailVerification.resendBtn,
                     ),
                   ),
                   const SizedBox(height: 20),
                   SizedBox(
                     width: double.infinity,
                     child: ButtonOutlinedRounded(
-                      text: 'Retour',
+                      text: t.auth.common.back,
                       borderColor: AppColors.greyLight,
                       textColor: AppColors.blueGreen,
                       onPressed: () {

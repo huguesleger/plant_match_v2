@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:plant_match_v2/core/gen/assets.gen.dart';
@@ -51,7 +52,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           SnackBar(
             duration: const Duration(seconds: 5),
             content: Text(
-              'Un e-mail de réinitialisation a été envoyé sur $email',
+              t.auth.forgotPassword.emailSent(email: email),
             ),
           ),
         );
@@ -91,15 +92,15 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      const TitlePage(
-                        title: 'Mot de passe oublié ?',
+                      TitlePage(
+                        title: t.auth.forgotPassword.title,
                         fontSize: AppTypo.textXl,
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 5),
-                      const Center(
+                      Center(
                         child: Text(
-                          'Entrez votre e-mail pour réinitialiser le mot de passe',
+                          t.auth.forgotPassword.description,
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -120,17 +121,17 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                             child: FormBuilderTextField(
                               name: 'email',
                               decoration: DecorationInput.inputDecoration(
-                                hintText: 'Entrez votre e-mail',
-                                labelText: 'E-mail',
+                                hintText: t.auth.common.email.hint,
+                                labelText: t.auth.common.email.label,
                               ),
                               autovalidateMode:
                                   AutovalidateMode.onUserInteraction,
                               controller: _emailController,
                               validator: FormBuilderValidators.compose([
                                 FormBuilderValidators.required(
-                                    errorText: 'Ce champ est requis'),
+                                    errorText: t.auth.common.email.required),
                                 FormBuilderValidators.email(
-                                    errorText: 'Entrez un e-mail valide'),
+                                    errorText: t.auth.common.email.invalid),
                               ]),
                             ),
                           ),
@@ -138,7 +139,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           SizedBox(
                             width: double.infinity,
                             child: ButtonRounded(
-                              text: 'Envoyer',
+                              text: t.auth.forgotPassword.send,
                               bgColor: AppColors.greenLight,
                               textColor: AppColors.blueGreen,
                               onPressed: onPressed,
@@ -148,7 +149,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           SizedBox(
                             width: double.infinity,
                             child: ButtonOutlinedRounded(
-                              text: 'Retour',
+                              text: t.auth.common.back,
                               borderColor: AppColors.greyLight,
                               textColor: AppColors.blueGreen,
                               onPressed: () {

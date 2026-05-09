@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:plant_match_v2/core/widgets/form/decoration_input.dart';
@@ -16,10 +17,11 @@ class AuthFullNameField extends StatelessWidget {
     return FormBuilderTextField(
       name: 'fullName',
       decoration: DecorationInput.inputDecoration(
-        hintText: 'Entrez votre prénom et nom',
-        labelText: 'Prénom et nom',
+        hintText: t.auth.common.fullName.hint,
+        labelText: t.auth.common.fullName.label,
       ),
-      validator: FormBuilderValidators.required(errorText: 'Ce champ est requis'),
+      validator:
+          FormBuilderValidators.required(errorText: t.auth.common.fullName.required),
       autovalidateMode: AutovalidateMode.onUserInteraction,
       controller: controller,
     );

@@ -40,6 +40,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	Translations $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => Translations(meta: meta ?? this.$meta);
 
 	// Translations
+	late final TranslationsAuthFr auth = TranslationsAuthFr.internal(_root);
 	late final TranslationsCatalogFr catalog = TranslationsCatalogFr.internal(_root);
 	late final TranslationsChatPlantFr chatPlant = TranslationsChatPlantFr.internal(_root);
 	late final TranslationsExchangeFr exchange = TranslationsExchangeFr.internal(_root);
@@ -53,6 +54,20 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final TranslationsPersonalInformationFr personalInformation = TranslationsPersonalInformationFr.internal(_root);
 	late final TranslationsProfilFr profil = TranslationsProfilFr.internal(_root);
 	late final TranslationsUserFr user = TranslationsUserFr.internal(_root);
+}
+
+// Path: auth
+class TranslationsAuthFr {
+	TranslationsAuthFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+	late final TranslationsAuthCommonFr common = TranslationsAuthCommonFr.internal(_root);
+	late final TranslationsAuthSignInFr signIn = TranslationsAuthSignInFr.internal(_root);
+	late final TranslationsAuthRegisterFr register = TranslationsAuthRegisterFr.internal(_root);
+	late final TranslationsAuthForgotPasswordFr forgotPassword = TranslationsAuthForgotPasswordFr.internal(_root);
+	late final TranslationsAuthEmailVerificationFr emailVerification = TranslationsAuthEmailVerificationFr.internal(_root);
 }
 
 // Path: catalog
@@ -240,6 +255,133 @@ class TranslationsUserFr {
 	late final TranslationsUserRecentPlantsFr recent_plants = TranslationsUserRecentPlantsFr.internal(_root);
 	late final TranslationsUserCatalogListFr catalog_list = TranslationsUserCatalogListFr.internal(_root);
 	late final TranslationsUserDetailPlantFr detail_plant = TranslationsUserDetailPlantFr.internal(_root);
+}
+
+// Path: auth.common
+class TranslationsAuthCommonFr {
+	TranslationsAuthCommonFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+	late final TranslationsAuthCommonEmailFr email = TranslationsAuthCommonEmailFr.internal(_root);
+	late final TranslationsAuthCommonPasswordFr password = TranslationsAuthCommonPasswordFr.internal(_root);
+	late final TranslationsAuthCommonFullNameFr fullName = TranslationsAuthCommonFullNameFr.internal(_root);
+
+	/// fr: 'Retour'
+	String get back => 'Retour';
+
+	/// fr: 'Confirmer'
+	String get confirm => 'Confirmer';
+
+	/// fr: 'Ok'
+	String get ok => 'Ok';
+
+	/// fr: 'Oups ! une erreur est survénue 🫤'
+	String get error_title => 'Oups !\nune erreur est survénue 🫤';
+}
+
+// Path: auth.signIn
+class TranslationsAuthSignInFr {
+	TranslationsAuthSignInFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Hey! Bienvenue'
+	String get title => 'Hey! Bienvenue';
+
+	/// fr: 'Mot de passe oublié ?'
+	String get forgotPassword => 'Mot de passe oublié ?';
+
+	/// fr: 'Pas encore de compte ?'
+	String get noAccount => 'Pas encore de compte ?';
+
+	/// fr: 'Créer un compte'
+	String get createAccount => 'Créer un compte';
+
+	late final TranslationsAuthSignInSocialFr social = TranslationsAuthSignInSocialFr.internal(_root);
+}
+
+// Path: auth.register
+class TranslationsAuthRegisterFr {
+	TranslationsAuthRegisterFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Créer un compte'
+	String get title => 'Créer un compte';
+
+	/// fr: 'Commencez !'
+	String get welcome => 'Commencez !';
+
+	/// fr: 'Il semblerait que vous soyez nouveau ici. Créons votre profil.'
+	String get description => 'Il semblerait que vous soyez nouveau ici. Créons votre profil.';
+
+	late final TranslationsAuthRegisterConfirmPasswordFr confirmPassword = TranslationsAuthRegisterConfirmPasswordFr.internal(_root);
+
+	/// fr: 'Vous avez déjà un compte ?'
+	String get alreadyHaveAccount => 'Vous avez déjà un compte ?';
+
+	late final TranslationsAuthRegisterPasswordRulesFr passwordRules = TranslationsAuthRegisterPasswordRulesFr.internal(_root);
+	late final TranslationsAuthRegisterCguFr cgu = TranslationsAuthRegisterCguFr.internal(_root);
+}
+
+// Path: auth.forgotPassword
+class TranslationsAuthForgotPasswordFr {
+	TranslationsAuthForgotPasswordFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Mot de passe oublié ?'
+	String get title => 'Mot de passe oublié ?';
+
+	/// fr: 'Entrez votre e-mail pour réinitialiser le mot de passe'
+	String get description => 'Entrez votre e-mail pour réinitialiser le mot de passe';
+
+	/// fr: 'Un e-mail de réinitialisation a été envoyé sur ${email}'
+	String emailSent({required Object email}) => 'Un e-mail de réinitialisation a été envoyé sur ${email}';
+
+	/// fr: 'Envoyer'
+	String get send => 'Envoyer';
+}
+
+// Path: auth.emailVerification
+class TranslationsAuthEmailVerificationFr {
+	TranslationsAuthEmailVerificationFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Validez votre compte'
+	String get title => 'Validez votre compte';
+
+	/// fr: 'Un e-mail a été envoyé à votre adresse : '
+	String get description => 'Un e-mail a été envoyé à votre adresse :\n';
+
+	/// fr: ' Cliquez sur le lien pour vérifier votre e-mail avant de continuer.'
+	String get instruction => '\nCliquez sur le lien pour vérifier votre e-mail avant de continuer.';
+
+	/// fr: 'Un nouvel e-mail de vérification a été envoyé.'
+	String get resendEmailSent => 'Un nouvel e-mail de vérification a été envoyé.';
+
+	/// fr: 'Erreur : ${error}'
+	String error({required Object error}) => 'Erreur : ${error}';
+
+	/// fr: 'Finalisation de votre inscription...'
+	String get finalizing => 'Finalisation de votre inscription...';
+
+	/// fr: 'Renvoyer l'e-mail'
+	String get resendBtn => 'Renvoyer l\'e-mail';
+
+	/// fr: 'Réessayez dans ${count} s'
+	String retryLabel({required Object count}) => 'Réessayez dans ${count} s';
 }
 
 // Path: catalog.screen
@@ -1290,6 +1432,144 @@ class TranslationsUserDetailPlantFr {
 	String get maintenance => 'entretien';
 }
 
+// Path: auth.common.email
+class TranslationsAuthCommonEmailFr {
+	TranslationsAuthCommonEmailFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'E-mail'
+	String get label => 'E-mail';
+
+	/// fr: 'Entrez votre e-mail'
+	String get hint => 'Entrez votre e-mail';
+
+	/// fr: 'Ce champ est requis'
+	String get required => 'Ce champ est requis';
+
+	/// fr: 'Entrez un e-mail valide'
+	String get invalid => 'Entrez un e-mail valide';
+}
+
+// Path: auth.common.password
+class TranslationsAuthCommonPasswordFr {
+	TranslationsAuthCommonPasswordFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Mot de passe'
+	String get label => 'Mot de passe';
+
+	/// fr: 'Entrez votre mot de passe'
+	String get hint => 'Entrez votre mot de passe';
+
+	/// fr: 'Ce champ est requis'
+	String get required => 'Ce champ est requis';
+}
+
+// Path: auth.common.fullName
+class TranslationsAuthCommonFullNameFr {
+	TranslationsAuthCommonFullNameFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Prénom et nom'
+	String get label => 'Prénom et nom';
+
+	/// fr: 'Entrez votre prénom et nom'
+	String get hint => 'Entrez votre prénom et nom';
+
+	/// fr: 'Ce champ est requis'
+	String get required => 'Ce champ est requis';
+}
+
+// Path: auth.signIn.social
+class TranslationsAuthSignInSocialFr {
+	TranslationsAuthSignInSocialFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ou s’identifier avec'
+	String get title => 'Ou s’identifier avec';
+
+	/// fr: 'S'identifier avec Google'
+	String get google => 'S\'identifier avec Google';
+
+	/// fr: 'S'identifier avec Facebook'
+	String get facebook => 'S\'identifier avec Facebook';
+}
+
+// Path: auth.register.confirmPassword
+class TranslationsAuthRegisterConfirmPasswordFr {
+	TranslationsAuthRegisterConfirmPasswordFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Confirmez le mot de passe'
+	String get label => 'Confirmez le mot de passe';
+
+	/// fr: 'Entrez le mot de passe'
+	String get hint => 'Entrez le mot de passe';
+
+	/// fr: 'Les mots de passe ne correspondent pas'
+	String get mismatch => 'Les mots de passe ne correspondent pas';
+}
+
+// Path: auth.register.passwordRules
+class TranslationsAuthRegisterPasswordRulesFr {
+	TranslationsAuthRegisterPasswordRulesFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Au moins 8 caractères'
+	String get minChars => 'Au moins 8 caractères';
+
+	/// fr: 'Un chiffre'
+	String get oneNumber => 'Un chiffre';
+
+	/// fr: 'Une majuscule'
+	String get oneUpper => 'Une majuscule';
+
+	/// fr: 'Un caractère spécial'
+	String get oneSpecial => 'Un caractère spécial';
+}
+
+// Path: auth.register.cgu
+class TranslationsAuthRegisterCguFr {
+	TranslationsAuthRegisterCguFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'J’accepte les '
+	String get accept => 'J’accepte les ';
+
+	/// fr: 'Conditions d’utilisation'
+	String get terms => 'Conditions d’utilisation';
+
+	/// fr: ' et je confirme avoir lu la '
+	String get and => ' et je confirme avoir lu la ';
+
+	/// fr: 'Politique de confidentialité'
+	String get privacy => 'Politique de confidentialité';
+
+	/// fr: ' de PlantMatch.'
+	String get of => ' de PlantMatch.';
+}
+
 // Path: catalog.detail.delete_dialog
 class TranslationsCatalogDetailDeleteDialogFr {
 	TranslationsCatalogDetailDeleteDialogFr.internal(this._root);
@@ -2284,6 +2564,55 @@ class TranslationsLevelLevelsK2ActionsFr {
 extension on Translations {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'auth.common.email.label' => 'E-mail',
+			'auth.common.email.hint' => 'Entrez votre e-mail',
+			'auth.common.email.required' => 'Ce champ est requis',
+			'auth.common.email.invalid' => 'Entrez un e-mail valide',
+			'auth.common.password.label' => 'Mot de passe',
+			'auth.common.password.hint' => 'Entrez votre mot de passe',
+			'auth.common.password.required' => 'Ce champ est requis',
+			'auth.common.fullName.label' => 'Prénom et nom',
+			'auth.common.fullName.hint' => 'Entrez votre prénom et nom',
+			'auth.common.fullName.required' => 'Ce champ est requis',
+			'auth.common.back' => 'Retour',
+			'auth.common.confirm' => 'Confirmer',
+			'auth.common.ok' => 'Ok',
+			'auth.common.error_title' => 'Oups !\nune erreur est survénue 🫤',
+			'auth.signIn.title' => 'Hey! Bienvenue',
+			'auth.signIn.forgotPassword' => 'Mot de passe oublié ?',
+			'auth.signIn.noAccount' => 'Pas encore de compte ?',
+			'auth.signIn.createAccount' => 'Créer un compte',
+			'auth.signIn.social.title' => 'Ou s’identifier avec',
+			'auth.signIn.social.google' => 'S\'identifier avec Google',
+			'auth.signIn.social.facebook' => 'S\'identifier avec Facebook',
+			'auth.register.title' => 'Créer un compte',
+			'auth.register.welcome' => 'Commencez !',
+			'auth.register.description' => 'Il semblerait que vous soyez nouveau ici. Créons votre profil.',
+			'auth.register.confirmPassword.label' => 'Confirmez le mot de passe',
+			'auth.register.confirmPassword.hint' => 'Entrez le mot de passe',
+			'auth.register.confirmPassword.mismatch' => 'Les mots de passe ne correspondent pas',
+			'auth.register.alreadyHaveAccount' => 'Vous avez déjà un compte ?',
+			'auth.register.passwordRules.minChars' => 'Au moins 8 caractères',
+			'auth.register.passwordRules.oneNumber' => 'Un chiffre',
+			'auth.register.passwordRules.oneUpper' => 'Une majuscule',
+			'auth.register.passwordRules.oneSpecial' => 'Un caractère spécial',
+			'auth.register.cgu.accept' => 'J’accepte les ',
+			'auth.register.cgu.terms' => 'Conditions d’utilisation',
+			'auth.register.cgu.and' => ' et je confirme avoir lu la ',
+			'auth.register.cgu.privacy' => 'Politique de confidentialité',
+			'auth.register.cgu.of' => ' de PlantMatch.',
+			'auth.forgotPassword.title' => 'Mot de passe oublié ?',
+			'auth.forgotPassword.description' => 'Entrez votre e-mail pour réinitialiser le mot de passe',
+			'auth.forgotPassword.emailSent' => ({required Object email}) => 'Un e-mail de réinitialisation a été envoyé sur ${email}',
+			'auth.forgotPassword.send' => 'Envoyer',
+			'auth.emailVerification.title' => 'Validez votre compte',
+			'auth.emailVerification.description' => 'Un e-mail a été envoyé à votre adresse :\n',
+			'auth.emailVerification.instruction' => '\nCliquez sur le lien pour vérifier votre e-mail avant de continuer.',
+			'auth.emailVerification.resendEmailSent' => 'Un nouvel e-mail de vérification a été envoyé.',
+			'auth.emailVerification.error' => ({required Object error}) => 'Erreur : ${error}',
+			'auth.emailVerification.finalizing' => 'Finalisation de votre inscription...',
+			'auth.emailVerification.resendBtn' => 'Renvoyer l\'e-mail',
+			'auth.emailVerification.retryLabel' => ({required Object count}) => 'Réessayez dans ${count} s',
 			'catalog.screen.title' => 'Mes plantes',
 			'catalog.screen.subtitle' => 'Mon catalogue de plantes à partager',
 			'catalog.screen.empty_message' => 'Ton catalogue est vide. Ajoute ta première plante pour commencer.',

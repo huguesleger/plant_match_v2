@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_template.dart';
@@ -10,13 +11,13 @@ class RegisterScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       appBar: AppBarTemplate(
         backgroundColor: AppColors.white,
         surfaceTintColor: AppColors.white,
         shadowColor: AppColors.black,
         leading: false,
-        title: 'Créer un compte',
+        title: t.auth.register.title,
         centerTitle: true,
       ),
       body: SafeArea(
@@ -24,17 +25,16 @@ class RegisterScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Padding(
                 padding: AppSpacing.paddingHorizontal,
                 child: TitlePage(
-                  title: 'Commencez !',
-                  subtitle:
-                      'Il semblerait que vous soyez nouveau ici. Créons votre profil.',
+                  title: t.auth.register.welcome,
+                  subtitle: t.auth.register.description,
                 ),
               ),
-              SizedBox(height: 40),
-              FormRegister(),
+              const SizedBox(height: 40),
+              const FormRegister(),
             ],
           ),
         ),

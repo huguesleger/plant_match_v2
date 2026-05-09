@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 
 class CguCheckboxField extends StatelessWidget {
@@ -29,20 +30,20 @@ class CguCheckboxField extends StatelessWidget {
             child: RichText(
               strutStyle: const StrutStyle(height: 1.5),
               text: TextSpan(
-                text: 'J’accepte les ',
+                text: t.auth.register.cgu.accept,
                 style: const TextStyle(color: AppColors.greyDark, fontSize: 14),
                 children: [
                   TextSpan(
                     recognizer: TapGestureRecognizer()..onTap = () {},
-                    text: 'Conditions d’utilisation',
+                    text: t.auth.register.cgu.terms,
                     style: const TextStyle(
                         color: AppColors.greyDark,
                         fontWeight: FontWeight.w700,
                         decoration: TextDecoration.underline),
                   ),
-                  const TextSpan(
-                    text: ' et je confirme avoir lu la ',
-                    style: TextStyle(
+                  TextSpan(
+                    text: t.auth.register.cgu.and,
+                    style: const TextStyle(
                       color: AppColors.greyDark,
                       fontSize: 14,
                     ),
@@ -52,15 +53,15 @@ class CguCheckboxField extends StatelessWidget {
                       ..onTap = () {
                         //TODO page privacy policy
                       },
-                    text: 'Politique de confidentialité',
+                    text: t.auth.register.cgu.privacy,
                     style: const TextStyle(
                         color: AppColors.greyDark,
                         fontWeight: FontWeight.w700,
                         decoration: TextDecoration.underline),
                   ),
-                  const TextSpan(
-                    text: ' de PlantMatch.',
-                    style: TextStyle(
+                  TextSpan(
+                    text: t.auth.register.cgu.of,
+                    style: const TextStyle(
                       color: AppColors.greyDark,
                       fontSize: 14,
                     ),

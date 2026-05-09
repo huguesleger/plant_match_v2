@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -23,7 +24,7 @@ class AuthCguCheckbox extends StatelessWidget {
       validator: FormBuilderValidators.compose([
         (value) {
           if (value == null || value == false) {
-            return 'Ce champ est requis';
+            return t.auth.common.email.required;
           }
           return null;
         },

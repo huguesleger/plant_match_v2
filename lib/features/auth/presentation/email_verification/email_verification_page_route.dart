@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/widgets/error/error_page.dart';
 import 'package:plant_match_v2/core/widgets/template/template_page.dart';
@@ -36,16 +37,16 @@ class EmailVerificationPageRoute extends StatelessWidget {
             ),
           Unauthenticated() => const RegisterScreen(),
           AuthEmailVerificationSent() => EmailVerificationScreen(user: user),
-          AuthFinalizing() => const Scaffold(
+          AuthFinalizing() => Scaffold(
               body: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    CircularProgressIndicator(),
-                    SizedBox(height: 20),
+                    const CircularProgressIndicator(),
+                    const SizedBox(height: 20),
                     Text(
-                      'Finalisation de votre inscription...',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      t.auth.emailVerification.finalizing,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),

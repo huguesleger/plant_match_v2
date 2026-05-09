@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_dynamic_header.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
@@ -30,10 +31,10 @@ class SignInScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 25),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 25),
                   child: TitlePage(
-                    title: 'Hey! Bienvenue',
+                    title: t.auth.signIn.title,
                   ),
                 ),
                 FormSignIn(toggleSignInOrRegister: toggleSignInOrRegister),
@@ -41,7 +42,7 @@ class SignInScreen extends StatelessWidget {
             ),
           ),
         ),
-        backgroundAppBar : const SignInBackground(),
+        backgroundAppBar: const SignInBackground(),
       ),
     );
   }

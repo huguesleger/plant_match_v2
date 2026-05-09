@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
@@ -23,7 +24,7 @@ class SignInPageRoute extends StatelessWidget {
           showDialog(
             context: context,
             builder: (dialogContext) => AppDialog(
-              title: 'Oups !\nune erreur est survénue 🫤',
+              title: t.auth.common.error_title,
               textAlign: TextAlign.left,
               child: Padding(
                 padding: const EdgeInsets.all(20),
@@ -37,7 +38,7 @@ class SignInPageRoute extends StatelessWidget {
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
-                        text: 'Ok',
+                        text: t.auth.common.ok,
                         bgColor: AppColors.greenLight,
                         textColor: AppColors.blueGreen,
                         padding: const EdgeInsets.symmetric(
