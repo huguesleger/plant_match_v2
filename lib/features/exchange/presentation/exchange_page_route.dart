@@ -1,3 +1,4 @@
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
@@ -24,8 +25,8 @@ class ExchangePageRoute extends StatelessWidget {
     final userId = context.read<AuthCubit>().userId;
 
     if (userId == null) {
-      return const Scaffold(
-        body: Center(child: Text("Utilisateur non connecté")),
+      return Scaffold(
+        body: Center(child: Text(t.message.errors.not_connected)),
       );
     }
 

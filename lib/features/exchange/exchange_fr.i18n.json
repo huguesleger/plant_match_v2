@@ -1,0 +1,19 @@
+{
+  "screen": {
+    "loading": "Chargement...",
+    "picking_title": "Choisir une plante à échanger",
+    "confirm_title": "Confirmer l'échange",
+    "success_title": "Succès",
+    "success_message": "Échange proposé avec succès !",
+    "error_title": "Erreur"
+  },
+  "confirmation": {
+    "offered_plant_title": "Tu proposes cette plante",
+    "target_plant_title": "Contre sa plante",
+    "confirm_btn": "Confirmer l'échange",
+    "change_plant_btn": "Choisir une autre plante"
+  },
+  "picker": {
+    "no_plants": "Tu n'as pas encore de plantes à échanger"
+  }
+}

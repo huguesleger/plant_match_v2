@@ -40,6 +40,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	Translations $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => Translations(meta: meta ?? this.$meta);
 
 	// Translations
+	late final TranslationsExchangeFr exchange = TranslationsExchangeFr.internal(_root);
 	late final TranslationsFavoriteFr favorite = TranslationsFavoriteFr.internal(_root);
 	late final TranslationsGetStartedFr getStarted = TranslationsGetStartedFr.internal(_root);
 	late final TranslationsHistoryFr history = TranslationsHistoryFr.internal(_root);
@@ -50,6 +51,18 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final TranslationsPersonalInformationFr personalInformation = TranslationsPersonalInformationFr.internal(_root);
 	late final TranslationsProfilFr profil = TranslationsProfilFr.internal(_root);
 	late final TranslationsUserFr user = TranslationsUserFr.internal(_root);
+}
+
+// Path: exchange
+class TranslationsExchangeFr {
+	TranslationsExchangeFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+	late final TranslationsExchangeScreenFr screen = TranslationsExchangeScreenFr.internal(_root);
+	late final TranslationsExchangeConfirmationFr confirmation = TranslationsExchangeConfirmationFr.internal(_root);
+	late final TranslationsExchangePickerFr picker = TranslationsExchangePickerFr.internal(_root);
 }
 
 // Path: favorite
@@ -189,6 +202,66 @@ class TranslationsUserFr {
 	late final TranslationsUserRecentPlantsFr recent_plants = TranslationsUserRecentPlantsFr.internal(_root);
 	late final TranslationsUserCatalogListFr catalog_list = TranslationsUserCatalogListFr.internal(_root);
 	late final TranslationsUserDetailPlantFr detail_plant = TranslationsUserDetailPlantFr.internal(_root);
+}
+
+// Path: exchange.screen
+class TranslationsExchangeScreenFr {
+	TranslationsExchangeScreenFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Chargement...'
+	String get loading => 'Chargement...';
+
+	/// fr: 'Choisir une plante à échanger'
+	String get picking_title => 'Choisir une plante à échanger';
+
+	/// fr: 'Confirmer l'échange'
+	String get confirm_title => 'Confirmer l\'échange';
+
+	/// fr: 'Succès'
+	String get success_title => 'Succès';
+
+	/// fr: 'Échange proposé avec succès !'
+	String get success_message => 'Échange proposé avec succès !';
+
+	/// fr: 'Erreur'
+	String get error_title => 'Erreur';
+}
+
+// Path: exchange.confirmation
+class TranslationsExchangeConfirmationFr {
+	TranslationsExchangeConfirmationFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Tu proposes cette plante'
+	String get offered_plant_title => 'Tu proposes cette plante';
+
+	/// fr: 'Contre sa plante'
+	String get target_plant_title => 'Contre sa plante';
+
+	/// fr: 'Confirmer l'échange'
+	String get confirm_btn => 'Confirmer l\'échange';
+
+	/// fr: 'Choisir une autre plante'
+	String get change_plant_btn => 'Choisir une autre plante';
+}
+
+// Path: exchange.picker
+class TranslationsExchangePickerFr {
+	TranslationsExchangePickerFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Tu n'as pas encore de plantes à échanger'
+	String get no_plants => 'Tu n\'as pas encore de plantes à échanger';
 }
 
 // Path: favorite.screen
@@ -1132,6 +1205,17 @@ class TranslationsLevelLevelsK2ActionsFr {
 extension on Translations {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'exchange.screen.loading' => 'Chargement...',
+			'exchange.screen.picking_title' => 'Choisir une plante à échanger',
+			'exchange.screen.confirm_title' => 'Confirmer l\'échange',
+			'exchange.screen.success_title' => 'Succès',
+			'exchange.screen.success_message' => 'Échange proposé avec succès !',
+			'exchange.screen.error_title' => 'Erreur',
+			'exchange.confirmation.offered_plant_title' => 'Tu proposes cette plante',
+			'exchange.confirmation.target_plant_title' => 'Contre sa plante',
+			'exchange.confirmation.confirm_btn' => 'Confirmer l\'échange',
+			'exchange.confirmation.change_plant_btn' => 'Choisir une autre plante',
+			'exchange.picker.no_plants' => 'Tu n\'as pas encore de plantes à échanger',
 			'favorite.screen.title' => 'Mes Favoris',
 			'favorite.screen.plants_tab' => ({required Object count}) => 'Plantes (${count})',
 			'favorite.screen.users_tab' => ({required Object count}) => 'Profils (${count})',

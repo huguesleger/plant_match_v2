@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:fpdart/fpdart.dart';
@@ -24,18 +25,18 @@ class ExchangeConfirmation extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          const Text(
-            "Tu proposes cette plante",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          Text(
+            t.exchange.confirmation.offered_plant_title,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
           const SizedBox(height: 20),
           ExchangePlantPreview(plant: offeredPlant),
           const SizedBox(height: 20),
           const Icon(Icons.swap_vert, size: 40, color: Colors.grey),
           const SizedBox(height: 20),
-          const Text(
-            "Contre sa plante",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          Text(
+            t.exchange.confirmation.target_plant_title,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
           const SizedBox(height: 20),
           ExchangePlantPreview(plant: targetPlant),
@@ -77,14 +78,14 @@ class ExchangeConfirmation extends StatelessWidget {
                 exchangeCubit.propose(exchange);
               }
             },
-            child: const Text("Confirmer l'échange"),
+            child: Text(t.exchange.confirmation.confirm_btn),
           ),
           const SizedBox(height: 10),
           TextButton(
             onPressed: () {
               context.read<ExchangeCubit>().cancelSelection();
             },
-            child: const Text("Choisir une autre plante"),
+            child: Text(t.exchange.confirmation.change_plant_btn),
           ),
         ],
       ),
