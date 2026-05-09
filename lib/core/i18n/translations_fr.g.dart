@@ -41,6 +41,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	// Translations
 	late final TranslationsGetStartedFr getStarted = TranslationsGetStartedFr.internal(_root);
+	late final TranslationsHistoryFr history = TranslationsHistoryFr.internal(_root);
 	late final TranslationsLevelFr level = TranslationsLevelFr.internal(_root);
 	late final TranslationsLevelAwardedFr levelAwarded = TranslationsLevelAwardedFr.internal(_root);
 	late final TranslationsMessageFr message = TranslationsMessageFr.internal(_root);
@@ -66,6 +67,20 @@ class TranslationsGetStartedFr {
 
 	/// fr: 'C'est parti !'
 	String get button => 'C\'est parti !';
+}
+
+// Path: history
+class TranslationsHistoryFr {
+	TranslationsHistoryFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+	late final TranslationsHistoryScreenFr screen = TranslationsHistoryScreenFr.internal(_root);
+	late final TranslationsHistoryEmptyFr empty = TranslationsHistoryEmptyFr.internal(_root);
+	late final TranslationsHistoryCardFr card = TranslationsHistoryCardFr.internal(_root);
+	late final TranslationsHistoryFiltersFr filters = TranslationsHistoryFiltersFr.internal(_root);
+	late final TranslationsHistoryStatusFr status = TranslationsHistoryStatusFr.internal(_root);
 }
 
 // Path: level
@@ -161,6 +176,99 @@ class TranslationsUserFr {
 	late final TranslationsUserRecentPlantsFr recent_plants = TranslationsUserRecentPlantsFr.internal(_root);
 	late final TranslationsUserCatalogListFr catalog_list = TranslationsUserCatalogListFr.internal(_root);
 	late final TranslationsUserDetailPlantFr detail_plant = TranslationsUserDetailPlantFr.internal(_root);
+}
+
+// Path: history.screen
+class TranslationsHistoryScreenFr {
+	TranslationsHistoryScreenFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Historique'
+	String get title => 'Historique';
+
+	/// fr: 'Erreur : $message'
+	String error({required Object message}) => 'Erreur : ${message}';
+}
+
+// Path: history.empty
+class TranslationsHistoryEmptyFr {
+	TranslationsHistoryEmptyFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aucun échange ni donation dans l'historique'
+	String get message => 'Aucun échange ni donation dans l\'historique';
+}
+
+// Path: history.card
+class TranslationsHistoryCardFr {
+	TranslationsHistoryCardFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Demande envoyée'
+	String get request_sent => 'Demande envoyée';
+
+	/// fr: 'Demande reçue'
+	String get request_received => 'Demande reçue';
+
+	/// fr: 'Échange'
+	String get exchange => 'Échange';
+
+	/// fr: 'Donation'
+	String get donation => 'Donation';
+
+	/// fr: 'Plante inconnue'
+	String get unknown_plant => 'Plante inconnue';
+}
+
+// Path: history.filters
+class TranslationsHistoryFiltersFr {
+	TranslationsHistoryFiltersFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Tous'
+	String get all => 'Tous';
+
+	/// fr: 'Acceptés'
+	String get accepted => 'Acceptés';
+
+	/// fr: 'Terminés'
+	String get completed => 'Terminés';
+
+	/// fr: 'Refusés'
+	String get rejected => 'Refusés';
+}
+
+// Path: history.status
+class TranslationsHistoryStatusFr {
+	TranslationsHistoryStatusFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Accepté'
+	String get accepted => 'Accepté';
+
+	/// fr: 'Terminé'
+	String get completed => 'Terminé';
+
+	/// fr: 'Refusé'
+	String get rejected => 'Refusé';
+
+	/// fr: 'En attente'
+	String get pending => 'En attente';
 }
 
 // Path: level.screen
@@ -937,6 +1045,22 @@ extension on Translations {
 			'getStarted.title' => 'Échangez, adoptez et cultivez ensemble.',
 			'getStarted.subtitle' => 'Rejoignez la communauté des amoureux des plantes près de chez vous.',
 			'getStarted.button' => 'C\'est parti !',
+			'history.screen.title' => 'Historique',
+			'history.screen.error' => ({required Object message}) => 'Erreur : ${message}',
+			'history.empty.message' => 'Aucun échange ni donation dans l\'historique',
+			'history.card.request_sent' => 'Demande envoyée',
+			'history.card.request_received' => 'Demande reçue',
+			'history.card.exchange' => 'Échange',
+			'history.card.donation' => 'Donation',
+			'history.card.unknown_plant' => 'Plante inconnue',
+			'history.filters.all' => 'Tous',
+			'history.filters.accepted' => 'Acceptés',
+			'history.filters.completed' => 'Terminés',
+			'history.filters.rejected' => 'Refusés',
+			'history.status.accepted' => 'Accepté',
+			'history.status.completed' => 'Terminé',
+			'history.status.rejected' => 'Refusé',
+			'history.status.pending' => 'En attente',
 			'level.screen.title' => 'Mes badges',
 			'level.screen.my_level' => 'Mon niveau',
 			'level.screen.my_badges' => 'Mes badges',

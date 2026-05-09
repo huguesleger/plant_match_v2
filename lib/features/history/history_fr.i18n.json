@@ -1,0 +1,28 @@
+{
+  "screen": {
+    "title": "Historique",
+    "error": "Erreur : $message"
+  },
+  "empty": {
+    "message": "Aucun échange ni donation dans l'historique"
+  },
+  "card": {
+    "request_sent": "Demande envoyée",
+    "request_received": "Demande reçue",
+    "exchange": "Échange",
+    "donation": "Donation",
+    "unknown_plant": "Plante inconnue"
+  },
+  "filters": {
+    "all": "Tous",
+    "accepted": "Acceptés",
+    "completed": "Terminés",
+    "rejected": "Refusés"
+  },
+  "status": {
+    "accepted": "Accepté",
+    "completed": "Terminé",
+    "rejected": "Refusé",
+    "pending": "En attente"
+  }
+}

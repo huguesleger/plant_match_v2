@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/features/history/presentation/widgets/history_item.dart';
@@ -24,7 +25,7 @@ class HistoryCardData {
 
   factory HistoryCardData.fromItem(HistoryItem item, String currentUserId) {
     final isRequester = item.requestedBy == currentUserId;
-    final roleText = isRequester ? 'Demande envoyée' : 'Demande reçue';
+    final roleText = isRequester ? t.history.card.request_sent : t.history.card.request_received;
 
     final (typeLabel, typeColor, plantName, imageUrl) = switch (item) {
       HistoryExchangeItem e => () {
@@ -35,18 +36,18 @@ class HistoryCardData {
               ? e.exchange.targetPlantImage
               : e.exchange.offeredPlantImage;
           return (
-            'Échange',
+            t.history.card.exchange,
             AppColors.greenDark,
-            name.isNotEmpty ? name.toCapitalize() : 'Plante inconnue',
+            name.isNotEmpty ? name.toCapitalize() : t.history.card.unknown_plant,
             image,
           );
         }(),
       HistoryDonationItem d => (
-          'Donation',
+          t.history.card.donation,
           AppColors.blueGreen,
           d.donation.plantName.isNotEmpty
               ? d.donation.plantName.toCapitalize()
-              : 'Plante inconnue',
+              : t.history.card.unknown_plant,
           d.donation.plantImage,
         ),
     };

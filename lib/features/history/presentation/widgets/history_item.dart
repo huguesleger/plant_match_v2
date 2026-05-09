@@ -1,19 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/features/donation/domain/entities/donation.dart';
 import 'package:plant_match_v2/features/exchange/domain/entities/exchange.dart';
 
 enum HistoryStatusFilter {
-  all('Tous', LucideIcons.list),
-  accepted('Acceptés', LucideIcons.circle_check),
-  completed('Terminés', LucideIcons.circle_check_big),
-  rejected('Refusés', LucideIcons.circle_x);
+  all(LucideIcons.list),
+  accepted(LucideIcons.circle_check),
+  completed(LucideIcons.circle_check_big),
+  rejected(LucideIcons.circle_x);
 
-  final String label;
   final IconData icon;
 
-  const HistoryStatusFilter(this.label, this.icon);
+  const HistoryStatusFilter(this.icon);
+
+  String get label => switch (this) {
+        HistoryStatusFilter.all => t.history.filters.all,
+        HistoryStatusFilter.accepted => t.history.filters.accepted,
+        HistoryStatusFilter.completed => t.history.filters.completed,
+        HistoryStatusFilter.rejected => t.history.filters.rejected,
+      };
 }
 
 sealed class HistoryItem {

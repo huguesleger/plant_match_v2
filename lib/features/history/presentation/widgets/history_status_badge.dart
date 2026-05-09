@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/widgets/badge/badge_pill.dart';
 
 class HistoryStatusBadge extends StatelessWidget {
@@ -29,22 +30,22 @@ class HistoryStatusBadge extends StatelessWidget {
     return switch (rawStatus) {
       'accepted' => (
           color: Colors.green,
-          text: 'Accepté',
+          text: t.history.status.accepted,
           icon: Icons.check_circle,
         ),
       'completed' => (
           color: Colors.blue,
-          text: 'Terminé',
+          text: t.history.status.completed,
           icon: Icons.done_all,
         ),
       'rejected' => (
           color: Colors.red,
-          text: 'Refusé',
+          text: t.history.status.rejected,
           icon: Icons.cancel,
         ),
       _ => (
           color: Colors.orange,
-          text: 'En attente',
+          text: t.history.status.pending,
           icon: Icons.hourglass_empty,
         ),
     };

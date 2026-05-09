@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 
@@ -7,19 +8,19 @@ class EmptyHistoryView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
+    return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
+          const Icon(
             LucideIcons.history,
             size: 64,
             color: AppColors.greyMedium,
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Text(
-            'Aucun échange ni donation dans l\'historique',
-            style: TextStyle(
+            t.history.empty.message,
+            style: const TextStyle(
               fontSize: 16,
               color: AppColors.greyDark,
             ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_template.dart';
@@ -21,7 +22,7 @@ class HistoryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarTemplate(
-        title: 'Historique',
+        title: t.history.screen.title,
         backgroundColor: AppColors.white,
         surfaceTintColor: AppColors.white,
         shadowColor: AppColors.black,
@@ -58,7 +59,7 @@ class HistoryScreen extends StatelessWidget {
                   const Center(child: CircularProgressIndicator()),
                 HistoryError s => Center(
                     child: Text(
-                      'Erreur : ${s.message}',
+                      t.history.screen.error(message: s.message),
                       style: const TextStyle(color: Colors.red),
                     ),
                   ),
