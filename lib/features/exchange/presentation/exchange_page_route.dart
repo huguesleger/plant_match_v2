@@ -26,7 +26,7 @@ class ExchangePageRoute extends StatelessWidget {
 
     if (userId == null) {
       return Scaffold(
-        body: Center(child: Text(t.message.errors.not_connected)),
+        body: Center(child: Text(t.common.notConnected)),
       );
     }
 

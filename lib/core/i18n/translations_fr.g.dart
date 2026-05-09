@@ -44,6 +44,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final TranslationsAuthFr auth = TranslationsAuthFr.internal(_root);
 	late final TranslationsCatalogFr catalog = TranslationsCatalogFr.internal(_root);
 	late final TranslationsChatPlantFr chatPlant = TranslationsChatPlantFr.internal(_root);
+	late final TranslationsCommonFr common = TranslationsCommonFr.internal(_root);
 	late final TranslationsExchangeFr exchange = TranslationsExchangeFr.internal(_root);
 	late final TranslationsFavoriteFr favorite = TranslationsFavoriteFr.internal(_root);
 	late final TranslationsGetStartedFr getStarted = TranslationsGetStartedFr.internal(_root);
@@ -124,6 +125,18 @@ class TranslationsChatPlantFr {
 	late final TranslationsChatPlantDisplayCodeFr display_code = TranslationsChatPlantDisplayCodeFr.internal(_root);
 	late final TranslationsChatPlantPlantCardFr plant_card = TranslationsChatPlantPlantCardFr.internal(_root);
 	late final TranslationsChatPlantInfoBarFr info_bar = TranslationsChatPlantInfoBarFr.internal(_root);
+}
+
+// Path: common
+class TranslationsCommonFr {
+	TranslationsCommonFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Utilisateur non connecté'
+	String get notConnected => 'Utilisateur non connecté';
 }
 
 // Path: exchange
@@ -216,7 +229,6 @@ class TranslationsMessageFr {
 	// Translations
 	late final TranslationsMessageScreenFr screen = TranslationsMessageScreenFr.internal(_root);
 	late final TranslationsMessageEmptyFr empty = TranslationsMessageEmptyFr.internal(_root);
-	late final TranslationsMessageErrorsFr errors = TranslationsMessageErrorsFr.internal(_root);
 }
 
 // Path: onboarding
@@ -1294,18 +1306,6 @@ class TranslationsMessageEmptyFr {
 
 	/// fr: 'Commencez à discuter avec vos futurs partenaires d'échange !'
 	String get subtitle => 'Commencez à discuter avec vos futurs partenaires d\'échange !';
-}
-
-// Path: message.errors
-class TranslationsMessageErrorsFr {
-	TranslationsMessageErrorsFr.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// fr: 'Utilisateur non connecté'
-	String get not_connected => 'Utilisateur non connecté';
 }
 
 // Path: onboarding.items
@@ -2986,6 +2986,7 @@ extension on Translations {
 			'chatPlant.info_bar.donation.accepted' => 'Donation acceptée 🎉',
 			'chatPlant.info_bar.donation.rejected' => 'Donation refusée',
 			'chatPlant.info_bar.donation.completed' => 'Donation terminée ✅',
+			'common.notConnected' => 'Utilisateur non connecté',
 			'exchange.screen.loading' => 'Chargement...',
 			'exchange.screen.picking_title' => 'Choisir une plante à échanger',
 			'exchange.screen.confirm_title' => 'Confirmer l\'échange',
@@ -3070,7 +3071,6 @@ extension on Translations {
 			'message.screen.title' => 'Mes messages',
 			'message.empty.title' => 'Aucune conversation',
 			'message.empty.subtitle' => 'Commencez à discuter avec vos futurs partenaires d\'échange !',
-			'message.errors.not_connected' => 'Utilisateur non connecté',
 			'onboarding.items.catalog.title' => 'Catalogue de Plantes\nPersonnalisé',
 			'onboarding.items.catalog.description' => 'Créez et gérez votre propre collection de plantes. Ajoutez des photos, des descriptions, et recevez des rappels pour l’entretien de vos plantes.',
 			'onboarding.items.map.title' => 'Échange de Plantes\net Boutures',
