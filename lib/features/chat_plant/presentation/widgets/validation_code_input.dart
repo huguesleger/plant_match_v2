@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 
 class ValidationCodeInput extends StatefulWidget {
@@ -45,15 +46,15 @@ class _ValidationCodeInputState extends State<ValidationCodeInput> {
       ),
       child: Column(
         children: [
-          const Text(
-            'Confirmation de réception',
-            style: TextStyle(fontWeight: FontWeight.bold),
+          Text(
+            t.chatPlant.validation.title,
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
-          const Text(
-            'Saisissez le code à 6 chiffres donné par le propriétaire.',
+          Text(
+            t.chatPlant.validation.description,
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 12, color: AppColors.grey),
+            style: const TextStyle(fontSize: 12, color: AppColors.grey),
           ),
           const SizedBox(height: 16),
           SizedBox(
@@ -71,7 +72,7 @@ class _ValidationCodeInputState extends State<ValidationCodeInput> {
               ),
               decoration: InputDecoration(
                 counterText: '',
-                hintText: '000000',
+                hintText: t.chatPlant.validation.hint,
                 hintStyle: TextStyle(color: AppColors.grey.withValues(alpha: 0.3)),
                 contentPadding: const EdgeInsets.symmetric(vertical: 8),
                 enabledBorder: UnderlineInputBorder(
@@ -107,7 +108,7 @@ class _ValidationCodeInputState extends State<ValidationCodeInput> {
                       ),
                     ),
                   )
-                : const Text('Confirmer la réception'),
+                : Text(t.chatPlant.validation.confirm_btn),
           ),
         ],
       ),

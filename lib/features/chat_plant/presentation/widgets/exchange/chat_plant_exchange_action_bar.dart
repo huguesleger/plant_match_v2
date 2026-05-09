@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -36,13 +37,14 @@ class ChatPlantExchangeActionBar extends StatelessWidget {
     return switch (state) {
       ExchangePending(:final exchange) when isPlantOwner =>
         ChatPlantAcceptOrRefuseBar(
-          label: "l'échange",
+          label: t.chatPlant.actions.labels.exchange,
           onAccept: () => context.read<ExchangeCubit>().accept(exchange.id),
           onRefuse: () => context.read<ExchangeCubit>().reject(exchange.id),
         ),
       ExchangeAccepted(:final exchange) when isPlantOwner =>
         ValidationCodeDisplay(
-          onGenerate: () => context.read<ExchangeCubit>().generateCode(exchange.id),
+          onGenerate: () =>
+              context.read<ExchangeCubit>().generateCode(exchange.id),
         ),
       ExchangeWaitingValidation(:final exchange) when isPlantOwner =>
         ValidationCodeDisplay(
@@ -57,8 +59,8 @@ class ChatPlantExchangeActionBar extends StatelessWidget {
                 currentUserId,
               ),
         ),
-      ExchangeAccepted() when !isPlantOwner => const ChatPlantStatusBanner(
-          message: "L'échange est accepté ! En attente de la rencontre.",
+      ExchangeAccepted() when !isPlantOwner => ChatPlantStatusBanner(
+          message: t.chatPlant.view.status.exchange_accepted_waiting,
           icon: LucideIcons.calendar_check,
         ),
       ExchangeInitial() ||
@@ -90,7 +92,7 @@ class ChatPlantExchangeActionBar extends StatelessWidget {
                 ),
                 backgroundColor: AppColors.greenDark,
                 icon: LucideIcons.heart_handshake,
-                label: 'Proposer un échange',
+                label: t.chatPlant.actions.propose_exchange_btn,
               )
             : const SizedBox.shrink(),
     };

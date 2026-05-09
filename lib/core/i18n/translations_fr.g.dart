@@ -40,6 +40,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	Translations $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => Translations(meta: meta ?? this.$meta);
 
 	// Translations
+	late final TranslationsChatPlantFr chatPlant = TranslationsChatPlantFr.internal(_root);
 	late final TranslationsExchangeFr exchange = TranslationsExchangeFr.internal(_root);
 	late final TranslationsFavoriteFr favorite = TranslationsFavoriteFr.internal(_root);
 	late final TranslationsGetStartedFr getStarted = TranslationsGetStartedFr.internal(_root);
@@ -51,6 +52,23 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final TranslationsPersonalInformationFr personalInformation = TranslationsPersonalInformationFr.internal(_root);
 	late final TranslationsProfilFr profil = TranslationsProfilFr.internal(_root);
 	late final TranslationsUserFr user = TranslationsUserFr.internal(_root);
+}
+
+// Path: chatPlant
+class TranslationsChatPlantFr {
+	TranslationsChatPlantFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+	late final TranslationsChatPlantScreenFr screen = TranslationsChatPlantScreenFr.internal(_root);
+	late final TranslationsChatPlantViewFr view = TranslationsChatPlantViewFr.internal(_root);
+	late final TranslationsChatPlantMenuFr menu = TranslationsChatPlantMenuFr.internal(_root);
+	late final TranslationsChatPlantActionsFr actions = TranslationsChatPlantActionsFr.internal(_root);
+	late final TranslationsChatPlantValidationFr validation = TranslationsChatPlantValidationFr.internal(_root);
+	late final TranslationsChatPlantDisplayCodeFr display_code = TranslationsChatPlantDisplayCodeFr.internal(_root);
+	late final TranslationsChatPlantPlantCardFr plant_card = TranslationsChatPlantPlantCardFr.internal(_root);
+	late final TranslationsChatPlantInfoBarFr info_bar = TranslationsChatPlantInfoBarFr.internal(_root);
 }
 
 // Path: exchange
@@ -202,6 +220,182 @@ class TranslationsUserFr {
 	late final TranslationsUserRecentPlantsFr recent_plants = TranslationsUserRecentPlantsFr.internal(_root);
 	late final TranslationsUserCatalogListFr catalog_list = TranslationsUserCatalogListFr.internal(_root);
 	late final TranslationsUserDetailPlantFr detail_plant = TranslationsUserDetailPlantFr.internal(_root);
+}
+
+// Path: chatPlant.screen
+class TranslationsChatPlantScreenFr {
+	TranslationsChatPlantScreenFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Erreur lors du chargement du chat'
+	String get error_loading => 'Erreur lors du chargement du chat';
+}
+
+// Path: chatPlant.view
+class TranslationsChatPlantViewFr {
+	TranslationsChatPlantViewFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aucun message pour le moment. Démarrez la conversation.'
+	String get empty_messages => 'Aucun message pour le moment.\nDémarrez la conversation.';
+
+	/// fr: 'Vous avez bloqué cet utilisateur'
+	String get blocked_user_banner => 'Vous avez bloqué cet utilisateur';
+
+	/// fr: 'Débloquer'
+	String get unblock_btn => 'Débloquer';
+
+	late final TranslationsChatPlantViewUnblockDialogFr unblock_dialog = TranslationsChatPlantViewUnblockDialogFr.internal(_root);
+	late final TranslationsChatPlantViewStatusFr status = TranslationsChatPlantViewStatusFr.internal(_root);
+
+	/// fr: 'Écrire un message…'
+	String get input_hint => 'Écrire un message…';
+}
+
+// Path: chatPlant.menu
+class TranslationsChatPlantMenuFr {
+	TranslationsChatPlantMenuFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Voir le profil'
+	String get see_profile => 'Voir le profil';
+
+	/// fr: 'Signaler'
+	String get report => 'Signaler';
+
+	/// fr: 'Débloquer'
+	String get unblock => 'Débloquer';
+
+	/// fr: 'Bloquer'
+	String get block => 'Bloquer';
+
+	/// fr: 'Effacer la conversation'
+	String get clear_chat => 'Effacer la conversation';
+
+	/// fr: 'Supprimer'
+	String get delete => 'Supprimer';
+
+	/// fr: 'Annuler'
+	String get cancel => 'Annuler';
+
+	late final TranslationsChatPlantMenuDeleteDialogFr delete_dialog = TranslationsChatPlantMenuDeleteDialogFr.internal(_root);
+	late final TranslationsChatPlantMenuReportDialogFr report_dialog = TranslationsChatPlantMenuReportDialogFr.internal(_root);
+	late final TranslationsChatPlantMenuBlockDialogFr block_dialog = TranslationsChatPlantMenuBlockDialogFr.internal(_root);
+}
+
+// Path: chatPlant.actions
+class TranslationsChatPlantActionsFr {
+	TranslationsChatPlantActionsFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Accepter'
+	String get accept => 'Accepter';
+
+	/// fr: 'Refuser'
+	String get refuse => 'Refuser';
+
+	/// fr: 'Annuler'
+	String get cancel => 'Annuler';
+
+	/// fr: 'Confirmer'
+	String get confirm => 'Confirmer';
+
+	/// fr: 'Marquer $label comme terminée'
+	String complete_label({required Object label}) => 'Marquer ${label} comme terminée';
+
+	/// fr: 'Proposer un échange'
+	String get propose_exchange_btn => 'Proposer un échange';
+
+	late final TranslationsChatPlantActionsLabelsFr labels = TranslationsChatPlantActionsLabelsFr.internal(_root);
+}
+
+// Path: chatPlant.validation
+class TranslationsChatPlantValidationFr {
+	TranslationsChatPlantValidationFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Confirmation de réception'
+	String get title => 'Confirmation de réception';
+
+	/// fr: 'Saisissez le code à 6 chiffres donné par le propriétaire.'
+	String get description => 'Saisissez le code à 6 chiffres donné par le propriétaire.';
+
+	/// fr: '000000'
+	String get hint => '000000';
+
+	/// fr: 'Confirmer la réception'
+	String get confirm_btn => 'Confirmer la réception';
+}
+
+// Path: chatPlant.display_code
+class TranslationsChatPlantDisplayCodeFr {
+	TranslationsChatPlantDisplayCodeFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'L'échange est prêt !'
+	String get ready_title => 'L\'échange est prêt !';
+
+	/// fr: 'Générez le code une fois que vous êtes avec la personne.'
+	String get ready_subtitle => 'Générez le code une fois que vous êtes avec la personne.';
+
+	/// fr: 'Générer le code de remise'
+	String get generate_btn => 'Générer le code de remise';
+
+	/// fr: 'Code de confirmation'
+	String get code_title => 'Code de confirmation';
+
+	/// fr: 'Montrez ce code au receveur pour finaliser l'échange.'
+	String get code_subtitle => 'Montrez ce code au receveur pour finaliser l\'échange.';
+}
+
+// Path: chatPlant.plant_card
+class TranslationsChatPlantPlantCardFr {
+	TranslationsChatPlantPlantCardFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Plante proposée'
+	String get proposed_plant => 'Plante proposée';
+
+	/// fr: 'Proposition d'échange'
+	String get exchange_proposal => 'Proposition d\'échange';
+
+	/// fr: 'Voir le détail'
+	String get view_detail => 'Voir le détail';
+
+	/// fr: 'Impossible de charger les détails'
+	String get error_loading => 'Impossible de charger les détails';
+}
+
+// Path: chatPlant.info_bar
+class TranslationsChatPlantInfoBarFr {
+	TranslationsChatPlantInfoBarFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+	late final TranslationsChatPlantInfoBarExchangeFr exchange = TranslationsChatPlantInfoBarExchangeFr.internal(_root);
+	late final TranslationsChatPlantInfoBarDonationFr donation = TranslationsChatPlantInfoBarDonationFr.internal(_root);
 }
 
 // Path: exchange.screen
@@ -827,6 +1021,147 @@ class TranslationsUserDetailPlantFr {
 	String get maintenance => 'entretien';
 }
 
+// Path: chatPlant.view.unblock_dialog
+class TranslationsChatPlantViewUnblockDialogFr {
+	TranslationsChatPlantViewUnblockDialogFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Débloquer cet utilisateur ?'
+	String get title => 'Débloquer cet utilisateur ?';
+
+	/// fr: 'Cette personne pourra à nouveau vous envoyer des messages.'
+	String get content => 'Cette personne pourra à nouveau vous envoyer des messages.';
+
+	/// fr: 'Annuler'
+	String get cancel => 'Annuler';
+
+	/// fr: 'Débloquer'
+	String get confirm => 'Débloquer';
+}
+
+// Path: chatPlant.view.status
+class TranslationsChatPlantViewStatusFr {
+	TranslationsChatPlantViewStatusFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'L'échange est accepté ! En attente de la rencontre.'
+	String get exchange_accepted_waiting => 'L\'échange est accepté ! En attente de la rencontre.';
+
+	/// fr: 'La donation est acceptée ! En attente de la rencontre.'
+	String get donation_accepted_waiting => 'La donation est acceptée ! En attente de la rencontre.';
+}
+
+// Path: chatPlant.menu.delete_dialog
+class TranslationsChatPlantMenuDeleteDialogFr {
+	TranslationsChatPlantMenuDeleteDialogFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Effacer la conversation'
+	String get title => 'Effacer la conversation';
+
+	/// fr: 'Elle sera supprimée uniquement pour vous.'
+	String get content => 'Elle sera supprimée uniquement pour vous.';
+}
+
+// Path: chatPlant.menu.report_dialog
+class TranslationsChatPlantMenuReportDialogFr {
+	TranslationsChatPlantMenuReportDialogFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Signaler'
+	String get title => 'Signaler';
+
+	/// fr: 'Cette conversation sera transmise à l'équipe PlantMatch pour examen. Merci de nous aider à maintenir une communauté saine.'
+	String get content => 'Cette conversation sera transmise à l\'équipe PlantMatch pour examen. Merci de nous aider à maintenir une communauté saine.';
+}
+
+// Path: chatPlant.menu.block_dialog
+class TranslationsChatPlantMenuBlockDialogFr {
+	TranslationsChatPlantMenuBlockDialogFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Bloquer cet utilisateur ?'
+	String get title => 'Bloquer cet utilisateur ?';
+
+	/// fr: 'Cette personne ne pourra plus vous envoyer de messages ni voir votre profil.'
+	String get content => 'Cette personne ne pourra plus vous envoyer de messages ni voir votre profil.';
+
+	/// fr: 'Attention : un échange est en cours. Bloquer cet utilisateur notifiera l'équipe PlantMatch et aucun point ne sera distribué.'
+	String get warning_active_transaction => 'Attention : un échange est en cours. Bloquer cet utilisateur notifiera l\'équipe PlantMatch et aucun point ne sera distribué.';
+}
+
+// Path: chatPlant.actions.labels
+class TranslationsChatPlantActionsLabelsFr {
+	TranslationsChatPlantActionsLabelsFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'l'échange'
+	String get exchange => 'l\'échange';
+
+	/// fr: 'la donation'
+	String get donation => 'la donation';
+}
+
+// Path: chatPlant.info_bar.exchange
+class TranslationsChatPlantInfoBarExchangeFr {
+	TranslationsChatPlantInfoBarExchangeFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Une demande d'échange est en attente de réponse'
+	String get pending => 'Une demande d\'échange est en attente de réponse';
+
+	/// fr: 'Échange accepté 🎉'
+	String get accepted => 'Échange accepté 🎉';
+
+	/// fr: 'Échange refusé'
+	String get rejected => 'Échange refusé';
+
+	/// fr: 'Échange terminé ✅'
+	String get completed => 'Échange terminé ✅';
+}
+
+// Path: chatPlant.info_bar.donation
+class TranslationsChatPlantInfoBarDonationFr {
+	TranslationsChatPlantInfoBarDonationFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Une demande de donation est en attente de réponse'
+	String get pending => 'Une demande de donation est en attente de réponse';
+
+	/// fr: 'Donation acceptée 🎉'
+	String get accepted => 'Donation acceptée 🎉';
+
+	/// fr: 'Donation refusée'
+	String get rejected => 'Donation refusée';
+
+	/// fr: 'Donation terminée ✅'
+	String get completed => 'Donation terminée ✅';
+}
+
 // Path: favorite.empty.plants
 class TranslationsFavoriteEmptyPlantsFr {
 	TranslationsFavoriteEmptyPlantsFr.internal(this._root);
@@ -1205,6 +1540,60 @@ class TranslationsLevelLevelsK2ActionsFr {
 extension on Translations {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'chatPlant.screen.error_loading' => 'Erreur lors du chargement du chat',
+			'chatPlant.view.empty_messages' => 'Aucun message pour le moment.\nDémarrez la conversation.',
+			'chatPlant.view.blocked_user_banner' => 'Vous avez bloqué cet utilisateur',
+			'chatPlant.view.unblock_btn' => 'Débloquer',
+			'chatPlant.view.unblock_dialog.title' => 'Débloquer cet utilisateur ?',
+			'chatPlant.view.unblock_dialog.content' => 'Cette personne pourra à nouveau vous envoyer des messages.',
+			'chatPlant.view.unblock_dialog.cancel' => 'Annuler',
+			'chatPlant.view.unblock_dialog.confirm' => 'Débloquer',
+			'chatPlant.view.status.exchange_accepted_waiting' => 'L\'échange est accepté ! En attente de la rencontre.',
+			'chatPlant.view.status.donation_accepted_waiting' => 'La donation est acceptée ! En attente de la rencontre.',
+			'chatPlant.view.input_hint' => 'Écrire un message…',
+			'chatPlant.menu.see_profile' => 'Voir le profil',
+			'chatPlant.menu.report' => 'Signaler',
+			'chatPlant.menu.unblock' => 'Débloquer',
+			'chatPlant.menu.block' => 'Bloquer',
+			'chatPlant.menu.clear_chat' => 'Effacer la conversation',
+			'chatPlant.menu.delete' => 'Supprimer',
+			'chatPlant.menu.cancel' => 'Annuler',
+			'chatPlant.menu.delete_dialog.title' => 'Effacer la conversation',
+			'chatPlant.menu.delete_dialog.content' => 'Elle sera supprimée uniquement pour vous.',
+			'chatPlant.menu.report_dialog.title' => 'Signaler',
+			'chatPlant.menu.report_dialog.content' => 'Cette conversation sera transmise à l\'équipe PlantMatch pour examen. Merci de nous aider à maintenir une communauté saine.',
+			'chatPlant.menu.block_dialog.title' => 'Bloquer cet utilisateur ?',
+			'chatPlant.menu.block_dialog.content' => 'Cette personne ne pourra plus vous envoyer de messages ni voir votre profil.',
+			'chatPlant.menu.block_dialog.warning_active_transaction' => 'Attention : un échange est en cours. Bloquer cet utilisateur notifiera l\'équipe PlantMatch et aucun point ne sera distribué.',
+			'chatPlant.actions.accept' => 'Accepter',
+			'chatPlant.actions.refuse' => 'Refuser',
+			'chatPlant.actions.cancel' => 'Annuler',
+			'chatPlant.actions.confirm' => 'Confirmer',
+			'chatPlant.actions.complete_label' => ({required Object label}) => 'Marquer ${label} comme terminée',
+			'chatPlant.actions.propose_exchange_btn' => 'Proposer un échange',
+			'chatPlant.actions.labels.exchange' => 'l\'échange',
+			'chatPlant.actions.labels.donation' => 'la donation',
+			'chatPlant.validation.title' => 'Confirmation de réception',
+			'chatPlant.validation.description' => 'Saisissez le code à 6 chiffres donné par le propriétaire.',
+			'chatPlant.validation.hint' => '000000',
+			'chatPlant.validation.confirm_btn' => 'Confirmer la réception',
+			'chatPlant.display_code.ready_title' => 'L\'échange est prêt !',
+			'chatPlant.display_code.ready_subtitle' => 'Générez le code une fois que vous êtes avec la personne.',
+			'chatPlant.display_code.generate_btn' => 'Générer le code de remise',
+			'chatPlant.display_code.code_title' => 'Code de confirmation',
+			'chatPlant.display_code.code_subtitle' => 'Montrez ce code au receveur pour finaliser l\'échange.',
+			'chatPlant.plant_card.proposed_plant' => 'Plante proposée',
+			'chatPlant.plant_card.exchange_proposal' => 'Proposition d\'échange',
+			'chatPlant.plant_card.view_detail' => 'Voir le détail',
+			'chatPlant.plant_card.error_loading' => 'Impossible de charger les détails',
+			'chatPlant.info_bar.exchange.pending' => 'Une demande d\'échange est en attente de réponse',
+			'chatPlant.info_bar.exchange.accepted' => 'Échange accepté 🎉',
+			'chatPlant.info_bar.exchange.rejected' => 'Échange refusé',
+			'chatPlant.info_bar.exchange.completed' => 'Échange terminé ✅',
+			'chatPlant.info_bar.donation.pending' => 'Une demande de donation est en attente de réponse',
+			'chatPlant.info_bar.donation.accepted' => 'Donation acceptée 🎉',
+			'chatPlant.info_bar.donation.rejected' => 'Donation refusée',
+			'chatPlant.info_bar.donation.completed' => 'Donation terminée ✅',
 			'exchange.screen.loading' => 'Chargement...',
 			'exchange.screen.picking_title' => 'Choisir une plante à échanger',
 			'exchange.screen.confirm_title' => 'Confirmer l\'échange',

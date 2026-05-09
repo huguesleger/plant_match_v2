@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_outlined_rounded.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
@@ -32,7 +33,7 @@ class ChatPlantAcceptOrRefuseBar extends StatelessWidget {
               bgColor: AppColors.greenLight,
               textColor: AppColors.blueGreen,
               padding: const EdgeInsets.symmetric(vertical: 14),
-              text: 'Accepter',
+              text: t.chatPlant.actions.accept,
             ),
           ),
           const SizedBox(width: 12),
@@ -42,7 +43,7 @@ class ChatPlantAcceptOrRefuseBar extends StatelessWidget {
               borderColor: AppColors.blueGreen,
               textColor: AppColors.blueGreen,
               padding: const EdgeInsets.symmetric(vertical: 14),
-              text: 'Refuser',
+              text: t.chatPlant.actions.refuse,
             ),
           ),
         ],
@@ -84,7 +85,7 @@ class ChatPlantCompleteActionBar extends StatelessWidget {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(ctx),
-                  child: const Text('Annuler'),
+                  child: Text(t.chatPlant.actions.cancel),
                 ),
                 ElevatedButton(
                   onPressed: () {
@@ -95,14 +96,14 @@ class ChatPlantCompleteActionBar extends StatelessWidget {
                     backgroundColor: Colors.green,
                     foregroundColor: Colors.white,
                   ),
-                  child: const Text('Confirmer'),
+                  child: Text(t.chatPlant.actions.confirm),
                 ),
               ],
             ),
           );
         },
         icon: const Icon(Icons.check_circle_outline, size: 20),
-        label: Text('Marquer $label comme terminée'),
+        label: Text(t.chatPlant.actions.complete_label(label: label)),
         style: OutlinedButton.styleFrom(
           foregroundColor: Colors.green.shade700,
           side: BorderSide(color: Colors.green.shade300),

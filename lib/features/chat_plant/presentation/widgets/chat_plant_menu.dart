@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -28,18 +29,18 @@ class ChatPlantMenu extends StatelessWidget {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Effacer la conversation'),
-        content: const Text('Elle sera supprimée uniquement pour vous.'),
+        title: Text(t.chatPlant.menu.delete_dialog.title),
+        content: Text(t.chatPlant.menu.delete_dialog.content),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annuler'),
+            child: Text(t.chatPlant.menu.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text(
-              'Supprimer',
-              style: TextStyle(color: Colors.red),
+            child: Text(
+              t.chatPlant.menu.delete,
+              style: const TextStyle(color: Colors.red),
             ),
           ),
         ],
@@ -57,18 +58,18 @@ class ChatPlantMenu extends StatelessWidget {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Signaler'),
-        content: const Text(
-          'Cette conversation sera transmise à l\'équipe PlantMatch pour examen. Merci de nous aider à maintenir une communauté saine.',
+        title: Text(t.chatPlant.menu.report_dialog.title),
+        content: Text(
+          t.chatPlant.menu.report_dialog.content,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annuler'),
+            child: Text(t.chatPlant.menu.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Signaler'),
+            child: Text(t.chatPlant.menu.report),
           ),
         ],
       ),
@@ -94,13 +95,13 @@ class ChatPlantMenu extends StatelessWidget {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Bloquer cet utilisateur ?'),
+        title: Text(t.chatPlant.view.unblock_dialog.title),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Cette personne ne pourra plus vous envoyer de messages ni voir votre profil.',
+            Text(
+              t.chatPlant.menu.block_dialog.content,
             ),
             if (isTransactionActive) ...[
               const SizedBox(height: 16),
@@ -111,14 +112,14 @@ class ChatPlantMenu extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
                 ),
-                child: const Row(
+                child:  Row(
                   children: [
-                    Icon(LucideIcons.triangle_alert, color: Colors.orange, size: 20),
-                    SizedBox(width: 8),
+                    const Icon(LucideIcons.triangle_alert, color: Colors.orange, size: 20),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        'Attention : un échange est en cours. Bloquer cet utilisateur notifiera l\'équipe PlantMatch et aucun point ne sera distribué.',
-                        style: TextStyle(
+                        t.chatPlant.menu.block_dialog.warning_active_transaction,
+                        style: const TextStyle(
                           color: Colors.orange,
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
@@ -134,13 +135,13 @@ class ChatPlantMenu extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annuler'),
+            child: Text(t.chatPlant.menu.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text(
-              'Bloquer',
-              style: TextStyle(color: Colors.red),
+            child: Text(
+              t.chatPlant.menu.block,
+              style: const TextStyle(color: Colors.red),
             ),
           ),
         ],
@@ -158,18 +159,18 @@ class ChatPlantMenu extends StatelessWidget {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Débloquer cet utilisateur ?'),
-        content: const Text(
-          'Cette personne pourra à nouveau vous envoyer des messages.',
+        title: Text(t.chatPlant.view.unblock_dialog.title),
+        content: Text(
+          t.chatPlant.view.unblock_dialog.content,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annuler'),
+            child: Text(t.chatPlant.menu.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Débloquer'),
+            child: Text(t.chatPlant.menu.unblock),
           ),
         ],
       ),
@@ -230,24 +231,24 @@ class ChatPlantMenu extends StatelessWidget {
       menuChildren: [
         MenuItemButton(
           onPressed: () => _onViewProfile(context),
-          child: const Text('Voir le profil'),
+          child: Text(t.chatPlant.menu.see_profile),
         ),
         MenuItemButton(
           onPressed: () => _onReport(context),
-          child: const Text('Signaler'),
+          child: Text(t.chatPlant.menu.report),
         ),
         isBlocked
             ? MenuItemButton(
                 onPressed: () => _onUnblock(context),
-                child: const Text('Débloquer'),
+                child: Text(t.chatPlant.menu.unblock),
               )
             : MenuItemButton(
                 onPressed: () => _onBlock(context),
-                child: const Text('Bloquer'),
+                child: Text(t.chatPlant.menu.block),
               ),
         MenuItemButton(
           onPressed: () => _onDeleteChat(context),
-          child: const Text('Effacer la conversation'),
+          child: Text(t.chatPlant.menu.clear_chat),
         ),
       ],
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 
@@ -48,8 +49,8 @@ class _ChatPlantTextInputState extends State<ChatPlantTextInput> {
                   controller: _controller,
                   minLines: 1,
                   maxLines: 4,
-                  decoration: const InputDecoration(
-                    hintText: 'Écrire un message…',
+                  decoration: InputDecoration(
+                    hintText: t.chatPlant.view.input_hint,
                     border: InputBorder.none,
                   ),
                 ),

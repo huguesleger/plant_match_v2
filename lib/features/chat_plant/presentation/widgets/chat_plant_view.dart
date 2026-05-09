@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart' hide ChatState;
@@ -58,11 +59,11 @@ class ChatPlantView extends StatelessWidget {
             user: types.User(id: userId),
             messages: messages,
             theme: ChatThemes.light,
-            emptyState: const Center(
+            emptyState: Center(
               child: Text(
-                'Aucun message pour le moment.\nDémarrez la conversation.',
+                t.chatPlant.view.empty_messages,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   color: AppColors.grey,
                   fontSize: AppTypo.text,
                 ),
@@ -241,18 +242,18 @@ class _BlockedBanner extends StatelessWidget {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Débloquer cet utilisateur ?'),
-        content: const Text(
-          'Cette personne pourra à nouveau vous envoyer des messages.',
+        title: Text(t.chatPlant.view.unblock_dialog.title),
+        content: Text(
+          t.chatPlant.view.unblock_dialog.content,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annuler'),
+            child: Text(t.chatPlant.view.unblock_dialog.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Débloquer'),
+            child: Text(t.chatPlant.view.unblock_dialog.confirm),
           ),
         ],
       ),
@@ -282,9 +283,9 @@ class _BlockedBanner extends StatelessWidget {
             children: [
               const Icon(LucideIcons.ban, size: 16, color: AppColors.grey),
               const SizedBox(width: 8),
-              const Text(
-                'Vous avez bloqué cet utilisateur',
-                style: TextStyle(
+              Text(
+                t.chatPlant.view.blocked_user_banner,
+                style: const TextStyle(
                   color: AppColors.grey,
                   fontSize: 13,
                 ),
@@ -292,9 +293,9 @@ class _BlockedBanner extends StatelessWidget {
               const SizedBox(width: 12),
               GestureDetector(
                 onTap: () => _onUnblock(context),
-                child: const Text(
-                  'Débloquer',
-                  style: TextStyle(
+                child: Text(
+                  t.chatPlant.view.unblock_btn,
+                  style: const TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                     color: AppColors.greenDark,

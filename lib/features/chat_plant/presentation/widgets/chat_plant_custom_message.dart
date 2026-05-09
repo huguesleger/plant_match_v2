@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/util/date_formatter.dart';
 import 'package:plant_match_v2/features/catalog/data/firebase_catalog_repository.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/plant_message_card.dart';
@@ -54,8 +55,8 @@ class ChatPlantCustomMessage extends StatelessWidget {
           } catch (e) {
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                    content: Text('Impossible de charger les détails')),
+                SnackBar(
+                    content: Text(t.chatPlant.plant_card.error_loading)),
               );
             }
           }

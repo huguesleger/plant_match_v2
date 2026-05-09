@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 
@@ -24,15 +25,15 @@ class ValidationCodeDisplay extends StatelessWidget {
       child: Column(
         children: [
           if (code == null) ...[
-            const Text(
-              'L\'échange est prêt !',
-              style: TextStyle(fontWeight: FontWeight.bold),
+            Text(
+              t.chatPlant.display_code.ready_title,
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            const Text(
-              'Générez le code une fois que vous êtes avec la personne.',
+            Text(
+              t.chatPlant.display_code.ready_subtitle,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 12, color: AppColors.grey),
+              style: const TextStyle(fontSize: 12, color: AppColors.grey),
             ),
             const SizedBox(height: 12),
             ElevatedButton(
@@ -44,12 +45,12 @@ class ValidationCodeDisplay extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              child: const Text('Générer le code de remise'),
+              child: Text(t.chatPlant.display_code.generate_btn),
             ),
           ] else ...[
-            const Text(
-              'Code de confirmation',
-              style: TextStyle(fontWeight: FontWeight.bold),
+            Text(
+              t.chatPlant.display_code.code_title,
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
             Row(
@@ -79,10 +80,10 @@ class ValidationCodeDisplay extends StatelessWidget {
                   .toList(),
             ),
             const SizedBox(height: 12),
-            const Text(
-              'Montrez ce code au receveur pour finaliser l\'échange.',
+            Text(
+              t.chatPlant.display_code.code_subtitle,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 12, color: AppColors.grey),
+              style: const TextStyle(fontSize: 12, color: AppColors.grey),
             ),
           ],
         ],

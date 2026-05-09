@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -85,8 +86,8 @@ class PlantMessageCard extends StatelessWidget {
                             const SizedBox(width: 4),
                             Text(
                               isSender
-                                  ? 'Plante proposée'
-                                  : 'Proposition d\'échange',
+                                  ? t.chatPlant.plant_card.proposed_plant
+                                  : t.chatPlant.plant_card.exchange_proposal,
                               style: const TextStyle(
                                 fontSize: AppTypo.textXs,
                                 color: AppColors.greenDark,
@@ -109,9 +110,9 @@ class PlantMessageCard extends StatelessWidget {
                         const SizedBox(height: 4),
                         Row(
                           children: [
-                            const Text(
-                              'Voir le détail',
-                              style: TextStyle(
+                            Text(
+                              t.chatPlant.plant_card.view_detail,
+                              style: const TextStyle(
                                 fontSize: AppTypo.textXs,
                                 color: AppColors.greenDark,
                                 decoration: TextDecoration.underline,

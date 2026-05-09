@@ -1,0 +1,88 @@
+{
+  "screen": {
+    "error_loading": "Erreur lors du chargement du chat"
+  },
+  "view": {
+    "empty_messages": "Aucun message pour le moment.\nDémarrez la conversation.",
+    "blocked_user_banner": "Vous avez bloqué cet utilisateur",
+    "unblock_btn": "Débloquer",
+    "unblock_dialog": {
+      "title": "Débloquer cet utilisateur ?",
+      "content": "Cette personne pourra à nouveau vous envoyer des messages.",
+      "cancel": "Annuler",
+      "confirm": "Débloquer"
+    },
+    "status": {
+      "exchange_accepted_waiting": "L'échange est accepté ! En attente de la rencontre.",
+      "donation_accepted_waiting": "La donation est acceptée ! En attente de la rencontre."
+    },
+    "input_hint": "Écrire un message…"
+  },
+  "menu": {
+    "see_profile": "Voir le profil",
+    "report": "Signaler",
+    "unblock": "Débloquer",
+    "block": "Bloquer",
+    "clear_chat": "Effacer la conversation",
+    "delete": "Supprimer",
+    "cancel": "Annuler",
+    "delete_dialog": {
+      "title": "Effacer la conversation",
+      "content": "Elle sera supprimée uniquement pour vous."
+    },
+    "report_dialog": {
+      "title": "Signaler",
+      "content": "Cette conversation sera transmise à l'équipe PlantMatch pour examen. Merci de nous aider à maintenir une communauté saine."
+    },
+    "block_dialog": {
+      "title": "Bloquer cet utilisateur ?",
+      "content": "Cette personne ne pourra plus vous envoyer de messages ni voir votre profil.",
+      "warning_active_transaction": "Attention : un échange est en cours. Bloquer cet utilisateur notifiera l'équipe PlantMatch et aucun point ne sera distribué."
+    }
+  },
+  "actions": {
+    "accept": "Accepter",
+    "refuse": "Refuser",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "complete_label": "Marquer $label comme terminée",
+    "propose_exchange_btn": "Proposer un échange",
+    "labels": {
+      "exchange": "l'échange",
+      "donation": "la donation"
+    }
+  },
+  "validation": {
+    "title": "Confirmation de réception",
+    "description": "Saisissez le code à 6 chiffres donné par le propriétaire.",
+    "hint": "000000",
+    "confirm_btn": "Confirmer la réception"
+  },
+  "display_code": {
+    "ready_title": "L'échange est prêt !",
+    "ready_subtitle": "Générez le code une fois que vous êtes avec la personne.",
+    "generate_btn": "Générer le code de remise",
+    "code_title": "Code de confirmation",
+    "code_subtitle": "Montrez ce code au receveur pour finaliser l'échange."
+  },
+  "plant_card": {
+    "proposed_plant": "Plante proposée",
+    "exchange_proposal": "Proposition d'échange",
+    "view_detail": "Voir le détail",
+    "error_loading": "Impossible de charger les détails"
+  },
+  "info_bar": {
+    "exchange": {
+      "pending": "Une demande d'échange est en attente de réponse",
+      "accepted": "Échange accepté 🎉",
+      "rejected": "Échange refusé",
+      "completed": "Échange terminé ✅"
+    },
+    "donation": {
+      "pending": "Une demande de donation est en attente de réponse",
+      "accepted": "Donation acceptée 🎉",
+      "rejected": "Donation refusée",
+      "completed": "Donation terminée ✅"
+    }
+  }
+}

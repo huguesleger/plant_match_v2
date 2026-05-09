@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/theme/inter_text_style.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/common/chat_plant_action_button.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/common/chat_plant_action_button_templates.dart';
+import 'package:plant_match_v2/features/chat_plant/presentation/widgets/validation_code_display.dart';
+import 'package:plant_match_v2/features/chat_plant/presentation/widgets/validation_code_input.dart';
 import 'package:plant_match_v2/features/donation/domain/entities/donation.dart';
 import 'package:plant_match_v2/features/donation/presentation/cubit/donation_cubit.dart';
 import 'package:plant_match_v2/features/donation/presentation/state/donation_state.dart';
-import 'package:plant_match_v2/features/chat_plant/presentation/widgets/validation_code_display.dart';
-import 'package:plant_match_v2/features/chat_plant/presentation/widgets/validation_code_input.dart';
-import 'package:flutter_lucide/flutter_lucide.dart';
 
 class ChatPlantDonationActionBar extends StatelessWidget {
   const ChatPlantDonationActionBar({
@@ -38,12 +39,14 @@ class ChatPlantDonationActionBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (plantOfferType != OfferType.donation) return const SizedBox.shrink();
+
     final bool isPlantOwner = currentUserId == plantOwnerId;
 
     return switch (state) {
       DonationPending(:final donation) when isPlantOwner =>
         ChatPlantAcceptOrRefuseBar(
-          label: 'la donation',
+          label: t.chatPlant.actions.labels.donation,
           onAccept: () => context.read<DonationCubit>().accept(donation.id),
           onRefuse: () => context.read<DonationCubit>().reject(donation.id),
         ),
@@ -64,8 +67,8 @@ class ChatPlantDonationActionBar extends StatelessWidget {
                 currentUserId,
               ),
         ),
-      DonationAccepted() when !isPlantOwner => const ChatPlantStatusBanner(
-          message: "La donation est acceptée ! En attente de la rencontre.",
+      DonationAccepted() when !isPlantOwner => ChatPlantStatusBanner(
+          message: t.chatPlant.view.status.donation_accepted_waiting,
           icon: LucideIcons.calendar_check,
         ),
       DonationInitial() ||
