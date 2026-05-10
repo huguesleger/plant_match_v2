@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catalog/catalog_edit/form/form_section.dart';
 import 'package:plant_match_v2/features/catalog/presentation/widgets/item_radio.dart';
 
@@ -12,14 +13,14 @@ class LightingField extends StatelessWidget {
     required this.onChanged,
   });
 
-  final String? selectedLighting;
-  final ValueChanged<String?> onChanged;
+  final Lighting? selectedLighting;
+  final ValueChanged<Lighting?> onChanged;
 
   @override
   Widget build(BuildContext context) {
     return FormSection(
       title: t.catalog.edit.lighting.title,
-      child: FormBuilderField<String>(
+      child: FormBuilderField<Lighting>(
         name: 'lighting',
         initialValue: selectedLighting,
         validator: FormBuilderValidators.required(
@@ -29,9 +30,9 @@ class LightingField extends StatelessWidget {
           children: [
             Column(
               children: [
-                ItemRadio(
+                ItemRadio<Lighting>(
                   title: t.catalog.wizard.steps.lighting.sun,
-                  value: 'sun',
+                  value: Lighting.sun,
                   selectedItem: selectedLighting,
                   onItemSelected: (val) {
                     onChanged(val);
@@ -40,9 +41,9 @@ class LightingField extends StatelessWidget {
                   },
                 ),
                 const SizedBox(height: 20),
-                ItemRadio(
+                ItemRadio<Lighting>(
                   title: t.catalog.wizard.steps.lighting.indirect,
-                  value: 'indirectLight',
+                  value: Lighting.indirectLight,
                   selectedItem: selectedLighting,
                   onItemSelected: (val) {
                     onChanged(val);
@@ -51,9 +52,9 @@ class LightingField extends StatelessWidget {
                   },
                 ),
                 const SizedBox(height: 20),
-                ItemRadio(
+                ItemRadio<Lighting>(
                   title: t.catalog.wizard.steps.lighting.shade,
-                  value: 'shade',
+                  value: Lighting.shade,
                   selectedItem: selectedLighting,
                   onItemSelected: (val) {
                     onChanged(val);

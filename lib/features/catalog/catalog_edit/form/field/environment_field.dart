@@ -14,14 +14,14 @@ class EnvironmentField extends StatelessWidget {
     required this.onChanged,
   });
 
-  final String? selectedEnvironment;
-  final ValueChanged<String?> onChanged;
+  final Environment? selectedEnvironment;
+  final ValueChanged<Environment?> onChanged;
 
   @override
   Widget build(BuildContext context) {
     return FormSection(
       title: t.catalog.edit.environment.title,
-      child: FormBuilderField<String>(
+      child: FormBuilderField<Environment>(
         name: 'category',
         initialValue: selectedEnvironment,
         validator: FormBuilderValidators.required(
@@ -32,11 +32,11 @@ class EnvironmentField extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: SelectableItem(
+                  child: SelectableItem<Environment>(
                     icon: LucideIcons.house,
                     label: t.catalog.wizard.steps.category.indoor,
-                    value: Environment.indoor.name,
-                    isSelected: selectedEnvironment == Environment.indoor.name,
+                    value: Environment.indoor,
+                    isSelected: selectedEnvironment == Environment.indoor,
                     onTap: (val) {
                       onChanged(val);
                       field.didChange(val);
@@ -46,11 +46,11 @@ class EnvironmentField extends StatelessWidget {
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: SelectableItem(
+                  child: SelectableItem<Environment>(
                     icon: LucideIcons.trees,
                     label: t.catalog.wizard.steps.category.outdoor,
-                    value: Environment.outdoor.name,
-                    isSelected: selectedEnvironment == Environment.outdoor.name,
+                    value: Environment.outdoor,
+                    isSelected: selectedEnvironment == Environment.outdoor,
                     onTap: (val) {
                       onChanged(val);
                       field.didChange(val);

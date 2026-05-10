@@ -11,20 +11,22 @@ class StepEnvironment extends StatelessWidget {
   const StepEnvironment({
     super.key,
     required this.formKey,
-    required this.controller,
+    required this.selected,
+    required this.onSelect,
   });
 
   final GlobalKey<FormBuilderState> formKey;
-  final TextEditingController controller;
+  final Environment? selected;
+  final ValueChanged<Environment?> onSelect;
 
   @override
   Widget build(BuildContext context) => AddPlantWizardItem(
         formKey: formKey,
         title: t.catalog.wizard.steps.category.title,
         description: t.catalog.wizard.steps.category.description,
-        child: FormBuilderField(
+        child: FormBuilderField<Environment>(
           name: 'category',
-          initialValue: controller.text,
+          initialValue: selected,
           validator: FormBuilderValidators.required(
             errorText: t.catalog.wizard.required_field,
           ),
@@ -34,13 +36,13 @@ class StepEnvironment extends StatelessWidget {
               Row(
                 children: [
                   Expanded(
-                    child: SelectableItem(
+                    child: SelectableItem<Environment>(
                       icon: LucideIcons.house,
                       label: t.catalog.wizard.steps.category.indoor,
-                      value: Environment.indoor.name,
-                      isSelected: controller.text == Environment.indoor.name,
+                      value: Environment.indoor,
+                      isSelected: selected == Environment.indoor,
                       onTap: (v) {
-                        controller.text = v;
+                        onSelect(v);
                         field.didChange(v);
                         field.validate();
                       },
@@ -48,13 +50,13 @@ class StepEnvironment extends StatelessWidget {
                   ),
                   const SizedBox(width: 10),
                   Expanded(
-                    child: SelectableItem(
+                    child: SelectableItem<Environment>(
                       icon: LucideIcons.trees,
                       label: t.catalog.wizard.steps.category.outdoor,
-                      value: Environment.outdoor.name,
-                      isSelected: controller.text == Environment.outdoor.name,
+                      value: Environment.outdoor,
+                      isSelected: selected == Environment.outdoor,
                       onTap: (v) {
-                        controller.text = v;
+                        onSelect(v);
                         field.didChange(v);
                         field.validate();
                       },

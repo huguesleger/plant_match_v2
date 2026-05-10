@@ -5,6 +5,7 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/title_with_icon/title_with_icon.dart';
+import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/widgets/add_plant_wizard_item.dart';
 import 'package:plant_match_v2/features/catalog/presentation/widgets/item_radio.dart';
 
@@ -17,15 +18,15 @@ class StepWatering extends StatelessWidget {
   });
 
   final GlobalKey<FormBuilderState> formKey;
-  final String? selected;
-  final Function(String) onSelect;
+  final Watering? selected;
+  final Function(Watering) onSelect;
 
   @override
   Widget build(BuildContext context) => AddPlantWizardItem(
         formKey: formKey,
         title: t.catalog.wizard.steps.watering.title,
         description: t.catalog.wizard.steps.watering.description,
-        child: FormBuilderField(
+        child: FormBuilderField<Watering>(
           name: 'watering',
           initialValue: selected,
           validator: FormBuilderValidators.required(
@@ -43,9 +44,9 @@ class StepWatering extends StatelessWidget {
                     iconColor: AppColors.greenLight,
                   ),
                   const SizedBox(height: 10),
-                  ItemRadio(
+                  ItemRadio<Watering>(
                     title: t.catalog.wizard.steps.watering.little,
-                    value: 'little',
+                    value: Watering.little,
                     selectedItem: selected,
                     onItemSelected: (v) {
                       onSelect(v);
@@ -54,9 +55,9 @@ class StepWatering extends StatelessWidget {
                     },
                   ),
                   const SizedBox(height: 10),
-                  ItemRadio(
+                  ItemRadio<Watering>(
                     title: t.catalog.wizard.steps.watering.regularly,
-                    value: 'regularly',
+                    value: Watering.regularly,
                     selectedItem: selected,
                     onItemSelected: (v) {
                       onSelect(v);

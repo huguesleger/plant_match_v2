@@ -3,7 +3,7 @@ import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 
-class ItemRadio extends StatelessWidget {
+class ItemRadio<T> extends StatelessWidget {
   const ItemRadio({
     super.key,
     this.subtitle,
@@ -15,9 +15,9 @@ class ItemRadio extends StatelessWidget {
 
   final String title;
   final String? subtitle;
-  final String value;
-  final String? selectedItem;
-  final Function(String) onItemSelected;
+  final T value;
+  final T? selectedItem;
+  final Function(T) onItemSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -47,11 +47,11 @@ class ItemRadio extends StatelessWidget {
             style: const TextStyle(fontSize: AppTypo.textXs),
           ),
         ),
-        trailing: RadioGroup<String>(
+        trailing: RadioGroup<T>(
           groupValue: selectedItem,
-          onChanged: (String? newValue) =>
+          onChanged: (T? newValue) =>
               Option.fromNullable(newValue).map(onItemSelected),
-          child: Radio<String>(
+          child: Radio<T>(
             value: value,
             activeColor: AppColors.greenDark,
           ),

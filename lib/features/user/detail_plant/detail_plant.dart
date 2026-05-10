@@ -67,7 +67,7 @@ class DetailPlant extends StatelessWidget {
             plantName: catalog.name,
             plantDescription: catalog.description,
             plantImage: catalog.images.first,
-            plantExchangeType: catalog.offerType.offerTypeName,
+            plantExchangeType: catalog.offerType,
           )
           .run()
           .then((result) {

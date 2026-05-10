@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catalog/catalog_edit/form/form_section.dart';
 import 'package:plant_match_v2/features/catalog/presentation/widgets/item_radio.dart';
 
@@ -12,14 +13,14 @@ class WateringField extends StatelessWidget {
     required this.onChanged,
   });
 
-  final String? selectedWatering;
-  final ValueChanged<String?> onChanged;
+  final Watering? selectedWatering;
+  final ValueChanged<Watering?> onChanged;
 
   @override
   Widget build(BuildContext context) {
     return FormSection(
       title: t.catalog.edit.watering.title,
-      child: FormBuilderField<String>(
+      child: FormBuilderField<Watering>(
         name: 'watering',
         initialValue: selectedWatering,
         validator: FormBuilderValidators.required(
@@ -29,9 +30,9 @@ class WateringField extends StatelessWidget {
           children: [
             Column(
               children: [
-                ItemRadio(
+                ItemRadio<Watering>(
                   title: t.catalog.wizard.steps.watering.little,
-                  value: 'little',
+                  value: Watering.little,
                   selectedItem: selectedWatering,
                   onItemSelected: (val) {
                     onChanged(val);
@@ -40,9 +41,9 @@ class WateringField extends StatelessWidget {
                   },
                 ),
                 const SizedBox(height: 20),
-                ItemRadio(
+                ItemRadio<Watering>(
                   title: t.catalog.wizard.steps.watering.regularly,
-                  value: 'regularly',
+                  value: Watering.regularly,
                   selectedItem: selectedWatering,
                   onItemSelected: (val) {
                     onChanged(val);

@@ -1,6 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:plant_match_v2/core/failures/failure.dart';
+import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/chat_plant/domain/entities/chat_plant.dart';
 
 abstract class ChatPlantRepository {
@@ -11,7 +12,7 @@ abstract class ChatPlantRepository {
     required String plantName,
     required String plantDescription,
     required String plantImage,
-    required String plantExchangeType,
+    required OfferType plantExchangeType,
   });
 
   Stream<List<types.Message>> messagesStream(String chatId);

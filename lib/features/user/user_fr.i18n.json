@@ -31,5 +31,12 @@
     "lighting": "lumière",
     "watering": "arrosage",
     "maintenance": "entretien"
+  },
+  "filters": {
+    "all": "Tous",
+    "donation": "Donations",
+    "exchange": "Échanges",
+    "outdoor": "Extérieur",
+    "indoor": "Intérieur"
   }
 }

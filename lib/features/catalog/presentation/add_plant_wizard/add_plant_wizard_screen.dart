@@ -11,7 +11,6 @@ import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
 import 'package:plant_match_v2/core/widgets/dialog/dialog_with_image.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catalog/presentation/cubit/catalog_cubit.dart';
-import 'package:plant_match_v2/features/catalog/presentation/util/string_to_enum.dart';
 import 'package:plant_match_v2/features/level/presentation/cubit/user_points_cubit.dart';
 import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/steps/step_environment.dart';
 import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/steps/step_description.dart';
@@ -39,9 +38,7 @@ class _AddPlantWizardScreenState extends State<AddPlantWizardScreen> {
   final PageController _pageController = PageController();
 
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _environmentController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _offerTypeController = TextEditingController();
   final TextEditingController _isPublishController =
       TextEditingController(text: 'true');
 
@@ -56,10 +53,12 @@ class _AddPlantWizardScreenState extends State<AddPlantWizardScreen> {
   final _formKeyOfferType = GlobalKey<FormBuilderState>();
   final _formKeyIsPublish = GlobalKey<FormBuilderState>();
 
-  final List<String> _selectedFamilies = [];
-  String? _selectedMaintenance;
-  String? _selectedWatering;
-  String? _selectedLighting;
+  final List<Family> _selectedFamilies = [];
+  LevelMaintenance? _selectedMaintenance;
+  Watering? _selectedWatering;
+  Lighting? _selectedLighting;
+  OfferType? _selectedOfferType;
+  Environment? _selectedEnvironment;
   late Catalog _wizardCatalog;
 
   @override
@@ -71,9 +70,7 @@ class _AddPlantWizardScreenState extends State<AddPlantWizardScreen> {
   @override
   void dispose() {
     _nameController.dispose();
-    _environmentController.dispose();
     _descriptionController.dispose();
-    _offerTypeController.dispose();
     _isPublishController.dispose();
     _pageController.dispose();
     super.dispose();
@@ -144,7 +141,10 @@ class _AddPlantWizardScreenState extends State<AddPlantWizardScreen> {
   List<Widget> _buildSteps() => [
         StepName(formKey: _formKeyName, controller: _nameController),
         StepEnvironment(
-            formKey: _formKeyEnvironment, controller: _environmentController),
+          formKey: _formKeyEnvironment,
+          selected: _selectedEnvironment,
+          onSelect: (v) => setState(() => _selectedEnvironment = v),
+        ),
         StepFamily(
             formKey: _formKeyFamily,
             selectedValues: _selectedFamilies,
@@ -174,9 +174,10 @@ class _AddPlantWizardScreenState extends State<AddPlantWizardScreen> {
             catalog: _wizardCatalog,
             onUpdate: (c) => setState(() => _wizardCatalog = c)),
         StepOfferType(
-            formKey: _formKeyOfferType,
-            controller: _offerTypeController,
-            onSelect: (v) => setState(() => _offerTypeController.text = v)),
+          formKey: _formKeyOfferType,
+          selected: _selectedOfferType,
+          onSelect: (v) => setState(() => _selectedOfferType = v),
+        ),
         StepPublish(
             formKey: _formKeyIsPublish,
             controller: _isPublishController,
@@ -246,16 +247,12 @@ class _AddPlantWizardScreenState extends State<AddPlantWizardScreen> {
       final finalCatalog = _wizardCatalog.copyWith(
         newName: _nameController.text,
         newDescription: _descriptionController.text,
-        newEnvironment: getEnvironmentFromString(_environmentController.text),
-        newFamily: _selectedFamilies
-            .map(getFamilyFromString)
-            .whereType<Family>()
-            .toList(),
-        newLevelMaintenance:
-            getLevelMaintenanceFromString(_selectedMaintenance ?? 'low'),
-        newWatering: getWateringFromString(_selectedWatering ?? 'little'),
-        newLighting: getLightingFromString(_selectedLighting ?? 'sun'),
-        newOfferType: getOfferTypeFromString(_offerTypeController.text),
+        newEnvironment: _selectedEnvironment ?? Environment.indoor,
+        newFamily: _selectedFamilies,
+        newLevelMaintenance: _selectedMaintenance ?? LevelMaintenance.low,
+        newWatering: _selectedWatering ?? Watering.little,
+        newLighting: _selectedLighting ?? Lighting.sun,
+        newOfferType: _selectedOfferType ?? OfferType.exchange,
         newStatus: _isPublishController.text == 'true'
             ? CatalogStatus.published
             : CatalogStatus.draft,

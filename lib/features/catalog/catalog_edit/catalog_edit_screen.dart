@@ -8,7 +8,6 @@ import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_template.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catalog/presentation/cubit/catalog_cubit.dart';
-import 'package:plant_match_v2/features/catalog/presentation/util/string_to_enum.dart';
 import 'package:plant_match_v2/features/catalog/catalog_edit/form/field/name_field.dart';
 import 'package:plant_match_v2/features/catalog/catalog_edit/form/field/environment_field.dart';
 import 'package:plant_match_v2/features/catalog/catalog_edit/form/field/family_field.dart';
@@ -36,12 +35,12 @@ class _CatalogEditScreenState extends State<CatalogEditScreen> {
   late TextEditingController _nameController;
   late TextEditingController _descriptionController;
 
-  String? _environment;
-  String? _offerType;
-  List<String> _selectedFamilies = [];
-  String? _maintenance;
-  String? _watering;
-  String? _lighting;
+  Environment? _environment;
+  OfferType? _offerType;
+  List<Family> _selectedFamilies = [];
+  LevelMaintenance? _maintenance;
+  Watering? _watering;
+  Lighting? _lighting;
   late List<String> _updatedImages;
   bool? _isPublish;
 
@@ -51,13 +50,13 @@ class _CatalogEditScreenState extends State<CatalogEditScreen> {
     _nameController = TextEditingController(text: widget.catalog.name);
     _descriptionController =
         TextEditingController(text: widget.catalog.description);
-    _environment = widget.catalog.environment.name;
-    _selectedFamilies = widget.catalog.family.map((f) => f.name).toList();
-    _maintenance = widget.catalog.levelMaintenance.name;
-    _watering = widget.catalog.watering.name;
-    _lighting = widget.catalog.lighting.name;
+    _environment = widget.catalog.environment;
+    _selectedFamilies = List.from(widget.catalog.family);
+    _maintenance = widget.catalog.levelMaintenance;
+    _watering = widget.catalog.watering;
+    _lighting = widget.catalog.lighting;
     _updatedImages = List.from(widget.catalog.images);
-    _offerType = widget.catalog.offerType.name;
+    _offerType = widget.catalog.offerType;
     _isPublish = widget.catalog.status == CatalogStatus.published;
   }
 
@@ -202,16 +201,12 @@ class _CatalogEditScreenState extends State<CatalogEditScreen> {
       final fullyUpdated = updated.copyWith(
         newName: _nameController.text,
         newDescription: _descriptionController.text,
-        newEnvironment: getEnvironmentFromString(_environment ?? 'indoor'),
-        newFamily: _selectedFamilies
-            .map(getFamilyFromString)
-            .whereType<Family>()
-            .toList(),
-        newLevelMaintenance:
-            getLevelMaintenanceFromString(_maintenance ?? 'low'),
-        newWatering: getWateringFromString(_watering ?? 'little'),
-        newLighting: getLightingFromString(_lighting ?? 'sun'),
-        newOfferType: getOfferTypeFromString(_offerType ?? 'exchange'),
+        newEnvironment: _environment ?? Environment.indoor,
+        newFamily: _selectedFamilies,
+        newLevelMaintenance: _maintenance ?? LevelMaintenance.low,
+        newWatering: _watering ?? Watering.little,
+        newLighting: _lighting ?? Lighting.sun,
+        newOfferType: _offerType ?? OfferType.exchange,
         newStatus:
             _isPublish == true ? CatalogStatus.published : CatalogStatus.draft,
       );

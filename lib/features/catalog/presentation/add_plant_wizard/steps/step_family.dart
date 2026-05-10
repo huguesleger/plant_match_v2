@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/widgets/add_plant_wizard_item.dart';
 import 'package:plant_match_v2/features/catalog/presentation/widgets/grid_selectable_item.dart';
 
@@ -14,8 +15,8 @@ class StepFamily extends StatelessWidget {
   });
 
   final GlobalKey<FormBuilderState> formKey;
-  final List<String> selectedValues;
-  final Function(String) onSelect;
+  final List<Family> selectedValues;
+  final Function(Family) onSelect;
 
   @override
   Widget build(BuildContext context) => AddPlantWizardItem(

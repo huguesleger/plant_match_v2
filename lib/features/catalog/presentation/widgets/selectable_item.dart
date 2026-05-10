@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 
-class SelectableItem extends StatelessWidget {
+class SelectableItem<T> extends StatelessWidget {
   const SelectableItem({
     super.key,
     required this.label,
@@ -13,9 +13,9 @@ class SelectableItem extends StatelessWidget {
   });
 
   final String label;
-  final String value;
+  final T value;
   final bool isSelected;
-  final Function(String) onTap;
+  final Function(T) onTap;
   final IconData icon;
 
   @override

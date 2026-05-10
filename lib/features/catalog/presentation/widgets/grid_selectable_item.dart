@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catalog/presentation/util/family_items.dart';
 import 'package:plant_match_v2/features/catalog/presentation/widgets/selectable_item.dart';
 
@@ -9,8 +10,8 @@ class GridSelectableItem extends StatelessWidget {
     required this.onSelect,
   });
 
-  final List<String> selectedValues;
-  final Function(String) onSelect;
+  final List<Family> selectedValues;
+  final Function(Family) onSelect;
 
   @override
   Widget build(BuildContext context) {

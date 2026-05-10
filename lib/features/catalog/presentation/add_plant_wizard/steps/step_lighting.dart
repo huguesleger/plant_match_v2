@@ -5,6 +5,7 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/title_with_icon/title_with_icon.dart';
+import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/widgets/add_plant_wizard_item.dart';
 import 'package:plant_match_v2/features/catalog/presentation/widgets/item_radio.dart';
 
@@ -17,15 +18,15 @@ class StepLighting extends StatelessWidget {
   });
 
   final GlobalKey<FormBuilderState> formKey;
-  final String? selected;
-  final Function(String) onSelect;
+  final Lighting? selected;
+  final Function(Lighting) onSelect;
 
   @override
   Widget build(BuildContext context) => AddPlantWizardItem(
         formKey: formKey,
         title: t.catalog.wizard.steps.lighting.title,
         description: t.catalog.wizard.steps.lighting.description,
-        child: FormBuilderField(
+        child: FormBuilderField<Lighting>(
           name: 'lighting',
           initialValue: selected,
           validator: FormBuilderValidators.required(
@@ -43,19 +44,9 @@ class StepLighting extends StatelessWidget {
                     iconColor: AppColors.greenLight,
                   ),
                   const SizedBox(height: 10),
-                  ItemRadio(
+                  ItemRadio<Lighting>(
                     title: t.catalog.wizard.steps.lighting.sun,
-                    value: 'sun',
-                    selectedItem: selected,
-                    onItemSelected: (v) {
-                      onSelect(v);
-                      field.didChange(v);
-                    },
-                  ),
-                  const SizedBox(height: 10),
-                  ItemRadio(
-                    title: t.catalog.wizard.steps.lighting.indirect,
-                    value: 'indirectLight',
+                    value: Lighting.sun,
                     selectedItem: selected,
                     onItemSelected: (v) {
                       onSelect(v);
@@ -64,9 +55,20 @@ class StepLighting extends StatelessWidget {
                     },
                   ),
                   const SizedBox(height: 10),
-                  ItemRadio(
+                  ItemRadio<Lighting>(
+                    title: t.catalog.wizard.steps.lighting.indirect,
+                    value: Lighting.indirectLight,
+                    selectedItem: selected,
+                    onItemSelected: (v) {
+                      onSelect(v);
+                      field.didChange(v);
+                      field.validate();
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  ItemRadio<Lighting>(
                     title: t.catalog.wizard.steps.lighting.shade,
-                    value: 'shade',
+                    value: Lighting.shade,
                     selectedItem: selected,
                     onItemSelected: (v) {
                       onSelect(v);

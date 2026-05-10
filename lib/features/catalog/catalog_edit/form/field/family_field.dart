@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catalog/catalog_edit/form/form_section.dart';
 import 'package:plant_match_v2/features/catalog/presentation/widgets/grid_selectable_item.dart';
 
@@ -12,14 +13,14 @@ class FamilyField extends StatelessWidget {
     required this.onSelect,
   });
 
-  final List<String> selectedFamilies;
-  final ValueChanged<String> onSelect;
+  final List<Family> selectedFamilies;
+  final ValueChanged<Family> onSelect;
 
   @override
   Widget build(BuildContext context) {
     return FormSection(
       title: t.catalog.edit.family.title,
-      child: FormBuilderField<List<String>>(
+      child: FormBuilderField<List<Family>>(
         name: 'family',
         initialValue: selectedFamilies,
         validator: FormBuilderValidators.required(

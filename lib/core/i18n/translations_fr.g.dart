@@ -287,6 +287,7 @@ class TranslationsUserFr {
 	late final TranslationsUserRecentPlantsFr recent_plants = TranslationsUserRecentPlantsFr.internal(_root);
 	late final TranslationsUserCatalogListFr catalog_list = TranslationsUserCatalogListFr.internal(_root);
 	late final TranslationsUserDetailPlantFr detail_plant = TranslationsUserDetailPlantFr.internal(_root);
+	late final TranslationsUserFiltersFr filters = TranslationsUserFiltersFr.internal(_root);
 }
 
 // Path: widgets
@@ -1556,6 +1557,30 @@ class TranslationsUserDetailPlantFr {
 
 	/// fr: 'entretien'
 	String get maintenance => 'entretien';
+}
+
+// Path: user.filters
+class TranslationsUserFiltersFr {
+	TranslationsUserFiltersFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Tous'
+	String get all => 'Tous';
+
+	/// fr: 'Donations'
+	String get donation => 'Donations';
+
+	/// fr: 'Échanges'
+	String get exchange => 'Échanges';
+
+	/// fr: 'Extérieur'
+	String get outdoor => 'Extérieur';
+
+	/// fr: 'Intérieur'
+	String get indoor => 'Intérieur';
 }
 
 // Path: widgets.navigation
@@ -3191,6 +3216,11 @@ extension on Translations {
 			'user.detail_plant.lighting' => 'lumière',
 			'user.detail_plant.watering' => 'arrosage',
 			'user.detail_plant.maintenance' => 'entretien',
+			'user.filters.all' => 'Tous',
+			'user.filters.donation' => 'Donations',
+			'user.filters.exchange' => 'Échanges',
+			'user.filters.outdoor' => 'Extérieur',
+			'user.filters.indoor' => 'Intérieur',
 			'widgets.navigation.explorer' => 'Explorer',
 			'widgets.navigation.aroundMe' => 'À proximité',
 			'widgets.navigation.add' => 'Ajouter',

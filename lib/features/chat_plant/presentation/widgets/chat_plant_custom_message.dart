@@ -4,6 +4,7 @@ import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/util/date_formatter.dart';
 import 'package:plant_match_v2/features/catalog/data/firebase_catalog_repository.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/plant_message_card.dart';
+import 'package:plant_match_v2/features/chat_plant/domain/entities/chat_plant.dart';
 import 'package:plant_match_v2/features/user/detail_plant/detail_plant.dart';
 
 class ChatPlantCustomMessage extends StatelessWidget {
@@ -19,7 +20,7 @@ class ChatPlantCustomMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final metadata = message.metadata;
-    if (metadata?['messageType'] == 'plant_exchange') {
+    if (metadata?['messageType'] == ChatMessageType.plantExchange.name) {
       final pId = metadata?['plantId'] as String? ?? '';
       final pName = metadata?['plantName'] as String? ?? '';
       final pImage = metadata?['plantImage'] as String? ?? '';

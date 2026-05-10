@@ -14,14 +14,14 @@ class OfferTypeField extends StatelessWidget {
     required this.onChanged,
   });
 
-  final String? selectedOfferType;
-  final ValueChanged<String?> onChanged;
+  final OfferType? selectedOfferType;
+  final ValueChanged<OfferType?> onChanged;
 
   @override
   Widget build(BuildContext context) {
     return FormSection(
       title: t.catalog.edit.offer_type.title,
-      child: FormBuilderField<String>(
+      child: FormBuilderField<OfferType>(
         name: 'offerType',
         initialValue: selectedOfferType,
         validator: FormBuilderValidators.required(
@@ -32,11 +32,11 @@ class OfferTypeField extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: SelectableItem(
+                  child: SelectableItem<OfferType>(
                     icon: LucideIcons.gift,
                     label: t.catalog.wizard.steps.offer_type.donation,
-                    value: OfferType.donation.name,
-                    isSelected: selectedOfferType == OfferType.donation.name,
+                    value: OfferType.donation,
+                    isSelected: selectedOfferType == OfferType.donation,
                     onTap: (val) {
                       onChanged(val);
                       field.didChange(val);
@@ -46,11 +46,11 @@ class OfferTypeField extends StatelessWidget {
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: SelectableItem(
+                  child: SelectableItem<OfferType>(
                     icon: LucideIcons.heart_handshake,
                     label: t.catalog.wizard.steps.offer_type.exchange,
-                    value: OfferType.exchange.name,
-                    isSelected: selectedOfferType == OfferType.exchange.name,
+                    value: OfferType.exchange,
+                    isSelected: selectedOfferType == OfferType.exchange,
                     onTap: (val) {
                       onChanged(val);
                       field.didChange(val);

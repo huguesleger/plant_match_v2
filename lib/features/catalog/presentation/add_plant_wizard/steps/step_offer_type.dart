@@ -11,22 +11,22 @@ class StepOfferType extends StatelessWidget {
   const StepOfferType({
     super.key,
     required this.formKey,
-    required this.controller,
+    required this.selected,
     required this.onSelect,
   });
 
   final GlobalKey<FormBuilderState> formKey;
-  final TextEditingController controller;
-  final Function(String) onSelect;
+  final OfferType? selected;
+  final Function(OfferType) onSelect;
 
   @override
   Widget build(BuildContext context) => AddPlantWizardItem(
         formKey: formKey,
         title: t.catalog.wizard.steps.offer_type.title,
         description: t.catalog.wizard.steps.offer_type.description,
-        child: FormBuilderField(
+        child: FormBuilderField<OfferType>(
           name: 'offerType',
-          initialValue: controller.text,
+          initialValue: selected,
           validator: FormBuilderValidators.required(
             errorText: t.catalog.wizard.required_field,
           ),
@@ -36,11 +36,11 @@ class StepOfferType extends StatelessWidget {
               Row(
                 children: [
                   Expanded(
-                    child: SelectableItem(
+                    child: SelectableItem<OfferType>(
                       icon: LucideIcons.gift,
                       label: t.catalog.wizard.steps.offer_type.donation,
-                      value: OfferType.donation.name,
-                      isSelected: controller.text == OfferType.donation.name,
+                      value: OfferType.donation,
+                      isSelected: selected == OfferType.donation,
                       onTap: (v) {
                         onSelect(v);
                         field.didChange(v);
@@ -50,11 +50,11 @@ class StepOfferType extends StatelessWidget {
                   ),
                   const SizedBox(width: 10),
                   Expanded(
-                    child: SelectableItem(
+                    child: SelectableItem<OfferType>(
                       icon: LucideIcons.heart_handshake,
                       label: t.catalog.wizard.steps.offer_type.exchange,
-                      value: OfferType.exchange.name,
-                      isSelected: controller.text == OfferType.exchange.name,
+                      value: OfferType.exchange,
+                      isSelected: selected == OfferType.exchange,
                       onTap: (v) {
                         onSelect(v);
                         field.didChange(v);

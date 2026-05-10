@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
+import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/chat_plant/domain/entities/chat_plant.dart';
 import 'package:plant_match_v2/features/chat_plant/domain/repository/chat_plant_repository.dart';
 
@@ -22,7 +23,7 @@ class FirebaseChatPlant implements ChatPlantRepository {
     required String plantName,
     required String plantDescription,
     required String plantImage,
-    required String plantExchangeType,
+    required OfferType plantExchangeType,
   }) {
     return TaskEither.tryCatch(
       () async {
@@ -58,7 +59,7 @@ class FirebaseChatPlant implements ChatPlantRepository {
           'plantName': plantName,
           'plantDescription': plantDescription,
           'plantImage': plantImage,
-          'plantExchangeType': plantExchangeType,
+          'plantExchangeType': plantExchangeType.name,
           'plantOwnerId': plantOwnerId,
           'plantOwnerName': plantOwnerName,
           'plantOwnerAvatar': plantOwnerAvatar,
@@ -104,7 +105,7 @@ class FirebaseChatPlant implements ChatPlantRepository {
                   ? types.Status.seen
                   : types.Status.sent;
 
-              if (messageType == 'plant_exchange') {
+              if (messageType == ChatMessageType.plantExchange.name) {
                 return types.CustomMessage(
                   id: doc.id,
                   author: types.User(id: doc['senderId']),
@@ -114,7 +115,7 @@ class FirebaseChatPlant implements ChatPlantRepository {
                       .millisecondsSinceEpoch,
                   metadata: {
                     'readAt': data['readAt'],
-                    'messageType': 'plant_exchange',
+                    'messageType': ChatMessageType.plantExchange.name,
                     'plantId': data['plantId'],
                     'plantName': data['plantName'],
                     'plantImage': data['plantImage'],
@@ -347,7 +348,7 @@ class FirebaseChatPlant implements ChatPlantRepository {
         await _messages(chatId).add({
           'senderId': senderId,
           'receiverId': receiverId,
-          'messageType': 'plant_exchange',
+          'messageType': ChatMessageType.plantExchange.name,
           'plantId': plantId,
           'plantName': plantName,
           'plantImage': plantImage,

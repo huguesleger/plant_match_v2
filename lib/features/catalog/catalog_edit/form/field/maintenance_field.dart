@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catalog/catalog_edit/form/form_section.dart';
 import 'package:plant_match_v2/features/catalog/presentation/widgets/item_radio.dart';
 
@@ -12,14 +13,14 @@ class MaintenanceField extends StatelessWidget {
     required this.onChanged,
   });
 
-  final String? selectedMaintenance;
-  final ValueChanged<String?> onChanged;
+  final LevelMaintenance? selectedMaintenance;
+  final ValueChanged<LevelMaintenance?> onChanged;
 
   @override
   Widget build(BuildContext context) {
     return FormSection(
       title: t.catalog.edit.maintenance.title,
-      child: FormBuilderField<String>(
+      child: FormBuilderField<LevelMaintenance>(
         name: 'maintenance',
         initialValue: selectedMaintenance,
         validator: FormBuilderValidators.required(
@@ -29,10 +30,10 @@ class MaintenanceField extends StatelessWidget {
           children: [
             Column(
               children: [
-                ItemRadio(
+                ItemRadio<LevelMaintenance>(
                   title: t.catalog.wizard.steps.maintenance.low,
                   subtitle: t.catalog.edit.maintenance.low_subtitle,
-                  value: 'low',
+                  value: LevelMaintenance.low,
                   selectedItem: selectedMaintenance,
                   onItemSelected: (val) {
                     onChanged(val);
@@ -41,10 +42,10 @@ class MaintenanceField extends StatelessWidget {
                   },
                 ),
                 const SizedBox(height: 20),
-                ItemRadio(
+                ItemRadio<LevelMaintenance>(
                   title: t.catalog.wizard.steps.maintenance.medium,
                   subtitle: t.catalog.edit.maintenance.medium_subtitle,
-                  value: 'medium',
+                  value: LevelMaintenance.medium,
                   selectedItem: selectedMaintenance,
                   onItemSelected: (val) {
                     onChanged(val);
@@ -53,10 +54,10 @@ class MaintenanceField extends StatelessWidget {
                   },
                 ),
                 const SizedBox(height: 20),
-                ItemRadio(
+                ItemRadio<LevelMaintenance>(
                   title: t.catalog.wizard.steps.maintenance.high,
                   subtitle: t.catalog.edit.maintenance.high_subtitle,
-                  value: 'high',
+                  value: LevelMaintenance.high,
                   selectedItem: selectedMaintenance,
                   onItemSelected: (val) {
                     onChanged(val);

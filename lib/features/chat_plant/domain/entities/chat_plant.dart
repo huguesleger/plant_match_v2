@@ -1,5 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
+
+enum ChatMessageType {
+  text,
+  plantExchange,
+}
 
 class ChatPlant {
   final String chatId;
@@ -7,7 +13,7 @@ class ChatPlant {
   final String plantName;
   final String plantDescription;
   final String plantImage;
-  final String plantExchangeType;
+  final OfferType plantExchangeType;
 
   final String plantOwnerId;
   final String plantOwnerName;
@@ -81,7 +87,7 @@ class ChatPlant {
       'plantName': plantName,
       'plantDescription': plantDescription,
       'plantImage': plantImage,
-      'plantExchangeType': plantExchangeType,
+      'plantExchangeType': plantExchangeType.name,
       'plantOwnerId': plantOwnerId,
       'plantOwnerName': plantOwnerName,
       'plantOwnerAvatar': plantOwnerAvatar.toNullable(),
@@ -100,7 +106,9 @@ class ChatPlant {
       plantName: json['plantName'] ?? '',
       plantDescription: json['plantDescription'] ?? '',
       plantImage: json['plantImage'] ?? '',
-      plantExchangeType: json['plantExchangeType'] ?? '',
+      plantExchangeType: json['plantExchangeType'] != null
+          ? OfferType.values.byName(json['plantExchangeType'])
+          : OfferType.exchange,
       plantOwnerId: json['plantOwnerId'] ?? '',
       plantOwnerName: json['plantOwnerName'] ?? 'Propriétaire',
       plantOwnerAvatar: Option.fromNullable(json['plantOwnerAvatar'] as String?),
