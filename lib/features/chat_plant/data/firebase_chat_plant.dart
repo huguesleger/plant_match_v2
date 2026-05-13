@@ -69,6 +69,7 @@ class FirebaseChatPlant implements ChatPlantRepository {
           await chatRef.set({
             ...chatData,
             'createdAt': FieldValue.serverTimestamp(),
+            'lastMessageAt': FieldValue.serverTimestamp(),
             'unreadCount': {
               currentUserId: 0,
               plantOwnerId: 0,
@@ -195,7 +196,9 @@ class FirebaseChatPlant implements ChatPlantRepository {
           plantName: data['plantName'],
           plantDescription: data['plantDescription'],
           plantImage: data['plantImage'],
-          plantExchangeType: data['plantExchangeType'],
+          plantExchangeType: data['plantExchangeType'] != null
+              ? OfferType.values.byName(data['plantExchangeType'] as String)
+              : OfferType.exchange,
           plantOwnerId: data['plantOwnerId'],
           plantOwnerName: data['plantOwnerName'],
           plantOwnerAvatar:
