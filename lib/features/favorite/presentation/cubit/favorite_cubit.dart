@@ -2,14 +2,16 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:plant_match_v2/features/profil/domain/repository/favorites_repository.dart';
-import 'package:plant_match_v2/features/favorite/cubit/favorite_state.dart';
+import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
+import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
+import 'package:plant_match_v2/features/favorite/domain/repository/favorites_repository.dart';
+import 'package:plant_match_v2/features/favorite/presentation/cubit/favorite_state.dart';
 
 class FavoriteCubit extends Cubit<FavoriteState> {
   final FavoritesRepository favoritesRepository;
 
-  StreamSubscription<List<Map<String, dynamic>>>? _plantsSub;
-  StreamSubscription? _usersSub;
+  StreamSubscription<List<Catalog>>? _plantsSub;
+  StreamSubscription<List<ProfilUser>>? _usersSub;
 
   FavoriteCubit({required this.favoritesRepository})
       : super(const FavoriteInitial());
@@ -17,44 +19,29 @@ class FavoriteCubit extends Cubit<FavoriteState> {
   void loadFavorites(String uid) {
     emit(const FavoriteLoading());
 
-    List<Map<String, dynamic>>? latestPlants;
-    List? latestUsers;
+    List<Catalog>? latestPlants;
+    List<ProfilUser>? latestUsers;
 
-    _plantsSub = favoritesRepository.getFavoritePlantsRaw(uid).listen(
-      (rawPlants) {
-        final checkTasks = rawPlants.map((plant) {
-          final catalogId = plant['id'] as String? ?? '';
-          return favoritesRepository
-              .checkPlantAvailability(catalogId)
-              .map((isAvailable) => {...plant, 'isAvailable': isAvailable});
-        }).toList();
+    _plantsSub = favoritesRepository.getFavoritePlants(uid).listen(
+      (plants) {
+        if (isClosed) return;
+        latestPlants = plants;
 
-        TaskEither.sequenceList(checkTasks).run().then((result) {
-          if (isClosed) return;
-
-          result.match(
-            (failure) => emit(FavoriteError(failure.message)),
-            (enriched) {
-              latestPlants = enriched;
-
-              final currentState = state;
-              if (currentState is FavoriteLoaded) {
-                emit(FavoriteLoaded(
-                  plants: enriched,
-                  users: currentState.users,
-                ));
-              } else {
-                Option.fromNullable(latestUsers).match(
-                  () => {},
-                  (users) => emit(FavoriteLoaded(
-                    plants: enriched,
-                    users: users.cast(),
-                  )),
-                );
-              }
-            },
+        final currentState = state;
+        if (currentState is FavoriteLoaded) {
+          emit(FavoriteLoaded(
+            plants: plants,
+            users: currentState.users,
+          ));
+        } else {
+          Option.fromNullable(latestUsers).match(
+            () => {},
+            (users) => emit(FavoriteLoaded(
+              plants: plants,
+              users: users,
+            )),
           );
-        });
+        }
       },
       onError: (e) {
         if (!isClosed) {

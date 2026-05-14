@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:plant_match_v2/features/donation/domain/entities/donation.dart';
+import 'package:plant_match_v2/features/exchange/domain/entities/exchange.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/theme/inter_text_style.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_template.dart';
+import 'package:plant_match_v2/core/widgets/avatar/avatar.dart';
 import 'package:plant_match_v2/core/widgets/error/error_page.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/features/catalog/data/firebase_catalog_repository.dart';
@@ -31,6 +35,32 @@ class ChatPlantScreen extends StatelessWidget {
   final String plantOwnerName;
   final String plantOwnerAvatar;
 
+  void _handleExchangeState(
+      BuildContext context, Exchange ex, ExchangeState state, String userId) {
+    final cubit = context.read<ExchangeCubit>();
+    if (userId == ex.ownerId && !ex.seenByOwner) {
+      cubit.markSeenByOwner(ex.id);
+    }
+    if (userId == ex.requestedBy &&
+        !ex.seenByRequester &&
+        state is! ExchangePending) {
+      cubit.markSeenByRequester(ex.id);
+    }
+  }
+
+  void _handleDonationState(
+      BuildContext context, Donation don, DonationState state, String userId) {
+    final cubit = context.read<DonationCubit>();
+    if (userId == don.ownerId && !don.seenByOwner) {
+      cubit.markSeenByOwner(don.id);
+    }
+    if (userId == don.requestedBy &&
+        !don.seenByRequester &&
+        state is! DonationPending) {
+      cubit.markSeenByRequester(don.id);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final userId = context.read<AuthCubit>().userId ?? '';
@@ -50,54 +80,47 @@ class ChatPlantScreen extends StatelessWidget {
         ),
         BlocListener<ExchangeCubit, ExchangeState>(
           listener: (context, state) {
-            final ex = switch (state) {
-              ExchangePending(:final exchange) => exchange,
-              ExchangeAccepted(:final exchange) => exchange,
-              ExchangeWaitingValidation(:final exchange) => exchange,
-              ExchangeRejected(:final exchange) => exchange,
-              ExchangeCompleted(:final exchange) => exchange,
+            final Option<Exchange> option = switch (state) {
+              ExchangePending(:final exchange) ||
+              ExchangeAccepted(:final exchange) ||
+              ExchangeWaitingValidation(:final exchange) ||
+              ExchangeRejected(:final exchange) ||
+              ExchangeCompleted(:final exchange) =>
+                Some(exchange),
               ExchangeInitial() ||
               ExchangeLoading() ||
               ExchangePickingPlant() ||
               ExchangeConfirming() ||
               ExchangeSuccess() ||
               ExchangeError() =>
-                null,
+                const None(),
             };
-            if (ex == null) return;
 
-            final cubit = context.read<ExchangeCubit>();
-            if (userId == ex.ownerId && !ex.seenByOwner) {
-              cubit.markSeenByOwner(ex.id);
-            }
-            if (userId == ex.requestedBy &&
-                !ex.seenByRequester &&
-                state is! ExchangePending) {
-              cubit.markSeenByRequester(ex.id);
-            }
+            option.match(
+              () {},
+              (ex) => _handleExchangeState(context, ex, state, userId),
+            );
           },
         ),
         BlocListener<DonationCubit, DonationState>(
           listener: (context, state) {
-            final don = switch (state) {
-              DonationPending(:final donation) => donation,
-              DonationAccepted(:final donation) => donation,
-              DonationWaitingValidation(:final donation) => donation,
-              DonationRejected(:final donation) => donation,
-              DonationCompleted(:final donation) => donation,
-              DonationInitial() || DonationLoading() || DonationError() => null,
+            final Option<Donation> option = switch (state) {
+              DonationPending(:final donation) ||
+              DonationAccepted(:final donation) ||
+              DonationWaitingValidation(:final donation) ||
+              DonationRejected(:final donation) ||
+              DonationCompleted(:final donation) =>
+                Some(donation),
+              DonationInitial() ||
+              DonationLoading() ||
+              DonationError() =>
+                const None(),
             };
-            if (don == null) return;
 
-            final cubit = context.read<DonationCubit>();
-            if (userId == don.ownerId && !don.seenByOwner) {
-              cubit.markSeenByOwner(don.id);
-            }
-            if (userId == don.requestedBy &&
-                !don.seenByRequester &&
-                state is! DonationPending) {
-              cubit.markSeenByRequester(don.id);
-            }
+            option.match(
+              () {},
+              (don) => _handleDonationState(context, don, state, userId),
+            );
           },
         ),
       ],
@@ -130,23 +153,11 @@ class ChatPlantScreen extends StatelessWidget {
               ),
               titleWidget: Row(
                 children: [
-                  CircleAvatar(
-                    radius: 24,
-                    backgroundColor: AppColors.greyLight,
-                    backgroundImage: plantOwnerAvatar.isNotEmpty &&
-                            plantOwnerAvatar != 'null'
-                        ? NetworkImage(plantOwnerAvatar)
-                        : null,
-                    child:
-                        plantOwnerAvatar.isEmpty || plantOwnerAvatar == 'null'
-                            ? Text(
-                                plantOwnerName[0].toUpperCase(),
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              )
-                            : null,
+                  Avatar(
+                    radius: 28,
+                    imageUrl: plantOwnerAvatar,
+                    name: plantOwnerName,
+                    imgSizeAvatar: 55,
                   ),
                   const SizedBox(width: 8),
                   Text(
@@ -198,7 +209,6 @@ class ChatPlantScreen extends StatelessWidget {
                     isBlocked: s.isBlocked,
                   ),
               },
-
             ),
           );
         },

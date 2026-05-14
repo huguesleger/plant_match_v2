@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:plant_match_v2/features/favorite/cubit/favorite_cubit.dart';
-import 'package:plant_match_v2/features/favorite/widgets/favorite_empty_state.dart';
-import 'package:plant_match_v2/features/favorite/widgets/favorite_plant_card.dart';
+import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
+import 'package:plant_match_v2/features/favorite/presentation/cubit/favorite_cubit.dart';
+import 'package:plant_match_v2/features/favorite/presentation/widgets/favorite_empty_state.dart';
+import 'package:plant_match_v2/features/favorite/presentation/widgets/favorite_plant_card.dart';
 
 class FavoritePlantsTab extends StatelessWidget {
   const FavoritePlantsTab({
@@ -13,7 +15,7 @@ class FavoritePlantsTab extends StatelessWidget {
   });
 
   final String uid;
-  final List<Map<String, dynamic>> plants;
+  final List<Catalog> plants;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +33,7 @@ class FavoritePlantsTab extends StatelessWidget {
       separatorBuilder: (_, __) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
         final plant = plants[index];
-        final catalogId = plant['id'] as String? ?? '';
+        final catalogId = plant.catalogId.getOrElse(() => '');
         return FavoritePlantCard(
           plant: plant,
           onRemove: () => context

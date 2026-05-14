@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
+import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
 
 class ValidationCodeDisplay extends StatelessWidget {
   const ValidationCodeDisplay({
@@ -16,9 +17,10 @@ class ValidationCodeDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.greenMedium.withValues(alpha: 0.1),
+        color: AppColors.greenMedium.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: AppColors.greenMedium.withValues(alpha: 0.3)),
       ),
@@ -33,19 +35,14 @@ class ValidationCodeDisplay extends StatelessWidget {
             Text(
               t.chatPlant.display_code.ready_subtitle,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 12, color: AppColors.grey),
+              style: const TextStyle(fontSize: 12, color: AppColors.greyDark),
             ),
             const SizedBox(height: 12),
-            ElevatedButton(
+            ButtonRounded(
+              text: t.chatPlant.display_code.generate_btn,
               onPressed: onGenerate,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.greenDark,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              child: Text(t.chatPlant.display_code.generate_btn),
+              bgColor: AppColors.greenDark,
+              textColor: AppColors.white,
             ),
           ] else ...[
             Text(

@@ -1,3 +1,4 @@
+import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 
 sealed class FavoriteState {
@@ -13,7 +14,7 @@ class FavoriteLoading extends FavoriteState {
 }
 
 class FavoriteLoaded extends FavoriteState {
-  final List<Map<String, dynamic>> plants;
+  final List<Catalog> plants;
   final List<ProfilUser> users;
 
   const FavoriteLoaded({

@@ -15,27 +15,22 @@ class FavoritePlantCard extends StatelessWidget {
     required this.onTap,
   });
 
-  final Map<String, dynamic> plant;
+  final Catalog plant;
   final VoidCallback onRemove;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final name = plant['name'] as String? ?? '';
-    final imageUrl = plant['imageUrl'] as String? ?? '';
-    final isAvailable = plant['isAvailable'] as bool? ?? true;
-    final offerTypeRaw = plant['offerType'] as String?;
-    final environmentRaw = plant['environment'] as String?;
+    final name = plant.name;
+    final imageUrl = plant.images.first;
+    final offerTypeRaw = plant.offerType.name;
+    final environmentRaw = plant.environment.name;
 
-    OfferType? offerType;
-    if (offerTypeRaw != null) {
-      offerType = OfferType.values.byName(offerTypeRaw);
-    }
+    OfferType offerType;
+    offerType = OfferType.values.byName(offerTypeRaw);
 
-    Environment? environment;
-    if (environmentRaw != null) {
-      environment = Environment.values.byName(environmentRaw);
-    }
+    Environment environment;
+    environment = Environment.values.byName(environmentRaw);
 
     final isDonation = offerType == OfferType.donation;
 
@@ -49,7 +44,7 @@ class FavoritePlantCard extends StatelessWidget {
       ),
       color: AppColors.white,
       child: InkWell(
-        onTap: isAvailable ? onTap : null,
+        onTap: onTap,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -65,31 +60,12 @@ class FavoritePlantCard extends StatelessWidget {
                       ? Image.network(
                           imageUrl,
                           width: 110,
-                          height: 110,
+                          height: 120,
                           fit: BoxFit.cover,
                           errorBuilder: (_, __, ___) => _placeholder(),
                         )
                       : _placeholder(),
                 ),
-                if (!isAvailable)
-                  Positioned.fill(
-                    child: ClipRRect(
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(16),
-                        bottomLeft: Radius.circular(16),
-                      ),
-                      child: ColoredBox(
-                        color: AppColors.black.withValues(alpha: 0.4),
-                        child: const Center(
-                          child: Icon(
-                            Icons.block_rounded,
-                            color: AppColors.white,
-                            size: 28,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
               ],
             ),
             // Contenu
@@ -104,57 +80,39 @@ class FavoritePlantCard extends StatelessWidget {
                       spacing: 6,
                       runSpacing: 4,
                       children: [
-                        if (!isAvailable)
-                          BadgePill(
-                            text: Text(
-                              t.favorite.card.not_available,
-                              style: InterTextStyle.inter(
-                                AppTypo.textXxs,
-                                color: AppColors.white,
-                              ),
+                        BadgePill(
+                          text: Text(
+                            offerType.offerTypeName,
+                            style: InterTextStyle.inter(
+                              AppTypo.textXxs,
+                              color: isDonation
+                                  ? AppColors.white
+                                  : AppColors.greenLight,
                             ),
-                            badgeColor: AppColors.red,
                           ),
-                        if (offerType != null)
-                          BadgePill(
-                            text: Text(
-                              offerType.offerTypeName,
-                              style: InterTextStyle.inter(
-                                AppTypo.textXxs,
-                                color: isDonation
-                                    ? AppColors.white
-                                    : AppColors.greenLight,
-                              ),
-                            ),
-                            badgeColor: isDonation
-                                ? AppColors.greenMedium
-                                : AppColors.blueGreen,
-                          ),
+                          badgeColor: isDonation
+                              ? AppColors.greenMedium
+                              : AppColors.blueGreen,
+                        ),
                       ],
                     ),
                     const SizedBox(height: 6),
                     Text(
                       name.toCapitalize(),
-                      style: InterTextStyle.inter(
-                        AppTypo.textS,
-                        fontWeight: FontWeight.w700,
-                        color: isAvailable
-                            ? AppColors.greyDark
-                            : AppColors.greyMedium,
-                      ),
+                      style: InterTextStyle.inter(AppTypo.textS,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.greyDark),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    if (environment != null) ...[
-                      const SizedBox(height: 4),
-                      Text(
-                        t.favorite.card.env_prefix(env: environment.envName),
-                        style: InterTextStyle.inter(
-                          AppTypo.textXs,
-                          color: AppColors.greyMedium,
-                        ),
+                    const SizedBox(height: 4),
+                    Text(
+                      t.favorite.card.env_prefix(env: environment.envName),
+                      style: InterTextStyle.inter(
+                        AppTypo.textXs,
+                        color: AppColors.greyMedium,
                       ),
-                    ],
+                    ),
                     const SizedBox(height: 8),
                     // Bouton retirer
                     GestureDetector(

@@ -3,7 +3,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
-import 'package:plant_match_v2/features/profil/domain/repository/favorites_repository.dart';
+import 'package:plant_match_v2/features/favorite/domain/repository/favorites_repository.dart';
 
 class FirebaseFavoritesRepo implements FavoritesRepository {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -24,12 +24,6 @@ class FirebaseFavoritesRepo implements FavoritesRepository {
         if (id == null) throw Exception('ID catalogue manquant');
         await _plantsRef(uid).doc(id).set({
           'catalogId': id,
-          'name': catalog.name,
-          'imageUrl': catalog.images.isNotEmpty ? catalog.images.first : '',
-          'offerType': catalog.offerType.name,
-          'environment': catalog.environment.name,
-          'description': catalog.description,
-          'userId': catalog.userId,
           'addedAt': FieldValue.serverTimestamp(),
         });
         return unit;
@@ -50,12 +44,27 @@ class FirebaseFavoritesRepo implements FavoritesRepository {
   }
 
   @override
-  Stream<List<Map<String, dynamic>>> getFavoritePlantsRaw(String uid) {
-    return _plantsRef(uid).orderBy('addedAt', descending: true).snapshots().map(
-        (snap) => snap.docs
-            .map((d) => {'id': d.id, ...d.data() as Map<String, dynamic>})
-            .toList());
+  Stream<List<Catalog>> getFavoritePlants(String uid) {
+    return _plantsRef(uid)
+        .orderBy('addedAt', descending: true)
+        .snapshots()
+        .asyncMap((snap) async {
+      final catalogTasks = snap.docs.map((d) async {
+        final catalogId = d.id;
+        final catalogDoc = await _db.collection('catalogs').doc(catalogId).get();
+
+        if (catalogDoc.exists && catalogDoc.data() != null) {
+          return Catalog.fromJson(catalogDoc.data()!, catalogId);
+        }
+        return null;
+      }).toList();
+
+      final results = await Future.wait(catalogTasks);
+      return results.whereType<Catalog>().toList();
+    });
   }
+
+
 
   @override
   TaskEither<Failure, bool> isFavoritePlant(String uid, String catalogId) {
@@ -68,17 +77,7 @@ class FirebaseFavoritesRepo implements FavoritesRepository {
     );
   }
 
-  @override
-  TaskEither<Failure, bool> checkPlantAvailability(String catalogId) {
-    return TaskEither.tryCatch(
-      () async {
-        if (catalogId.isEmpty) return false;
-        final doc = await _db.collection('catalogs').doc(catalogId).get();
-        return doc.exists && (doc.data()?['status'] != 'archived');
-      },
-      (error, _) => UnexpectedFailure('Erreur lors de la vérification de disponibilité: $error'),
-    );
-  }
+
 
   // ─── Profils utilisateurs ───────────────────────────────────────────────────
 
@@ -88,12 +87,6 @@ class FirebaseFavoritesRepo implements FavoritesRepository {
       () async {
         await _usersRef(uid).doc(targetUser.uid).set({
           'uid': targetUser.uid,
-          'fullName': targetUser.fullName,
-          'userName': targetUser.userName,
-          'profilImg': targetUser.profilImg,
-          'localisation': targetUser.localisation,
-          'zipCode': targetUser.zipCode,
-          'isOnline': targetUser.isOnline,
           'addedAt': FieldValue.serverTimestamp(),
         });
         return unit;
@@ -118,24 +111,23 @@ class FirebaseFavoritesRepo implements FavoritesRepository {
     return _usersRef(uid)
         .orderBy('addedAt', descending: true)
         .snapshots()
-        .map((snap) => snap.docs.map((d) {
-              final data = d.data() as Map<String, dynamic>;
-              return ProfilUser(
-                uid: data['uid'] ?? '',
-                email: Option.fromNullable(data['email'] as String?),
-                fullName: data['fullName'] ?? '',
-                bio: const None(),
-                profilImg: data['profilImg'] ?? '',
-                userName: Option.fromNullable(data['userName'] as String?),
-                localisation: data['localisation'] ?? '',
-                country: '',
-                zipCode: data['zipCode'] ?? '',
-                birthdayDate: const None(),
-                latitude: const None(),
-                longitude: const None(),
-                isOnline: data['isOnline'] ?? false,
-              );
-            }).toList());
+        .asyncMap((snap) async {
+      final userTasks = snap.docs.map((d) async {
+        final targetUid = d.id;
+        final userDoc = await _db.collection('users').doc(targetUid).get();
+
+        if (userDoc.exists && userDoc.data() != null) {
+          return ProfilUser.fromJson({
+            ...userDoc.data()!,
+            'uid': targetUid,
+          });
+        }
+        return null;
+      }).toList();
+
+      final results = await Future.wait(userTasks);
+      return results.whereType<ProfilUser>().toList();
+    });
   }
 
   @override

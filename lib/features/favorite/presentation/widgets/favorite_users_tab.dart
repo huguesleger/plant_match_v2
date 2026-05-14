@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
-import 'package:plant_match_v2/features/favorite/cubit/favorite_cubit.dart';
-import 'package:plant_match_v2/features/favorite/widgets/favorite_empty_state.dart';
-import 'package:plant_match_v2/features/favorite/widgets/favorite_user_card.dart';
+import 'package:plant_match_v2/features/favorite/presentation/cubit/favorite_cubit.dart';
+import 'package:plant_match_v2/features/favorite/presentation/widgets/favorite_empty_state.dart';
+import 'package:plant_match_v2/features/favorite/presentation/widgets/favorite_user_card.dart';
 
 class FavoriteUsersTab extends StatelessWidget {
   const FavoriteUsersTab({

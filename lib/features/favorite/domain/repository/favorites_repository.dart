@@ -8,9 +8,8 @@ abstract class FavoritesRepository {
   TaskEither<Failure, Unit> removeFavoritePlant(String uid, String catalogId);
   TaskEither<Failure, Unit> addFavoriteUser(String uid, ProfilUser targetUser);
   TaskEither<Failure, Unit> removeFavoriteUser(String uid, String targetUid);
-  Stream<List<Map<String, dynamic>>> getFavoritePlantsRaw(String uid);
+  Stream<List<Catalog>> getFavoritePlants(String uid);
   Stream<List<ProfilUser>> getFavoriteUsers(String uid);
   TaskEither<Failure, bool> isFavoritePlant(String uid, String catalogId);
   TaskEither<Failure, bool> isFavoriteUser(String uid, String targetUid);
-  TaskEither<Failure, bool> checkPlantAvailability(String catalogId);
 }

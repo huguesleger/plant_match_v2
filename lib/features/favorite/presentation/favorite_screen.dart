@@ -6,10 +6,10 @@ import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/theme/inter_text_style.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_template.dart';
 import 'package:plant_match_v2/core/widgets/error/error_page.dart';
-import 'package:plant_match_v2/features/favorite/cubit/favorite_cubit.dart';
-import 'package:plant_match_v2/features/favorite/cubit/favorite_state.dart';
-import 'package:plant_match_v2/features/favorite/widgets/favorite_plants_tab.dart';
-import 'package:plant_match_v2/features/favorite/widgets/favorite_users_tab.dart';
+import 'package:plant_match_v2/features/favorite/presentation/cubit/favorite_cubit.dart';
+import 'package:plant_match_v2/features/favorite/presentation/cubit/favorite_state.dart';
+import 'package:plant_match_v2/features/favorite/presentation/widgets/favorite_plants_tab.dart';
+import 'package:plant_match_v2/features/favorite/presentation/widgets/favorite_users_tab.dart';
 
 class FavoriteScreen extends StatelessWidget {
   const FavoriteScreen({

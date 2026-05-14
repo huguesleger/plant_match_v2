@@ -6,7 +6,7 @@ import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/widgets/app_card/app_card.dart';
 import 'package:plant_match_v2/features/catalog/presentation/catalog_page_route.dart';
 import 'package:plant_match_v2/features/level/presentation/level_page_route.dart';
-import 'package:plant_match_v2/features/favorite/favorite_page_route.dart';
+import 'package:plant_match_v2/features/favorite/presentation/favorite_page_route.dart';
 
 class ProfilCard extends StatelessWidget {
   const ProfilCard({super.key});

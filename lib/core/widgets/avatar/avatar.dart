@@ -6,30 +6,35 @@ import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 class Avatar extends StatelessWidget {
   const Avatar({
     super.key,
-    required this.profilUser,
+    this.profilUser,
+    this.imageUrl,
+    this.name,
     this.radius = 30,
     this.imgSizeAvatar = 60,
     this.defaultSizeAvatar = 45,
   });
 
-  final ProfilUser profilUser;
+  final ProfilUser? profilUser;
+  final String? imageUrl;
+  final String? name;
   final double radius;
   final double imgSizeAvatar;
   final double defaultSizeAvatar;
 
   @override
   Widget build(BuildContext context) {
-    String imageUrl = profilUser.profilImg;
+    final String effectiveImageUrl = imageUrl ?? profilUser?.profilImg ?? '';
+    final String effectiveName = name ?? profilUser?.fullName ?? '';
 
     final String defaultAvatarPath = Assets.res.images.avatarPng.path;
-    final bool isNetworkImage = imageUrl.contains('http');
+    final bool isNetworkImage = effectiveImageUrl.contains('http');
     final bool isDefaultAvatar =
-        imageUrl.isEmpty || imageUrl == defaultAvatarPath;
+        effectiveImageUrl.isEmpty || effectiveImageUrl == defaultAvatarPath || effectiveImageUrl == 'null';
     final bool isSelectedAvatar =
-        imageUrl.isNotEmpty && !isDefaultAvatar && imageUrl.contains('avatar');
+        effectiveImageUrl.isNotEmpty && !isDefaultAvatar && effectiveImageUrl.contains('avatar');
 
     if (isSelectedAvatar) {
-      return _buildSelectedAvatar(imageUrl);
+      return _buildSelectedAvatar(effectiveImageUrl);
     }
 
     return CircleAvatar(
@@ -37,12 +42,23 @@ class Avatar extends StatelessWidget {
       radius: radius,
       child: ClipOval(
         child: isNetworkImage
-            ? _buildNetworkImage(imageUrl)
-            : Assets.res.images.avatarPng.image(
-                width: defaultSizeAvatar,
-                height: defaultSizeAvatar,
-                alignment: Alignment.bottomCenter,
-              ),
+            ? _buildNetworkImage(effectiveImageUrl)
+            : effectiveName.isNotEmpty
+                ? Center(
+                    child: Text(
+                      effectiveName[0].toUpperCase(),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: radius * 0.8,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  )
+                : Assets.res.images.avatarPng.image(
+                    width: defaultSizeAvatar,
+                    height: defaultSizeAvatar,
+                    alignment: Alignment.bottomCenter,
+                  ),
       ),
     );
   }

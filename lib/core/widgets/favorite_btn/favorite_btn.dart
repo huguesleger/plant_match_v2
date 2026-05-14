@@ -3,14 +3,9 @@ import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:fpdart/fpdart.dart' hide State;
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
-import 'package:plant_match_v2/features/profil/data/firebase_favorites_repo.dart';
+import 'package:plant_match_v2/features/favorite/data/firebase_favorites_repo.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 
-/// Bouton favori générique.
-///
-/// - Pour **une plante** : passer [catalog] + [currentUserId]
-/// - Pour **un profil** : passer [targetUser] + [currentUserId]
-/// - Si aucun de ces paramètres n'est fourni, le bouton est purement visuel (mode legacy).
 class FavoriteBtn extends StatefulWidget {
   const FavoriteBtn({
     super.key,
@@ -23,14 +18,8 @@ class FavoriteBtn extends StatefulWidget {
 
   final bool initialValue;
   final ValueChanged<bool>? onChanged;
-
-  /// Plante à mettre en favori (mode plante)
   final Catalog? catalog;
-
-  /// Profil à mettre en favori (mode profil)
   final ProfilUser? targetUser;
-
-  /// UID de l'utilisateur connecté
   final String? currentUserId;
 
   @override
@@ -116,7 +105,6 @@ class _FavoriteBtnState extends State<FavoriteBtn>
         },
       );
     } catch (_) {
-      // Erreur silencieuse
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
