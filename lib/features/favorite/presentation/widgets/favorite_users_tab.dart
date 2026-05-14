@@ -5,6 +5,7 @@ import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/features/favorite/presentation/cubit/favorite_cubit.dart';
 import 'package:plant_match_v2/features/favorite/presentation/widgets/favorite_empty_state.dart';
 import 'package:plant_match_v2/features/favorite/presentation/widgets/favorite_user_card.dart';
+import 'package:plant_match_v2/features/user/presentation/user_page_route.dart';
 
 class FavoriteUsersTab extends StatelessWidget {
   const FavoriteUsersTab({
@@ -37,7 +38,12 @@ class FavoriteUsersTab extends StatelessWidget {
           onRemove: () => context
               .read<FavoriteCubit>()
               .removeFavoriteUser(uid, user.uid),
-          onTap: () {},
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => UserPageRoute(uid: user.uid),
+            ),
+          ),
         );
       },
     );

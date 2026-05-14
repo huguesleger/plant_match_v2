@@ -6,6 +6,7 @@ import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/favorite/presentation/cubit/favorite_cubit.dart';
 import 'package:plant_match_v2/features/favorite/presentation/widgets/favorite_empty_state.dart';
 import 'package:plant_match_v2/features/favorite/presentation/widgets/favorite_plant_card.dart';
+import 'package:plant_match_v2/features/user/detail_plant/detail_plant.dart';
 
 class FavoritePlantsTab extends StatelessWidget {
   const FavoritePlantsTab({
@@ -39,7 +40,12 @@ class FavoritePlantsTab extends StatelessWidget {
           onRemove: () => context
               .read<FavoriteCubit>()
               .removeFavoritePlant(uid, catalogId),
-          onTap: () {},
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DetailPlant(catalog: plant),
+            ),
+          ),
         );
       },
     );
