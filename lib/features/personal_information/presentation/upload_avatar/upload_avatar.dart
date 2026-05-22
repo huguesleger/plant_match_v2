@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_state.dart';
+import 'package:plant_match_v2/core/widgets/avatar/avatar.dart';
 import 'package:plant_match_v2/features/personal_information/presentation/upload_avatar/show_image_source_bottom_sheet.dart';
 
 class UploadAvatar extends StatefulWidget {
@@ -15,12 +15,10 @@ class UploadAvatar extends StatefulWidget {
   final ProfilUser profilUser;
 
   @override
-  State<UploadAvatar> createState() =>
-      _UploadAvatarState();
+  State<UploadAvatar> createState() => _UploadAvatarState();
 }
 
-class _UploadAvatarState
-    extends State<UploadAvatar> {
+class _UploadAvatarState extends State<UploadAvatar> {
   final ImagePicker _picker = ImagePicker();
 
   Future<void> _pickImage(ImageSource source) async {
@@ -49,12 +47,6 @@ class _UploadAvatarState
           avatarUrl = state.profilUser.profilImg;
         }
 
-        final bool isAvatar = avatarUrl.contains("avatar");
-        final ImageProvider profilImage =
-            avatarUrl.isNotEmpty && avatarUrl.contains('http')
-                ? NetworkImage(avatarUrl)
-                : Assets.res.images.avatarPng.provider();
-
         return Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -81,38 +73,15 @@ class _UploadAvatarState
                         width: 2,
                       ),
                     ),
-                    child: isAvatar
-                        ? ClipOval(
-                            child: Transform.scale(
-                              alignment: Alignment.center,
-                              scale: 0.65,
-                              child: Image(
-                                image: profilImage,
-                              ),
-                            ),
-                          )
-                        : CircleAvatar(
-                            backgroundColor: AppColors.white,
-                            radius: 60,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(60),
-                              child: profilImage is AssetImage
-                                  ? Align(
-                                      alignment: Alignment.bottomCenter,
-                                      child: Image(
-                                        image: profilImage,
-                                        width: 120,
-                                        height: 100,
-                                      ),
-                                    )
-                                  : Image(
-                                      image: profilImage,
-                                      width: 120,
-                                      height: 120,
-                                      fit: BoxFit.cover,
-                                    ),
-                            ),
-                          ),
+                    child: Avatar(
+                      profilUser: state is ProfilLoaded
+                          ? state.profilUser
+                          : widget.profilUser,
+                      imageUrl: avatarUrl,
+                      radius: 60,
+                      imgSizeAvatar: 120,
+                      defaultSizeAvatar: 100,
+                    ),
                   ),
                   Positioned(
                     bottom: 0,

@@ -18,7 +18,9 @@ class LevelCard extends StatelessWidget {
             description: t.level.cards.challenges.description,
             bgColor: AppColors.greenMedium.withValues(alpha: 0.3),
             textColor: AppColors.greyDark,
-            onPressed: () {},
+            onPressed: () {
+              // TODO: add onPressed to go to page
+            },
             bgColorIcon: AppColors.greyUltraLight.withValues(alpha: 0.3),
             titleColor: AppColors.blueGreen,
             iconColor: AppColors.greyDark,
@@ -33,7 +35,9 @@ class LevelCard extends StatelessWidget {
             description: t.level.cards.gifts.description,
             bgColor: AppColors.greenMedium.withValues(alpha: 0.3),
             textColor: AppColors.greyDark,
-            onPressed: () {},
+            onPressed: () {
+              // TODO: add onPressed to go to page
+            },
             bgColorIcon: AppColors.greyUltraLight.withValues(alpha: 0.3),
             titleColor: AppColors.blueGreen,
             iconColor: AppColors.greyDark,

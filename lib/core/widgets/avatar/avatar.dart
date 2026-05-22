@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
 import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
@@ -12,6 +13,7 @@ class Avatar extends StatelessWidget {
     this.radius = 30,
     this.imgSizeAvatar = 60,
     this.defaultSizeAvatar = 45,
+    this.backgroundColor = AppColors.greyLight,
   });
 
   final ProfilUser? profilUser;
@@ -20,6 +22,7 @@ class Avatar extends StatelessWidget {
   final double radius;
   final double imgSizeAvatar;
   final double defaultSizeAvatar;
+  final Color backgroundColor;
 
   @override
   Widget build(BuildContext context) {
@@ -28,17 +31,19 @@ class Avatar extends StatelessWidget {
 
     final String defaultAvatarPath = Assets.res.images.avatarPng.path;
     final bool isNetworkImage = effectiveImageUrl.contains('http');
-    final bool isDefaultAvatar =
-        effectiveImageUrl.isEmpty || effectiveImageUrl == defaultAvatarPath || effectiveImageUrl == 'null';
-    final bool isSelectedAvatar =
-        effectiveImageUrl.isNotEmpty && !isDefaultAvatar && effectiveImageUrl.contains('avatar');
+    final bool isDefaultAvatar = effectiveImageUrl.isEmpty ||
+        effectiveImageUrl == defaultAvatarPath ||
+        effectiveImageUrl == 'null';
+    final bool isSelectedAvatar = effectiveImageUrl.isNotEmpty &&
+        !isDefaultAvatar &&
+        effectiveImageUrl.contains('avatar');
 
     if (isSelectedAvatar) {
       return _buildSelectedAvatar(effectiveImageUrl);
     }
 
     return CircleAvatar(
-      backgroundColor: AppColors.greyLight,
+      backgroundColor: backgroundColor,
       radius: radius,
       child: ClipOval(
         child: isNetworkImage
@@ -46,10 +51,10 @@ class Avatar extends StatelessWidget {
             : effectiveName.isNotEmpty
                 ? Center(
                     child: Text(
-                      effectiveName[0].toUpperCase(),
+                      effectiveName.toInitials(),
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: radius * 0.8,
+                        fontSize: radius * 0.65,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -67,9 +72,9 @@ class Avatar extends StatelessWidget {
     return Container(
       width: imgSizeAvatar,
       height: imgSizeAvatar,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: AppColors.greyLight,
+        color: backgroundColor,
       ),
       child: ClipOval(
         child: Transform.scale(

@@ -12,20 +12,19 @@ class MessageEmpty extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Stack(
+      fit: StackFit.expand,
       children: [
-        Positioned(
-          bottom: 0,
-          left: 0,
-          right: 0,
+        Align(
+          alignment: Alignment.bottomCenter,
           child: Assets.res.images.emptyTchat.image(
-            width: MediaQuery.of(context).size.width,
+            width: double.infinity,
             fit: BoxFit.fitWidth,
           ),
         ),
         Align(
-          alignment: const Alignment(0, -0.4),
+          alignment: const Alignment(0, -0.7),
           child: Padding(
-            padding: const EdgeInsets.all(32),
+            padding: const EdgeInsets.symmetric(horizontal: 32),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -33,7 +32,7 @@ class MessageEmpty extends StatelessWidget {
                   width: 72,
                   height: 72,
                   decoration: const BoxDecoration(
-                    color: AppColors.white,
+                    color: AppColors.greyUltraLight,
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(

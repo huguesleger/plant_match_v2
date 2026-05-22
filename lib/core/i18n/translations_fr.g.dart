@@ -272,6 +272,7 @@ class TranslationsProfilFr {
 	// Translations
 	late final TranslationsProfilNavigationFr navigation = TranslationsProfilNavigationFr.internal(_root);
 	late final TranslationsProfilCardsFr cards = TranslationsProfilCardsFr.internal(_root);
+	late final TranslationsProfilPremiumFr premium = TranslationsProfilPremiumFr.internal(_root);
 }
 
 // Path: user
@@ -464,6 +465,9 @@ class TranslationsAuthRegisterFr {
 
 	/// fr: 'Vous avez déjà un compte ?'
 	String get alreadyHaveAccount => 'Vous avez déjà un compte ?';
+
+	/// fr: 'S'identifier'
+	String get signIn => 'S\'identifier';
 
 	late final TranslationsAuthRegisterPasswordRulesFr passwordRules = TranslationsAuthRegisterPasswordRulesFr.internal(_root);
 	late final TranslationsAuthRegisterCguFr cgu = TranslationsAuthRegisterCguFr.internal(_root);
@@ -1440,6 +1444,8 @@ class TranslationsProfilNavigationFr {
 
 	/// fr: 'Se déconnecter'
 	String get logout => 'Se déconnecter';
+
+	late final TranslationsProfilNavigationNavigationTitleFr navigation_title = TranslationsProfilNavigationNavigationTitleFr.internal(_root);
 }
 
 // Path: profil.cards
@@ -1452,6 +1458,24 @@ class TranslationsProfilCardsFr {
 	late final TranslationsProfilCardsCatalogFr catalog = TranslationsProfilCardsCatalogFr.internal(_root);
 	late final TranslationsProfilCardsFavoritesFr favorites = TranslationsProfilCardsFavoritesFr.internal(_root);
 	late final TranslationsProfilCardsAwardsFr awards = TranslationsProfilCardsAwardsFr.internal(_root);
+}
+
+// Path: profil.premium
+class TranslationsProfilPremiumFr {
+	TranslationsProfilPremiumFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'PlantMatch Premium'
+	String get title => 'PlantMatch Premium';
+
+	/// fr: 'Profiter des avantages premium avec des fonctionnalités exclusives.'
+	String get description => 'Profiter des avantages premium avec des fonctionnalités exclusives.';
+
+	/// fr: 'Découvrir'
+	String get btn => 'Découvrir';
 }
 
 // Path: user.bio
@@ -2502,6 +2526,24 @@ class TranslationsPersonalInformationWizardCommonFr {
 	String get geolocate => 'Me géolocaliser';
 }
 
+// Path: profil.navigation.navigation_title
+class TranslationsProfilNavigationNavigationTitleFr {
+	TranslationsProfilNavigationNavigationTitleFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Les essentiels'
+	String get essential => 'Les essentiels';
+
+	/// fr: 'Personnalisation'
+	String get personalization => 'Personnalisation';
+
+	/// fr: 'PlantMatch'
+	String get plant_match => 'PlantMatch';
+}
+
 // Path: profil.cards.catalog
 class TranslationsProfilCardsCatalogFr {
 	TranslationsProfilCardsCatalogFr.internal(this._root);
@@ -2864,6 +2906,7 @@ extension on Translations {
 			'auth.register.confirmPassword.hint' => 'Entrez le mot de passe',
 			'auth.register.confirmPassword.mismatch' => 'Les mots de passe ne correspondent pas',
 			'auth.register.alreadyHaveAccount' => 'Vous avez déjà un compte ?',
+			'auth.register.signIn' => 'S\'identifier',
 			'auth.register.passwordRules.minChars' => 'Au moins 8 caractères',
 			'auth.register.passwordRules.oneNumber' => 'Un chiffre',
 			'auth.register.passwordRules.oneUpper' => 'Une majuscule',
@@ -3195,12 +3238,18 @@ extension on Translations {
 			'profil.navigation.legal' => 'Informations juridiques',
 			'profil.navigation.about' => 'À propos',
 			'profil.navigation.logout' => 'Se déconnecter',
+			'profil.navigation.navigation_title.essential' => 'Les essentiels',
+			'profil.navigation.navigation_title.personalization' => 'Personnalisation',
+			'profil.navigation.navigation_title.plant_match' => 'PlantMatch',
 			'profil.cards.catalog.title' => 'Plantes & Boutures',
 			'profil.cards.catalog.description' => 'Mon catalogue de ce que j’ai à partager',
 			'profil.cards.favorites.title' => 'Mes\nFavoris',
 			'profil.cards.favorites.description' => 'Mes plantes et profils préférés',
 			'profil.cards.awards.title' => 'Badges & Récompenses',
 			'profil.cards.awards.description' => 'Mes badges et mon niveau',
+			'profil.premium.title' => 'PlantMatch Premium',
+			'profil.premium.description' => 'Profiter des avantages premium avec des fonctionnalités exclusives.',
+			'profil.premium.btn' => 'Découvrir',
 			'user.bio.empty' => 'Pas encore de description...',
 			'user.stats.plants' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'plante', other: 'plantes', ), 
 			'user.stats.matches' => 'plantMatch',

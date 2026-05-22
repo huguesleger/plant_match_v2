@@ -6,7 +6,12 @@
     "help": "Aide",
     "legal": "Informations juridiques",
     "about": "À propos",
-    "logout": "Se déconnecter"
+    "logout": "Se déconnecter",
+    "navigation_title": {
+      "essential": "Les essentiels",
+      "personalization": "Personnalisation",
+      "plant_match": "PlantMatch"
+    }
   },
   "cards": {
     "catalog": {
@@ -21,5 +26,10 @@
       "title": "Badges & Récompenses",
       "description": "Mes badges et mon niveau"
     }
+  },
+  "premium": {
+    "title": "PlantMatch Premium",
+    "description": "Profiter des avantages premium avec des fonctionnalités exclusives.",
+    "btn": "Découvrir"
   }
 }

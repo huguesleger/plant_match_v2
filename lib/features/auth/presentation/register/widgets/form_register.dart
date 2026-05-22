@@ -96,7 +96,7 @@ class _FormRegisterState extends State<FormRegister> {
             ),
             AuthFooterLinks(
               mainText: t.auth.register.alreadyHaveAccount,
-              actionText: t.auth.common.confirm,
+              actionText: t.auth.register.signIn,
               onActionTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
