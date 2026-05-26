@@ -18,6 +18,6 @@
     }
   },
   "skip": "Passer",
-  "register": "S'enregistrer",
-  "login": "S'identifier"
+  "register": "Créer un compte",
+  "login": "Se connecter"
 }

@@ -62,8 +62,9 @@ void main() {
       result.fold(
         (l) => fail('Devrait réussir'),
         (r) {
-          expect(r.email.isSome(), true);
-          expect(r.uid, isNotNull);
+          expect(r.$1.email.isSome(), true);
+          expect(r.$1.uid, isNotNull);
+          expect(r.$2, true); // isFirstTime should be true
         },
       );
 
@@ -98,7 +99,8 @@ void main() {
       result.fold(
         (l) => fail('Devrait réussir: ${l.message}'),
         (r) {
-          expect(r.email, const Some(tEmail));
+          expect(r.$1.email, const Some(tEmail));
+          expect(r.$2, true); // isFirstTime should be true
         },
       );
     });

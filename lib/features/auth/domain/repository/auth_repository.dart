@@ -21,10 +21,10 @@ abstract class AuthRepository {
   TaskEither<Failure, Option<UserAuth>> getCurrentUser();
 
   /// Connexion avec Google
-  TaskEither<Failure, UserAuth> signInWithGoogle();
+  TaskEither<Failure, (UserAuth, bool)> signInWithGoogle();
 
   /// Connexion avec Facebook
-  TaskEither<Failure, UserAuth> signInWithFacebook();
+  TaskEither<Failure, (UserAuth, bool)> signInWithFacebook();
 
   /// Envoi d'un email de réinitialisation de mot de passe
   TaskEither<Failure, Unit> sendPasswordResetEmail({required String email});

@@ -142,7 +142,7 @@ class FirebaseAuthRepository implements AuthRepository {
   // ─── signInWithGoogle ─────────────────────────────────────────────────────
 
   @override
-  TaskEither<Failure, UserAuth> signInWithGoogle() {
+  TaskEither<Failure, (UserAuth, bool)> signInWithGoogle() {
     return TaskEither.tryCatch(
       () async {
         final googleUser = await _googleSignIn.signIn();
@@ -170,13 +170,22 @@ class FirebaseAuthRepository implements AuthRepository {
           fullName: firebaseUser.displayName ?? '',
         );
 
-        await _firebaseFirestore.collection('users').doc(userAuth.uid).set({
-          'email': userAuth.email,
-          'fullName': userAuth.fullName,
-          'isOnline': true,
-        });
+        final docRef = _firebaseFirestore.collection('users').doc(userAuth.uid);
+        final docSnapshot = await docRef.get();
 
-        return userAuth;
+        if (docSnapshot.exists) {
+          await docRef.update({'isOnline': true});
+          return (userAuth, false);
+        } else {
+          await docRef.set({
+            'email': userAuth.email.toNullable(),
+            'fullName': userAuth.fullName,
+            'isOnline': true,
+            'createdAt': FieldValue.serverTimestamp(),
+            'emailVerified': true,
+          });
+          return (userAuth, true);
+        }
       },
       (error, _) => _mapErrorToFailure(error),
     );
@@ -185,7 +194,7 @@ class FirebaseAuthRepository implements AuthRepository {
   // ─── signInWithFacebook ───────────────────────────────────────────────────
 
   @override
-  TaskEither<Failure, UserAuth> signInWithFacebook() {
+  TaskEither<Failure, (UserAuth, bool)> signInWithFacebook() {
     return TaskEither.tryCatch(
       () async {
         final nonce = DateTime.now().toIso8601String();
@@ -219,13 +228,22 @@ class FirebaseAuthRepository implements AuthRepository {
           fullName: userData['name'] ?? '',
         );
 
-        await _firebaseFirestore.collection('users').doc(userAuth.uid).set({
-          'email': userAuth.email,
-          'fullName': userAuth.fullName,
-          'isOnline': true,
-        });
+        final docRef = _firebaseFirestore.collection('users').doc(userAuth.uid);
+        final docSnapshot = await docRef.get();
 
-        return userAuth;
+        if (docSnapshot.exists) {
+          await docRef.update({'isOnline': true});
+          return (userAuth, false);
+        } else {
+          await docRef.set({
+            'email': userAuth.email.toNullable(),
+            'fullName': userAuth.fullName,
+            'isOnline': true,
+            'createdAt': FieldValue.serverTimestamp(),
+            'emailVerified': true,
+          });
+          return (userAuth, true);
+        }
       },
       (error, _) => _mapErrorToFailure(error),
     );
@@ -252,6 +270,10 @@ class FirebaseAuthRepository implements AuthRepository {
                 .collection('users')
                 .doc(user.uid)
                 .update({'isOnline': false});
+          }
+        } on FirebaseException catch (e) {
+          if (e.code != 'not-found') {
+            debugPrint('Note: Impossible de mettre à jour le statut online: $e');
           }
         } catch (e) {
           debugPrint('Note: Impossible de mettre à jour le statut online: $e');

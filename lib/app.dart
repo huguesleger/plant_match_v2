@@ -23,10 +23,38 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+class _MyAppState extends State<MyApp> {
   final authRepository = FirebaseAuthRepository();
   final userPointsRepository = FirebaseUserPoints();
 
+  @override
+  Widget build(BuildContext context) {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => AuthCubit(
+            authRepository: authRepository,
+            userPointsRepository: userPointsRepository,
+          )..checkCurrentUser(),
+        ),
+        BlocProvider(
+          create: (context) =>
+              UserPointsCubit(repository: userPointsRepository),
+        ),
+      ],
+      child: const _MyAppBody(),
+    );
+  }
+}
+
+class _MyAppBody extends StatefulWidget {
+  const _MyAppBody();
+
+  @override
+  State<_MyAppBody> createState() => _MyAppBodyState();
+}
+
+class _MyAppBodyState extends State<_MyAppBody> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
@@ -66,80 +94,66 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (context) => AuthCubit(
-            authRepository: authRepository,
-            userPointsRepository: userPointsRepository,
-          )..checkCurrentUser(),
-        ),
-        BlocProvider(
-          create: (context) =>
-              UserPointsCubit(repository: userPointsRepository),
-        ),
-      ],
-      child: MaterialApp(
-        title: 'Plant Match',
-        theme: AppTheme.defaultTheme,
-        color: AppTheme.defaultTheme.primaryColor,
-        locale: TranslationProvider.of(context).locale.flutterLocale,
-        supportedLocales: AppLocaleUtils.supportedLocales,
-        localizationsDelegates: GlobalMaterialLocalizations.delegates,
-        home: MultiBlocListener(
-          listeners: [
-            BlocListener<AuthCubit, AuthState>(
-              listener: (context, authState) {
-                if (authState is Authenticated && authState.isFirstTime) {
-                  context.read<UserPointsCubit>().addUserPoints(
-                        authState.user.uid,
-                        25,
-                        1,
-                        isFromRegistration: true,
-                      );
-                }
-              },
-            ),
-            BlocListener<UserPointsCubit, UserPointsState>(
-              listener: (context, pointsState) {
-                if (pointsState is UserPointsAwarded && pointsState.points > 0) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => LevelAwardedPageRoute(
-                        userId: pointsState.userId,
-                        userPoints: pointsState.userPoints,
-                        isFromRegistration: pointsState.isFromRegistration,
-                      ),
-                      fullscreenDialog: true,
-                    ),
-                  );
-                }
-              },
-            ),
-          ],
-          child: BlocBuilder<AuthCubit, AuthState>(
-            builder: (context, authState) {
-              return Scaffold(
-                body: switch (authState) {
-                  AuthInitial() || AuthLoading() => const Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  Authenticated() => const TemplatePage(),
-                  Unauthenticated() => const GetStartedPageRoute(),
-                  AuthError() => ErrorPage(
-                      errorMessage: authState.message,
-                      onRetry: () {
-                        context.read<AuthCubit>().checkCurrentUser();
-                      },
-                    ),
-                  AuthEmailVerificationSent(user: var u) ||
-                  AuthFinalizing(user: var u) =>
-                    EmailVerificationPageRoute(user: u),
-                },
-              );
+    return MaterialApp(
+      title: 'Plant Match',
+      theme: AppTheme.defaultTheme,
+      color: AppTheme.defaultTheme.primaryColor,
+      locale: TranslationProvider.of(context).locale.flutterLocale,
+      supportedLocales: AppLocaleUtils.supportedLocales,
+      localizationsDelegates: GlobalMaterialLocalizations.delegates,
+      home: MultiBlocListener(
+        listeners: [
+          BlocListener<AuthCubit, AuthState>(
+            listener: (context, authState) {
+              if (authState is Authenticated && authState.isFirstTime) {
+                context.read<UserPointsCubit>().addUserPoints(
+                      authState.user.uid,
+                      25,
+                      1,
+                      isFromRegistration: true,
+                    );
+              }
             },
           ),
+          BlocListener<UserPointsCubit, UserPointsState>(
+            listener: (context, pointsState) {
+              if (pointsState is UserPointsAwarded && pointsState.points > 0) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LevelAwardedPageRoute(
+                      userId: pointsState.userId,
+                      userPoints: pointsState.userPoints,
+                      isFromRegistration: pointsState.isFromRegistration,
+                    ),
+                    fullscreenDialog: true,
+                  ),
+                );
+              }
+            },
+          ),
+        ],
+        child: BlocBuilder<AuthCubit, AuthState>(
+          builder: (context, authState) {
+            return Scaffold(
+              body: switch (authState) {
+                AuthInitial() || AuthLoading() => const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                Authenticated() => const TemplatePage(),
+                Unauthenticated() => const GetStartedPageRoute(),
+                AuthError() => ErrorPage(
+                    errorMessage: authState.message,
+                    onRetry: () {
+                      context.read<AuthCubit>().checkCurrentUser();
+                    },
+                  ),
+                AuthEmailVerificationSent(user: var u) ||
+                AuthFinalizing(user: var u) =>
+                  EmailVerificationPageRoute(user: u),
+              },
+            );
+          },
         ),
       ),
     );

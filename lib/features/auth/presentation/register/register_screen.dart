@@ -16,9 +16,14 @@ class RegisterScreen extends StatelessWidget {
         backgroundColor: AppColors.white,
         surfaceTintColor: AppColors.white,
         shadowColor: AppColors.black,
-        leading: false,
         title: t.auth.register.title,
         centerTitle: true,
+        onPressed: () => Navigator.pop(context),
+        styleIconButton: IconButton.styleFrom(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          side: const BorderSide(color: AppColors.greyLight),
+        ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(

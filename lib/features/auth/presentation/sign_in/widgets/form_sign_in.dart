@@ -46,7 +46,7 @@ class _FormSignInState extends State<FormSignIn> {
             width: double.infinity,
             child: FilledButton(
               onPressed: _onPressedSignIn,
-              child: Text(t.auth.common.confirm),
+              child: Text(t.auth.signIn.login),
             ),
           ),
           AuthFooterLinks(

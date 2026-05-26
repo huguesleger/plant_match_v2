@@ -27,10 +27,11 @@
     "noAccount": "Pas encore de compte ?",
     "createAccount": "Créer un compte",
     "social": {
-      "title": "Ou s’identifier avec",
-      "google": "S'identifier avec Google",
-      "facebook": "S'identifier avec Facebook"
-    }
+      "title": "Ou",
+      "google": "Continuer avec Google",
+      "facebook": "Continuer avec Facebook"
+    },
+    "login": "Se connecter"
   },
   "register": {
     "title": "Créer un compte",
@@ -72,5 +73,12 @@
     "finalizing": "Finalisation de votre inscription...",
     "resendBtn": "Renvoyer l'e-mail",
     "retryLabel": "Réessayez dans ${count} s"
+  },
+  "register_choice": {
+    "title": "Comment souhaitez-vous créer votre compte ?",
+    "description": "Créer votre compte avec votre adresse e-mail ou continuez avec votre méthode préférée.",
+    "email": "Continuer avec un e-mail",
+    "google": "Continuer avec Google",
+    "facebook": "Continuer avec Facebook"
   }
 }

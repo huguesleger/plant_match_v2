@@ -89,6 +89,7 @@ class TranslationsAuthFr {
 	late final TranslationsAuthRegisterFr register = TranslationsAuthRegisterFr.internal(_root);
 	late final TranslationsAuthForgotPasswordFr forgotPassword = TranslationsAuthForgotPasswordFr.internal(_root);
 	late final TranslationsAuthEmailVerificationFr emailVerification = TranslationsAuthEmailVerificationFr.internal(_root);
+	late final TranslationsAuthRegisterChoiceFr register_choice = TranslationsAuthRegisterChoiceFr.internal(_root);
 }
 
 // Path: catalog
@@ -243,11 +244,11 @@ class TranslationsOnboardingFr {
 	/// fr: 'Passer'
 	String get skip => 'Passer';
 
-	/// fr: 'S'enregistrer'
-	String get register => 'S\'enregistrer';
+	/// fr: 'Créer un compte'
+	String get register => 'Créer un compte';
 
-	/// fr: 'S'identifier'
-	String get login => 'S\'identifier';
+	/// fr: 'Se connecter'
+	String get login => 'Se connecter';
 }
 
 // Path: personalInformation
@@ -442,6 +443,9 @@ class TranslationsAuthSignInFr {
 	String get createAccount => 'Créer un compte';
 
 	late final TranslationsAuthSignInSocialFr social = TranslationsAuthSignInSocialFr.internal(_root);
+
+	/// fr: 'Se connecter'
+	String get login => 'Se connecter';
 }
 
 // Path: auth.register
@@ -525,6 +529,30 @@ class TranslationsAuthEmailVerificationFr {
 
 	/// fr: 'Réessayez dans ${count} s'
 	String retryLabel({required Object count}) => 'Réessayez dans ${count} s';
+}
+
+// Path: auth.register_choice
+class TranslationsAuthRegisterChoiceFr {
+	TranslationsAuthRegisterChoiceFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Comment souhaitez-vous créer votre compte ?'
+	String get title => 'Comment souhaitez-vous créer votre compte ?';
+
+	/// fr: 'Créer votre compte avec votre adresse e-mail ou continuez avec votre méthode préférée.'
+	String get description => 'Créer votre compte avec votre adresse e-mail ou continuez avec votre méthode préférée.';
+
+	/// fr: 'Continuer avec un e-mail'
+	String get email => 'Continuer avec un e-mail';
+
+	/// fr: 'Continuer avec Google'
+	String get google => 'Continuer avec Google';
+
+	/// fr: 'Continuer avec Facebook'
+	String get facebook => 'Continuer avec Facebook';
 }
 
 // Path: catalog.screen
@@ -1749,14 +1777,14 @@ class TranslationsAuthSignInSocialFr {
 
 	// Translations
 
-	/// fr: 'Ou s’identifier avec'
-	String get title => 'Ou s’identifier avec';
+	/// fr: 'Ou'
+	String get title => 'Ou';
 
-	/// fr: 'S'identifier avec Google'
-	String get google => 'S\'identifier avec Google';
+	/// fr: 'Continuer avec Google'
+	String get google => 'Continuer avec Google';
 
-	/// fr: 'S'identifier avec Facebook'
-	String get facebook => 'S\'identifier avec Facebook';
+	/// fr: 'Continuer avec Facebook'
+	String get facebook => 'Continuer avec Facebook';
 }
 
 // Path: auth.register.confirmPassword
@@ -2896,9 +2924,10 @@ extension on Translations {
 			'auth.signIn.forgotPassword' => 'Mot de passe oublié ?',
 			'auth.signIn.noAccount' => 'Pas encore de compte ?',
 			'auth.signIn.createAccount' => 'Créer un compte',
-			'auth.signIn.social.title' => 'Ou s’identifier avec',
-			'auth.signIn.social.google' => 'S\'identifier avec Google',
-			'auth.signIn.social.facebook' => 'S\'identifier avec Facebook',
+			'auth.signIn.social.title' => 'Ou',
+			'auth.signIn.social.google' => 'Continuer avec Google',
+			'auth.signIn.social.facebook' => 'Continuer avec Facebook',
+			'auth.signIn.login' => 'Se connecter',
 			'auth.register.title' => 'Créer un compte',
 			'auth.register.welcome' => 'Commencez !',
 			'auth.register.description' => 'Il semblerait que vous soyez nouveau ici. Créons votre profil.',
@@ -2928,6 +2957,11 @@ extension on Translations {
 			'auth.emailVerification.finalizing' => 'Finalisation de votre inscription...',
 			'auth.emailVerification.resendBtn' => 'Renvoyer l\'e-mail',
 			'auth.emailVerification.retryLabel' => ({required Object count}) => 'Réessayez dans ${count} s',
+			'auth.register_choice.title' => 'Comment souhaitez-vous créer votre compte ?',
+			'auth.register_choice.description' => 'Créer votre compte avec votre adresse e-mail ou continuez avec votre méthode préférée.',
+			'auth.register_choice.email' => 'Continuer avec un e-mail',
+			'auth.register_choice.google' => 'Continuer avec Google',
+			'auth.register_choice.facebook' => 'Continuer avec Facebook',
 			'catalog.screen.title' => 'Mes plantes',
 			'catalog.screen.subtitle' => 'Mon catalogue de plantes à partager',
 			'catalog.screen.empty_message' => 'Ton catalogue est vide. Ajoute ta première plante pour commencer.',
@@ -3196,8 +3230,8 @@ extension on Translations {
 			'onboarding.items.advice.title' => 'Aide et Conseils\nCommunautaires',
 			'onboarding.items.advice.description' => 'Posez des questions et obtenez des conseils personnalisés de la part de la communauté pour mieux prendre soin de vos plantes ou résoudre des problèmes.',
 			'onboarding.skip' => 'Passer',
-			'onboarding.register' => 'S\'enregistrer',
-			'onboarding.login' => 'S\'identifier',
+			'onboarding.register' => 'Créer un compte',
+			'onboarding.login' => 'Se connecter',
 			'personalInformation.screen.title' => 'Informations personnelles',
 			'personalInformation.detail.title' => 'Détail de mon profil',
 			'personalInformation.detail.pseudo' => 'Pseudo d\'affichage',

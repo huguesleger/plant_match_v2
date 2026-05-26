@@ -133,7 +133,7 @@ void main() {
         'doit émettre [AuthLoading, Authenticated] en cas de succès',
         build: () {
           when(() => mockAuthRepository.signInWithGoogle())
-              .thenReturn(TaskEither.right(tUser));
+              .thenReturn(TaskEither.right((tUser, false)));
           return authCubit;
         },
         act: (cubit) => cubit.signInWithGoogle(),
@@ -164,7 +164,7 @@ void main() {
         'doit émettre [AuthLoading, Authenticated] en cas de succès',
         build: () {
           when(() => mockAuthRepository.signInWithFacebook())
-              .thenReturn(TaskEither.right(tUser));
+              .thenReturn(TaskEither.right((tUser, false)));
           return authCubit;
         },
         act: (cubit) => cubit.signInWithFacebook(),

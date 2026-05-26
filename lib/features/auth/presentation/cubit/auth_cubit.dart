@@ -162,11 +162,28 @@ class AuthCubit extends Cubit<AuthState> {
 
     authRepository
         .signInWithGoogle()
+        .flatMap((result) {
+          final user = result.$1;
+          final isFirst = result.$2;
+
+          if (isFirst) {
+            return TaskEither<Failure, Unit>.tryCatch(
+              () async {
+                await welcomeEmail(
+                    user.email.getOrElse(() => ''), user.fullName);
+                return unit;
+              },
+              (error, _) => UnexpectedFailure(
+                  'Erreur lors de l’envoi de l’email de bienvenue : $error'),
+            ).alt(() => TaskEither.right(unit)).map((_) => result);
+          }
+          return TaskEither.right(result);
+        })
         .match(
           (failure) => AuthError(failure.message),
-          (user) {
-            _currentUser = user;
-            return Authenticated(user);
+          (result) {
+            _currentUser = result.$1;
+            return Authenticated(result.$1, isFirstTime: result.$2);
           },
         )
         .map(emit)
@@ -178,11 +195,28 @@ class AuthCubit extends Cubit<AuthState> {
 
     authRepository
         .signInWithFacebook()
+        .flatMap((result) {
+          final user = result.$1;
+          final isFirst = result.$2;
+
+          if (isFirst) {
+            return TaskEither<Failure, Unit>.tryCatch(
+              () async {
+                await welcomeEmail(
+                    user.email.getOrElse(() => ''), user.fullName);
+                return unit;
+              },
+              (error, _) => UnexpectedFailure(
+                  'Erreur lors de l’envoi de l’email de bienvenue : $error'),
+            ).alt(() => TaskEither.right(unit)).map((_) => result);
+          }
+          return TaskEither.right(result);
+        })
         .match(
           (failure) => AuthError(failure.message),
-          (user) {
-            _currentUser = user;
-            return Authenticated(user);
+          (result) {
+            _currentUser = result.$1;
+            return Authenticated(result.$1, isFirstTime: result.$2);
           },
         )
         .map(emit)
