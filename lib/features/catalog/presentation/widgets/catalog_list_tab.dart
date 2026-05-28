@@ -8,10 +8,17 @@ import 'package:plant_match_v2/features/catalog/presentation/widgets/catalog_car
 import 'package:plant_match_v2/features/catalog/presentation/cubit/catalog_cubit.dart';
 import 'package:plant_match_v2/features/catalog/presentation/cubit/catalog_state.dart';
 
+import 'package:plant_match_v2/features/catalog/presentation/widgets/catalog_sort_option.dart';
+
 class CatalogListTab extends StatelessWidget {
-  const CatalogListTab({super.key, required this.status});
+  const CatalogListTab({
+    super.key,
+    required this.status,
+    required this.sortOption,
+  });
 
   final CatalogStatus status;
+  final CatalogSortOption sortOption;
 
   @override
   Widget build(BuildContext context) {
@@ -28,11 +35,24 @@ class CatalogListTab extends StatelessWidget {
               ),
             ),
           CatalogLoaded(:final catalogs) => _buildList(
-              catalogs.where((c) => c.status == status).toList(),
+              _sortCatalogs(
+                catalogs.where((c) => c.status == status).toList(),
+              ),
             ),
         };
       },
     );
+  }
+
+  List<Catalog> _sortCatalogs(List<Catalog> list) {
+    switch (sortOption) {
+      case CatalogSortOption.newest:
+        return list..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      case CatalogSortOption.nameAsc:
+        return list..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+      case CatalogSortOption.nameDesc:
+        return list..sort((a, b) => b.name.toLowerCase().compareTo(a.name.toLowerCase()));
+    }
   }
 
   Widget _buildList(List<Catalog> catalogs) {
@@ -55,9 +75,11 @@ class CatalogListTab extends StatelessWidget {
     return Container(
       color: AppColors.greyUltraLight,
       child: ListView.builder(
-        padding: AppSpacing.paddingHorizontal + const EdgeInsets.only(top: 10, bottom: 100),
+        padding: AppSpacing.paddingHorizontal +
+            const EdgeInsets.only(top: 10, bottom: 100),
         itemCount: catalogs.length,
-        itemBuilder: (context, index) => CatalogCardItem(catalog: catalogs[index]),
+        itemBuilder: (context, index) =>
+            CatalogCardItem(catalog: catalogs[index]),
       ),
     );
   }

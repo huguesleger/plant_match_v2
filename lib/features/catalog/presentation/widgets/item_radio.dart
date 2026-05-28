@@ -32,6 +32,7 @@ class ItemRadio<T> extends StatelessWidget {
         borderRadius: BorderRadius.circular(15),
       ),
       child: ListTile(
+        onTap: () => onItemSelected(value),
         tileColor: isSelected
             ? AppColors.greenDark.withValues(alpha: 0.1)
             : AppColors.greyUltraLight,

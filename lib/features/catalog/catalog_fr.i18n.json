@@ -192,5 +192,12 @@
       "exchange": "Échange",
       "donation": "Donation"
     }
+  },
+  "sort": {
+    "title": "Trier par",
+    "newest": "Plus récent",
+    "nameAsc": "Nom de la plante : A à Z",
+    "nameDesc": "Nom de la plante : Z à A",
+    "btn": "Appliquer"
   }
 }

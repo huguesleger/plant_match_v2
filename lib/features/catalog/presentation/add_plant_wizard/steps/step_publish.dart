@@ -25,6 +25,7 @@ class StepPublish extends StatelessWidget {
           title: Text(t.catalog.wizard.publish_label),
           initialValue: controller.text == 'true',
           onChanged: (v) => onToggle(v ?? false),
+          decoration: const InputDecoration(border: InputBorder.none),
         ),
       );
 }

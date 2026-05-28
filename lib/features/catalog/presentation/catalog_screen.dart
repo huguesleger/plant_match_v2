@@ -29,9 +29,10 @@ class CatalogScreen extends StatelessWidget {
               },
             ),
           ),
-        CatalogLoaded(:final catalogs, :final catalog) => CatalogLoadedView(
+        CatalogLoaded(:final catalogs, :final catalog, :final sortOption) => CatalogLoadedView(
             catalogs: catalogs,
             catalog: catalog,
+            sortOption: sortOption,
           ),
       },
     );

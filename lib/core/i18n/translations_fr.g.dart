@@ -109,6 +109,7 @@ class TranslationsCatalogFr {
 	late final TranslationsCatalogWizardFr wizard = TranslationsCatalogWizardFr.internal(_root);
 	late final TranslationsCatalogFamiliesFr families = TranslationsCatalogFamiliesFr.internal(_root);
 	late final TranslationsCatalogEnumsFr enums = TranslationsCatalogEnumsFr.internal(_root);
+	late final TranslationsCatalogSortFr sort = TranslationsCatalogSortFr.internal(_root);
 }
 
 // Path: chatPlant
@@ -804,6 +805,30 @@ class TranslationsCatalogEnumsFr {
 	late final TranslationsCatalogEnumsMaintenanceFr maintenance = TranslationsCatalogEnumsMaintenanceFr.internal(_root);
 	late final TranslationsCatalogEnumsWateringFr watering = TranslationsCatalogEnumsWateringFr.internal(_root);
 	late final TranslationsCatalogEnumsOfferTypeFr offer_type = TranslationsCatalogEnumsOfferTypeFr.internal(_root);
+}
+
+// Path: catalog.sort
+class TranslationsCatalogSortFr {
+	TranslationsCatalogSortFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Trier par'
+	String get title => 'Trier par';
+
+	/// fr: 'Plus récent'
+	String get newest => 'Plus récent';
+
+	/// fr: 'Nom de la plante : A à Z'
+	String get nameAsc => 'Nom de la plante : A à Z';
+
+	/// fr: 'Nom de la plante : Z à A'
+	String get nameDesc => 'Nom de la plante : Z à A';
+
+	/// fr: 'Appliquer'
+	String get btn => 'Appliquer';
 }
 
 // Path: chatPlant.screen
@@ -3126,6 +3151,11 @@ extension on Translations {
 			'catalog.enums.watering.regularly' => 'Régulier',
 			'catalog.enums.offer_type.exchange' => 'Échange',
 			'catalog.enums.offer_type.donation' => 'Donation',
+			'catalog.sort.title' => 'Trier par',
+			'catalog.sort.newest' => 'Plus récent',
+			'catalog.sort.nameAsc' => 'Nom de la plante : A à Z',
+			'catalog.sort.nameDesc' => 'Nom de la plante : Z à A',
+			'catalog.sort.btn' => 'Appliquer',
 			'chatPlant.screen.error_loading' => 'Erreur lors du chargement du chat',
 			'chatPlant.view.empty_messages' => 'Aucun message pour le moment.\nDémarrez la conversation.',
 			'chatPlant.view.blocked_user_banner' => 'Vous avez bloqué cet utilisateur',

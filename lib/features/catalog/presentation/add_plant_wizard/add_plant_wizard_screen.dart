@@ -22,7 +22,7 @@ import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/st
 import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/steps/step_offer_type.dart';
 import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/steps/step_publish.dart';
 import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/steps/step_watering.dart';
-import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/widgets/loading_dialog.dart';
+import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/widgets/loading_overlay.dart';
 
 class AddPlantWizardScreen extends StatefulWidget {
   const AddPlantWizardScreen({super.key, required this.catalog});
@@ -239,9 +239,11 @@ class _AddPlantWizardScreenState extends State<AddPlantWizardScreen> {
 
   void _onSave() async {
     showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => const LoadingDialog());
+      context: context,
+      barrierDismissible: false,
+      barrierColor: Colors.black54,
+      builder: (_) => const LoadingOverlay(),
+    );
     try {
       final cubit = context.read<CatalogCubit>();
       final finalCatalog = _wizardCatalog.copyWith(

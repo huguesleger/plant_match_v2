@@ -190,7 +190,7 @@ class FirebaseExchange implements ExchangeRepository {
 
         final exchange = Exchange.fromJson(doc.id, data);
 
-        if (exchange.validationCode != code) {
+        if (exchange.validationCode.getOrElse(() => '') != code) {
           throw Exception('Code incorrect');
         }
 
