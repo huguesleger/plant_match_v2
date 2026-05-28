@@ -60,13 +60,17 @@ class AuthCubit extends Cubit<AuthState> {
   void registerWithEmailAndPassword({
     required String email,
     required String password,
-    required String fullName,
+    required String firstName,
+    required String lastName,
   }) {
     emit(const AuthLoading());
 
     authRepository
         .registerWithEmailAndPassword(
-            email: email, password: password, fullName: fullName)
+            email: email,
+            password: password,
+            firstName: firstName,
+            lastName: lastName)
         .flatMap(
             (user) => authRepository.sendEmailVerification().map((_) => user))
         .match(
@@ -111,14 +115,14 @@ class AuthCubit extends Cubit<AuthState> {
           }
 
           final resolvedName = fullName ?? _currentUser?.fullName ?? '';
-          final userAuth = UserAuth(
+          final userAuth = UserAuth.fromFullName(
             uid: firebaseUser.uid,
             email: Option.fromNullable(firebaseUser.email),
             fullName: resolvedName,
           );
 
           return TaskEither<Failure, UserAuth>.right(userAuth).flatMap((u) => authRepository
-              .finalizeRegistration(firebaseUser, resolvedName)
+              .finalizeRegistration(firebaseUser, u.firstName, u.lastName)
               .flatMap<Authenticated>((isFirst) {
             if (isFirst) {
               return TaskEither<Failure, Unit>.tryCatch(

@@ -9,7 +9,8 @@ class AroundMe extends ProfilUser {
     required super.userName,
     required super.latitude,
     required super.longitude,
-    required super.fullName,
+    required super.firstName,
+    required super.lastName,
     required super.profilImg,
     required super.localisation,
     required super.country,
@@ -22,18 +23,30 @@ class AroundMe extends ProfilUser {
   @override
   Map<String, dynamic> toJson() {
     final data = super.toJson();
-    // On peut ajouter des champs spécifiques à AroundMe ici si nécessaire
     return data;
   }
 
   factory AroundMe.fromJson(Map<String, dynamic> json) {
+    final firstName = json['firstName'] as String? ?? '';
+    final lastName = json['lastName'] as String? ?? '';
+    final (fName, lName) = (firstName.isEmpty && lastName.isEmpty)
+        ? (() {
+            final fullName = json['fullName'] as String? ?? '';
+            final parts = fullName.trim().split(' ');
+            final fn = parts.first;
+            final ln = parts.length > 1 ? parts.sublist(1).join(' ') : '';
+            return (fn, ln);
+          })()
+        : (firstName, lastName);
+
     return AroundMe(
       uid: json['uid'] ?? '',
       email: json['email'] ?? '',
       userName: Option.fromNullable(json['userName'] as String?),
       latitude: Option.fromNullable(json['latitude']?.toDouble()),
       longitude: Option.fromNullable(json['longitude']?.toDouble()),
-      fullName: json['fullName'] ?? '',
+      firstName: fName,
+      lastName: lName,
       profilImg: json['profilImg'] ?? '',
       localisation: json['localisation'] ?? '',
       country: json['country'] ?? '',

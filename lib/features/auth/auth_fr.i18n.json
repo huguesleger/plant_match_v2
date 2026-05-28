@@ -16,6 +16,16 @@
       "hint": "Entrez votre prénom et nom",
       "required": "Ce champ est requis"
     },
+    "firstName": {
+      "label": "Prénom",
+      "hint": "Entrez votre prénom",
+      "required": "Ce champ est requis"
+    },
+    "lastName": {
+      "label": "Nom",
+      "hint": "Entrez votre nom",
+      "required": "Ce champ est requis"
+    },
     "back": "Retour",
     "confirm": "Confirmer",
     "ok": "Ok",

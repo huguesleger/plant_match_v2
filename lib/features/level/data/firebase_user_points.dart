@@ -45,11 +45,10 @@ class FirebaseUserPoints implements UserPointsRepository {
           throw NotFoundFailure('Données utilisateur $userId vides');
         }
 
-        return UserPoints(
-          uid: userId,
-          currentPoints: data['currentPoints'] as int,
-          level: data['level'] as int,
-        );
+        return UserPoints.fromJson({
+          ...data,
+          'uid': userId,
+        });
       },
       (error, stackTrace) => _mapErrorToFailure(error),
     );
@@ -70,13 +69,15 @@ class FirebaseUserPoints implements UserPointsRepository {
           throw NotFoundFailure('Données utilisateur $userId vides');
         }
 
-        int currentPoints = data['currentPoints'] as int;
-        int level = data['level'] as int;
+        final userPoints = UserPoints.fromJson({
+          ...data,
+          'uid': userId,
+        });
 
-        currentPoints += pointsToAdd;
+        int currentPoints = userPoints.currentPoints + pointsToAdd;
         if (currentPoints < 0) currentPoints = 0;
 
-        level = 1;
+        int level = 1;
         final Map<int, LevelData> reversedLevels = Map.fromEntries(
           UserPointsUtils.levelData.entries.toList().reversed,
         );

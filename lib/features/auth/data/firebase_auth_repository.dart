@@ -38,12 +38,14 @@ class FirebaseAuthRepository implements AuthRepository {
             .collection('users')
             .doc(firebaseUser.uid)
             .get();
+        final data = userDoc.data();
+        if (data == null) return const None();
 
-        return Some(UserAuth(
-          email: Option.fromNullable(firebaseUser.email),
-          uid: firebaseUser.uid,
-          fullName: userDoc.data()?['fullName'] ?? '',
-        ));
+        return Some(UserAuth.fromJson({
+          ...data,
+          'uid': firebaseUser.uid,
+          'email': firebaseUser.email,
+        }));
       },
       (error, _) => _mapErrorToFailure(error),
     );
@@ -72,17 +74,27 @@ class FirebaseAuthRepository implements AuthRepository {
 
         final userDoc =
             await _firebaseFirestore.collection('users').doc(user.uid).get();
+        final data = userDoc.data();
 
         await _firebaseFirestore
             .collection('users')
             .doc(user.uid)
             .update({'isOnline': true});
 
-        return UserAuth(
-          uid: user.uid,
-          email: Option.fromNullable(user.email),
-          fullName: userDoc.data()?['fullName'] ?? '',
-        );
+        if (data == null) {
+          return UserAuth(
+            uid: user.uid,
+            email: Option.fromNullable(user.email),
+            firstName: '',
+            lastName: '',
+          );
+        }
+
+        return UserAuth.fromJson({
+          ...data,
+          'uid': user.uid,
+          'email': user.email,
+        });
       },
       (error, _) => _mapErrorToFailure(error),
     );
@@ -94,7 +106,8 @@ class FirebaseAuthRepository implements AuthRepository {
   TaskEither<Failure, UserAuth> registerWithEmailAndPassword({
     required String email,
     required String password,
-    required String fullName,
+    required String firstName,
+    required String lastName,
   }) {
     return TaskEither.tryCatch(
       () async {
@@ -109,7 +122,8 @@ class FirebaseAuthRepository implements AuthRepository {
         return UserAuth(
           email: Option.fromNullable(email),
           uid: user.uid,
-          fullName: fullName,
+          firstName: firstName,
+          lastName: lastName,
         );
       },
       (error, _) => _mapErrorToFailure(error),
@@ -119,7 +133,11 @@ class FirebaseAuthRepository implements AuthRepository {
   // ─── finalizeRegistration ─────────────────────────────────────────────────
 
   @override
-  TaskEither<Failure, bool> finalizeRegistration(User user, String fullName) {
+  TaskEither<Failure, bool> finalizeRegistration(
+    User user,
+    String firstName,
+    String lastName,
+  ) {
     return TaskEither.tryCatch(
       () async {
         final docRef = _firebaseFirestore.collection('users').doc(user.uid);
@@ -128,7 +146,8 @@ class FirebaseAuthRepository implements AuthRepository {
 
         await docRef.set({
           'email': user.email,
-          'fullName': fullName,
+          'firstName': firstName,
+          'lastName': lastName,
           'isOnline': true,
           'createdAt': FieldValue.serverTimestamp(),
           'emailVerified': true,
@@ -164,7 +183,7 @@ class FirebaseAuthRepository implements AuthRepository {
           throw const AuthFailure("Échec de l'authentification avec Google.");
         }
 
-        final userAuth = UserAuth(
+        final userAuth = UserAuth.fromFullName(
           email: Option.fromNullable(firebaseUser.email),
           uid: firebaseUser.uid,
           fullName: firebaseUser.displayName ?? '',
@@ -179,7 +198,8 @@ class FirebaseAuthRepository implements AuthRepository {
         } else {
           await docRef.set({
             'email': userAuth.email.toNullable(),
-            'fullName': userAuth.fullName,
+            'firstName': userAuth.firstName,
+            'lastName': userAuth.lastName,
             'isOnline': true,
             'createdAt': FieldValue.serverTimestamp(),
             'emailVerified': true,
@@ -222,7 +242,7 @@ class FirebaseAuthRepository implements AuthRepository {
           throw const AuthFailure("Échec de l'authentification avec Facebook.");
         }
 
-        final userAuth = UserAuth(
+        final userAuth = UserAuth.fromFullName(
           email: Option.fromNullable(userData['email'] as String?),
           uid: firebaseUser.uid,
           fullName: userData['name'] ?? '',
@@ -237,7 +257,8 @@ class FirebaseAuthRepository implements AuthRepository {
         } else {
           await docRef.set({
             'email': userAuth.email.toNullable(),
-            'fullName': userAuth.fullName,
+            'firstName': userAuth.firstName,
+            'lastName': userAuth.lastName,
             'isOnline': true,
             'createdAt': FieldValue.serverTimestamp(),
             'emailVerified': true,

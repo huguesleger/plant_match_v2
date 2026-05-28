@@ -14,7 +14,8 @@ abstract class AuthRepository {
   TaskEither<Failure, UserAuth> registerWithEmailAndPassword({
     required String email,
     required String password,
-    required String fullName,
+    required String firstName,
+    required String lastName,
   });
 
   /// Récupère l'utilisateur courant (None si non connecté)
@@ -40,5 +41,5 @@ abstract class AuthRepository {
 
   /// Finalise l'inscription (crée le doc Firestore).
   /// Retourne true si c'est la première finalisation.
-  TaskEither<Failure, bool> finalizeRegistration(User user, String fullName);
+  TaskEither<Failure, bool> finalizeRegistration(User user, String firstName, String lastName);
 }

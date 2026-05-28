@@ -408,6 +408,8 @@ class TranslationsAuthCommonFr {
 	late final TranslationsAuthCommonEmailFr email = TranslationsAuthCommonEmailFr.internal(_root);
 	late final TranslationsAuthCommonPasswordFr password = TranslationsAuthCommonPasswordFr.internal(_root);
 	late final TranslationsAuthCommonFullNameFr fullName = TranslationsAuthCommonFullNameFr.internal(_root);
+	late final TranslationsAuthCommonFirstNameFr firstName = TranslationsAuthCommonFirstNameFr.internal(_root);
+	late final TranslationsAuthCommonLastNameFr lastName = TranslationsAuthCommonLastNameFr.internal(_root);
 
 	/// fr: 'Retour'
 	String get back => 'Retour';
@@ -1769,6 +1771,42 @@ class TranslationsAuthCommonFullNameFr {
 	String get required => 'Ce champ est requis';
 }
 
+// Path: auth.common.firstName
+class TranslationsAuthCommonFirstNameFr {
+	TranslationsAuthCommonFirstNameFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Prénom'
+	String get label => 'Prénom';
+
+	/// fr: 'Entrez votre prénom'
+	String get hint => 'Entrez votre prénom';
+
+	/// fr: 'Ce champ est requis'
+	String get required => 'Ce champ est requis';
+}
+
+// Path: auth.common.lastName
+class TranslationsAuthCommonLastNameFr {
+	TranslationsAuthCommonLastNameFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Nom'
+	String get label => 'Nom';
+
+	/// fr: 'Entrez votre nom'
+	String get hint => 'Entrez votre nom';
+
+	/// fr: 'Ce champ est requis'
+	String get required => 'Ce champ est requis';
+}
+
 // Path: auth.signIn.social
 class TranslationsAuthSignInSocialFr {
 	TranslationsAuthSignInSocialFr.internal(this._root);
@@ -2916,6 +2954,12 @@ extension on Translations {
 			'auth.common.fullName.label' => 'Prénom et nom',
 			'auth.common.fullName.hint' => 'Entrez votre prénom et nom',
 			'auth.common.fullName.required' => 'Ce champ est requis',
+			'auth.common.firstName.label' => 'Prénom',
+			'auth.common.firstName.hint' => 'Entrez votre prénom',
+			'auth.common.firstName.required' => 'Ce champ est requis',
+			'auth.common.lastName.label' => 'Nom',
+			'auth.common.lastName.hint' => 'Entrez votre nom',
+			'auth.common.lastName.required' => 'Ce champ est requis',
 			'auth.common.back' => 'Retour',
 			'auth.common.confirm' => 'Confirmer',
 			'auth.common.ok' => 'Ok',

@@ -15,6 +15,7 @@ import 'package:plant_match_v2/core/widgets/favorite_btn/favorite_btn.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
+import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/features/chat_plant/data/firebase_chat_plant.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/chat_plant_page_route.dart';
 import 'package:plant_match_v2/features/user/detail_plant/widgets/badge_family.dart';
@@ -37,26 +38,28 @@ class DetailPlant extends StatelessWidget {
         .doc(catalog.userId)
         .get()
         .then((userDoc) {
-      final Option<Map<String, dynamic>> dataOpt =
-          Option.fromNullable(userDoc.data());
+      final data = userDoc.data();
+      final String ownerName;
+      final String? ownerAvatar;
 
-      final String ownerName = dataOpt.match(
-        () => t.user.detail_plant.owner_placeholder,
-        (data) {
-          final userName = Option.fromNullable(data['userName'] as String?)
-              .filter((s) => s.trim().isNotEmpty);
-          final fullName = Option.fromNullable(data['fullName'] as String?)
-              .filter((s) => s.trim().isNotEmpty)
-              .map((s) => s.split(' ').first);
+      if (data == null) {
+        ownerName = t.user.detail_plant.owner_placeholder;
+        ownerAvatar = null;
+      } else {
+        final profilUser = ProfilUser.fromJson({
+          ...data,
+          'uid': userDoc.id,
+        });
 
-          return userName.alt(() => fullName).getOrElse(() => t.user.detail_plant.owner_placeholder);
-        },
-      );
+        ownerName = profilUser.userName
+            .alt(() => Some(profilUser.firstName))
+            .filter((s) => s.trim().isNotEmpty)
+            .getOrElse(() => t.user.detail_plant.owner_placeholder);
 
-      final String? ownerAvatar = dataOpt
-          .flatMap((data) => Option.fromNullable(data['profilImg'] as String?)
-              .filter((s) => s.trim().isNotEmpty))
-          .toNullable();
+        ownerAvatar = profilUser.profilImg.trim().isNotEmpty
+            ? profilUser.profilImg
+            : null;
+      }
 
       final chatRepository = FirebaseChatPlant();
       chatRepository

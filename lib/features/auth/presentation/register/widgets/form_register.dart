@@ -8,7 +8,8 @@ import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart'
 import 'package:plant_match_v2/features/auth/presentation/register/widgets/password_field.dart';
 import 'package:plant_match_v2/features/auth/presentation/sign_in_or_register.dart';
 import 'package:plant_match_v2/features/auth/presentation/widgets/auth_email_field.dart';
-import 'package:plant_match_v2/features/auth/presentation/widgets/auth_full_name_field.dart';
+import 'package:plant_match_v2/features/auth/presentation/widgets/auth_first_name_field.dart';
+import 'package:plant_match_v2/features/auth/presentation/widgets/auth_last_name_field.dart';
 import 'package:plant_match_v2/features/auth/presentation/widgets/auth_password_field.dart';
 import 'package:plant_match_v2/features/auth/presentation/widgets/auth_cgu_checkbox.dart';
 import 'package:plant_match_v2/features/auth/presentation/widgets/auth_footer_links.dart';
@@ -22,7 +23,8 @@ class FormRegister extends StatefulWidget {
 
 class _FormRegisterState extends State<FormRegister> {
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _fullNameController = TextEditingController();
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
@@ -36,7 +38,8 @@ class _FormRegisterState extends State<FormRegister> {
       context.read<AuthCubit>().registerWithEmailAndPassword(
             email: _emailController.text,
             password: _passwordController.text,
-            fullName: _fullNameController.text,
+            firstName: _firstNameController.text,
+            lastName: _lastNameController.text,
           );
     }
   }
@@ -44,7 +47,8 @@ class _FormRegisterState extends State<FormRegister> {
   @override
   void dispose() {
     _emailController.dispose();
-    _fullNameController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
@@ -60,7 +64,9 @@ class _FormRegisterState extends State<FormRegister> {
           children: [
             AuthEmailField(controller: _emailController),
             const SizedBox(height: 20),
-            AuthFullNameField(controller: _fullNameController),
+            AuthFirstNameField(controller: _firstNameController),
+            const SizedBox(height: 20),
+            AuthLastNameField(controller: _lastNameController),
             const SizedBox(height: 20),
             PasswordField(
               controller: _passwordController,

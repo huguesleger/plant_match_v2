@@ -5,6 +5,7 @@ import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/chat_plant/domain/entities/chat_plant.dart';
 import 'package:plant_match_v2/features/chat_plant/domain/repository/chat_plant_repository.dart';
+import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 
 class FirebaseChatPlant implements ChatPlantRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -33,19 +34,27 @@ class FirebaseChatPlant implements ChatPlantRepository {
 
         final ownerDoc =
             await _firestore.collection('users').doc(plantOwnerId).get();
+        final ownerData = ownerDoc.data();
 
-        final ownerData = ownerDoc.data() ?? {};
+        final String plantOwnerName;
+        final String plantOwnerAvatar;
 
-        final String plantOwnerName =
-            (ownerData['userName'] as String?)?.trim().isNotEmpty == true
-                ? ownerData['userName']
-                : (ownerData['fullName'] as String?)?.split(' ').first ??
-                    'Propriétaire';
+        if (ownerData == null) {
+          plantOwnerName = 'Propriétaire';
+          plantOwnerAvatar = '';
+        } else {
+          final profilUser = ProfilUser.fromJson({
+            ...ownerData,
+            'uid': ownerDoc.id,
+          });
 
-        final String plantOwnerAvatar =
-            (ownerData['profilImg'] as String?)?.trim().isNotEmpty == true
-                ? ownerData['profilImg']
-                : '';
+          plantOwnerName = profilUser.userName
+              .alt(() => Some(profilUser.firstName))
+              .filter((s) => s.trim().isNotEmpty)
+              .getOrElse(() => 'Propriétaire');
+
+          plantOwnerAvatar = profilUser.profilImg;
+        }
 
         final ids = [currentUserId, plantOwnerId]..sort();
         final chatId = '${plantId}_${ids[0]}_${ids[1]}';

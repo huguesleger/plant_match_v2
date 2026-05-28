@@ -17,7 +17,8 @@ class ProfilUser extends UserAuth {
   ProfilUser({
     required super.uid,
     required super.email,
-    required super.fullName,
+    required super.firstName,
+    required super.lastName,
     required this.bio,
     required this.profilImg,
     required this.userName,
@@ -31,6 +32,8 @@ class ProfilUser extends UserAuth {
   });
 
   ProfilUser copyWith({
+    String? newFirstName,
+    String? newLastName,
     Option<String>? newBio,
     String? newProfilImg,
     Option<String>? newUserName,
@@ -45,7 +48,8 @@ class ProfilUser extends UserAuth {
     return ProfilUser(
       uid: uid,
       email: email,
-      fullName: fullName,
+      firstName: newFirstName ?? firstName,
+      lastName: newLastName ?? lastName,
       bio: newBio ?? bio,
       profilImg: newProfilImg ?? profilImg,
       userName: newUserName ?? userName,
@@ -64,7 +68,8 @@ class ProfilUser extends UserAuth {
     return {
       'uid': uid,
       'email': email.toNullable(),
-      'fullName': fullName,
+      'firstName': firstName,
+      'lastName': lastName,
       'bio': bio.toNullable(),
       'profilImg': profilImg,
       'userName': userName.toNullable(),
@@ -88,10 +93,23 @@ class ProfilUser extends UserAuth {
       return Some(s);
     }
 
+    final firstName = json['firstName'] as String? ?? '';
+    final lastName = json['lastName'] as String? ?? '';
+    final (fName, lName) = (firstName.isEmpty && lastName.isEmpty)
+        ? (() {
+            final fullName = json['fullName'] as String? ?? '';
+            final parts = fullName.trim().split(' ');
+            final fn = parts.first;
+            final ln = parts.length > 1 ? parts.sublist(1).join(' ') : '';
+            return (fn, ln);
+          })()
+        : (firstName, lastName);
+
     return ProfilUser(
       uid: json['uid'] ?? '',
       email: Option.fromNullable(json['email'] as String?),
-      fullName: json['fullName'] ?? '',
+      firstName: fName,
+      lastName: lName,
       bio: stringToOption(json['bio']),
       profilImg: json['profilImg'] ?? '',
       userName: stringToOption(json['userName']),

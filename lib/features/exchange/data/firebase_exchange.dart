@@ -123,15 +123,15 @@ class FirebaseExchange implements ExchangeRepository {
   TaskEither<Failure, Unit> markAsCompleted(String exchangeId, String completedBy) {
     return TaskEither.tryCatch(
       () async {
-        // Récupérer l'échange pour obtenir le chatId et les IDs des plantes
         final exchangeDoc = await _col.doc(exchangeId).get();
         final exchangeData = exchangeDoc.data();
 
         if (exchangeData == null) throw Exception('Echange introuvable');
 
-        final chatId = exchangeData['chatId'] as String;
-        final targetPlantId = exchangeData['targetPlantId'] as String;
-        final offeredPlantId = exchangeData['offeredPlantId'] as String;
+        final exchange = Exchange.fromJson(exchangeDoc.id, exchangeData);
+        final chatId = exchange.chatId;
+        final targetPlantId = exchange.targetPlantId;
+        final offeredPlantId = exchange.offeredPlantId;
 
         // Marquer l'échange comme terminé
         await _col.doc(exchangeId).update({
@@ -188,11 +188,12 @@ class FirebaseExchange implements ExchangeRepository {
         final data = doc.data();
         if (data == null) throw Exception('Données corrompues');
 
-        if (data['validationCode'] != code) {
+        final exchange = Exchange.fromJson(doc.id, data);
+
+        if (exchange.validationCode != code) {
           throw Exception('Code incorrect');
         }
 
-        // Si le code est bon, on marque comme complété
         final result = await markAsCompleted(exchangeId, userId).run();
         return result.match(
           (failure) => throw Exception(failure.message),

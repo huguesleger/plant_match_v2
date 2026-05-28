@@ -70,6 +70,8 @@ void main() {
 
       final users = await fakeFirestore.collection('users').get();
       expect(users.docs.length, 1);
+      expect(users.docs.first.data()['firstName'], 'John');
+      expect(users.docs.first.data()['lastName'], 'Doe');
     });
 
     test('signInWithFacebook devrait réussir et créer un utilisateur dans Firestore', () async {
@@ -103,12 +105,18 @@ void main() {
           expect(r.$2, true); // isFirstTime should be true
         },
       );
+
+      final users = await fakeFirestore.collection('users').get();
+      expect(users.docs.length, 1);
+      expect(users.docs.first.data()['firstName'], 'John');
+      expect(users.docs.first.data()['lastName'], 'Doe');
     });
     test('registerWithEmailAndPassword devrait créer un utilisateur dans Auth', () async {
       final result = await repository.registerWithEmailAndPassword(
         email: tEmail,
         password: tPassword,
-        fullName: tFullName,
+        firstName: 'John',
+        lastName: 'Doe',
       ).run();
 
       result.fold(
@@ -175,12 +183,13 @@ void main() {
 
     test('finalizeRegistration devrait créer un document utilisateur s’il n’existe pas', () async {
       final mockUser = MockUser(uid: tUid, email: tEmail);
-      final result = await repository.finalizeRegistration(mockUser, tFullName).run();
+      final result = await repository.finalizeRegistration(mockUser, 'John', 'Doe').run();
 
       expect(result.getOrElse((_) => false), true);
       final userDoc = await fakeFirestore.collection('users').doc(tUid).get();
       expect(userDoc.exists, true);
-      expect(userDoc.data()?['fullName'], tFullName);
+      expect(userDoc.data()?['firstName'], 'John');
+      expect(userDoc.data()?['lastName'], 'Doe');
     });
 
     test('isEmailVerified devrait appeler reload et retourner le statut', () async {

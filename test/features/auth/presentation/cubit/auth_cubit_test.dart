@@ -33,7 +33,8 @@ void main() {
   final tUser = UserAuth(
     uid: '123',
     email: const Some('test@example.com'),
-    fullName: 'John Doe',
+    firstName: 'John',
+    lastName: 'Doe',
   );
 
   group('AuthCubit', () {
@@ -110,7 +111,7 @@ void main() {
       );
 
       blocTest<AuthCubit, AuthState>(
-        'doit émettre [AuthLoading, AuthError, Unauthenticated] en cas déchec',
+        'doit émettre [AuthLoading, AuthError] en cas déchec',
         build: () {
           when(() => mockAuthRepository.signInWithEmailAndPassword(
                 email: tEmail,
@@ -123,7 +124,6 @@ void main() {
         expect: () => [
           isA<AuthLoading>(),
           isA<AuthError>().having((s) => s.message, 'message', 'Identifiants invalides'),
-          isA<Unauthenticated>(),
         ],
       );
     });
@@ -144,7 +144,7 @@ void main() {
       );
 
       blocTest<AuthCubit, AuthState>(
-        'doit émettre [AuthLoading, AuthError, Unauthenticated] en cas déchec',
+        'doit émettre [AuthLoading, AuthError] en cas déchec',
         build: () {
           when(() => mockAuthRepository.signInWithGoogle())
               .thenReturn(TaskEither.left(const AuthFailure('Erreur Google')));
@@ -154,7 +154,6 @@ void main() {
         expect: () => [
           isA<AuthLoading>(),
           isA<AuthError>().having((s) => s.message, 'message', 'Erreur Google'),
-          isA<Unauthenticated>(),
         ],
       );
     });
@@ -175,7 +174,7 @@ void main() {
       );
 
       blocTest<AuthCubit, AuthState>(
-        'doit émettre [AuthLoading, AuthError, Unauthenticated] en cas déchec',
+        'doit émettre [AuthLoading, AuthError] en cas déchec',
         build: () {
           when(() => mockAuthRepository.signInWithFacebook())
               .thenReturn(TaskEither.left(const AuthFailure('Erreur Facebook')));
@@ -185,7 +184,6 @@ void main() {
         expect: () => [
           isA<AuthLoading>(),
           isA<AuthError>().having((s) => s.message, 'message', 'Erreur Facebook'),
-          isA<Unauthenticated>(),
         ],
       );
     });
