@@ -53,52 +53,59 @@ class _CatalogLoadedViewState extends State<CatalogLoadedView>
         ),
       ),
       floatingActionButton: AddPlantButton(catalog: widget.catalog),
-      body: widget.catalogs.isEmpty
-          ? const CatalogEmptyView()
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: AppSpacing.paddingHorizontal +
-                      const EdgeInsets.only(top: 16),
-                  child: TitlePage(
-                    title: t.catalog.screen.title,
-                    subtitle: t.catalog.screen.subtitle,
-                  ),
-                ),
-                Padding(
-                  padding: AppSpacing.paddingHorizontal
-                      .add(const EdgeInsets.only(top: 10)),
-                  child: TabBar.secondary(
-                    controller: _tabController,
-                    tabs: [
-                      Tab(
-                          text: t.catalog.tabs.published(
-                              count: _count(
-                                  widget.catalogs, CatalogStatus.published))),
-                      Tab(
-                          text: t.catalog.tabs.draft(
-                              count: _count(
-                                  widget.catalogs, CatalogStatus.draft))),
-                      Tab(
-                          text: t.catalog.tabs.archived(
-                              count: _count(
-                                  widget.catalogs, CatalogStatus.archived))),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: TabBarView(
-                    controller: _tabController,
-                    children: const [
-                      CatalogListTab(status: CatalogStatus.published),
-                      CatalogListTab(status: CatalogStatus.draft),
-                      CatalogListTab(status: CatalogStatus.archived),
-                    ],
-                  ),
-                ),
-              ],
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: AppSpacing.paddingHorizontal +
+                const EdgeInsets.only(top: 16),
+            child: TitlePage(
+              title: t.catalog.screen.title,
+              subtitle: t.catalog.screen.subtitle,
             ),
+          ),
+          Expanded(
+            child: widget.catalogs.isEmpty
+                ? const CatalogEmptyView()
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: AppSpacing.paddingHorizontal
+                            .add(const EdgeInsets.only(top: 10)),
+                        child: TabBar.secondary(
+                          controller: _tabController,
+                          tabs: [
+                            Tab(
+                                text: t.catalog.tabs.published(
+                                    count: _count(
+                                        widget.catalogs, CatalogStatus.published))),
+                            Tab(
+                                text: t.catalog.tabs.draft(
+                                    count: _count(
+                                        widget.catalogs, CatalogStatus.draft))),
+                            Tab(
+                                text: t.catalog.tabs.archived(
+                                    count: _count(
+                                        widget.catalogs, CatalogStatus.archived))),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: TabBarView(
+                          controller: _tabController,
+                          children: const [
+                            CatalogListTab(status: CatalogStatus.published),
+                            CatalogListTab(status: CatalogStatus.draft),
+                            CatalogListTab(status: CatalogStatus.archived),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+          ),
+        ],
+      ),
     );
   }
 

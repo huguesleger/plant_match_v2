@@ -135,32 +135,35 @@ class _CatalogUploadImageState extends State<CatalogUploadImage> {
           ),
           if (catalogImages.isNotEmpty) ...[
             const SizedBox(height: 20),
-            ListView.separated(
-              shrinkWrap: true,
-              separatorBuilder: (_, __) => const Divider(),
-              itemCount: catalogImages.length,
-              itemBuilder: (_, index) {
-                final imagePath = catalogImages[index];
-                return ListTile(
-                  tileColor: AppColors.white,
-                  contentPadding: EdgeInsets.zero,
-                  leading: ClipRRect(
-                    borderRadius: BorderRadius.circular(15),
-                    child: _buildImage(imagePath),
-                  ),
-                  title: Text(
-                    t.catalog.wizard.image_count(index: index + 1),
-                    style: InterTextStyle.inter(
-                      AppTypo.textS,
-                      color: AppColors.greyDark,
+            SizedBox(
+              height: 175,
+              child: ListView.separated(
+                shrinkWrap: true,
+                separatorBuilder: (_, __) => const Divider(),
+                itemCount: catalogImages.length,
+                itemBuilder: (_, index) {
+                  final imagePath = catalogImages[index];
+                  return ListTile(
+                    tileColor: AppColors.white,
+                    contentPadding: EdgeInsets.zero,
+                    leading: ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: _buildImage(imagePath),
                     ),
-                  ),
-                  trailing: IconButton(
-                    onPressed: () => _deleteImage(index),
-                    icon: const Icon(LucideIcons.x, size: AppTypo.text),
-                  ),
-                );
-              },
+                    title: Text(
+                      t.catalog.wizard.image_count(index: index + 1),
+                      style: InterTextStyle.inter(
+                        AppTypo.textS,
+                        color: AppColors.greyDark,
+                      ),
+                    ),
+                    trailing: IconButton(
+                      onPressed: () => _deleteImage(index),
+                      icon: const Icon(LucideIcons.x, size: AppTypo.text),
+                    ),
+                  );
+                },
+              ),
             ),
           ],
         ],
