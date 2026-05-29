@@ -16,7 +16,7 @@ import 'package:plant_match_v2/features/catalog/presentation/widgets/catalog_lis
 import 'package:plant_match_v2/features/catalog/presentation/widgets/catalog_sort_option.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 
-class CatalogLoadedView extends StatefulWidget {
+class CatalogLoadedView extends StatelessWidget {
   const CatalogLoadedView({
     super.key,
     required this.catalogs,
@@ -27,28 +27,6 @@ class CatalogLoadedView extends StatefulWidget {
   final List<Catalog> catalogs;
   final Catalog catalog;
   final CatalogSortOption sortOption;
-
-  @override
-  State<CatalogLoadedView> createState() => _CatalogLoadedViewState();
-}
-
-class _CatalogLoadedViewState extends State<CatalogLoadedView>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -75,14 +53,14 @@ class _CatalogLoadedViewState extends State<CatalogLoadedView>
             ),
             onPressed: () => showCatalogSortBottomSheet(
               context: context,
-              currentSortOption: widget.sortOption,
+              currentSortOption: sortOption,
               onSortApplied: (newSort) =>
                   context.read<CatalogCubit>().changeSortOption(newSort),
             ),
           ),
         ],
       ),
-      floatingActionButton: AddPlantButton(catalog: widget.catalog),
+      floatingActionButton: AddPlantButton(catalog: catalog),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -95,52 +73,53 @@ class _CatalogLoadedViewState extends State<CatalogLoadedView>
             ),
           ),
           Expanded(
-            child: widget.catalogs.isEmpty
+            child: catalogs.isEmpty
                 ? const CatalogEmptyView()
-                : Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: AppSpacing.paddingHorizontal
-                            .add(const EdgeInsets.only(top: 10)),
-                        child: TabBar.secondary(
-                          controller: _tabController,
-                          tabs: [
-                            Tab(
-                                text: t.catalog.tabs.published(
-                                    count: _count(widget.catalogs,
-                                        CatalogStatus.published))),
-                            Tab(
-                                text: t.catalog.tabs.draft(
-                                    count: _count(
-                                        widget.catalogs, CatalogStatus.draft))),
-                            Tab(
-                                text: t.catalog.tabs.archived(
-                                    count: _count(widget.catalogs,
-                                        CatalogStatus.archived))),
-                          ],
+                : DefaultTabController(
+                    length: 3,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: AppSpacing.paddingHorizontal
+                              .add(const EdgeInsets.only(top: 10)),
+                          child: TabBar.secondary(
+                            tabs: [
+                              Tab(
+                                  text: t.catalog.tabs.published(
+                                      count: _count(catalogs,
+                                          CatalogStatus.published))),
+                              Tab(
+                                  text: t.catalog.tabs.draft(
+                                      count: _count(
+                                          catalogs, CatalogStatus.draft))),
+                              Tab(
+                                  text: t.catalog.tabs.archived(
+                                      count: _count(catalogs,
+                                          CatalogStatus.archived))),
+                            ],
+                          ),
                         ),
-                      ),
-                      Expanded(
-                        child: TabBarView(
-                          controller: _tabController,
-                          children: [
-                            CatalogListTab(
-                              status: CatalogStatus.published,
-                              sortOption: widget.sortOption,
-                            ),
-                            CatalogListTab(
-                              status: CatalogStatus.draft,
-                              sortOption: widget.sortOption,
-                            ),
-                            CatalogListTab(
-                              status: CatalogStatus.archived,
-                              sortOption: widget.sortOption,
-                            ),
-                          ],
+                        Expanded(
+                          child: TabBarView(
+                            children: [
+                              CatalogListTab(
+                                status: CatalogStatus.published,
+                                sortOption: sortOption,
+                              ),
+                              CatalogListTab(
+                                status: CatalogStatus.draft,
+                                sortOption: sortOption,
+                              ),
+                              CatalogListTab(
+                                status: CatalogStatus.archived,
+                                sortOption: sortOption,
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
           ),
         ],

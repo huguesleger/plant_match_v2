@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
-import 'package:plant_match_v2/core/theme/app_typo.dart';
-import 'package:plant_match_v2/core/theme/inter_text_style.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_template.dart';
 import 'package:plant_match_v2/core/widgets/error/error_page.dart';
 import 'package:plant_match_v2/features/favorite/presentation/cubit/favorite_cubit.dart';
@@ -50,27 +48,10 @@ class FavoriteScreen extends StatelessWidget {
               length: 2,
               child: Column(
                 children: [
-                  Container(
-                    margin: const EdgeInsets.symmetric(
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
                         horizontal: 20, vertical: 12),
-                    decoration: BoxDecoration(
-                      color: AppColors.greyUltraLight,
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: TabBar(
-                      indicator: BoxDecoration(
-                        color: AppColors.greenMedium,
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      indicatorPadding: const EdgeInsets.all(4),
-                      indicatorSize: TabBarIndicatorSize.tab,
-                      dividerColor: Colors.transparent,
-                      labelColor: AppColors.white,
-                      unselectedLabelColor: AppColors.greyMedium,
-                      labelStyle: InterTextStyle.inter(
-                        AppTypo.textS,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    child: TabBar.secondary(
                       tabs: [
                         Tab(
                           child: Row(
