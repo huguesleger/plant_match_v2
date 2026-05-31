@@ -32,9 +32,17 @@ class HomeCardPlant extends StatelessWidget {
     final isImg = catalog.images.isNotEmpty;
 
     return Material(
-      color: AppColors.white,
+      elevation: 6,
+      shadowColor: AppColors.black.withValues(alpha: 0.2),
       clipBehavior: Clip.antiAlias,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      color: AppColors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: const BorderSide(
+          color: AppColors.greyUltraLight,
+          width: 1,
+        ),
+      ),
       child: InkWell(
         onTap: onPressed,
         child: SizedBox(
@@ -59,17 +67,15 @@ class HomeCardPlant extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color:
-                            (isExchange ? AppColors.green : AppColors.blueGreen)
-                                .withValues(alpha: 0.15),
+                        color: isExchange
+                            ? AppColors.blueGreen
+                            : AppColors.greenMedium,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
-                        isExchange ? "Échange" : "Don",
+                        isExchange ? "Échange" : "Donation",
                         style: TextStyle(
-                          color: isExchange
-                              ? AppColors.greenDark
-                              : AppColors.blueGreen,
+                          color: isExchange ? AppColors.green : AppColors.white,
                           fontSize: AppTypo.textXxs,
                           fontWeight: FontWeight.bold,
                         ),
@@ -81,10 +87,14 @@ class HomeCardPlant extends StatelessWidget {
                     right: 8,
                     child: Container(
                       decoration: const BoxDecoration(
-                          color: AppColors.white, shape: BoxShape.circle),
-                      padding: const EdgeInsets.all(4),
+                        color: AppColors.white,
+                        shape: BoxShape.circle,
+                      ),
+                      padding: const EdgeInsets.all(6),
                       child: FavoriteBtn(
-                          catalog: catalog, currentUserId: currentUserId),
+                        catalog: catalog,
+                        currentUserId: currentUserId,
+                      ),
                     ),
                   ),
                   Positioned(

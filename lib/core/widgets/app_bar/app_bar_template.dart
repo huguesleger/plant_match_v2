@@ -43,6 +43,7 @@ class AppBarTemplate extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      toolbarHeight: preferredHeight,
       title: titleWidget ??
           (title != null
               ? Text(

@@ -18,87 +18,98 @@ import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/features/chat_plant/data/firebase_chat_plant.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/chat_plant_page_route.dart';
+import 'package:plant_match_v2/features/user/data/firebase_user.dart';
 import 'package:plant_match_v2/features/user/detail_plant/widgets/badge_family.dart';
 import 'package:plant_match_v2/features/user/detail_plant/widgets/badge_offer_type.dart';
 import 'package:plant_match_v2/features/user/detail_plant/widgets/content_header.dart';
+import 'package:plant_match_v2/features/user/detail_plant/widgets/owner_profile_section.dart';
 import 'package:plant_match_v2/features/user/detail_plant/widgets/plant_characteristic.dart';
 import 'package:plant_match_v2/features/user/detail_plant/widgets/plant_environment.dart';
 
 class DetailPlant extends StatelessWidget {
-  const DetailPlant({super.key, required this.catalog});
+  const DetailPlant({
+    super.key,
+    required this.catalog,
+    this.owner,
+  });
 
   final Catalog catalog;
+  final ProfilUser? owner;
 
   void openPlantChat(BuildContext context) {
     final userId = context.read<AuthCubit>().userId ?? '';
     if (userId.isEmpty) return;
 
-    FirebaseFirestore.instance
-        .collection('users')
-        .doc(catalog.userId)
-        .get()
-        .then((userDoc) {
-      final data = userDoc.data();
-      final String ownerName;
-      final String? ownerAvatar;
-
-      if (data == null) {
-        ownerName = t.user.detail_plant.owner_placeholder;
-        ownerAvatar = null;
-      } else {
+    if (owner != null) {
+      _startChat(context, userId, owner!);
+    } else {
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(catalog.userId)
+          .get()
+          .then((userDoc) {
+        if (!context.mounted) return;
+        final data = userDoc.data();
+        if (data == null) return;
         final profilUser = ProfilUser.fromJson({
           ...data,
           'uid': userDoc.id,
         });
-
-        ownerName = profilUser.userName
-            .alt(() => Some(profilUser.firstName))
-            .filter((s) => s.trim().isNotEmpty)
-            .getOrElse(() => t.user.detail_plant.owner_placeholder);
-
-        ownerAvatar = profilUser.profilImg.trim().isNotEmpty
-            ? profilUser.profilImg
-            : null;
-      }
-
-      final chatRepository = FirebaseChatPlant();
-      chatRepository
-          .getOrCreatePlantChat(
-            currentUserId: userId,
-            plantOwnerId: catalog.userId,
-            plantId: catalog.catalogId.getOrElse(() => ''),
-            plantName: catalog.name,
-            plantDescription: catalog.description,
-            plantImage: catalog.images.first,
-            plantExchangeType: catalog.offerType,
-          )
-          .run()
-          .then((result) {
-        result.match(
-          (failure) {
-            if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(failure.message)),
-              );
-            }
-          },
-          (chatId) {
-            if (!context.mounted) return;
-
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => ChatPlantPageRoute(
-                  chatId: chatId,
-                  plantId: catalog.catalogId.getOrElse(() => ''),
-                  plantOwnerName: ownerName,
-                  plantOwnerAvatar: ownerAvatar ?? '',
-                ),
-              ),
-            );
-          },
-        );
+        _startChat(context, userId, profilUser);
       });
+    }
+  }
+
+  void _startChat(
+    BuildContext context,
+    String currentUserId,
+    ProfilUser plantOwner,
+  ) {
+    final ownerName = plantOwner.userName
+        .alt(() => Some(plantOwner.firstName))
+        .filter((s) => s.trim().isNotEmpty)
+        .getOrElse(() => t.user.detail_plant.owner_placeholder);
+
+    final ownerAvatar =
+        plantOwner.profilImg.trim().isNotEmpty ? plantOwner.profilImg : null;
+
+    final chatRepository = FirebaseChatPlant();
+    chatRepository
+        .getOrCreatePlantChat(
+          currentUserId: currentUserId,
+          plantOwnerId: catalog.userId,
+          plantId: catalog.catalogId.getOrElse(() => ''),
+          plantName: catalog.name,
+          plantDescription: catalog.description,
+          plantImage: catalog.images.first,
+          plantExchangeType: catalog.offerType,
+        )
+        .run()
+        .then((result) {
+      result.match(
+        (failure) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(failure.message)),
+            );
+          }
+        },
+        (chatId) {
+          if (!context.mounted) return;
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => ChatPlantPageRoute(
+                chatId: chatId,
+                plantId: catalog.catalogId.getOrElse(() => ''),
+                plantOwnerName: ownerName,
+                plantOwnerAvatar: ownerAvatar ?? '',
+              ),
+            ),
+          );
+        },
+      );
     });
   }
 
@@ -168,7 +179,35 @@ class DetailPlant extends StatelessWidget {
                   color: AppColors.greyDark,
                 ),
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 24),
+              owner != null
+                  ? OwnerProfileSection(owner: owner!)
+                  : FutureBuilder(
+                      future: FirebaseUser().getUserUid(catalog.userId).run(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                            child: SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          );
+                        }
+                        if (snapshot.hasData) {
+                          return snapshot.data!.match(
+                            (failure) => const SizedBox.shrink(),
+                            (profilUser) =>
+                                OwnerProfileSection(owner: profilUser),
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      },
+                    ),
+              const SizedBox(height: 24),
+              const Text('Les informations clés'),
+              const SizedBox(height: 24),
               PlantCharacteristic(
                 lighting: catalog.lighting,
                 watering: catalog.watering,

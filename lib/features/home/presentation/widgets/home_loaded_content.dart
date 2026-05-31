@@ -5,7 +5,6 @@ import 'package:plant_match_v2/core/util/distance/distance_helper.dart';
 import 'package:plant_match_v2/core/widgets/template/template_page.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
-import 'package:plant_match_v2/features/home/presentation/widgets/home_header.dart';
 import 'package:plant_match_v2/features/home/presentation/widgets/home_filter_chips.dart';
 import 'package:plant_match_v2/features/home/presentation/widgets/home_around_me_section.dart';
 import 'package:plant_match_v2/features/home/presentation/widgets/home_recommended_banner.dart';
@@ -38,12 +37,6 @@ class _HomeLoadedContentState extends State<HomeLoadedContent> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          HomeHeader(
-            firstName: widget.currentUser.firstName,
-            fullName: widget.currentUser.fullName,
-            profilImg: widget.currentUser.profilImg,
-          ),
-          const SizedBox(height: 20),
           HomeFilterChips(
               selectedOption: _filter,
               onOptionSelected: (o) => setState(() => _filter = o)),

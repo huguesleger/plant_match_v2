@@ -45,7 +45,8 @@ class _CatalogDetailScreenState extends State<CatalogDetailScreen> {
         content: _buildHeaderSlider(),
         onPressed: () => Navigator.pop(context, true),
         styleIconButton: IconButton.styleFrom(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           backgroundColor: AppColors.white,
         ),
       ),
@@ -94,7 +95,8 @@ class _CatalogDetailScreenState extends State<CatalogDetailScreen> {
           text: SizedBox(
             width: 20,
             child: Center(
-              child: Text('${_currentIndex + 1}/$count', style: const TextStyle(fontSize: 11)),
+              child: Text('${_currentIndex + 1}/$count',
+                  style: const TextStyle(fontSize: 11)),
             ),
           ),
           badgeColor: AppColors.white.withValues(alpha: 0.5),
@@ -109,16 +111,20 @@ class _CatalogDetailScreenState extends State<CatalogDetailScreen> {
           width: double.infinity,
           decoration: const BoxDecoration(
             color: AppColors.white,
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(30), topRight: Radius.circular(30)),
           ),
           child: Padding(
-            padding: AppSpacing.paddingHorizontal + const EdgeInsets.symmetric(vertical: 25),
+            padding: AppSpacing.paddingHorizontal +
+                const EdgeInsets.symmetric(vertical: 25),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 _buildBasicInfo(),
                 BadgePill(
-                  text: Text(_catalog.status.label, style: TextStyle(fontSize: 12, color: _catalog.status.textColor)),
+                  text: Text(_catalog.status.label,
+                      style: TextStyle(
+                          fontSize: 12, color: _catalog.status.textColor)),
                   badgeColor: _catalog.status.badgeColor,
                 ),
               ],
@@ -130,12 +136,13 @@ class _CatalogDetailScreenState extends State<CatalogDetailScreen> {
   Widget _buildBasicInfo() => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(_catalog.name.toCapitalize(), style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+          Text(_catalog.name.toCapitalize(),
+              style:
+                  const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
           Row(
             children: [
               Text(
-                  t.catalog.detail
-                      .plant_env(env: _catalog.environment.envName),
+                  t.catalog.detail.plant_env(env: _catalog.environment.envName),
                   style: const TextStyle(fontSize: 14, color: Colors.grey)),
               const SizedBox(width: 5),
               _buildEnvironmentIcon(),
@@ -150,7 +157,9 @@ class _CatalogDetailScreenState extends State<CatalogDetailScreen> {
           width: 25,
           height: 25,
           child: Icon(
-            _catalog.environment == Environment.outdoor ? LucideIcons.trees : LucideIcons.house,
+            _catalog.environment == Environment.outdoor
+                ? LucideIcons.trees
+                : LucideIcons.house,
             color: AppColors.blueGreen,
             size: AppTypo.textS,
           ),
@@ -210,7 +219,10 @@ class _CatalogDetailScreenState extends State<CatalogDetailScreen> {
             Expanded(child: _DeleteButton(catalog: _catalog)),
             if (_catalog.status != CatalogStatus.archived) ...[
               const SizedBox(width: 12),
-              Expanded(child: _EditButton(catalog: _catalog, onUpdate: (c) => setState(() => _catalog = c))),
+              Expanded(
+                  child: _EditButton(
+                      catalog: _catalog,
+                      onUpdate: (c) => setState(() => _catalog = c))),
             ],
           ],
         ),
@@ -218,7 +230,8 @@ class _CatalogDetailScreenState extends State<CatalogDetailScreen> {
 }
 
 class _CardDetailItem extends StatelessWidget {
-  const _CardDetailItem({required this.icon, required this.label, required this.value});
+  const _CardDetailItem(
+      {required this.icon, required this.label, required this.value});
   final IconData icon;
   final String label;
   final String value;
@@ -241,8 +254,12 @@ class _CardDetailItem extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(value, style: const TextStyle(fontSize: AppTypo.textXs, fontWeight: FontWeight.bold)),
-            Text(label, style: const TextStyle(fontSize: AppTypo.textXs, color: Colors.grey)),
+            Text(value,
+                style: const TextStyle(
+                    fontSize: AppTypo.textXs, fontWeight: FontWeight.bold)),
+            Text(label,
+                style: const TextStyle(
+                    fontSize: AppTypo.textXs, color: Colors.grey)),
           ],
         ),
       ],
@@ -271,7 +288,8 @@ class _DeleteButton extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(t.catalog.detail.delete_dialog.title),
-        content: Text(t.catalog.detail.delete_dialog.content(name: catalog.name)),
+        content:
+            Text(t.catalog.detail.delete_dialog.content(name: catalog.name)),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx),
@@ -283,7 +301,8 @@ class _DeleteButton extends StatelessWidget {
               final userPointsCubit = context.read<UserPointsCubit>();
 
               final result = await catalogCubit
-                  .deleteCatalog(catalog.catalogId.getOrElse(() => ''), catalog.userId)
+                  .deleteCatalog(
+                      catalog.catalogId.getOrElse(() => ''), catalog.userId)
                   .run();
 
               result.match(
@@ -322,11 +341,16 @@ class _EditButton extends StatelessWidget {
       onPressed: () async {
         final result = await Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => CatalogEditPageRoute(catalog: catalog)),
+          MaterialPageRoute(
+              builder: (_) => CatalogEditPageRoute(catalog: catalog)),
         );
         if (result == true && context.mounted) {
-          final getResult = await context.read<CatalogCubit>().getCatalogById(catalog.catalogId.getOrElse(() => '')).run();
-          getResult.match((_) => null, (updatedCatalog) => onUpdate(updatedCatalog));
+          final getResult = await context
+              .read<CatalogCubit>()
+              .getCatalogById(catalog.catalogId.getOrElse(() => ''))
+              .run();
+          getResult.match(
+              (_) => null, (updatedCatalog) => onUpdate(updatedCatalog));
         }
       },
       bgColor: AppColors.greenLight,

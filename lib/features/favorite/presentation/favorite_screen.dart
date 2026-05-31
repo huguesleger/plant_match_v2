@@ -25,7 +25,7 @@ class FavoriteScreen extends StatelessWidget {
         centerTitle: true,
         backgroundColor: AppColors.white,
         surfaceTintColor: AppColors.white,
-        shadowColor: AppColors.black.withValues(alpha: 0.08),
+        shadowColor: AppColors.black,
         styleIconButton: IconButton.styleFrom(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),

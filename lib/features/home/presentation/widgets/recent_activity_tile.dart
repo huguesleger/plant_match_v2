@@ -28,7 +28,12 @@ class RecentActivityTile extends StatelessWidget {
     return InkWell(
       onTap: () => Navigator.push(
         context,
-        MaterialPageRoute(builder: (_) => DetailPlant(catalog: catalog)),
+        MaterialPageRoute(
+          builder: (_) => DetailPlant(
+            catalog: catalog,
+            owner: owner,
+          ),
+        ),
       ),
       child: Row(
         children: [

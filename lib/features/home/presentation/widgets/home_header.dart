@@ -4,6 +4,7 @@ import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/widgets/avatar/avatar.dart';
+import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
 
 class HomeHeader extends StatelessWidget {
   const HomeHeader({
@@ -27,20 +28,16 @@ class HomeHeader extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                "Hello, ${firstName.toCapitalize()}",
-                style: const TextStyle(
-                    fontSize: AppTypo.textXxl,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.black),
+              TitlePage(
+                title: "Hello, ${firstName.toCapitalize()}",
+                fontSize: AppTypo.textXl,
               ),
-              const SizedBox(height: 6),
               const Text(
                 "Prêt à échanger ou donner\nde nouvelles plantes ?",
                 style: TextStyle(
-                    fontSize: AppTypo.text,
-                    color: AppColors.greyMedium,
-                    height: 1.3),
+                  fontSize: AppTypo.textS,
+                  color: AppColors.greyMedium,
+                ),
               ),
             ],
           ),
