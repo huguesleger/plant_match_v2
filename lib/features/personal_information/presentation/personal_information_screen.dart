@@ -25,10 +25,20 @@ class PersonalInformationScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ProfilCubit, ProfilState>(
       builder: (context, state) {
+        if (state is ProfilError) {
+          return ErrorPage(
+            errorMessage: state.message,
+            onRetry: () => context.read<ProfilCubit>().getProfilUser(userId),
+          );
+        }
+
         final profilUserState = switch (state) {
-          ProfilInitial() || ProfilLoading() || ProfilError() => profilUser,
+          ProfilInitial() ||
+          ProfilLoading() ||
+          ProfilImageUploading() ||
+          ProfilError() =>
+            profilUser,
           ProfilLoaded s => s.profilUser,
-          ProfilImageUploading() => profilUser,
         };
 
         return Scaffold(
@@ -49,18 +59,7 @@ class PersonalInformationScreen extends StatelessWidget {
               profilUser: profilUserState,
             ),
           ),
-          body: switch (state) {
-            ProfilInitial() ||
-            ProfilLoading() ||
-            ProfilImageUploading() ||
-            ProfilLoaded() =>
-              PersonalInformationView(profilUser: profilUserState),
-            ProfilError s => ErrorPage(
-                errorMessage: s.message,
-                onRetry: () =>
-                    context.read<ProfilCubit>().getProfilUser(userId),
-              ),
-          },
+          body: PersonalInformationView(profilUser: profilUserState),
         );
       },
     );

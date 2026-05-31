@@ -27,7 +27,6 @@ class BottomSheetHeader extends StatelessWidget {
           profilUser: user,
           radius: 45,
           imgSizeAvatar: 90,
-          defaultSizeAvatar: 65,
         ),
         const SizedBox(width: 10),
         _buildUserInfo(),

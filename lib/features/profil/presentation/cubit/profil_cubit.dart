@@ -152,9 +152,13 @@ class ProfilCubit extends Cubit<ProfilState> {
     }
 
     final currentUser = currentState.profilUser;
+    final isStorageUrl = imageUrl.startsWith('http') || imageUrl.startsWith('gs://');
 
-    storageRepository
-        .deleteImage(imageUrl: imageUrl)
+    final TaskEither<Failure, String> deleteStorageTask = isStorageUrl
+        ? storageRepository.deleteImage(imageUrl: imageUrl)
+        : TaskEither.right(imageUrl);
+
+    deleteStorageTask
         .flatMap((_) {
           final updatedProfilUser = currentUser.copyWith(newProfilImg: '');
           return profilRepository

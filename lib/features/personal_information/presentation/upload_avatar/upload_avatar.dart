@@ -80,7 +80,6 @@ class _UploadAvatarState extends State<UploadAvatar> {
                       imageUrl: avatarUrl,
                       radius: 60,
                       imgSizeAvatar: 120,
-                      defaultSizeAvatar: 100,
                     ),
                   ),
                   Positioned(

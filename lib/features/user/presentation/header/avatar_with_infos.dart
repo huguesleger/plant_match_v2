@@ -37,7 +37,6 @@ class AvatarWithInfos extends StatelessWidget {
                 profilUser: user,
                 radius: 45,
                 imgSizeAvatar: 90,
-                defaultSizeAvatar: 65,
               ),
             ),
             Positioned(

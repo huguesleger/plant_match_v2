@@ -47,7 +47,6 @@ class FavoriteUserCard extends StatelessWidget {
                     profilUser: user,
                     radius: 30,
                     imgSizeAvatar: 46,
-                    defaultSizeAvatar: 42,
                   ),
                   Positioned(
                     bottom: 2,
