@@ -5,6 +5,7 @@ import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:fpdart/fpdart.dart' hide State;
 import 'package:latlong2/latlong.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
+import 'package:plant_match_v2/core/util/distance/distance_helper.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/map/cluster_marker.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/map/map_controls.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/map/map_marker.dart';
@@ -71,7 +72,7 @@ class _AroundMeMapState extends State<AroundMeMap>
       );
 
   Marker _buildMarkerForUser(ProfilUser user) {
-    final distance = _calculateDistance(widget.currentUser, user);
+    final distance = DistanceHelper.calculateDistance(widget.currentUser, user);
     return Marker(
       width: 40.0,
       height: 40.0,
@@ -101,6 +102,7 @@ class _AroundMeMapState extends State<AroundMeMap>
 
     final otherUsersMarkers = widget.users
         .where((u) => u.uid != widget.currentUser.uid)
+        .where((u) => DistanceHelper.calculateDistance(widget.currentUser, u) <= DistanceHelper.maxDistance)
         .map(_buildMarkerForUser)
         .toList();
 
@@ -154,16 +156,5 @@ class _AroundMeMapState extends State<AroundMeMap>
         ),
       ],
     );
-  }
-
-  double _calculateDistance(ProfilUser currentUser, ProfilUser user) {
-    if (user.uid == currentUser.uid) return 0.0;
-    const Distance distance = Distance();
-    final meters = distance.as(
-      LengthUnit.Meter,
-      _getUserPosition(currentUser),
-      _getUserPosition(user),
-    );
-    return double.parse((meters / 1000).toStringAsFixed(2));
   }
 }

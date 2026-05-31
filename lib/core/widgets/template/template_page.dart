@@ -5,7 +5,7 @@ import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/add_plant_wizard_page_route.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/around_me_page_route.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
-import 'package:plant_match_v2/features/home/presentation/home_page.dart';
+import 'package:plant_match_v2/features/home/presentation/home_page_route.dart';
 import 'package:plant_match_v2/features/message/presentation/message_page_route.dart';
 import 'package:plant_match_v2/features/message/presentation/cubit/unread_messages_cubit.dart';
 import 'package:plant_match_v2/features/profil/presentation/profil_page_route.dart';
@@ -41,7 +41,7 @@ class TemplatePageState extends State<TemplatePage> {
     uid = user?.uid ?? '';
 
     _pages = [
-      const HomePage(),
+      const HomePageRoute(),
       AroundMePageRoute(uid: uid),
       const SizedBox.shrink(),
       MessagesPageRoute(),
@@ -49,7 +49,7 @@ class TemplatePageState extends State<TemplatePage> {
     ];
   }
 
-  void _onPageChanged(int index) {
+  void onPageChanged(int index) {
     if (index == _addButtonIndex) {
       _openAddPlantWizard();
       return;
@@ -88,7 +88,7 @@ class TemplatePageState extends State<TemplatePage> {
       child: NavigationBottomBar(
         body: _pages[_currentIndex],
         currentIndex: _currentIndex,
-        onTap: _onPageChanged,
+        onTap: onPageChanged,
       ),
     );
   }

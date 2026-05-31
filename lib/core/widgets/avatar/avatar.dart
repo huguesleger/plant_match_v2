@@ -13,7 +13,7 @@ class Avatar extends StatelessWidget {
     this.radius = 30,
     this.imgSizeAvatar = 60,
     this.defaultSizeAvatar = 45,
-    this.backgroundColor = AppColors.greyLight,
+    this.backgroundColor = AppColors.greenMedium,
   });
 
   final ProfilUser? profilUser;

@@ -54,12 +54,24 @@ class ProfilScreen extends StatelessWidget {
                   leadingWith: 16,
                   preferredHeight: 70,
                   actions: [
-                    Avatar(
-                      profilUser: profilUser,
-                      radius: 28,
-                      imgSizeAvatar: 55,
-                      defaultSizeAvatar: 55,
-                    )
+                    Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppColors.white,
+                        border: Border.all(color: AppColors.white, width: 2),
+                        boxShadow: const [
+                          BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 4,
+                              offset: Offset(0, 2))
+                        ],
+                      ),
+                      child: Avatar(
+                        profilUser: profilUser,
+                        radius: 22,
+                        imgSizeAvatar: 44,
+                      ),
+                    ),
                   ],
                 )
               : null,
