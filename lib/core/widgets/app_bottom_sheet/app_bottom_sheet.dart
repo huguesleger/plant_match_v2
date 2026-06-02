@@ -15,7 +15,10 @@ class AppBottomSheet {
         ),
       ),
       builder: (context) {
-        return child;
+        return SafeArea(
+          top: false,
+          child: child,
+        );
       },
     );
   }
