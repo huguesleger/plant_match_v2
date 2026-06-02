@@ -336,7 +336,7 @@ class _EditButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ButtonRoundedWithIcon(
+    return ButtonRoundedWithIcon.small(
       text: t.catalog.detail.edit,
       onPressed: () async {
         final result = await Navigator.push(
@@ -356,7 +356,8 @@ class _EditButton extends StatelessWidget {
       bgColor: AppColors.greenLight,
       textColor: AppColors.blueGreen,
       iconAlignment: IconAlignment.start,
-      icon: const Icon(LucideIcons.pencil, color: AppColors.blueGreen),
+      icon:
+          const Icon(LucideIcons.pencil, color: AppColors.blueGreen, size: 16),
     );
   }
 }

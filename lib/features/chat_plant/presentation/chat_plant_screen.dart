@@ -182,6 +182,7 @@ class ChatPlantScreen extends StatelessWidget {
                     onRetry: () => context.read<ChatPlantCubit>().subscribe(
                           chatId: chatId,
                           currentUserId: userId,
+                          otherUserId: plant.userId,
                         ),
                   ),
                 ChatPlantBlocked() => ChatPlantView(

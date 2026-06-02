@@ -53,6 +53,7 @@ class MessageItem extends StatelessWidget {
             plantId: chat.plantId,
             plantOwnerName: chat.plantOwnerName,
             plantOwnerAvatar: chat.plantOwnerAvatar.getOrElse(() => ''),
+            otherUserId: chat.otherUserId,
           ),
         ),
       ),

@@ -150,6 +150,73 @@ class FirebaseChatPlant implements ChatPlantRepository {
         );
   }
 
+  Future<void> _ensureChatExists(
+    String chatId,
+    String senderId,
+    String receiverId,
+  ) async {
+    final chatDoc = await _chats.doc(chatId).get();
+    if (chatDoc.exists) return;
+
+    final parts = chatId.split('_');
+    if (parts.length < 3) throw Exception('chatId invalide');
+    final plantId = parts[0];
+
+    final plantDoc =
+        await _firestore.collection('catalogs').doc(plantId).get();
+    final plantData = plantDoc.data();
+    if (plantData == null) throw Exception('Plante introuvable');
+
+    final plantOwnerId = plantData['userId'] as String? ?? receiverId;
+
+    final ownerDoc =
+        await _firestore.collection('users').doc(plantOwnerId).get();
+    final ownerData = ownerDoc.data();
+
+    final String plantOwnerName;
+    final String plantOwnerAvatar;
+
+    if (ownerData == null) {
+      plantOwnerName = 'Propriétaire';
+      plantOwnerAvatar = '';
+    } else {
+      final profilUser = ProfilUser.fromJson({
+        ...ownerData,
+        'uid': ownerDoc.id,
+      });
+
+      plantOwnerName = profilUser.userName
+          .alt(() => Some(profilUser.firstName))
+          .filter((s) => s.trim().isNotEmpty)
+          .getOrElse(() => 'Propriétaire');
+
+      plantOwnerAvatar = profilUser.profilImg;
+    }
+
+    final images = plantData['images'] as List?;
+    final plantImage = (images != null && images.isNotEmpty)
+        ? images.first as String
+        : '';
+
+    await _chats.doc(chatId).set({
+      'participants': [senderId, receiverId]..sort(),
+      'plantId': plantId,
+      'plantName': plantData['name'] ?? '',
+      'plantDescription': plantData['description'] ?? '',
+      'plantImage': plantImage,
+      'plantExchangeType': plantData['offerType'] ?? 'exchange',
+      'plantOwnerId': plantOwnerId,
+      'plantOwnerName': plantOwnerName,
+      'plantOwnerAvatar': plantOwnerAvatar,
+      'createdAt': FieldValue.serverTimestamp(),
+      'lastMessageAt': FieldValue.serverTimestamp(),
+      'unreadCount': {
+        senderId: 0,
+        receiverId: 0,
+      },
+    });
+  }
+
   @override
   TaskEither<Failure, Unit> sendMessage({
     required String chatId,
@@ -162,6 +229,8 @@ class FirebaseChatPlant implements ChatPlantRepository {
         if (chatId.isEmpty || senderId.isEmpty || receiverId.isEmpty) {
           throw Exception('Paramètres invalides pour l’envoi du message');
         }
+
+        await _ensureChatExists(chatId, senderId, receiverId);
 
         final chatRef = _chats.doc(chatId);
 
@@ -195,7 +264,7 @@ class FirebaseChatPlant implements ChatPlantRepository {
       return snapshot.docs.where((doc) {
         final data = doc.data();
         final deletedFor = List<String>.from(data['deletedFor'] ?? []);
-        return !deletedFor.contains(uid);
+        return !deletedFor.contains(uid) && data['lastMessage'] != null;
       }).map((doc) {
         final data = doc.data();
 
@@ -354,6 +423,8 @@ class FirebaseChatPlant implements ChatPlantRepository {
         if (chatId.isEmpty || senderId.isEmpty || receiverId.isEmpty) {
           throw Exception('Paramètres invalides pour l\'envoi du message');
         }
+
+        await _ensureChatExists(chatId, senderId, receiverId);
 
         final chatRef = _chats.doc(chatId);
 

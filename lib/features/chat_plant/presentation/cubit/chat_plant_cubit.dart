@@ -21,65 +21,46 @@ class ChatPlantCubit extends Cubit<ChatPlantState> {
   void subscribe({
     required String chatId,
     required String currentUserId,
+    required String otherUserId,
   }) {
     emit(ChatPlantLoading());
 
-    repository
-        .getParticipants(chatId)
-        .match<ChatPlantState>(
-          (failure) => ChatPlantError(failure.message),
-          (participants) {
-            final otherId = participants.firstWhere(
-              (id) => id != currentUserId,
-              orElse: () => '',
-            );
+    _otherUserId = otherUserId;
 
-            if (otherId.isEmpty) {
-              return ChatPlantError('Impossible de déterminer le destinataire');
-            }
-
-            _otherUserId = otherId;
-
-            _blockedSub?.cancel();
-            _blockedSub = repository
-                .isBlockedStream(
-                  currentUserId: currentUserId,
-                  otherUserId: otherId,
-                )
-                .listen((isBlocked) {
-              if (isClosed) return;
-              _isBlocked = isBlocked;
-              if (state is ChatPlantLoaded) {
-                emit(ChatPlantLoaded(
-                  messages: _currentMessages,
-                  isBlocked: _isBlocked,
-                ));
-              }
-            });
-
-            _messagesSub?.cancel();
-            _messagesSub = repository.messagesStream(chatId).listen(
-              (messages) {
-                if (!isClosed) {
-                  _currentMessages = messages;
-                  emit(ChatPlantLoaded(
-                    messages: messages,
-                    isBlocked: _isBlocked,
-                  ));
-                }
-              },
-              onError: (e) {
-                if (!isClosed) {
-                  emit(ChatPlantError(e.toString()));
-                }
-              },
-            );
-
-            return state;
-          },
+    _blockedSub?.cancel();
+    _blockedSub = repository
+        .isBlockedStream(
+          currentUserId: currentUserId,
+          otherUserId: otherUserId,
         )
-        .map((s) => emit(s))
-        .run();
+        .listen((isBlocked) {
+      if (isClosed) return;
+      _isBlocked = isBlocked;
+      if (state is ChatPlantLoaded) {
+        emit(ChatPlantLoaded(
+          messages: _currentMessages,
+          isBlocked: _isBlocked,
+        ));
+      }
+    });
+
+    _messagesSub?.cancel();
+    _messagesSub = repository.messagesStream(chatId).listen(
+      (messages) {
+        if (!isClosed) {
+          _currentMessages = messages;
+          emit(ChatPlantLoaded(
+            messages: messages,
+            isBlocked: _isBlocked,
+          ));
+        }
+      },
+      onError: (e) {
+        if (!isClosed) {
+          emit(ChatPlantError(e.toString()));
+        }
+      },
+    );
   }
 
   void send({

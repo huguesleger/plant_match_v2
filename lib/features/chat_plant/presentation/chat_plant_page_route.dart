@@ -17,12 +17,14 @@ class ChatPlantPageRoute extends StatelessWidget {
     required this.plantId,
     required this.plantOwnerName,
     required this.plantOwnerAvatar,
+    required this.otherUserId,
   });
 
   final String chatId;
   final String plantId;
   final String plantOwnerName;
   final String plantOwnerAvatar;
+  final String otherUserId;
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +54,7 @@ class ChatPlantPageRoute extends StatelessWidget {
             ..subscribe(
               chatId: chatId,
               currentUserId: userId,
+              otherUserId: otherUserId,
             )
             ..markMessagesAsRead(
               chatId: chatId,

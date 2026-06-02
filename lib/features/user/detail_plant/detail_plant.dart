@@ -16,7 +16,6 @@ import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
-import 'package:plant_match_v2/features/chat_plant/data/firebase_chat_plant.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/chat_plant_page_route.dart';
 import 'package:plant_match_v2/features/user/data/firebase_user.dart';
 import 'package:plant_match_v2/features/user/detail_plant/widgets/badge_family.dart';
@@ -73,44 +72,22 @@ class DetailPlant extends StatelessWidget {
     final ownerAvatar =
         plantOwner.profilImg.trim().isNotEmpty ? plantOwner.profilImg : null;
 
-    final chatRepository = FirebaseChatPlant();
-    chatRepository
-        .getOrCreatePlantChat(
-          currentUserId: currentUserId,
-          plantOwnerId: catalog.userId,
-          plantId: catalog.catalogId.getOrElse(() => ''),
-          plantName: catalog.name,
-          plantDescription: catalog.description,
-          plantImage: catalog.images.first,
-          plantExchangeType: catalog.offerType,
-        )
-        .run()
-        .then((result) {
-      result.match(
-        (failure) {
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(failure.message)),
-            );
-          }
-        },
-        (chatId) {
-          if (!context.mounted) return;
+    final ids = [currentUserId, catalog.userId]..sort();
+    final chatId =
+        '${catalog.catalogId.getOrElse(() => '')}_${ids[0]}_${ids[1]}';
 
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => ChatPlantPageRoute(
-                chatId: chatId,
-                plantId: catalog.catalogId.getOrElse(() => ''),
-                plantOwnerName: ownerName,
-                plantOwnerAvatar: ownerAvatar ?? '',
-              ),
-            ),
-          );
-        },
-      );
-    });
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ChatPlantPageRoute(
+          chatId: chatId,
+          plantId: catalog.catalogId.getOrElse(() => ''),
+          plantOwnerName: ownerName,
+          plantOwnerAvatar: ownerAvatar ?? '',
+          otherUserId: catalog.userId,
+        ),
+      ),
+    );
   }
 
   @override
