@@ -1,0 +1,17 @@
+{
+  "Simulator Target Bundle": "com.example.plantMatchV2",
+  "aps": {
+    "alert": {
+      "title": "Nouveau message de test 🌿",
+      "body": "Salut ! Est-ce que ta plante est toujours disponible ?"
+    },
+    "badge": 1,
+    "sound": "default"
+  },
+  "gcm.message_id": "test-message-123",
+  "data": {
+    "chatId": "test_chat_123",
+    "senderId": "user_test_456",
+    "text": "Salut ! Est-ce que ta plante est toujours disponible ?"
+  }
+}

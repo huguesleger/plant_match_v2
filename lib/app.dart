@@ -15,6 +15,9 @@ import 'package:plant_match_v2/features/level/data/firebase_user_points.dart';
 import 'package:plant_match_v2/features/level/presentation/cubit/user_points_cubit.dart';
 import 'package:plant_match_v2/features/level/presentation/cubit/user_points_state.dart';
 import 'package:plant_match_v2/features/level_awarded/presentation/level_awarded_page_route.dart';
+import 'package:plant_match_v2/features/notifications/data/datasources/fcm_remote_datasource.dart';
+import 'package:plant_match_v2/features/notifications/data/repositories/notification_repository_impl.dart';
+import 'package:plant_match_v2/features/notifications/presentation/cubit/notification_cubit.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -26,6 +29,9 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final authRepository = FirebaseAuthRepository();
   final userPointsRepository = FirebaseUserPoints();
+  final notificationRepository = NotificationRepositoryImpl(
+    remoteDataSource: FcmRemoteDataSource(),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +46,11 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(
           create: (context) =>
               UserPointsCubit(repository: userPointsRepository),
+        ),
+        BlocProvider(
+          create: (context) => NotificationCubit(
+            notificationRepository: notificationRepository,
+          )..initialize(),
         ),
       ],
       child: const _MyAppBody(),
@@ -105,13 +116,16 @@ class _MyAppBodyState extends State<_MyAppBody> with WidgetsBindingObserver {
         listeners: [
           BlocListener<AuthCubit, AuthState>(
             listener: (context, authState) {
-              if (authState is Authenticated && authState.isFirstTime) {
-                context.read<UserPointsCubit>().addUserPoints(
-                      authState.user.uid,
-                      25,
-                      1,
-                      isFromRegistration: true,
-                    );
+              if (authState is Authenticated) {
+                context.read<NotificationCubit>().requestPermissionAndSaveToken(authState.user.uid);
+                if (authState.isFirstTime) {
+                  context.read<UserPointsCubit>().addUserPoints(
+                        authState.user.uid,
+                        25,
+                        1,
+                        isFromRegistration: true,
+                      );
+                }
               }
             },
           ),
