@@ -16,6 +16,7 @@ class AroundMe extends ProfilUser {
     required super.country,
     required super.zipCode,
     required super.isOnline,
+    required super.createdAt,
     super.bio = const None(),
     super.birthdayDate = const None(),
   });
@@ -37,7 +38,7 @@ class AroundMe extends ProfilUser {
             final ln = parts.length > 1 ? parts.sublist(1).join(' ') : '';
             return (fn, ln);
           })()
-        : (firstName, lastName);
+          : (firstName, lastName);
 
     return AroundMe(
       uid: json['uid'] ?? '',
@@ -52,6 +53,12 @@ class AroundMe extends ProfilUser {
       country: json['country'] ?? '',
       zipCode: json['zipCode'] ?? '',
       isOnline: json['isOnline'] ?? false,
+      createdAt: json['createdAt'] == null
+          ? DateTime.now()
+          : (json['createdAt'] is Timestamp
+              ? (json['createdAt'] as Timestamp).toDate()
+              : DateTime.tryParse(json['createdAt'] as String) ??
+                  DateTime.now()),
       bio: Option.fromNullable(json['bio'] as String?),
       birthdayDate: Option.fromNullable(json['birthdayDate']).map((d) {
         if (d is Timestamp) return d.toDate();

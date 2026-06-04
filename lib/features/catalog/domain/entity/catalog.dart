@@ -44,6 +44,7 @@ class Catalog {
   final CatalogStatus status;
   final DateTime createdAt;
   final OfferType offerType;
+  final int views;
 
   Catalog({
     required this.userId,
@@ -59,6 +60,7 @@ class Catalog {
     required this.status,
     required this.createdAt,
     required this.offerType,
+    required this.views,
   });
 
   Catalog copyWith({
@@ -75,6 +77,7 @@ class Catalog {
     CatalogStatus? newStatus,
     DateTime? newCreatedAt,
     OfferType? newOfferType,
+    int? newViews,
   }) {
     return Catalog(
       userId: newUserId ?? userId,
@@ -90,6 +93,7 @@ class Catalog {
       status: newStatus ?? status,
       createdAt: newCreatedAt ?? createdAt,
       offerType: newOfferType ?? offerType,
+      views: newViews ?? views,
     );
   }
 
@@ -108,16 +112,15 @@ class Catalog {
       status: CatalogStatus.draft,
       createdAt: DateTime.now(),
       offerType: OfferType.exchange,
+      views: 0,
     );
   }
 
   factory Catalog.fromJson(Map<String, dynamic> json, String id) {
-    // Rétrocompatibilité : migration depuis isPublish vers status
     CatalogStatus status;
     if (json['status'] != null) {
       status = CatalogStatus.values.byName(json['status']);
     } else {
-      // Migration automatique depuis isPublish
       final isPublish = json['isPublish'] ?? false;
       status = isPublish ? CatalogStatus.published : CatalogStatus.draft;
     }
@@ -152,6 +155,7 @@ class Catalog {
       offerType: json['offerType'] != null
           ? OfferType.values.byName(json['offerType'])
           : OfferType.exchange,
+      views: json['views'] as int? ?? 0,
     );
   }
 
@@ -169,6 +173,7 @@ class Catalog {
       'status': status.name,
       'createdAt': createdAt.toIso8601String(),
       'offerType': offerType.name,
+      'views': views,
     };
   }
 }

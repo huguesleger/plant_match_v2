@@ -23,4 +23,6 @@ abstract class CatalogRepository {
 
   /// Observe tous les catalogues d'un utilisateur en temps réel
   Stream<List<Catalog>> watchCatalogsByUserId(String userId);
+
+  TaskEither<Failure, Unit> incrementCatalogViews(String catalogId);
 }

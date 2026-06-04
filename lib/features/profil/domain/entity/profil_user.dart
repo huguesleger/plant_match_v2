@@ -13,6 +13,7 @@ class ProfilUser extends UserAuth {
   final Option<double> latitude;
   final Option<double> longitude;
   final bool isOnline;
+  final DateTime createdAt;
 
   ProfilUser({
     required super.uid,
@@ -29,6 +30,7 @@ class ProfilUser extends UserAuth {
     required this.latitude,
     required this.longitude,
     required this.isOnline,
+    required this.createdAt,
   });
 
   ProfilUser copyWith({
@@ -44,6 +46,7 @@ class ProfilUser extends UserAuth {
     Option<double>? newLatitude,
     Option<double>? newLongitude,
     bool? newIsOnline,
+    DateTime? newCreatedAt,
   }) {
     return ProfilUser(
       uid: uid,
@@ -60,6 +63,7 @@ class ProfilUser extends UserAuth {
       latitude: newLatitude ?? latitude,
       longitude: newLongitude ?? longitude,
       isOnline: newIsOnline ?? isOnline,
+      createdAt: newCreatedAt ?? createdAt,
     );
   }
 
@@ -83,6 +87,7 @@ class ProfilUser extends UserAuth {
       'latitude': latitude.toNullable(),
       'longitude': longitude.toNullable(),
       'isOnline': isOnline,
+      'createdAt': Timestamp.fromDate(createdAt),
     };
   }
 
@@ -124,6 +129,12 @@ class ProfilUser extends UserAuth {
       latitude: Option.fromNullable(json['latitude']?.toDouble()),
       longitude: Option.fromNullable(json['longitude']?.toDouble()),
       isOnline: json['isOnline'] ?? false,
+      createdAt: json['createdAt'] == null
+          ? DateTime.now()
+          : (json['createdAt'] is Timestamp
+              ? (json['createdAt'] as Timestamp).toDate()
+              : DateTime.tryParse(json['createdAt'] as String) ??
+                  DateTime.now()),
     );
   }
 }

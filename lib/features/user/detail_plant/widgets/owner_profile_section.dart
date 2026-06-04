@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:intl/intl.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
+import 'package:plant_match_v2/core/theme/inter_text_style.dart';
 import 'package:plant_match_v2/core/widgets/avatar/avatar.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/features/user/presentation/user_page_route.dart';
@@ -15,6 +17,7 @@ class OwnerProfileSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final displayName = owner.userName.getOrElse(() => owner.firstName);
+    final date = DateFormat('MMMM y', 'fr_FR');
 
     return Material(
       color: AppColors.white,
@@ -57,6 +60,13 @@ class OwnerProfileSection extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 2),
+                    Text(
+                      "Membre depuis ${date.format(owner.createdAt)}",
+                      style: InterTextStyle.inter(
+                        AppTypo.textXs,
+                        color: AppColors.greyMedium,
+                      ),
+                    ),
                     const Text(
                       "Voir le profil",
                       style: TextStyle(

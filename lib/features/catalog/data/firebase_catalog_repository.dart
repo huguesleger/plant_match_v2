@@ -115,6 +115,19 @@ class FirebaseCatalogRepository implements CatalogRepository {
             .toList());
   }
 
+  @override
+  TaskEither<Failure, Unit> incrementCatalogViews(String catalogId) {
+    return TaskEither.tryCatch(
+      () async {
+        await firestore.collection('catalogs').doc(catalogId).update({
+          'views': FieldValue.increment(1),
+        });
+        return unit;
+      },
+      (error, _) => _mapErrorToFailure(error),
+    );
+  }
+
   Failure _mapErrorToFailure(Object error) {
     if (error is Failure) return error;
     if (error is FirebaseException) {

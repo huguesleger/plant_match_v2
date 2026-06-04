@@ -62,9 +62,12 @@ class AppBarHeaderSlider extends StatelessWidget
             )
           : const SizedBox.shrink(),
       elevation: 0,
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.white,
       actions: actions,
       actionsPadding: actions != null ? actionsPadding : null,
+      scrolledUnderElevation: 2,
+      shadowColor: AppColors.black,
+      surfaceTintColor: AppColors.white,
     );
   }
 }
