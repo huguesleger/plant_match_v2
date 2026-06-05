@@ -9,7 +9,13 @@ import 'package:plant_match_v2/features/home/presentation/widgets/home_filter_ch
 import 'package:plant_match_v2/features/home/presentation/widgets/home_around_me_section.dart';
 import 'package:plant_match_v2/features/home/presentation/widgets/home_recommended_banner.dart';
 import 'package:plant_match_v2/features/home/presentation/widgets/home_recent_activity.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/features/home/presentation/recent_activity/recent_activity_page_route.dart';
+import 'package:plant_match_v2/features/recommendation/presentation/recommendation_page_route.dart';
+import 'package:plant_match_v2/features/recommendation/presentation/cubit/saved_recommendation_cubit.dart';
+import 'package:plant_match_v2/features/recommendation/presentation/cubit/saved_recommendation_state.dart';
+import 'package:plant_match_v2/features/home/presentation/widgets/home_recommendation_section.dart';
 
 class HomeLoadedContent extends StatefulWidget {
   const HomeLoadedContent({
@@ -49,11 +55,36 @@ class _HomeLoadedContentState extends State<HomeLoadedContent> {
                 ?.onPageChanged(1),
           ),
           const SizedBox(height: 24),
-          HomeRecommendedBanner(
-              onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                        content: Text("Questionnaire bientôt disponible ! 🌿")),
-                  )),
+          BlocBuilder<SavedRecommendationCubit, SavedRecommendationState>(
+            builder: (context, state) {
+              return state.match(
+                initial: (_) => const SizedBox.shrink(),
+                loading: (_) => const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: CircularProgressIndicator(
+                      color: AppColors.greenDark,
+                    ),
+                  ),
+                ),
+                loaded: (loadedState) => loadedState.answers.match(
+                  () => HomeRecommendedBanner(
+                    onPressed: () => _navigateToQuestionnaire(context),
+                  ),
+                  (answers) => HomeRecommendationSection(
+                    plants: loadedState.suggestedPlants,
+                    onAdjustPressed: () => _navigateToQuestionnaire(context),
+                  ),
+                ),
+                error: (errorState) => Center(
+                  child: Text(
+                    "Erreur de chargement : ${errorState.message}",
+                    style: const TextStyle(color: Colors.red, fontSize: 12),
+                  ),
+                ),
+              );
+            },
+          ),
           const SizedBox(height: 24),
           HomeRecentActivity(
             activities: _getRecentActivities(),
@@ -121,5 +152,19 @@ class _HomeLoadedContentState extends State<HomeLoadedContent> {
     });
     list.sort((a, b) => b.$1.createdAt.compareTo(a.$1.createdAt));
     return list.take(5).toList();
+  }
+
+  Future<void> _navigateToQuestionnaire(BuildContext context) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const RecommendationPageRoute(),
+      ),
+    );
+    if (context.mounted) {
+      context
+          .read<SavedRecommendationCubit>()
+          .loadSavedRecommendations(widget.currentUser.uid);
+    }
   }
 }

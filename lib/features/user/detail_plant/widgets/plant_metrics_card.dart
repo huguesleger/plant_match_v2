@@ -61,16 +61,17 @@ class PlantMetricsCard extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: AppSpacing.paddingAll,
+      padding: AppSpacing.paddingVertical +
+          const EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: AppColors.greyUltraLight),
       ),
       child: Row(
         children: [
           Expanded(
-            flex: 3,
+            flex: 4,
             child: _MetricItem(
               icon: LucideIcons.map_pin,
               title: distanceText,
@@ -90,7 +91,7 @@ class PlantMetricsCard extends StatelessWidget {
           ),
           _buildDivider(),
           Expanded(
-            flex: 2,
+            flex: 3,
             child: _MetricItem(
               icon: LucideIcons.eye,
               title: '$viewsCount',
