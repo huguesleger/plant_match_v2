@@ -65,11 +65,12 @@ class PlantMetricsCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.greyLight),
+        border: Border.all(color: AppColors.greyUltraLight),
       ),
       child: Row(
         children: [
           Expanded(
+            flex: 3,
             child: _MetricItem(
               icon: LucideIcons.map_pin,
               title: distanceText,
@@ -79,6 +80,7 @@ class PlantMetricsCard extends StatelessWidget {
           ),
           _buildDivider(),
           Expanded(
+            flex: 4,
             child: _MetricItem(
               icon: LucideIcons.calendar,
               title: 'Publiée il y a',
@@ -88,6 +90,7 @@ class PlantMetricsCard extends StatelessWidget {
           ),
           _buildDivider(),
           Expanded(
+            flex: 2,
             child: _MetricItem(
               icon: LucideIcons.eye,
               title: '$viewsCount',
@@ -100,10 +103,13 @@ class PlantMetricsCard extends StatelessWidget {
     );
   }
 
-  Widget _buildDivider() => Container(
-        height: 35,
-        width: 1,
-        color: AppColors.greyLight,
+  Widget _buildDivider() => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 6),
+        child: Container(
+          height: 35,
+          width: 1,
+          color: AppColors.greyLight,
+        ),
       );
 }
 
@@ -123,13 +129,13 @@ class _MetricItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         ClipOval(
           child: Container(
             color: AppColors.greenLight.withValues(alpha: 0.2),
-            width: 35,
-            height: 35,
+            width: 30,
+            height: 30,
             child: Icon(icon, color: AppColors.greenDark, size: AppTypo.text),
           ),
         ),
@@ -141,20 +147,20 @@ class _MetricItem extends StatelessWidget {
             children: [
               Text(
                 title,
+                maxLines: 1,
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 11,
                   fontWeight: isTitleBold ? FontWeight.bold : FontWeight.normal,
                   color: AppColors.black,
                 ),
-                overflow: TextOverflow.ellipsis,
               ),
               Text(
                 subtitle,
+                maxLines: 1,
                 style: const TextStyle(
-                  fontSize: 11,
+                  fontSize: 10,
                   color: Colors.grey,
                 ),
-                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
