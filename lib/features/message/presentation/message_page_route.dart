@@ -5,6 +5,8 @@ import 'package:plant_match_v2/features/chat_plant/data/firebase_chat_plant.dart
 import 'package:plant_match_v2/features/chat_plant/domain/repository/chat_plant_repository.dart';
 import 'package:plant_match_v2/features/exchange/data/firebase_exchange.dart';
 import 'package:plant_match_v2/features/exchange/domain/repository/exchange_repository.dart';
+import 'package:plant_match_v2/features/donation/data/firebase_donation.dart';
+import 'package:plant_match_v2/features/donation/domain/repository/donation_repository.dart';
 import 'package:plant_match_v2/features/message/presentation/cubit/message_cubit.dart';
 import 'package:plant_match_v2/features/message/presentation/message_screen.dart';
 import 'package:plant_match_v2/features/user/data/firebase_user.dart';
@@ -17,6 +19,7 @@ class MessagesPageRoute extends StatelessWidget {
   final ChatPlantRepository chatPlantRepository = FirebaseChatPlant();
   final UserRepository userRepository = FirebaseUser();
   final ExchangeRepository exchangeRepository = FirebaseExchange();
+  final DonationRepository donationRepository = FirebaseDonation();
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +36,7 @@ class MessagesPageRoute extends StatelessWidget {
         chatPlantRepository: chatPlantRepository,
         userRepository: userRepository,
         exchangeRepository: exchangeRepository,
+        donationRepository: donationRepository,
       )..load(userId),
       child: const MessagesScreen(),
     );

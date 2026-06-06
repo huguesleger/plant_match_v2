@@ -12,6 +12,8 @@ import 'package:plant_match_v2/features/profil/presentation/profil_page_route.da
 import 'package:plant_match_v2/features/chat_plant/data/firebase_chat_plant.dart';
 import 'package:plant_match_v2/features/exchange/data/firebase_exchange.dart';
 import 'package:plant_match_v2/features/exchange/presentation/cubit/unread_exhange_cubit.dart';
+import 'package:plant_match_v2/features/donation/data/firebase_donation.dart';
+import 'package:plant_match_v2/features/donation/presentation/cubit/unread_donation_cubit.dart';
 
 const int _addButtonIndex = 2;
 
@@ -82,6 +84,11 @@ class TemplatePageState extends State<TemplatePage> {
         BlocProvider(
           create: (_) => UnreadExchangesCubit(
             repository: exchangeRepository,
+          )..listen(uid),
+        ),
+        BlocProvider(
+          create: (_) => UnreadDonationsCubit(
+            repository: FirebaseDonation(),
           )..listen(uid),
         ),
       ],

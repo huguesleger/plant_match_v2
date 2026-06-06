@@ -115,7 +115,8 @@ class FirebaseChatPlant implements ChatPlantRepository {
                   ? types.Status.seen
                   : types.Status.sent;
 
-              if (messageType == ChatMessageType.plantExchange.name) {
+              if (messageType == ChatMessageType.plantExchange.name ||
+                  messageType == ChatMessageType.plantDonation.name) {
                 return types.CustomMessage(
                   id: doc.id,
                   author: types.User(id: doc['senderId']),
@@ -125,7 +126,7 @@ class FirebaseChatPlant implements ChatPlantRepository {
                       .millisecondsSinceEpoch,
                   metadata: {
                     'readAt': data['readAt'],
-                    'messageType': ChatMessageType.plantExchange.name,
+                    'messageType': messageType,
                     'plantId': data['plantId'],
                     'plantName': data['plantName'],
                     'plantImage': data['plantImage'],
@@ -293,6 +294,10 @@ class FirebaseChatPlant implements ChatPlantRepository {
           isExchangeCompleted: data['isExchangeCompleted'] ?? false,
           acceptedExchangeId:
               Option.fromNullable(data['acceptedExchangeId'] as String?),
+          hasUnreadDonation: false,
+          isDonationCompleted: data['isDonationCompleted'] ?? false,
+          acceptedDonationId:
+              Option.fromNullable(data['acceptedDonationId'] as String?),
           isOtherUserOnline: false,
         );
       }).toList();
@@ -448,6 +453,48 @@ class FirebaseChatPlant implements ChatPlantRepository {
         return unit;
       },
       (error, _) => UnexpectedFailure('Erreur envoi message échange: $error'),
+    );
+  }
+
+  @override
+  TaskEither<Failure, Unit> sendPlantDonationMessage({
+    required String chatId,
+    required String senderId,
+    required String receiverId,
+    required String plantId,
+    required String plantName,
+    required String plantImage,
+  }) {
+    return TaskEither.tryCatch(
+      () async {
+        if (chatId.isEmpty || senderId.isEmpty || receiverId.isEmpty) {
+          throw Exception('Paramètres invalides pour l\'envoi du message de donation');
+        }
+
+        await _ensureChatExists(chatId, senderId, receiverId);
+
+        final chatRef = _chats.doc(chatId);
+
+        await _messages(chatId).add({
+          'senderId': senderId,
+          'receiverId': receiverId,
+          'messageType': ChatMessageType.plantDonation.name,
+          'plantId': plantId,
+          'plantName': plantName,
+          'plantImage': plantImage,
+          'text': 'Demande de donation',
+          'timestamp': FieldValue.serverTimestamp(),
+          'readAt': null,
+        });
+
+        await chatRef.update({
+          'lastMessage': 'Demande de donation',
+          'lastMessageAt': FieldValue.serverTimestamp(),
+          'deletedFor': FieldValue.arrayRemove([senderId, receiverId]),
+        });
+        return unit;
+      },
+      (error, _) => UnexpectedFailure('Erreur envoi message donation: $error'),
     );
   }
 

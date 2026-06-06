@@ -51,6 +51,15 @@ abstract class ChatPlantRepository {
     required String plantImage,
   });
 
+  TaskEither<Failure, Unit> sendPlantDonationMessage({
+    required String chatId,
+    required String senderId,
+    required String receiverId,
+    required String plantId,
+    required String plantName,
+    required String plantImage,
+  });
+
   TaskEither<Failure, Unit> reportChat({
     required String chatId,
     required String reporterUserId,

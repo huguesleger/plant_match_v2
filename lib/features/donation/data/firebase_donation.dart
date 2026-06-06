@@ -186,4 +186,44 @@ class FirebaseDonation implements DonationRepository {
       (error, _) => UnexpectedFailure('Erreur lors de la récupération des donations : $error'),
     );
   }
+
+  @override
+  Stream<int> unreadDonationCount(String uid) {
+    return FirebaseFirestore.instance
+        .collection('plant_donations')
+        .where(Filter.or(
+          Filter.and(
+            Filter('ownerId', isEqualTo: uid),
+            Filter('seenByOwner', isEqualTo: false),
+          ),
+          Filter.and(
+            Filter('requestedBy', isEqualTo: uid),
+            Filter('seenByRequester', isEqualTo: false),
+          ),
+        ))
+        .snapshots()
+        .map((snapshot) => snapshot.docs.length);
+  }
+
+  @override
+  Stream<List<Donation>> watchUnreadDonations(String uid) {
+    return FirebaseFirestore.instance
+        .collection('plant_donations')
+        .where(Filter.or(
+          Filter.and(
+            Filter('ownerId', isEqualTo: uid),
+            Filter('seenByOwner', isEqualTo: false),
+          ),
+          Filter.and(
+            Filter('requestedBy', isEqualTo: uid),
+            Filter('seenByRequester', isEqualTo: false),
+          ),
+        ))
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs
+          .map((doc) => Donation.fromJson(doc.id, doc.data()))
+          .toList();
+    });
+  }
 }

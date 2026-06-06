@@ -20,4 +20,8 @@ abstract class DonationRepository {
   TaskEither<Failure, Unit> validateCode(String donationId, String code, String userId);
 
   TaskEither<Failure, List<Donation>> getCompletedDonations(String uid);
+
+  Stream<int> unreadDonationCount(String uid);
+
+  Stream<List<Donation>> watchUnreadDonations(String uid);
 }

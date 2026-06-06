@@ -20,7 +20,8 @@ class ChatPlantCustomMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final metadata = message.metadata;
-    if (metadata?['messageType'] == ChatMessageType.plantExchange.name) {
+    if (metadata?['messageType'] == ChatMessageType.plantExchange.name ||
+        metadata?['messageType'] == ChatMessageType.plantDonation.name) {
       final pId = metadata?['plantId'] as String? ?? '';
       final pName = metadata?['plantName'] as String? ?? '';
       final pImage = metadata?['plantImage'] as String? ?? '';

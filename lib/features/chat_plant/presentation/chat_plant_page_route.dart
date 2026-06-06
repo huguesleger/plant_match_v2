@@ -47,7 +47,10 @@ class ChatPlantPageRoute extends StatelessWidget {
           )..listen(chatId),
         ),
         BlocProvider(
-          create: (_) => DonationCubit(repository: FirebaseDonation())..listen(chatId),
+          create: (_) => DonationCubit(
+            repository: FirebaseDonation(),
+            chatRepository: chatRepository,
+          )..listen(chatId),
         ),
         BlocProvider(
           create: (_) => ChatPlantCubit(repository: chatRepository)

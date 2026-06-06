@@ -1,15 +1,20 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:plant_match_v2/features/chat_plant/domain/repository/chat_plant_repository.dart';
 import 'package:plant_match_v2/features/donation/domain/entities/donation.dart';
 import 'package:plant_match_v2/features/donation/domain/repository/donation_repository.dart';
 import 'package:plant_match_v2/features/donation/presentation/state/donation_state.dart';
 
 class DonationCubit extends Cubit<DonationState> {
   final DonationRepository repository;
+  final ChatPlantRepository chatRepository;
   StreamSubscription<Donation?>? _sub;
 
-  DonationCubit({required this.repository}) : super(DonationInitial());
+  DonationCubit({
+    required this.repository,
+    required this.chatRepository,
+  }) : super(DonationInitial());
 
   void listen(String chatId) {
     _sub?.cancel();
@@ -45,6 +50,14 @@ class DonationCubit extends Cubit<DonationState> {
 
     repository
         .createDonation(donation)
+        .flatMap((_) => chatRepository.sendPlantDonationMessage(
+              chatId: donation.chatId,
+              senderId: donation.requestedBy,
+              receiverId: donation.ownerId,
+              plantId: donation.plantId,
+              plantName: donation.plantName,
+              plantImage: donation.plantImage,
+            ))
         .match(
           (failure) => DonationError(failure.message),
           (_) => state,

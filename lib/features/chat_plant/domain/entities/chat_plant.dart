@@ -5,6 +5,7 @@ import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 enum ChatMessageType {
   text,
   plantExchange,
+  plantDonation,
 }
 
 class ChatPlant {
@@ -27,6 +28,9 @@ class ChatPlant {
   final bool hasUnreadExchange;
   final Option<String> acceptedExchangeId;
   final bool isExchangeCompleted;
+  final bool hasUnreadDonation;
+  final Option<String> acceptedDonationId;
+  final bool isDonationCompleted;
   final bool isOtherUserOnline;
 
   ChatPlant({
@@ -47,6 +51,9 @@ class ChatPlant {
     required this.hasUnreadExchange,
     required this.acceptedExchangeId,
     required this.isExchangeCompleted,
+    required this.hasUnreadDonation,
+    required this.acceptedDonationId,
+    required this.isDonationCompleted,
     required this.isOtherUserOnline,
   });
 
@@ -57,6 +64,9 @@ class ChatPlant {
     bool? hasUnreadExchange,
     Option<String>? acceptedExchangeId,
     bool? isExchangeCompleted,
+    bool? hasUnreadDonation,
+    Option<String>? acceptedDonationId,
+    bool? isDonationCompleted,
     bool? isOtherUserOnline,
   }) {
     return ChatPlant(
@@ -77,6 +87,9 @@ class ChatPlant {
       hasUnreadExchange: hasUnreadExchange ?? this.hasUnreadExchange,
       acceptedExchangeId: acceptedExchangeId ?? this.acceptedExchangeId,
       isExchangeCompleted: isExchangeCompleted ?? this.isExchangeCompleted,
+      hasUnreadDonation: hasUnreadDonation ?? this.hasUnreadDonation,
+      acceptedDonationId: acceptedDonationId ?? this.acceptedDonationId,
+      isDonationCompleted: isDonationCompleted ?? this.isDonationCompleted,
       isOtherUserOnline: isOtherUserOnline ?? this.isOtherUserOnline,
     );
   }
@@ -122,6 +135,9 @@ class ChatPlant {
       hasUnreadExchange: false,
       acceptedExchangeId: Option.fromNullable(json['acceptedExchangeId'] as String?),
       isExchangeCompleted: json['isExchangeCompleted'] ?? false,
+      hasUnreadDonation: false,
+      acceptedDonationId: Option.fromNullable(json['acceptedDonationId'] as String?),
+      isDonationCompleted: json['isDonationCompleted'] ?? false,
       isOtherUserOnline: json['isOtherUserOnline'] ?? false,
     );
   }
