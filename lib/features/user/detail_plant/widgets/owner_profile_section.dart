@@ -41,8 +41,7 @@ class OwnerProfileSection extends StatelessWidget {
           child: Row(
             children: [
               Avatar(
-                imageUrl: owner.profilImg,
-                name: displayName,
+                profilUser: owner,
                 radius: 20,
                 imgSizeAvatar: 40,
               ),

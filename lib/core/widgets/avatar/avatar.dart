@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
@@ -24,7 +25,9 @@ class Avatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String effectiveImageUrl = imageUrl ?? profilUser?.profilImg ?? '';
-    final String effectiveName = name ?? profilUser?.fullName ?? '';
+    final String effectiveName = name ??
+        profilUser?.userName.getOrElse(() => profilUser?.firstName ?? '') ??
+        '';
 
     final bool isNetworkImage = effectiveImageUrl.contains('http');
     final bool isSelectedAvatar =

@@ -14,12 +14,7 @@ extension StringCapitalize on String {
   }
 
   String toInitials() {
-    if (trim().isEmpty) return '';
-    final words = trim().split(RegExp(r'\s+')).where((w) => w.isNotEmpty).toList();
-    if (words.isEmpty) return '';
-    if (words.length > 1) {
-      return (words[0][0] + words[1][0]).toUpperCase();
-    }
-    return words[0][0].toUpperCase();
+    final words = trim().split(RegExp(r'[\s\-]+')).where((w) => w.isNotEmpty);
+    return words.isEmpty ? '' : words.take(2).map((w) => w[0].toUpperCase()).join();
   }
 }

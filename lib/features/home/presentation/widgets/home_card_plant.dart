@@ -139,7 +139,6 @@ class _HomeCardPlantAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final displayName = owner.userName.getOrElse(() => owner.firstName);
     return Container(
       decoration: BoxDecoration(
         shape: BoxShape.circle,
@@ -150,8 +149,7 @@ class _HomeCardPlantAvatar extends StatelessWidget {
         ],
       ),
       child: Avatar(
-        imageUrl: owner.profilImg,
-        name: displayName,
+        profilUser: owner,
         radius: 14,
         imgSizeAvatar: 28,
       ),

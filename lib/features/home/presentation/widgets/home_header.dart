@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
@@ -10,13 +11,13 @@ class HomeHeader extends StatelessWidget {
   const HomeHeader({
     super.key,
     required this.firstName,
-    required this.fullName,
     required this.profilImg,
+    required this.userName,
   });
 
   final String firstName;
-  final String fullName;
   final String profilImg;
+  final Option<String> userName;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +30,10 @@ class HomeHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TitlePage(
-                title: "Hello, ${firstName.toCapitalize()}",
+                title: "Hello, ${userName.match(
+                  () => firstName.toCapitalizeWords(),
+                  (uName) => uName.toCapitalizeWords(),
+                )}",
                 fontSize: AppTypo.textXl,
               ),
               const Text(
@@ -101,7 +105,10 @@ class HomeHeader extends StatelessWidget {
       ),
       child: Avatar(
         imageUrl: profilImg,
-        name: fullName,
+        name: userName.match(
+          () => firstName,
+          (uName) => uName,
+        ),
         radius: 22,
         imgSizeAvatar: 44,
       ),

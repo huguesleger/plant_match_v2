@@ -48,8 +48,8 @@ class HomeScreen extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: HomeHeader(
                   firstName: currentUser.firstName,
-                  fullName: currentUser.fullName,
                   profilImg: currentUser.profilImg,
+                  userName: currentUser.userName,
                 ),
               ),
             ),

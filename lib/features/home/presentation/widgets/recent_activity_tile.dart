@@ -37,7 +37,7 @@ class RecentActivityTile extends StatelessWidget {
       ),
       child: Row(
         children: [
-          _buildUserAvatar(displayName),
+          _buildUserAvatar(),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -84,10 +84,9 @@ class RecentActivityTile extends StatelessWidget {
     );
   }
 
-  Widget _buildUserAvatar(String displayName) {
+  Widget _buildUserAvatar() {
     return Avatar(
-      imageUrl: owner.profilImg,
-      name: displayName,
+      profilUser: owner,
       radius: 22,
       imgSizeAvatar: 44,
     );
