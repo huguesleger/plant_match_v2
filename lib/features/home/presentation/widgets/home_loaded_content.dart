@@ -11,7 +11,7 @@ import 'package:plant_match_v2/features/home/presentation/widgets/home_recommend
 import 'package:plant_match_v2/features/home/presentation/widgets/home_recent_activity.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
-import 'package:plant_match_v2/features/home/presentation/recent_activity/recent_activity_page_route.dart';
+import 'package:plant_match_v2/features/recent_activity/recent_activity_page_route.dart';
 import 'package:plant_match_v2/features/recommendation/presentation/recommendation_page_route.dart';
 import 'package:plant_match_v2/features/recommendation/presentation/cubit/saved_recommendation_cubit.dart';
 import 'package:plant_match_v2/features/recommendation/presentation/cubit/saved_recommendation_state.dart';

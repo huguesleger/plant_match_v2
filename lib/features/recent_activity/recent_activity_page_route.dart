@@ -6,7 +6,7 @@ import 'package:plant_match_v2/features/catalog/data/firebase_catalog_repository
 import 'package:plant_match_v2/features/profil/data/firebase_profil_repo.dart';
 import 'package:plant_match_v2/core/services/location/location_service.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
-import 'package:plant_match_v2/features/home/presentation/recent_activity/recent_activity_screen.dart';
+import 'package:plant_match_v2/features/recent_activity/recent_activity_screen.dart';
 
 class RecentActivityPageRoute extends StatelessWidget {
   const RecentActivityPageRoute({super.key});

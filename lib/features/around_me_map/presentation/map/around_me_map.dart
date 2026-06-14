@@ -117,6 +117,11 @@ class _AroundMeMapState extends State<AroundMeMap>
               options: MapOptions(
                 initialCenter: _getUserPosition(widget.currentUser),
                 initialZoom: _currentZoom,
+                minZoom: _minZoom,
+                maxZoom: _maxZoom,
+                onPositionChanged: (position, hasGesture) {
+                  _currentZoom = position.zoom;
+                },
                 interactionOptions: InteractionOptions(
                   flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
                   // TODO: retirer cette options qui est juste pour tester sur le simulateur

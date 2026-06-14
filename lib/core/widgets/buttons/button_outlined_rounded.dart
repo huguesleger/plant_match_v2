@@ -11,6 +11,16 @@ class ButtonOutlinedRounded extends StatelessWidget {
     this.padding = const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
   });
 
+  const ButtonOutlinedRounded.small({
+    super.key,
+    required this.text,
+    required this.onPressed,
+    required this.borderColor,
+    required this.textColor,
+    this.fontSize = 12,
+    this.padding = const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+  });
+
   final String text;
   final VoidCallback onPressed;
   final Color borderColor;

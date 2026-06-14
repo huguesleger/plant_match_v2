@@ -6,7 +6,6 @@ import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/widgets/avatar/avatar.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
-import 'package:plant_match_v2/core/widgets/favorite_btn/favorite_btn.dart';
 import 'package:plant_match_v2/features/user/detail_plant/detail_plant.dart';
 
 class RecentActivityTile extends StatelessWidget {
@@ -77,8 +76,6 @@ class RecentActivityTile extends StatelessWidget {
           ),
           const SizedBox(width: 10),
           _buildPlantThumbnail(),
-          const SizedBox(width: 8),
-          _buildFavoriteButton(),
         ],
       ),
     );
@@ -108,20 +105,6 @@ class RecentActivityTile extends StatelessWidget {
             : const Icon(LucideIcons.image,
                 color: AppColors.greyMedium, size: 20),
       ),
-    );
-  }
-
-  Widget _buildFavoriteButton() {
-    return Container(
-      width: 36,
-      height: 36,
-      decoration: BoxDecoration(
-        color: AppColors.greyUltraLight,
-        shape: BoxShape.circle,
-        border: Border.all(color: AppColors.greyLight.withValues(alpha: 0.3)),
-      ),
-      alignment: Alignment.center,
-      child: FavoriteBtn(catalog: catalog, currentUserId: currentUserId),
     );
   }
 

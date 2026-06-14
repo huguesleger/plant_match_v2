@@ -5,6 +5,7 @@ import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
 import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
+import 'package:plant_match_v2/core/widgets/buttons/button_outlined_rounded.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/user/detail_plant/detail_plant.dart';
 
@@ -28,8 +29,6 @@ class HomeRecommendationSection extends StatelessWidget {
           children: [
             const Row(
               children: [
-                Icon(LucideIcons.sparkles, color: AppColors.greenDark, size: 20),
-                SizedBox(width: 6),
                 Text(
                   "Tes suggestions personnalisées",
                   style: TextStyle(
@@ -84,16 +83,11 @@ class HomeRecommendationSection extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          OutlinedButton(
+          ButtonOutlinedRounded.small(
+            borderColor: AppColors.greenDark,
+            textColor: AppColors.greenDark,
+            text: "Ajuster les filtres",
             onPressed: onAdjustPressed,
-            style: OutlinedButton.styleFrom(
-              side: const BorderSide(color: AppColors.greenDark),
-              foregroundColor: AppColors.greenDark,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-            ),
-            child: const Text("Ajuster les filtres"),
           ),
         ],
       ),

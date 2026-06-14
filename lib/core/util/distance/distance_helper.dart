@@ -3,7 +3,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 
 class DistanceHelper {
-  static const double maxDistance = 10.0;
+  static const double maxDistance = 05.0;
 
   static String get maxDistanceFormatted => '${maxDistance.toInt()} km';
 

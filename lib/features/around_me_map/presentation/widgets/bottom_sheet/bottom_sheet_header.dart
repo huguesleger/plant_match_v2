@@ -25,8 +25,8 @@ class BottomSheetHeader extends StatelessWidget {
       children: [
         Avatar(
           profilUser: user,
-          radius: 45,
-          imgSizeAvatar: 90,
+          radius: 35,
+          imgSizeAvatar: 70,
         ),
         const SizedBox(width: 10),
         _buildUserInfo(),
@@ -97,7 +97,9 @@ class _OnlineStatusBadge extends StatelessWidget {
             const SizedBox(width: 2),
           ],
           Text(
-            isOnline ? t.aroundMeMap.status.online : t.aroundMeMap.status.offline,
+            isOnline
+                ? t.aroundMeMap.status.online
+                : t.aroundMeMap.status.offline,
             style: TextStyle(
               color: isOnline ? AppColors.white : AppColors.greyDark,
               fontSize: 8,

@@ -9,7 +9,7 @@ import 'package:plant_match_v2/features/around_me_map/presentation/cubit/around_
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
-import 'package:plant_match_v2/features/home/presentation/widgets/recent_activity_tile.dart';
+import 'package:plant_match_v2/features/recent_activity/recent_activity_tile.dart';
 
 class RecentActivityScreen extends StatelessWidget {
   const RecentActivityScreen({super.key});
