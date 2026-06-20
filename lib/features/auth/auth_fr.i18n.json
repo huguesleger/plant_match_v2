@@ -58,7 +58,8 @@
       "minChars": "Au moins 8 caractères",
       "oneNumber": "Un chiffre",
       "oneUpper": "Une majuscule",
-      "oneSpecial": "Un caractère spécial"
+      "oneSpecial": "Un caractère spécial",
+      "error_rules": "Le mot de passe ne respecte pas les critères requis"
     },
     "cgu": {
       "accept": "J’accepte les ",

@@ -1887,6 +1887,9 @@ class TranslationsAuthRegisterPasswordRulesFr {
 
 	/// fr: 'Un caractère spécial'
 	String get oneSpecial => 'Un caractère spécial';
+
+	/// fr: 'Le mot de passe ne respecte pas les critères requis'
+	String get error_rules => 'Le mot de passe ne respecte pas les critères requis';
 }
 
 // Path: auth.register.cgu
@@ -3009,6 +3012,7 @@ extension on Translations {
 			'auth.register.passwordRules.oneNumber' => 'Un chiffre',
 			'auth.register.passwordRules.oneUpper' => 'Une majuscule',
 			'auth.register.passwordRules.oneSpecial' => 'Un caractère spécial',
+			'auth.register.passwordRules.error_rules' => 'Le mot de passe ne respecte pas les critères requis',
 			'auth.register.cgu.accept' => 'J’accepte les ',
 			'auth.register.cgu.terms' => 'Conditions d’utilisation',
 			'auth.register.cgu.and' => ' et je confirme avoir lu la ',

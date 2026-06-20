@@ -10,11 +10,13 @@ class PasswordField extends StatelessWidget {
     required this.obscureText,
     required this.onPressed,
     required this.controller,
+    this.showErrors = false,
   });
 
   final bool obscureText;
   final VoidCallback onPressed;
   final TextEditingController controller;
+  final bool showErrors;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +25,17 @@ class PasswordField extends StatelessWidget {
       autovalidateMode: AutovalidateMode.onUserInteraction,
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return t.auth.common.password.required;
+          return showErrors ? t.auth.common.password.required : null;
+        }
+        final rules = {
+          MinCharactersValidationRule(8),
+          DigitValidationRule(),
+          UppercaseValidationRule(),
+          SpecialCharacterValidationRule(),
+        };
+        final isAllValid = rules.every((rule) => rule.validate(value));
+        if (!isAllValid) {
+          return showErrors ? t.auth.register.passwordRules.error_rules : null;
         }
         return null;
       },
@@ -51,6 +63,7 @@ class PasswordField extends StatelessWidget {
               children: rules.map(
                 (rule) {
                   final ruleValidated = rule.validate(value);
+                  final isRed = showErrors && !ruleValidated;
                   return Chip(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
@@ -58,7 +71,9 @@ class PasswordField extends StatelessWidget {
                     side: BorderSide(
                       color: ruleValidated
                           ? const Color(0xFF0A9471)
-                          : const Color(0xFF9A9FAF),
+                          : isRed
+                              ? AppColors.error
+                              : const Color(0xFF9A9FAF),
                     ),
                     label: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -68,14 +83,18 @@ class PasswordField extends StatelessWidget {
                           style: TextStyle(
                             color: ruleValidated
                                 ? const Color(0xFF0A9471)
-                                : const Color(0xFF9A9FAF),
+                                : isRed
+                                    ? AppColors.error
+                                    : const Color(0xFF9A9FAF),
                           ),
                         ),
                       ],
                     ),
                     backgroundColor: ruleValidated
                         ? const Color(0xFFD0F7ED)
-                        : const Color(0xFFF4F5F6),
+                        : isRed
+                            ? const Color(0xFFFFEBEE)
+                            : const Color(0xFFF4F5F6),
                   );
                 },
               ).toList(),

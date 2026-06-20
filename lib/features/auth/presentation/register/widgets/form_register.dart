@@ -32,8 +32,12 @@ class _FormRegisterState extends State<FormRegister> {
 
   bool _isPasswordVisible = true;
   bool _isChecked = false;
+  bool _showPasswordErrors = false;
 
   void _onPressedRegister() {
+    setState(() {
+      _showPasswordErrors = true;
+    });
     if (_formKey.currentState?.saveAndValidate() ?? false) {
       context.read<AuthCubit>().registerWithEmailAndPassword(
             email: _emailController.text,
@@ -71,6 +75,7 @@ class _FormRegisterState extends State<FormRegister> {
             PasswordField(
               controller: _passwordController,
               obscureText: _isPasswordVisible,
+              showErrors: _showPasswordErrors,
               onPressed: () =>
                   setState(() => _isPasswordVisible = !_isPasswordVisible),
             ),
