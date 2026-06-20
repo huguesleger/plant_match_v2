@@ -25,28 +25,34 @@ class HomeRecentActivity extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              "Activité récente",
-              style: TextStyle(fontSize: AppTypo.textM, fontWeight: FontWeight.bold, color: AppColors.black),
-            ),
-            TextButton(
-              onPressed: onSeeAllPressed,
-              child: const Row(
-                children: [
-                  Text("Voir tout", style: TextStyle(color: AppColors.greyMedium, fontSize: AppTypo.textXs)),
-                  SizedBox(width: 2),
-                  Icon(LucideIcons.chevron_right, color: AppColors.greyMedium, size: 12),
-                ],
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                "Activité récente",
+                style: TextStyle(fontSize: AppTypo.textM, fontWeight: FontWeight.bold, color: AppColors.black),
               ),
-            ),
-          ],
+              TextButton(
+                onPressed: onSeeAllPressed,
+                child: const Row(
+                  children: [
+                    Text("Voir tout", style: TextStyle(color: AppColors.greyMedium, fontSize: AppTypo.textXs)),
+                    SizedBox(width: 2),
+                    Icon(LucideIcons.chevron_right, color: AppColors.greyMedium, size: 12),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
         const SizedBox(height: 10),
         activities.isEmpty
-            ? const Text("Aucune activité récente", style: TextStyle(color: AppColors.greyMedium, fontSize: AppTypo.textS))
+            ? const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12),
+                child: Text("Aucune activité récente", style: TextStyle(color: AppColors.greyMedium, fontSize: AppTypo.textS)),
+              )
             : ListView.separated(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),

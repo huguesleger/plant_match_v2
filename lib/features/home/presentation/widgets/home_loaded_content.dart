@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart' hide State;
-import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/util/distance/distance_helper.dart';
 import 'package:plant_match_v2/core/widgets/template/template_page.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
-import 'package:plant_match_v2/features/home/presentation/widgets/home_filter_chips.dart';
+import 'package:plant_match_v2/core/widgets/filter/filter_bar.dart';
+import 'package:plant_match_v2/features/user/domain/entities/catalog_filter.dart';
 import 'package:plant_match_v2/features/home/presentation/widgets/home_around_me_section.dart';
 import 'package:plant_match_v2/features/home/presentation/widgets/home_recommended_banner.dart';
 import 'package:plant_match_v2/features/home/presentation/widgets/home_recent_activity.dart';
@@ -34,64 +34,85 @@ class HomeLoadedContent extends StatefulWidget {
 }
 
 class _HomeLoadedContentState extends State<HomeLoadedContent> {
-  HomeFilterOption _filter = HomeFilterOption.all;
+  CatalogFilter _filter = CatalogFilter.all;
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: AppSpacing.paddingAll,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          HomeFilterChips(
-              selectedOption: _filter,
-              onOptionSelected: (o) => setState(() => _filter = o)),
-          const SizedBox(height: 24),
-          HomeAroundMeSection(
-            plants: _getFilteredPlants(),
-            isGeolocated: _hasValidLoc(widget.currentUser),
-            onSeeAllPressed: () => context
-                .findAncestorStateOfType<TemplatePageState>()
-                ?.onPageChanged(1),
+          FilterBar<CatalogFilter>(
+            filters: CatalogFilter.values,
+            selected: _filter,
+            onChanged: (filter) => setState(() => _filter = filter),
+            labelBuilder: (f) => f.label,
+            iconBuilder: (f) => f.icon,
           ),
-          const SizedBox(height: 24),
-          BlocBuilder<SavedRecommendationCubit, SavedRecommendationState>(
-            builder: (context, state) {
-              return state.match(
-                initial: (_) => const SizedBox.shrink(),
-                loading: (_) => const Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: CircularProgressIndicator(
-                      color: AppColors.greenDark,
+          Padding(
+            padding: const EdgeInsets.only(top: 24, bottom: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: HomeAroundMeSection(
+                    plants: _getFilteredPlants(),
+                    isGeolocated: _hasValidLoc(widget.currentUser),
+                    onSeeAllPressed: () => context
+                        .findAncestorStateOfType<TemplatePageState>()
+                        ?.onPageChanged(1),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: BlocBuilder<SavedRecommendationCubit, SavedRecommendationState>(
+                    builder: (context, state) {
+                      return state.match(
+                        initial: (_) => const SizedBox.shrink(),
+                        loading: (_) => const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: CircularProgressIndicator(
+                              color: AppColors.greenDark,
+                            ),
+                          ),
+                        ),
+                        loaded: (loadedState) => loadedState.answers.match(
+                          () => HomeRecommendedBanner(
+                            onPressed: () => _navigateToQuestionnaire(context),
+                          ),
+                          (answers) => HomeRecommendationSection(
+                            plants: loadedState.suggestedPlants,
+                            onAdjustPressed: () =>
+                                _navigateToQuestionnaire(context),
+                          ),
+                        ),
+                        error: (errorState) => Center(
+                          child: Text(
+                            "Erreur de chargement : ${errorState.message}",
+                            style:
+                                const TextStyle(color: Colors.red, fontSize: 12),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: HomeRecentActivity(
+                    activities: _getRecentActivities(),
+                    onSeeAllPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const RecentActivityPageRoute()),
                     ),
                   ),
                 ),
-                loaded: (loadedState) => loadedState.answers.match(
-                  () => HomeRecommendedBanner(
-                    onPressed: () => _navigateToQuestionnaire(context),
-                  ),
-                  (answers) => HomeRecommendationSection(
-                    plants: loadedState.suggestedPlants,
-                    onAdjustPressed: () => _navigateToQuestionnaire(context),
-                  ),
-                ),
-                error: (errorState) => Center(
-                  child: Text(
-                    "Erreur de chargement : ${errorState.message}",
-                    style: const TextStyle(color: Colors.red, fontSize: 12),
-                  ),
-                ),
-              );
-            },
-          ),
-          const SizedBox(height: 24),
-          HomeRecentActivity(
-            activities: _getRecentActivities(),
-            onSeeAllPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (_) => const RecentActivityPageRoute()),
+              ],
             ),
           ),
         ],
@@ -115,25 +136,16 @@ class _HomeLoadedContentState extends State<HomeLoadedContent> {
         final dist =
             DistanceHelper.calculateDistance(widget.currentUser, owner);
         if (dist > DistanceHelper.maxDistance) continue;
-        if (_filter == HomeFilterOption.donation &&
-            cat.offerType != OfferType.donation) {
-          continue;
+        final isMatch = switch (_filter) {
+          CatalogFilter.all => true,
+          CatalogFilter.donation => cat.offerType == OfferType.donation,
+          CatalogFilter.exchange => cat.offerType == OfferType.exchange,
+          CatalogFilter.outdoor => cat.environment == Environment.outdoor,
+          CatalogFilter.indoor => cat.environment == Environment.indoor,
+        };
+        if (isMatch) {
+          list.add((cat, owner, dist));
         }
-        if (_filter == HomeFilterOption.exchange &&
-            cat.offerType != OfferType.exchange) {
-          continue;
-        }
-        if (_filter == HomeFilterOption.cutting &&
-            !cat.name.toLowerCase().contains("bouture") &&
-            !cat.description.toLowerCase().contains("bouture")) {
-          continue;
-        }
-        if (_filter == HomeFilterOption.rare &&
-            !cat.name.toLowerCase().contains("rare") &&
-            !cat.name.toLowerCase().contains("monstera")) {
-          continue;
-        }
-        list.add((cat, owner, dist));
       }
     });
     return list..sort((a, b) => a.$3.compareTo(b.$3));

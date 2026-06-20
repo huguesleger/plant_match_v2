@@ -34,49 +34,52 @@ class RecentActivityTile extends StatelessWidget {
           ),
         ),
       ),
-      child: Row(
-        children: [
-          _buildUserAvatar(),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                RichText(
-                  text: TextSpan(
-                    style: const TextStyle(
-                        color: AppColors.black, fontSize: AppTypo.textS),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        child: Row(
+          children: [
+            _buildUserAvatar(),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  RichText(
+                    text: TextSpan(
+                      style: const TextStyle(
+                          color: AppColors.black, fontSize: AppTypo.textS),
+                      children: [
+                        TextSpan(
+                            text: displayName,
+                            style: const TextStyle(fontWeight: FontWeight.bold)),
+                        const TextSpan(text: " a ajouté une plante"),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
                     children: [
-                      TextSpan(
-                          text: displayName,
-                          style: const TextStyle(fontWeight: FontWeight.bold)),
-                      const TextSpan(text: " a ajouté une plante"),
+                      const Icon(
+                        LucideIcons.calendar_clock,
+                        color: AppColors.greyMedium,
+                        size: 12,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        _formatTimeAgo(catalog.createdAt),
+                        style: const TextStyle(
+                            color: AppColors.greyMedium,
+                            fontSize: AppTypo.textXs),
+                      ),
                     ],
                   ),
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    const Icon(
-                      LucideIcons.calendar_clock,
-                      color: AppColors.greyMedium,
-                      size: 12,
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      _formatTimeAgo(catalog.createdAt),
-                      style: const TextStyle(
-                          color: AppColors.greyMedium,
-                          fontSize: AppTypo.textXs),
-                    ),
-                  ],
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          const SizedBox(width: 10),
-          _buildPlantThumbnail(),
-        ],
+            const SizedBox(width: 10),
+            _buildPlantThumbnail(),
+          ],
+        ),
       ),
     );
   }

@@ -50,18 +50,20 @@ class HomeAroundMeSection extends StatelessWidget {
                 ),
               ],
             ),
-            TextButton(
+            TextButton.icon(
               onPressed: onSeeAllPressed,
-              child: const Row(
-                children: [
-                  Text("Voir sur la carte",
-                      style: TextStyle(
-                          color: AppColors.greyMedium,
-                          fontSize: AppTypo.textXs)),
-                  SizedBox(width: 2),
-                  Icon(LucideIcons.chevron_right,
-                      color: AppColors.greyMedium, size: 12),
-                ],
+              iconAlignment: IconAlignment.end,
+              label: const Text(
+                "Voir sur la carte",
+                style: TextStyle(
+                  color: AppColors.greyMedium,
+                  fontSize: AppTypo.textXs,
+                ),
+              ),
+              icon: const Icon(
+                LucideIcons.chevron_right,
+                color: AppColors.greyMedium,
+                size: 12,
               ),
             ),
           ],
