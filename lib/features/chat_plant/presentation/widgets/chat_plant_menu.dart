@@ -195,9 +195,14 @@ class ChatPlantMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = context.watch<ChatPlantCubit>().state;
-    final isBlocked = switch (state) {
-      ChatPlantLoaded(:final isBlocked) => isBlocked,
-      _ => false,
+    final blockedByMe = switch (state) {
+      ChatPlantLoaded(:final blockStatus) =>
+        blockStatus == BlockStatus.blockedByMe,
+      ChatPlantInitial() ||
+      ChatPlantLoading() ||
+      ChatPlantBlocked() ||
+      ChatPlantError() =>
+        false,
     };
 
     return MenuAnchor(
@@ -237,7 +242,7 @@ class ChatPlantMenu extends StatelessWidget {
           onPressed: () => _onReport(context),
           child: Text(t.chatPlant.menu.report),
         ),
-        isBlocked
+        blockedByMe
             ? MenuItemButton(
                 onPressed: () => _onUnblock(context),
                 child: Text(t.chatPlant.menu.unblock),

@@ -6,7 +6,7 @@ import 'package:plant_match_v2/features/around_me_map/presentation/cubit/around_
 import 'package:plant_match_v2/features/around_me_map/presentation/cubit/around_me_state.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/around_me_empty.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/map/around_me_map.dart';
-import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
+import 'package:plant_match_v2/core/util/distance/distance_helper.dart';
 
 class AroundMeScreen extends StatelessWidget {
   const AroundMeScreen({super.key, required this.uid});
@@ -32,7 +32,7 @@ class AroundMeScreen extends StatelessWidget {
               :final currentUser,
               :final userCatalogs
             ) =>
-              _hasValidLocation(currentUser)
+              DistanceHelper.hasValidLocation(currentUser)
                   ? Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -52,14 +52,4 @@ class AroundMeScreen extends StatelessWidget {
       ),
     );
   }
-
-  bool _hasValidLocation(ProfilUser user) =>
-      user.latitude.match(
-        () => false,
-        (lat) => lat != 0,
-      ) &&
-      user.longitude.match(
-        () => false,
-        (lng) => lng != 0,
-      );
 }

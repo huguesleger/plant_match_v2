@@ -122,7 +122,7 @@ class RecommendationCubit extends SafeCubit<RecommendationState> {
     emit(const RecommendationLoading());
     _repository
         .saveAnswers(_userId, answers)
-        .flatMap((_) => _repository.getRecommendedPlants(answers))
+        .flatMap((_) => _repository.getRecommendedPlants(_userId, answers))
         .match(
           (failure) => emit(RecommendationError(message: failure.message)),
           (plants) => emit(RecommendationResult(suggestedPlants: plants)),

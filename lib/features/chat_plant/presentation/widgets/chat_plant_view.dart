@@ -10,6 +10,7 @@ import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/cubit/chat_plant_cubit.dart';
+import 'package:plant_match_v2/features/chat_plant/presentation/state/chat_plant_state.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/chat_plant_custom_message.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/chat_plant_text_input.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
@@ -33,7 +34,7 @@ class ChatPlantView extends StatelessWidget {
     required this.plantOwnerName,
     required this.plantOfferType,
     required this.messages,
-    this.isBlocked = false,
+    this.blockStatus = BlockStatus.none,
   });
 
   final String chatId;
@@ -45,7 +46,7 @@ class ChatPlantView extends StatelessWidget {
   final String plantOwnerName;
   final OfferType plantOfferType;
   final List<types.Message> messages;
-  final bool isBlocked;
+  final BlockStatus blockStatus;
 
   void _send(BuildContext context, String userId, String text) {
     final profilCubit = context.read<ProfilCubit>();
@@ -105,8 +106,11 @@ class ChatPlantView extends StatelessWidget {
                   currentUserId: userId,
                   state: donationState,
                 ),
-                isBlocked
-                    ? _BlockedBanner(blockedUserId: otherUserId)
+                blockStatus != BlockStatus.none
+                    ? _BlockedBanner(
+                        blockedUserId: otherUserId,
+                        blockedByMe: blockStatus == BlockStatus.blockedByMe,
+                      )
                     : ChatPlantTextInput(
                         onSend: (text) => _send(context, userId, text),
                       ),
@@ -234,9 +238,13 @@ class _StatusIcon extends StatelessWidget {
 }
 
 class _BlockedBanner extends StatelessWidget {
-  const _BlockedBanner({required this.blockedUserId});
+  const _BlockedBanner({
+    required this.blockedUserId,
+    required this.blockedByMe,
+  });
 
   final String blockedUserId;
+  final bool blockedByMe;
 
   String _currentUserId(BuildContext context) =>
       context.read<AuthCubit>().userId ?? '';
@@ -287,25 +295,29 @@ class _BlockedBanner extends StatelessWidget {
               const Icon(LucideIcons.ban, size: 16, color: AppColors.grey),
               const SizedBox(width: 8),
               Text(
-                t.chatPlant.view.blocked_user_banner,
+                blockedByMe
+                    ? t.chatPlant.view.blocked_user_banner
+                    : t.chatPlant.view.blocked_by_other_banner,
                 style: const TextStyle(
                   color: AppColors.grey,
                   fontSize: 13,
                 ),
               ),
-              const SizedBox(width: 12),
-              GestureDetector(
-                onTap: () => _onUnblock(context),
-                child: Text(
-                  t.chatPlant.view.unblock_btn,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.greenDark,
-                    decoration: TextDecoration.underline,
+              if (blockedByMe) ...[
+                const SizedBox(width: 12),
+                GestureDetector(
+                  onTap: () => _onUnblock(context),
+                  child: Text(
+                    t.chatPlant.view.unblock_btn,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.greenDark,
+                      decoration: TextDecoration.underline,
+                    ),
                   ),
                 ),
-              ),
+              ],
             ],
           ),
         ),

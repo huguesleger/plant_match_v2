@@ -36,13 +36,15 @@
       "title": "Supprimer la plante",
       "content": "Êtes-vous sûr de vouloir supprimer \"${name}\" ?\n\nCette action est irréversible.",
       "cancel": "Annuler"
-    }
+    },
+    "delete_error": "La suppression a échoué. Réessaie plus tard."
   },
   "edit": {
     "title": "Modifier ma plante",
     "modifier_with_name": "Modifier ${name}",
     "save": "Enregistrer les modifications",
     "upload_error": "Erreur upload: ${error}",
+    "save_error": "Erreur lors de l'enregistrement : ${error}",
     "name": {
       "hint": "Nom de la plante",
       "label": "Nom"

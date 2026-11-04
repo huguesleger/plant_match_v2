@@ -1,52 +1,52 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:plant_match_v2/core/failures/failure.dart';
+import 'package:plant_match_v2/features/level/domain/entities/points_update.dart';
+import 'package:plant_match_v2/features/level/domain/entities/user_points.dart';
 import 'package:plant_match_v2/features/level/domain/repository/user_points_repository.dart';
 import 'package:plant_match_v2/features/level/presentation/cubit/user_points_state.dart';
+import 'package:plant_match_v2/features/level/utils/user_points_utils.dart';
 
 class UserPointsCubit extends Cubit<UserPointsState> {
   final UserPointsRepository repository;
 
   static const int plantGivenLeaves = 2;
 
+  Option<UserPoints> _known = const None();
+  Option<StreamSubscription<Either<Failure, UserPoints>>> _subscription =
+      const None();
+  int _pendingUpdates = 0;
+
   UserPointsCubit({required this.repository}) : super(UserPointsInitial());
 
-  int get currentLevel => switch (state) {
-        UserPointsLoaded(:final level) => level,
-        UserPointsAwarded(:final userPoints) => userPoints.level,
-        UserPointsInitial() || UserPointsLoading() || UserPointsError() => 1,
-      };
+  Option<UserPoints> get lastKnownPoints => _known;
+
+  int get currentLevel =>
+      _known.map((points) => points.level).getOrElse(() => 1);
 
   void fetchUserPoints(String userId) {
-    emit(UserPointsLoading());
-
-    repository
-        .getPoints(userId)
-        .match(
-          (failure) => UserPointsError(failure.message),
-          (userPoints) => UserPointsLoaded(
-            userPoints.currentPoints,
-            userPoints.level,
-            userPoints,
-          ),
-        )
-        .map(emit)
-        .run();
+    _cancelSubscription();
+    _known = _known.filter((points) => points.uid == userId);
+    _safeEmit(
+      _known.match(() => UserPointsLoading(), _loaded),
+    );
+    _watch(userId);
   }
 
   void addUserPoints(String userId, int initialPoints, int level) {
-    emit(UserPointsLoading());
+    _cancelSubscription();
+    _safeEmit(UserPointsLoading());
 
     repository
         .addPoints(userId, initialPoints, level)
         .match(
-          (failure) => UserPointsError(failure.message),
-          (userPoints) => UserPointsLoaded(
-            userPoints.currentPoints,
-            userPoints.level,
-            userPoints,
-          ),
+          _fallback,
+          (userPoints) => _remember(userPoints, _loaded(userPoints)),
         )
-        .map(emit)
+        .map(_safeEmit)
+        .map((_) => _watch(userId))
         .run();
   }
 
@@ -55,14 +55,17 @@ class UserPointsCubit extends Cubit<UserPointsState> {
     int pointsToAdd, {
     int giftedLeaves = 0,
   }) {
+    _pendingUpdates++;
     repository
         .updatePoints(userId, pointsToAdd, giftedLeaves: giftedLeaves)
         .match(
-          (failure) => UserPointsError(failure.message),
-          UserPointsAwarded.new,
+          _fallback,
+          (update) => _remember(update.userPoints, UserPointsAwarded(update)),
         )
-        .map(emit)
-        .run();
+        .map((state) {
+      _pendingUpdates--;
+      _safeEmit(state);
+    }).run();
   }
 
   Task<Unit> rewardPartner(
@@ -73,4 +76,72 @@ class UserPointsCubit extends Cubit<UserPointsState> {
       repository
           .updatePoints(userId, pointsToAdd, giftedLeaves: giftedLeaves)
           .match((_) => unit, (_) => unit);
+
+  void reset() {
+    _cancelSubscription();
+    _known = const None();
+    _pendingUpdates = 0;
+    _safeEmit(UserPointsInitial());
+  }
+
+  @override
+  Future<void> close() {
+    _cancelSubscription();
+    return super.close();
+  }
+
+  void _watch(String userId) {
+    _cancelSubscription();
+    _subscription = Some(
+      repository.watchPoints(userId).listen(
+            (result) => _safeEmit(result.match(_fallback, _onSnapshot)),
+          ),
+    );
+  }
+
+  UserPointsState _onSnapshot(UserPoints userPoints) {
+    final remoteLevelUp = _known.map((previous) => previous.level).filter(
+        (previousLevel) =>
+            _pendingUpdates == 0 && userPoints.level > previousLevel);
+    return _remember(
+      userPoints,
+      remoteLevelUp.match(
+        () => _loaded(userPoints),
+        (previousLevel) => UserPointsAwarded(
+          PointsUpdate(
+            userPoints: userPoints,
+            previousLevel: previousLevel,
+            bonusLeaves: UserPointsUtils.bonusLeavesBetween(
+              previousLevel,
+              userPoints.level,
+            ),
+            giftedLeaves: 0,
+          ),
+        ),
+      ),
+    );
+  }
+
+  UserPointsState _fallback(Failure failure) =>
+      _known.match(() => UserPointsError(failure.message), _loaded);
+
+  UserPointsState _remember(UserPoints userPoints, UserPointsState state) {
+    _known = Some(userPoints);
+    return state;
+  }
+
+  UserPointsState _loaded(UserPoints userPoints) => UserPointsLoaded(
+        userPoints.currentPoints,
+        userPoints.level,
+        userPoints,
+      );
+
+  void _cancelSubscription() {
+    _subscription.map((subscription) => subscription.cancel());
+    _subscription = const None();
+  }
+
+  void _safeEmit(UserPointsState state) {
+    if (!isClosed) emit(state);
+  }
 }

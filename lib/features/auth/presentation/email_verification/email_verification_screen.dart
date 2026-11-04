@@ -65,7 +65,9 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
 
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_remainingSeconds == 0) {
+      if (!mounted) {
+        timer.cancel();
+      } else if (_remainingSeconds == 0) {
         timer.cancel();
         setState(() => _cooldown = false);
       } else {
@@ -86,28 +88,20 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
     if (_cooldown) return;
     _startCooldown();
 
-    try {
-      context.read<AuthCubit>().resendEmailVerification();
-
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(t.auth.emailVerification.resendEmailSent),
+    final messenger = ScaffoldMessenger.of(context);
+    final result =
+        await context.read<AuthCubit>().resendEmailVerification().run();
+    if (!mounted) return;
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(
+          result.match(
+            (failure) => t.auth.emailVerification.error(error: failure.message),
+            (_) => t.auth.emailVerification.resendEmailSent,
+          ),
         ),
-      );
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text(t.auth.emailVerification.error(error: e.toString()))),
-      );
-    } finally {
-      for (var i = 60; i > 0; i--) {
-        await Future.delayed(const Duration(seconds: 1));
-        setState(() => _remainingSeconds = i - 1);
-      }
-      if (mounted) setState(() => _cooldown = false);
-    }
+      ),
+    );
   }
 
   @override

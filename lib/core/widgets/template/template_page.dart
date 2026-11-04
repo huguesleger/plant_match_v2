@@ -30,6 +30,7 @@ class TemplatePageState extends State<TemplatePage> {
   late int _currentIndex;
   late final String uid;
   late final List<Widget> _pages;
+  late final Set<int> _visited = {_currentIndex};
   final chatRepository = FirebaseChatPlant();
   final exchangeRepository = FirebaseExchange();
 
@@ -58,6 +59,7 @@ class TemplatePageState extends State<TemplatePage> {
     }
     setState(() {
       _currentIndex = index;
+      _visited.add(index);
     });
   }
 
@@ -93,7 +95,15 @@ class TemplatePageState extends State<TemplatePage> {
         ),
       ],
       child: NavigationBottomBar(
-        body: _pages[_currentIndex],
+        body: IndexedStack(
+          index: _currentIndex,
+          children: List.generate(
+            _pages.length,
+            (index) => _visited.contains(index)
+                ? _pages[index]
+                : const SizedBox.shrink(),
+          ),
+        ),
         currentIndex: _currentIndex,
         onTap: onPageChanged,
       ),

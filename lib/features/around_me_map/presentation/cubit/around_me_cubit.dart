@@ -59,7 +59,8 @@ class AroundMeCubit extends Cubit<AroundMeState> {
                   const AuthFailure('Utilisateur introuvable'),
                 ),
                 (currentUser) {
-                  final connectedUsers = users.where((user) => user.uid != uid).toList();
+                  final connectedUsers =
+                      users.where((user) => user.uid != uid).toList();
                   return _getUsersWithCatalogs(connectedUsers, currentUser);
                 },
               ),
@@ -79,7 +80,9 @@ class AroundMeCubit extends Cubit<AroundMeState> {
 
     locationService
         .getCurrentPosition()
-        .flatMap((position) => locationService.getPlacemarkFromPosition(position).map((placemark) => (position, placemark)))
+        .flatMap((position) => locationService
+            .getPlacemarkFromPosition(position)
+            .map((placemark) => (position, placemark)))
         .flatMap((data) {
           final position = data.$1;
           final placemark = data.$2;
@@ -89,9 +92,13 @@ class AroundMeCubit extends Cubit<AroundMeState> {
             newLatitude: Some(position.latitude),
             newLongitude: Some(position.longitude),
           );
-          return aroundMeRepository.updateUserLocation(updatedUser).map((_) => updatedUser);
+          return aroundMeRepository
+              .updateUserLocation(updatedUser)
+              .map((_) => updatedUser);
         })
-        .flatMap((updatedUser) => aroundMeRepository.getAllUserUids().flatMap((users) => _getUsersWithCatalogs(users, updatedUser)))
+        .flatMap((updatedUser) => aroundMeRepository
+            .getAllUserUids()
+            .flatMap((users) => _getUsersWithCatalogs(users, updatedUser)))
         .match(
           (failure) => AroundMeError(failure.message),
           (state) => state,
@@ -105,21 +112,20 @@ class AroundMeCubit extends Cubit<AroundMeState> {
   TaskEither<Failure, AroundMeState> _getUsersWithCatalogs(
     List<ProfilUser> users,
     ProfilUser currentUser,
-  ) {
-    final catalogTasks = users.map((user) => catalogRepository.getCatalogsByUserId(user.uid)).toList();
-
-    return TaskEither.sequenceList(catalogTasks).map(
-      (allCatalogs) {
-        final userCatalogs = <String, List<Catalog>>{};
-        for (var i = 0; i < users.length; i++) {
-          userCatalogs[users[i].uid] = allCatalogs[i];
-        }
-        return AroundMeLoaded(
+  ) =>
+      TaskEither.sequenceList(users.map(_catalogsOrEmpty).toList()).map(
+        (allCatalogs) => AroundMeLoaded(
           currentUser: currentUser,
           users: users,
-          userCatalogs: userCatalogs,
-        );
-      },
-    );
-  }
+          userCatalogs: Map.fromIterables(
+            users.map((user) => user.uid),
+            allCatalogs,
+          ),
+        ),
+      );
+
+  TaskEither<Failure, List<Catalog>> _catalogsOrEmpty(ProfilUser user) =>
+      catalogRepository
+          .getCatalogsByUserId(user.uid)
+          .orElse((_) => TaskEither.right(const <Catalog>[]));
 }

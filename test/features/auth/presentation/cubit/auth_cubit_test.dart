@@ -124,6 +124,7 @@ void main() {
         expect: () => [
           isA<AuthLoading>(),
           isA<AuthError>().having((s) => s.message, 'message', 'Identifiants invalides'),
+          isA<Unauthenticated>(),
         ],
       );
     });
@@ -154,6 +155,7 @@ void main() {
         expect: () => [
           isA<AuthLoading>(),
           isA<AuthError>().having((s) => s.message, 'message', 'Erreur Google'),
+          isA<Unauthenticated>(),
         ],
       );
     });
@@ -184,6 +186,7 @@ void main() {
         expect: () => [
           isA<AuthLoading>(),
           isA<AuthError>().having((s) => s.message, 'message', 'Erreur Facebook'),
+          isA<Unauthenticated>(),
         ],
       );
     });
@@ -192,18 +195,13 @@ void main() {
       blocTest<AuthCubit, AuthState>(
         'doit émettre [Unauthenticated] et réinitialiser currentUser',
         build: () {
-          // Pré-authentifier l'utilisateur
-          when(() => mockAuthRepository.getCurrentUser())
-              .thenReturn(TaskEither.right(Some(tUser)));
-          authCubit.checkCurrentUser();
-          
           when(() => mockAuthRepository.logOut())
               .thenReturn(TaskEither.right(unit));
           return authCubit;
         },
+        seed: () => Authenticated(tUser),
         act: (cubit) => cubit.logOut(),
         expect: () => [
-          isA<Authenticated>().having((s) => s.user, 'user', tUser), // Du checkCurrentUser
           isA<Unauthenticated>(),
         ],
         verify: (_) {

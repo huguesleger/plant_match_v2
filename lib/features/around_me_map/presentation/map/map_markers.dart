@@ -16,8 +16,7 @@ class MapMarkers {
   List<Marker> around(List<ProfilUser> users, double radius) => users
       .where((user) => user.uid != currentUser.uid)
       .where(MapGeo.hasValidLocation)
-      .where((user) =>
-          DistanceHelper.calculateDistance(currentUser, user) <= radius)
+      .where((user) => DistanceHelper.isWithin(currentUser, user, radius))
       .map((user) => _markerFor(user, isCurrentUser: false))
       .toList();
 

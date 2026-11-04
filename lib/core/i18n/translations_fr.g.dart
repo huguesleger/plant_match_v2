@@ -699,6 +699,9 @@ class TranslationsCatalogDetailFr {
 	String get edit => 'Modifier';
 
 	late final TranslationsCatalogDetailDeleteDialogFr delete_dialog = TranslationsCatalogDetailDeleteDialogFr.internal(_root);
+
+	/// fr: 'La suppression a échoué. Réessaie plus tard.'
+	String get delete_error => 'La suppression a échoué. Réessaie plus tard.';
 }
 
 // Path: catalog.edit
@@ -720,6 +723,9 @@ class TranslationsCatalogEditFr {
 
 	/// fr: 'Erreur upload: ${error}'
 	String upload_error({required Object error}) => 'Erreur upload: ${error}';
+
+	/// fr: 'Erreur lors de l'enregistrement : ${error}'
+	String save_error({required Object error}) => 'Erreur lors de l\'enregistrement : ${error}';
 
 	late final TranslationsCatalogEditNameFr name = TranslationsCatalogEditNameFr.internal(_root);
 	late final TranslationsCatalogEditDescriptionFr description = TranslationsCatalogEditDescriptionFr.internal(_root);
@@ -862,6 +868,9 @@ class TranslationsChatPlantScreenFr {
 
 	/// fr: 'Erreur lors du chargement du chat'
 	String get error_loading => 'Erreur lors du chargement du chat';
+
+	/// fr: 'Cette plante n'est plus disponible.'
+	String get plant_unavailable => 'Cette plante n\'est plus disponible.';
 }
 
 // Path: chatPlant.view
@@ -877,6 +886,9 @@ class TranslationsChatPlantViewFr {
 
 	/// fr: 'Vous avez bloqué cet utilisateur'
 	String get blocked_user_banner => 'Vous avez bloqué cet utilisateur';
+
+	/// fr: 'Vous ne pouvez plus écrire à cet utilisateur'
+	String get blocked_by_other_banner => 'Vous ne pouvez plus écrire à cet utilisateur';
 
 	/// fr: 'Débloquer'
 	String get unblock_btn => 'Débloquer';
@@ -1285,6 +1297,9 @@ class TranslationsLevelProgressFr {
 
 	/// fr: 'Niveau '
 	String get level_prefix => 'Niveau ';
+
+	/// fr: 'Niveau max'
+	String get max_level => 'Niveau max';
 
 	/// fr: ' dons/échanges'
 	String get pts_suffix => ' dons/échanges';
@@ -3346,10 +3361,12 @@ extension on Translations {
 			'catalog.detail.delete_dialog.title' => 'Supprimer la plante',
 			'catalog.detail.delete_dialog.content' => ({required Object name}) => 'Êtes-vous sûr de vouloir supprimer "${name}" ?\n\nCette action est irréversible.',
 			'catalog.detail.delete_dialog.cancel' => 'Annuler',
+			'catalog.detail.delete_error' => 'La suppression a échoué. Réessaie plus tard.',
 			'catalog.edit.title' => 'Modifier ma plante',
 			'catalog.edit.modifier_with_name' => ({required Object name}) => 'Modifier ${name}',
 			'catalog.edit.save' => 'Enregistrer les modifications',
 			'catalog.edit.upload_error' => ({required Object error}) => 'Erreur upload: ${error}',
+			'catalog.edit.save_error' => ({required Object error}) => 'Erreur lors de l\'enregistrement : ${error}',
 			'catalog.edit.name.hint' => 'Nom de la plante',
 			'catalog.edit.name.label' => 'Nom',
 			'catalog.edit.description.title' => 'Ajouter une brève description',
@@ -3447,8 +3464,10 @@ extension on Translations {
 			'catalog.sort.nameDesc' => 'Nom de la plante : Z à A',
 			'catalog.sort.btn' => 'Appliquer',
 			'chatPlant.screen.error_loading' => 'Erreur lors du chargement du chat',
+			'chatPlant.screen.plant_unavailable' => 'Cette plante n\'est plus disponible.',
 			'chatPlant.view.empty_messages' => 'Aucun message pour le moment.\nDémarrez la conversation.',
 			'chatPlant.view.blocked_user_banner' => 'Vous avez bloqué cet utilisateur',
+			'chatPlant.view.blocked_by_other_banner' => 'Vous ne pouvez plus écrire à cet utilisateur',
 			'chatPlant.view.unblock_btn' => 'Débloquer',
 			'chatPlant.view.unblock_dialog.title' => 'Débloquer cet utilisateur ?',
 			'chatPlant.view.unblock_dialog.content' => 'Cette personne pourra à nouveau vous envoyer des messages.',
@@ -3552,6 +3571,7 @@ extension on Translations {
 			'level.cards.gifts.description' => 'Transformer vos dons en feuilles bonus',
 			'level.cards.discover' => 'Découvrir',
 			'level.progress.level_prefix' => 'Niveau ',
+			'level.progress.max_level' => 'Niveau max',
 			'level.progress.pts_suffix' => ' dons/échanges',
 			'level.detail.level_title' => ({required Object level}) => 'Niveau ${level}',
 			'level.detail.conditions' => 'Conditions : ',

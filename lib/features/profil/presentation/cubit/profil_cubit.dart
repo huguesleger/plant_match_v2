@@ -1,4 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
@@ -33,69 +35,6 @@ class ProfilCubit extends Cubit<ProfilState> {
             () => ProfilError('Profil introuvable'),
             (user) => ProfilLoaded(user),
           ),
-        )
-        .map(emit)
-        .run();
-  }
-
-  // ─── updateProfilUser ───────────────────────────────────────────────────────
-
-  void updateProfilUser({
-    required String uid,
-    String? newBio,
-    String? imageUrl,
-    String? newUserName,
-    String? newLocalisation,
-    String? newZipCode,
-    String? newCountry,
-    DateTime? newBirthdayDate,
-    double? newLatitude,
-    double? newLongitude,
-  }) {
-    emit(ProfilLoading());
-
-    profilRepository
-        .getProfilUser(uid)
-        .flatMap((option) => option.match(
-              () => TaskEither.left(const AuthFailure('Profil introuvable')),
-              (currentUser) => imageUrl != null
-                  ? storageRepository
-                      .uploadImageFromUrl(
-                        path: imageUrl,
-                        fileName: uid,
-                        folder: 'profile_images',
-                      )
-                      .map((imageDownloadUrl) => currentUser.copyWith(
-                            newBio: Option.fromNullable(newBio),
-                            newProfilImg: imageDownloadUrl,
-                            newUserName: Option.fromNullable(newUserName),
-                            newLocalisation:
-                                newLocalisation ?? currentUser.localisation,
-                            newCountry: newCountry ?? currentUser.country,
-                            newZipCode: newZipCode ?? currentUser.zipCode,
-                            newBirthdayDate:
-                                Option.fromNullable(newBirthdayDate),
-                            newLatitude: Option.fromNullable(newLatitude),
-                            newLongitude: Option.fromNullable(newLongitude),
-                          ))
-                  : TaskEither.right(currentUser.copyWith(
-                      newBio: Option.fromNullable(newBio),
-                      newUserName: Option.fromNullable(newUserName),
-                      newLocalisation:
-                          newLocalisation ?? currentUser.localisation,
-                      newCountry: newCountry ?? currentUser.country,
-                      newZipCode: newZipCode ?? currentUser.zipCode,
-                      newBirthdayDate: Option.fromNullable(newBirthdayDate),
-                      newLatitude: Option.fromNullable(newLatitude),
-                      newLongitude: Option.fromNullable(newLongitude),
-                    )),
-            ))
-        .flatMap((updatedUser) => profilRepository
-            .updateProfilUser(updatedUser)
-            .map((_) => updatedUser))
-        .match(
-          (failure) => ProfilError(failure.message),
-          (updatedUser) => ProfilLoaded(updatedUser),
         )
         .map(emit)
         .run();
@@ -219,26 +158,18 @@ class ProfilCubit extends Cubit<ProfilState> {
                 () => TaskEither.right(0),
                 (code) => profilRepository
                     .getProfilUserByReferralCode(code)
-                    .flatMap((sponsor) => sponsor
-                        .filter((p) => p.uid != user.uid)
-                        .match(
-                          () => TaskEither.right(0),
-                          (p) => profilRepository
-                              .updateProfilField(
-                                uid: user.uid,
-                                field: 'referredBy',
-                                value: code,
-                              )
-                              .flatMap((_) => profilRepository.incrementLeaves(
-                                    p.uid,
-                                    referralBonus,
-                                  ))
-                              .flatMap((_) => profilRepository.incrementLeaves(
-                                    user.uid,
-                                    referralBonus,
-                                  ))
-                              .map((_) => referralBonus),
-                        )),
+                    .flatMap((sponsor) =>
+                        sponsor.filter((p) => p.uid != user.uid).match(
+                              () => TaskEither.right(0),
+                              (p) => profilRepository
+                                  .applyReferral(
+                                    newUserUid: user.uid,
+                                    referrerUid: p.uid,
+                                    referralCode: code,
+                                    bonus: referralBonus,
+                                  )
+                                  .map((_) => referralBonus),
+                            )),
               );
 
   TaskEither<Failure, ProfilUser> _loadUser(String uid) =>
@@ -321,10 +252,18 @@ class ProfilCubit extends Cubit<ProfilState> {
   void updateLocation(String uid) {
     emit(ProfilLoading());
 
-    locationService
-        .getCurrentPosition()
+    TaskEither<Failure, Position>(
+      () => locationService.getCurrentPosition().run().timeout(
+            _locationTimeLimit,
+            onTimeout: () => Either.left(
+              const LocationFailure('Délai de localisation dépassé'),
+            ),
+          ),
+    )
         .flatMap((position) => locationService
             .getPlacemarkFromPosition(position)
+            .map<Option<Placemark>>(Some.new)
+            .alt(() => TaskEither.right(const None()))
             .map((placemark) => (position, placemark)))
         .flatMap((data) {
           final position = data.$1;
@@ -334,9 +273,15 @@ class ProfilCubit extends Cubit<ProfilState> {
                 () => TaskEither.left(const AuthFailure('Profil introuvable')),
                 (user) {
                   final updatedUser = user.copyWith(
-                    newLocalisation: placemark.locality ?? '',
-                    newCountry: placemark.country ?? '',
-                    newZipCode: placemark.postalCode ?? '',
+                    newLocalisation: placemark
+                        .map((p) => p.locality ?? '')
+                        .getOrElse(() => user.localisation),
+                    newCountry: placemark
+                        .map((p) => p.country ?? '')
+                        .getOrElse(() => user.country),
+                    newZipCode: placemark
+                        .map((p) => p.postalCode ?? '')
+                        .getOrElse(() => user.zipCode),
                     newLatitude: Some(position.latitude),
                     newLongitude: Some(position.longitude),
                   );
@@ -355,6 +300,10 @@ class ProfilCubit extends Cubit<ProfilState> {
   }
 
   static const int referralBonus = 3;
+
+  static const Duration _locationTimeLimit = Duration(seconds: 15);
+
+  void reset() => emit(ProfilInitial());
 
   void addLeaves(String uid, int count, Option<String> message) {
     profilRepository

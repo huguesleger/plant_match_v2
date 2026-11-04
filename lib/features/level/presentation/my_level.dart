@@ -11,12 +11,10 @@ class MyLevel extends StatelessWidget {
     super.key,
     required this.currentPoints,
     required this.level,
-    required this.maxPoints,
   });
 
   final int currentPoints;
   final int level;
-  final int maxPoints;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +36,6 @@ class MyLevel extends StatelessWidget {
             LevelPointsCard(
               level: level,
               points: currentPoints,
-              maxPoints: maxPoints,
             ),
           ],
         ),

@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/features/chat_plant/domain/entities/chat_plant.dart';
 import 'package:plant_match_v2/features/chat_plant/domain/repository/chat_plant_repository.dart';
 import 'package:plant_match_v2/features/exchange/domain/entities/exchange.dart';
@@ -25,6 +24,7 @@ class MessagesCubit extends Cubit<MessagesState> {
   List<ChatPlant> _lastChats = [];
   List<Exchange> _lastExchanges = [];
   List<Donation> _lastDonations = [];
+  int _generation = 0;
 
   MessagesCubit({
     required this.chatPlantRepository,
@@ -34,6 +34,8 @@ class MessagesCubit extends Cubit<MessagesState> {
   }) : super(const MessagesInitial());
 
   void load(String currentUserId) {
+    _cancelSubscriptions();
+    _generation++;
     emit(const MessagesLoading());
 
     _chatsSub = chatPlantRepository.chatsForUser(currentUserId).listen(
@@ -41,11 +43,7 @@ class MessagesCubit extends Cubit<MessagesState> {
         _lastChats = chats;
         _emitCombined(currentUserId);
       },
-      onError: (e) {
-        if (!isClosed) {
-          emit(MessagesError(e.toString()));
-        }
-      },
+      onError: _emitError,
     );
 
     _exchangesSub =
@@ -54,11 +52,7 @@ class MessagesCubit extends Cubit<MessagesState> {
         _lastExchanges = exchanges;
         _emitCombined(currentUserId);
       },
-      onError: (e) {
-        if (!isClosed) {
-          emit(MessagesError(e.toString()));
-        }
-      },
+      onError: _emitError,
     );
 
     _donationsSub =
@@ -67,15 +61,26 @@ class MessagesCubit extends Cubit<MessagesState> {
         _lastDonations = donations;
         _emitCombined(currentUserId);
       },
-      onError: (e) {
-        if (!isClosed) {
-          emit(MessagesError(e.toString()));
-        }
-      },
+      onError: _emitError,
     );
   }
 
+  void _emitError(Object error) {
+    _generation++;
+    if (!isClosed) {
+      emit(MessagesError(error.toString()));
+    }
+  }
+
+  void _cancelSubscriptions() {
+    _chatsSub?.cancel();
+    _exchangesSub?.cancel();
+    _donationsSub?.cancel();
+  }
+
   void _emitCombined(String currentUserId) {
+    final generation = ++_generation;
+
     if (_lastChats.isEmpty) {
       if (!isClosed) {
         emit(const MessagesLoaded(chats: []));
@@ -83,13 +88,13 @@ class MessagesCubit extends Cubit<MessagesState> {
       return;
     }
 
-    final List<TaskEither<Failure, ChatPlant?>> tasks = _lastChats.map((chat) {
+    final List<Task<Option<ChatPlant>>> tasks = _lastChats.map((chat) {
       final otherUserId = chat.participants.firstWhere(
         (id) => id != currentUserId,
         orElse: () => '',
       );
 
-      if (otherUserId.isEmpty) return TaskEither<Failure, ChatPlant?>.of(null);
+      if (otherUserId.isEmpty) return Task.of(none<ChatPlant>());
 
       return userRepository.getUserUid(otherUserId).map((user) {
         final String displayName = user.userName.match(
@@ -163,7 +168,8 @@ class MessagesCubit extends Cubit<MessagesState> {
           plantOwnerId: chat.plantOwnerId,
           otherUserId: otherUserId,
           plantOwnerName: displayName,
-          plantOwnerAvatar: Option.fromNullable(displayAvatar.isEmpty ? null : displayAvatar),
+          plantOwnerAvatar:
+              Option.fromNullable(displayAvatar.isEmpty ? null : displayAvatar),
           participants: chat.participants,
           lastMessage: chat.lastMessage,
           lastMessageAt: chat.lastMessageAt,
@@ -176,34 +182,29 @@ class MessagesCubit extends Cubit<MessagesState> {
           isDonationCompleted: chat.isDonationCompleted,
           isOtherUserOnline: user.isOnline,
         );
-      });
+      }).match((_) => none<ChatPlant>(), (c) => some(c));
     }).toList();
 
-    TaskEither.sequenceList(tasks)
-        .match<MessagesState>(
-          (failure) => MessagesError(failure.message),
-          (results) {
-            final chatPlants = results.whereType<ChatPlant>().toList();
-            final filteredResult = chatPlants
-                .where((chat) =>
-                    !chat.isExchangeCompleted && !chat.isDonationCompleted)
-                .toList();
-            return MessagesLoaded(chats: filteredResult);
-          },
-        )
+    Task.sequenceList(tasks)
+        .map(
+      (results) => MessagesLoaded(
+        chats: results
+            .expand((option) => option.match(() => <ChatPlant>[], (c) => [c]))
+            .where((chat) =>
+                !chat.isExchangeCompleted && !chat.isDonationCompleted)
+            .toList(),
+      ),
+    )
         .map((s) {
-          if (!isClosed) {
-            emit(s);
-          }
-        })
-        .run();
+      if (!isClosed && generation == _generation) {
+        emit(s);
+      }
+    }).run();
   }
 
   @override
   Future<void> close() {
-    _chatsSub?.cancel();
-    _exchangesSub?.cancel();
-    _donationsSub?.cancel();
+    _cancelSubscriptions();
     return super.close();
   }
 }

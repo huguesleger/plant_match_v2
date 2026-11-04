@@ -10,10 +10,9 @@ import 'package:plant_match_v2/core/widgets/app_bar/app_bar_template.dart';
 import 'package:plant_match_v2/core/widgets/avatar/avatar.dart';
 import 'package:plant_match_v2/core/widgets/error/error_page.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
-import 'package:plant_match_v2/features/catalog/data/firebase_catalog_repository.dart';
-import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/cubit/chat_plant_cubit.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/state/chat_plant_state.dart';
+import 'package:plant_match_v2/features/chat_plant/presentation/widgets/chat_plant_catalog_loader.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/chat_plant_menu.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/chat_plant_view.dart';
 import 'package:plant_match_v2/features/donation/presentation/cubit/donation_cubit.dart';
@@ -66,7 +65,6 @@ class ChatPlantScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userId = context.read<AuthCubit>().userId ?? '';
-    final catalogRepo = FirebaseCatalogRepository();
 
     return MultiBlocListener(
       listeners: [
@@ -126,21 +124,9 @@ class ChatPlantScreen extends StatelessWidget {
           },
         ),
       ],
-      child: FutureBuilder<Catalog?>(
-        future: catalogRepo
-            .getCatalogById(plantId)
-            .map((opt) => opt.toNullable())
-            .getOrElse((_) => null)
-            .run(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            );
-          }
-
-          final plant = snapshot.data!;
-
+      child: ChatPlantCatalogLoader(
+        plantId: plantId,
+        builder: (context, plant) {
           return Scaffold(
             appBar: AppBarTemplate(
               preferredHeight: 85,
@@ -198,7 +184,7 @@ class ChatPlantScreen extends StatelessWidget {
                     plantOwnerName: plantOwnerName,
                     plantOfferType: plant.offerType,
                     messages: const [],
-                    isBlocked: true,
+                    blockStatus: BlockStatus.blockedByMe,
                   ),
                 ChatPlantLoaded s => ChatPlantView(
                     chatId: chatId,
@@ -211,7 +197,7 @@ class ChatPlantScreen extends StatelessWidget {
                     plantOwnerName: plantOwnerName,
                     plantOfferType: plant.offerType,
                     messages: s.messages,
-                    isBlocked: s.isBlocked,
+                    blockStatus: s.blockStatus,
                   ),
               },
             ),

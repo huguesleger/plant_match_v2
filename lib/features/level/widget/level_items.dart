@@ -15,7 +15,8 @@ class LevelItems extends StatelessWidget {
 
   final int currentLevel;
 
-  IconData _getIconForLevel(int level) => UserPointsUtils.getIconForLevel(level);
+  IconData _getIconForLevel(int level) =>
+      UserPointsUtils.getIconForLevel(level);
 
   String _getLevelName(int level) => UserPointsUtils.getLevelName(level);
 
@@ -29,13 +30,16 @@ class LevelItems extends StatelessWidget {
       separatorBuilder: (context, index) => const SizedBox(width: 10),
       itemBuilder: (context, index) {
         final level = levels[index].key;
-        final maxPoints = levels[index].value.maxPoints;
-        return _buildLevelItem(context, level, maxPoints);
+        return _buildLevelItem(
+          context,
+          level,
+          UserPointsUtils.requiredPointsFor(level),
+        );
       },
     );
   }
 
-  Widget _buildLevelItem(BuildContext context, int level, int maxPoints) {
+  Widget _buildLevelItem(BuildContext context, int level, int requiredPoints) {
     final bool isCurrentOrPreviousLevel = level <= currentLevel;
 
     return Card.filled(
@@ -91,7 +95,7 @@ class LevelItems extends StatelessWidget {
                 ),
                 const SizedBox(height: 5),
                 Text(
-                  '$maxPoints ${t.level.progress.pts_suffix}',
+                  '$requiredPoints${t.level.progress.pts_suffix}',
                   style: InterTextStyle.inter(
                     AppTypo.textXs,
                     color: AppColors.greyDark,

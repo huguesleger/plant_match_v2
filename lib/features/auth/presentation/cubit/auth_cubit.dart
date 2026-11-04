@@ -47,15 +47,14 @@ class AuthCubit extends Cubit<AuthState> {
     authRepository
         .signInWithEmailAndPassword(email: email, password: password)
         .match(
-          (failure) => failure is AuthProfileMissingFailure
-              ? _resumeRegistration()
-              : emit(AuthError(failure.message)),
-          (user) {
-            _currentUser = user;
-            emit(Authenticated(user));
-          },
-        )
-        .run();
+      (failure) => failure is AuthProfileMissingFailure
+          ? _resumeRegistration()
+          : _fail(failure.message, const Unauthenticated()),
+      (user) {
+        _currentUser = user;
+        emit(Authenticated(user));
+      },
+    ).run();
   }
 
   void _resumeRegistration() => Option.fromNullable(
@@ -92,54 +91,40 @@ class AuthCubit extends Cubit<AuthState> {
         .flatMap(
             (user) => authRepository.sendEmailVerification().map((_) => user))
         .match(
-          (failure) => AuthError(failure.message),
-          (user) {
-            _currentUser = user;
-            return AuthEmailVerificationSent(user);
-          },
-        )
-        .map(emit)
-        .run();
+      (failure) => _fail(failure.message, const Unauthenticated()),
+      (user) {
+        _currentUser = user;
+        emit(AuthEmailVerificationSent(user));
+      },
+    ).run();
   }
 
-  void resendEmailVerification() {
-    authRepository
-        .sendEmailVerification()
-        .match(
-          (failure) => AuthError(failure.message),
-          (_) => _currentUser != null
-              ? AuthEmailVerificationSent(_currentUser!)
-              : const Unauthenticated(),
-        )
-        .map(emit)
-        .run();
-  }
+  TaskEither<Failure, Unit> resendEmailVerification() =>
+      authRepository.sendEmailVerification();
 
   void checkEmailVerified({String? fullName}) {
     if (_isCheckingEmail) return;
     _isCheckingEmail = true;
 
-    authRepository
-        .isEmailVerified()
-        .flatMap((verified) {
-          if (!verified) {
-            return TaskEither.left(const AuthEmailNotVerifiedFailure());
-          }
+    authRepository.isEmailVerified().flatMap((verified) {
+      if (!verified) {
+        return TaskEither.left(const AuthEmailNotVerifiedFailure());
+      }
 
-          final firebaseUser = FirebaseAuth.instance.currentUser;
-          if (firebaseUser == null) {
-            return TaskEither.left(
-                const AuthFailure("Utilisateur introuvable"));
-          }
+      final firebaseUser = FirebaseAuth.instance.currentUser;
+      if (firebaseUser == null) {
+        return TaskEither.left(const AuthFailure("Utilisateur introuvable"));
+      }
 
-          final resolvedName = fullName ?? _currentUser?.fullName ?? '';
-          final userAuth = UserAuth.fromFullName(
-            uid: firebaseUser.uid,
-            email: Option.fromNullable(firebaseUser.email),
-            fullName: resolvedName,
-          );
+      final resolvedName = fullName ?? _currentUser?.fullName ?? '';
+      final userAuth = UserAuth.fromFullName(
+        uid: firebaseUser.uid,
+        email: Option.fromNullable(firebaseUser.email),
+        fullName: resolvedName,
+      );
 
-          return TaskEither<Failure, UserAuth>.right(userAuth).flatMap((u) => authRepository
+      return TaskEither<Failure, UserAuth>.right(userAuth).flatMap((u) =>
+          authRepository
               .finalizeRegistration(firebaseUser, u.firstName, u.lastName)
               .flatMap<Authenticated>((isFirst) {
             if (isFirst) {
@@ -157,118 +142,91 @@ class AuthCubit extends Cubit<AuthState> {
             return TaskEither<Failure, Authenticated>.right(
                 Authenticated(u, isFirstTime: isFirst));
           }));
-        })
-        .match<AuthState>(
-          (failure) {
-            _isCheckingEmail = false;
-            return (failure is AuthEmailNotVerifiedFailure)
-                ? (_currentUser != null
-                    ? AuthEmailVerificationSent(_currentUser!)
-                    : const Unauthenticated())
-                : AuthError(failure.message);
-          },
-          (state) {
-            _isCheckingEmail = false;
-            if (state is Authenticated) {
-              _currentUser = state.user;
-            }
-            return state;
-          },
-        )
-        .map(emit)
-        .run();
+    }).match(
+      (failure) {
+        _isCheckingEmail = false;
+        final pending = _currentUser != null
+            ? AuthEmailVerificationSent(_currentUser!)
+            : const Unauthenticated();
+        failure is AuthEmailNotVerifiedFailure
+            ? emit(pending)
+            : _fail(failure.message, pending);
+      },
+      (state) {
+        _isCheckingEmail = false;
+        _currentUser = state.user;
+        emit(state);
+      },
+    ).run();
   }
 
   void signInWithGoogle() {
     emit(const AuthLoading());
 
-    authRepository
-        .signInWithGoogle()
-        .flatMap((result) {
-          final user = result.$1;
-          final isFirst = result.$2;
+    authRepository.signInWithGoogle().flatMap((result) {
+      final user = result.$1;
+      final isFirst = result.$2;
 
-          if (isFirst) {
-            return TaskEither<Failure, Unit>.tryCatch(
-              () async {
-                await welcomeEmail(
-                    user.email.getOrElse(() => ''), user.fullName);
-                return unit;
-              },
-              (error, _) => UnexpectedFailure(
-                  'Erreur lors de l’envoi de l’email de bienvenue : $error'),
-            ).alt(() => TaskEither.right(unit)).map((_) => result);
-          }
-          return TaskEither.right(result);
-        })
-        .match(
-          (failure) => AuthError(failure.message),
-          (result) {
-            _currentUser = result.$1;
-            return Authenticated(result.$1, isFirstTime: result.$2);
+      if (isFirst) {
+        return TaskEither<Failure, Unit>.tryCatch(
+          () async {
+            await welcomeEmail(user.email.getOrElse(() => ''), user.fullName);
+            return unit;
           },
-        )
-        .map(emit)
-        .run();
+          (error, _) => UnexpectedFailure(
+              'Erreur lors de l’envoi de l’email de bienvenue : $error'),
+        ).alt(() => TaskEither.right(unit)).map((_) => result);
+      }
+      return TaskEither.right(result);
+    }).match(
+      (failure) => _fail(failure.message, const Unauthenticated()),
+      (result) {
+        _currentUser = result.$1;
+        emit(Authenticated(result.$1, isFirstTime: result.$2));
+      },
+    ).run();
   }
 
   void signInWithFacebook() {
     emit(const AuthLoading());
 
-    authRepository
-        .signInWithFacebook()
-        .flatMap((result) {
-          final user = result.$1;
-          final isFirst = result.$2;
+    authRepository.signInWithFacebook().flatMap((result) {
+      final user = result.$1;
+      final isFirst = result.$2;
 
-          if (isFirst) {
-            return TaskEither<Failure, Unit>.tryCatch(
-              () async {
-                await welcomeEmail(
-                    user.email.getOrElse(() => ''), user.fullName);
-                return unit;
-              },
-              (error, _) => UnexpectedFailure(
-                  'Erreur lors de l’envoi de l’email de bienvenue : $error'),
-            ).alt(() => TaskEither.right(unit)).map((_) => result);
-          }
-          return TaskEither.right(result);
-        })
-        .match(
-          (failure) => AuthError(failure.message),
-          (result) {
-            _currentUser = result.$1;
-            return Authenticated(result.$1, isFirstTime: result.$2);
+      if (isFirst) {
+        return TaskEither<Failure, Unit>.tryCatch(
+          () async {
+            await welcomeEmail(user.email.getOrElse(() => ''), user.fullName);
+            return unit;
           },
-        )
-        .map(emit)
-        .run();
+          (error, _) => UnexpectedFailure(
+              'Erreur lors de l’envoi de l’email de bienvenue : $error'),
+        ).alt(() => TaskEither.right(unit)).map((_) => result);
+      }
+      return TaskEither.right(result);
+    }).match(
+      (failure) => _fail(failure.message, const Unauthenticated()),
+      (result) {
+        _currentUser = result.$1;
+        emit(Authenticated(result.$1, isFirstTime: result.$2));
+      },
+    ).run();
   }
 
-  void logOut() {
-    authRepository
-        .logOut()
-        .match(
-          (failure) => AuthError(failure.message),
-          (_) {
-            _currentUser = null;
-            return const Unauthenticated();
-          },
-        )
-        .map(emit)
-        .run();
+  Future<void> logOut() {
+    final previous = state;
+    return authRepository.logOut().match(
+      (failure) => _fail(failure.message, previous),
+      (_) {
+        _currentUser = null;
+        emit(const Unauthenticated());
+      },
+    ).run();
   }
 
-  void sendPasswordResetEmail({required String email}) {
-    authRepository
-        .sendPasswordResetEmail(email: email)
-        .match(
-          (failure) => AuthError(failure.message),
-          (_) => state,
-        )
-        .map(emit)
-        .run();
-  }
+  TaskEither<Failure, Unit> sendPasswordResetEmail({required String email}) =>
+      authRepository.sendPasswordResetEmail(email: email);
 
   void deleteUnverifiedUser() {
     TaskEither<Failure, Unit>.tryCatch(
@@ -283,18 +241,21 @@ class AuthCubit extends Cubit<AuthState> {
       (error, _) => (error is FirebaseAuthException &&
               error.code == 'requires-recent-login')
           ? const AuthFailure('Reconnexion requise pour supprimer le compte')
-          : UnexpectedFailure('Erreur lors de la suppression du compte : $error'),
-    )
-        .match(
-          (failure) => AuthError(failure.message),
-          (_) {
-            _currentUser = null;
-            return const Unauthenticated();
-          },
-        )
-        .map(emit)
-        .run();
+          : UnexpectedFailure(
+              'Erreur lors de la suppression du compte : $error'),
+    ).match(
+      (failure) => _fail(failure.message, const Unauthenticated()),
+      (_) {
+        _currentUser = null;
+        emit(const Unauthenticated());
+      },
+    ).run();
   }
 
   void reset() => emit(const Unauthenticated());
+
+  void _fail(String message, AuthState recovery) {
+    emit(AuthError(message));
+    emit(recovery);
+  }
 }

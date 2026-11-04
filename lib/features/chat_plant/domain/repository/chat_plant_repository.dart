@@ -1,6 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:plant_match_v2/core/failures/failure.dart';
+import 'package:plant_match_v2/features/chat_plant/presentation/state/chat_plant_state.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/chat_plant/domain/entities/chat_plant.dart';
 
@@ -84,7 +85,7 @@ abstract class ChatPlantRepository {
     required String blockedUserId,
   });
 
-  Stream<bool> isBlockedStream({
+  Stream<BlockStatus> blockStatusStream({
     required String currentUserId,
     required String otherUserId,
   });

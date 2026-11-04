@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:plant_match_v2/features/around_me_map/data/firebase_around_me_repository.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/cubit/around_me_cubit.dart';
 import 'package:plant_match_v2/features/catalog/data/firebase_catalog_repository.dart';
@@ -13,17 +14,19 @@ class HomePageRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = context.read<AuthCubit>().currentUser;
-    final uid = user?.uid ?? '';
-
-    return BlocProvider(
-      create: (context) => AroundMeCubit(
-        aroundMeRepository: FirebaseAroundMeRepository(),
-        profilRepository: FirebaseProfilRepo(),
-        catalogRepository: FirebaseCatalogRepository(),
-        locationService: LocationServiceImpl(),
-      )..getAllUserProfiles(uid),
-      child: const HomeScreen(),
-    );
+    return Option.fromNullable(context.read<AuthCubit>().userId)
+        .filter((uid) => uid.isNotEmpty)
+        .match(
+          () => const SizedBox.shrink(),
+          (uid) => BlocProvider(
+            create: (context) => AroundMeCubit(
+              aroundMeRepository: FirebaseAroundMeRepository(),
+              profilRepository: FirebaseProfilRepo(),
+              catalogRepository: FirebaseCatalogRepository(),
+              locationService: LocationServiceImpl(),
+            )..getAllUserProfiles(uid),
+            child: const HomeScreen(),
+          ),
+        );
   }
 }

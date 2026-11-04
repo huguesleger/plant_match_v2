@@ -70,17 +70,18 @@ class _DeleteButton extends StatelessWidget {
           ElevatedButton(
             onPressed: () async {
               final navigator = Navigator.of(context);
-              final catalogCubit = context.read<CatalogCubit>();
-
-              await catalogCubit
-                  .deleteCatalog(
-                    catalog.catalogId.getOrElse(() => ''),
-                    catalog.userId,
-                  )
+              final messenger = ScaffoldMessenger.of(context);
+              final result = await context
+                  .read<CatalogCubit>()
+                  .deleteCatalog(catalog)
                   .run();
-
               navigator.pop();
-              navigator.pop(true);
+              result.match<void>(
+                (_) => messenger.showSnackBar(
+                  SnackBar(content: Text(t.catalog.detail.delete_error)),
+                ),
+                (_) => navigator.pop(true),
+              );
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,

@@ -9,9 +9,9 @@ class ChatPlantCubit extends Cubit<ChatPlantState> {
   final ChatPlantRepository repository;
 
   StreamSubscription<List<types.Message>>? _messagesSub;
-  StreamSubscription<bool>? _blockedSub;
+  StreamSubscription<BlockStatus>? _blockedSub;
   String? _otherUserId;
-  bool _isBlocked = false;
+  BlockStatus _blockStatus = BlockStatus.none;
   List<types.Message> _currentMessages = [];
 
   ChatPlantCubit({
@@ -29,17 +29,17 @@ class ChatPlantCubit extends Cubit<ChatPlantState> {
 
     _blockedSub?.cancel();
     _blockedSub = repository
-        .isBlockedStream(
+        .blockStatusStream(
       currentUserId: currentUserId,
       otherUserId: otherUserId,
     )
-        .listen((isBlocked) {
+        .listen((blockStatus) {
       if (isClosed) return;
-      _isBlocked = isBlocked;
+      _blockStatus = blockStatus;
       if (state is ChatPlantLoaded) {
         emit(ChatPlantLoaded(
           messages: _currentMessages,
-          isBlocked: _isBlocked,
+          blockStatus: _blockStatus,
         ));
       }
     });
@@ -51,7 +51,7 @@ class ChatPlantCubit extends Cubit<ChatPlantState> {
           _currentMessages = messages;
           emit(ChatPlantLoaded(
             messages: messages,
-            isBlocked: _isBlocked,
+            blockStatus: _blockStatus,
           ));
         }
       },
@@ -69,7 +69,7 @@ class ChatPlantCubit extends Cubit<ChatPlantState> {
     required String text,
   }) async {
     if (_otherUserId == null || _otherUserId!.isEmpty) return;
-    if (_isBlocked) return;
+    if (_blockStatus != BlockStatus.none) return;
     final receiverId = _otherUserId!;
 
     await repository
@@ -126,7 +126,7 @@ class ChatPlantCubit extends Cubit<ChatPlantState> {
     required String plantImage,
   }) {
     if (_otherUserId == null || _otherUserId!.isEmpty) return;
-    if (_isBlocked) return;
+    if (_blockStatus != BlockStatus.none) return;
 
     repository
         .sendPlantExchangeMessage(

@@ -73,8 +73,6 @@ class LevelScreen extends StatelessWidget {
                             MyLevel(
                               currentPoints: userPoints.currentPoints,
                               level: userPoints.level,
-                              maxPoints: UserPointsUtils.getMaxPointsForLevel(
-                                  userPoints.level),
                             ),
                             const SizedBox(height: 20),
                             MyBadges(

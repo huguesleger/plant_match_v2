@@ -10,14 +10,13 @@ class LevelPointsCard extends StatelessWidget {
     super.key,
     required this.level,
     required this.points,
-    required this.maxPoints,
   });
 
   final int level;
   final int points;
-  final int maxPoints;
 
-  IconData _getIconForLevel(int level) => UserPointsUtils.getIconForLevel(level);
+  IconData _getIconForLevel(int level) =>
+      UserPointsUtils.getIconForLevel(level);
 
   String _getLevelName(int level) => UserPointsUtils.getLevelName(level);
 
@@ -62,7 +61,6 @@ class LevelPointsCard extends StatelessWidget {
               const SizedBox(height: 20),
               LevelProgressIndicator(
                 currentPoints: points,
-                maxPoints: maxPoints,
                 level: level,
               ),
             ],

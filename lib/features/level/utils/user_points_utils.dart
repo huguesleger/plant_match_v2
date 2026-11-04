@@ -92,16 +92,18 @@ class UserPointsUtils {
       .where((level) => points >= requiredPointsFor(level))
       .fold(1, (best, level) => level > best ? level : best);
 
-  static double calculateLevelProgression(UserPoints userPoints) {
-    final previousMax = requiredPointsFor(userPoints.level);
-    final range = getMaxPointsForLevel(userPoints.level) - previousMax;
-    return switch ((userPoints.level >= maxLevel, range > 0)) {
+  static double progressionFor(int points, int level) {
+    final previousMax = requiredPointsFor(level);
+    final range = getMaxPointsForLevel(level) - previousMax;
+    return switch ((level >= maxLevel, range > 0)) {
       (true, _) => 1.0,
       (false, false) => 0.0,
-      (false, true) =>
-        ((userPoints.currentPoints - previousMax) / range).clamp(0.0, 1.0),
+      (false, true) => ((points - previousMax) / range).clamp(0.0, 1.0),
     };
   }
+
+  static double calculateLevelProgression(UserPoints userPoints) =>
+      progressionFor(userPoints.currentPoints, userPoints.level);
 
   static double calculateProgress(UserPoints userPoints) =>
       calculateLevelProgression(userPoints);

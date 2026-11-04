@@ -12,7 +12,6 @@ import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
 import 'package:plant_match_v2/core/widgets/form/decoration_input.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
-import 'package:plant_match_v2/features/auth/presentation/sign_in/sign_in_page_route.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -25,48 +24,36 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final _formKey = GlobalKey<FormBuilderState>();
   final TextEditingController _emailController = TextEditingController();
 
-  bool showSignIn = true;
-
-  void toggleSignInOrRegister() {
-    setState(() {
-      showSignIn = !showSignIn;
-    });
+  @override
+  void dispose() {
+    _emailController.dispose();
+    super.dispose();
   }
 
-  void onPressed() async {
-    final String email = _emailController.text;
-    final authCubit = context.read<AuthCubit>();
-
-    try {
-      authCubit.sendPasswordResetEmail(email: email);
-      if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (_) =>
-                  SignInPageRoute(toggleSignInOrRegister: toggleSignInOrRegister)),
-        );
-      }
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
+  Future<void> onPressed() async {
+    if (!(_formKey.currentState?.saveAndValidate() ?? false)) return;
+    final email = _emailController.text.trim();
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+    final result = await context
+        .read<AuthCubit>()
+        .sendPasswordResetEmail(email: email)
+        .run();
+    if (!mounted) return;
+    result.match(
+      (failure) => messenger.showSnackBar(
+        SnackBar(content: Text(failure.message)),
+      ),
+      (_) {
+        messenger.showSnackBar(
           SnackBar(
             duration: const Duration(seconds: 5),
-            content: Text(
-              t.auth.forgotPassword.emailSent(email: email),
-            ),
+            content: Text(t.auth.forgotPassword.emailSent(email: email)),
           ),
         );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString()),
-          ),
-        );
-      }
-    }
-    _formKey.currentState?.saveAndValidate() ?? false;
+        navigator.pop();
+      },
+    );
   }
 
   @override

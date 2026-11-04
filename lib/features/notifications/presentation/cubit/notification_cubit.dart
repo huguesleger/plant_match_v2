@@ -20,7 +20,8 @@ class NotificationCubit extends SafeCubit<NotificationState> {
       (failure) => emit(NotificationError(failure.message)),
       (_) {
         _notificationSubscription?.cancel();
-        _notificationSubscription = _notificationRepository.onNotificationReceived.listen(
+        _notificationSubscription =
+            _notificationRepository.onNotificationReceived.listen(
           (notification) {
             // Optionnel : Gérer des actions spécifiques dans l'app lors de la réception
           },
@@ -31,38 +32,44 @@ class NotificationCubit extends SafeCubit<NotificationState> {
 
   /// Demande la permission de notification et sauvegarde le jeton FCM de l'utilisateur.
   void requestPermissionAndSaveToken(String userId) {
-    _notificationRepository.requestPermission().flatMap((granted) {
-      if (!granted) {
-        return TaskEither<Failure, NotificationState>.right(
-            const NotificationPermissionDenied());
-      }
-      return _notificationRepository.getFCMToken().flatMap((optionToken) {
-        return optionToken.match(
-          () => TaskEither<Failure, NotificationState>.right(
-              const NotificationPermissionDenied()),
-          (token) => _notificationRepository
-              .saveTokenToUser(userId, token)
-              .map((_) => NotificationPermissionGranted(token)),
-        );
-      });
-    }).match(
-      (failure) => NotificationError(failure.message),
-      (state) => state,
-    ).map(emit).run();
+    _notificationRepository
+        .requestPermission()
+        .flatMap((granted) {
+          if (!granted) {
+            return TaskEither<Failure, NotificationState>.right(
+                const NotificationPermissionDenied());
+          }
+          return _notificationRepository.getFCMToken().flatMap((optionToken) {
+            return optionToken.match(
+              () => TaskEither<Failure, NotificationState>.right(
+                  const NotificationPermissionDenied()),
+              (token) => _notificationRepository
+                  .saveTokenToUser(userId, token)
+                  .map((_) => NotificationPermissionGranted(token)),
+            );
+          });
+        })
+        .match(
+          (failure) => NotificationError(failure.message),
+          (state) => state,
+        )
+        .map(emit)
+        .run();
   }
 
   /// Supprime le jeton FCM de l'utilisateur (lors de la déconnexion).
-  void removeTokenAndLogout(String userId) {
-    state.match(
-      initial: (initial) => TaskEither<Failure, Unit>.right(unit),
-      granted: (granted) => _notificationRepository.deleteTokenFromUser(userId, granted.token),
-      denied: (denied) => TaskEither<Failure, Unit>.right(unit),
-      error: (error) => TaskEither<Failure, Unit>.right(unit),
-    ).match(
-      (failure) => emit(NotificationError(failure.message)),
-      (_) => emit(const NotificationInitial()),
-    ).run();
-  }
+  Future<void> removeTokenAndLogout(String userId) => _notificationRepository
+      .getFCMToken()
+      .flatMap((optionToken) => optionToken.match(
+            () => TaskEither<Failure, Unit>.right(unit),
+            (token) =>
+                _notificationRepository.deleteTokenFromUser(userId, token),
+          ))
+      .match(
+        (failure) => emit(NotificationError(failure.message)),
+        (_) => emit(const NotificationInitial()),
+      )
+      .run();
 
   @override
   Future<void> close() {

@@ -5,6 +5,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_animations/flutter_map_animations.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:plant_match_v2/core/util/distance/distance_helper.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 
 class MapGeo {
@@ -16,7 +17,7 @@ class MapGeo {
       );
 
   static bool hasValidLocation(ProfilUser user) =>
-      user.latitude.isSome() && user.longitude.isSome();
+      DistanceHelper.hasValidLocation(user);
 
   static bool isLimited(double radius) => radius < unlimitedRadius;
 

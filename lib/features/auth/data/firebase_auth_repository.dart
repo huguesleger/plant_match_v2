@@ -185,7 +185,7 @@ class FirebaseAuthRepository implements AuthRepository {
 
         if (docSnapshot.exists) {
           await docRef.update({'isOnline': true});
-          return (userAuth, false);
+          return (_withStoredNames(userAuth, docSnapshot.data()), false);
         } else {
           await docRef.set({
             'email': userAuth.email.toNullable(),
@@ -247,7 +247,7 @@ class FirebaseAuthRepository implements AuthRepository {
 
         if (docSnapshot.exists) {
           await docRef.update({'isOnline': true});
-          return (userAuth, false);
+          return (_withStoredNames(userAuth, docSnapshot.data()), false);
         } else {
           await docRef.set({
             'email': userAuth.email.toNullable(),
@@ -291,7 +291,8 @@ class FirebaseAuthRepository implements AuthRepository {
           }
         } on FirebaseException catch (e) {
           if (e.code != 'not-found') {
-            debugPrint('Note: Impossible de mettre à jour le statut online: $e');
+            debugPrint(
+                'Note: Impossible de mettre à jour le statut online: $e');
           }
         } catch (e) {
           debugPrint('Note: Impossible de mettre à jour le statut online: $e');
@@ -362,6 +363,26 @@ class FirebaseAuthRepository implements AuthRepository {
       (error, _) => _mapErrorToFailure(error),
     );
   }
+
+  UserAuth _withStoredNames(UserAuth user, Map<String, dynamic>? data) =>
+      Option.fromNullable(data)
+          .map((d) => (
+                _storedName(d['firstName']),
+                _storedName(d['lastName']),
+              ))
+          .filter((names) => names.$1.isSome() || names.$2.isSome())
+          .match(
+            () => user,
+            (names) => UserAuth(
+              uid: user.uid,
+              email: user.email,
+              firstName: names.$1.getOrElse(() => user.firstName),
+              lastName: names.$2.getOrElse(() => user.lastName),
+            ),
+          );
+
+  Option<String> _storedName(Object? value) =>
+      value is String && value.trim().isNotEmpty ? Some(value) : const None();
 
   // ─── Mapping d'erreurs ────────────────────────────────────────────────────
 

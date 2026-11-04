@@ -18,8 +18,10 @@ class FirebaseCatalogRepository implements CatalogRepository {
       ),
       (id) => TaskEither.tryCatch(
         () async {
-          final data = catalog.toJson();
-          data.remove('createdAt');
+          final data = catalog.toJson()
+            ..remove('createdAt')
+            ..remove('views')
+            ..remove('userId');
 
           await firestore.collection('catalogs').doc(id).update(data);
           return unit;

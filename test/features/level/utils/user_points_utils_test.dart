@@ -64,4 +64,27 @@ void main() {
     const top = UserPoints(uid: 'u', currentPoints: 120, level: 7);
     expect(UserPointsUtils.calculateLevelProgression(top), 1.0);
   });
+
+  group('progressionFor', () {
+    test('starts at zero on the threshold of the level', () {
+      expect(UserPointsUtils.progressionFor(2, 2), 0.0);
+      expect(UserPointsUtils.progressionFor(0, 1), 0.0);
+    });
+
+    test('is relative to the current level range', () {
+      expect(UserPointsUtils.progressionFor(1, 1), closeTo(0.5, 1e-9));
+      expect(UserPointsUtils.progressionFor(75, 6), closeTo(0.5, 1e-9));
+    });
+
+    test('is full at max level', () {
+      expect(UserPointsUtils.progressionFor(100, 7), 1.0);
+    });
+  });
+
+  test('requiredPointsFor matches level thresholds', () {
+    expect(
+      List.generate(7, (index) => UserPointsUtils.requiredPointsFor(index + 1)),
+      [0, 2, 5, 10, 25, 50, 100],
+    );
+  });
 }

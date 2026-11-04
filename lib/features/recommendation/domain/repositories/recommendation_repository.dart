@@ -5,6 +5,7 @@ import 'package:plant_match_v2/features/recommendation/domain/entities/recommend
 
 abstract class RecommendationRepository {
   TaskEither<Failure, List<Catalog>> getRecommendedPlants(
+    String userId,
     RecommendationAnswers answers,
   );
 

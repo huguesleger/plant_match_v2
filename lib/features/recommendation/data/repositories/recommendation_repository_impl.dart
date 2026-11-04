@@ -8,8 +8,15 @@ import 'package:plant_match_v2/features/recommendation/domain/repositories/recom
 class RecommendationRepositoryImpl implements RecommendationRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  static const int _maxCandidates = 100;
+  static final RegExp _nonToxic = RegExp(r'non[\s-]*toxique');
+
+  static bool _mentionsToxicity(String text) =>
+      text.toLowerCase().replaceAll(_nonToxic, '').contains('toxique');
+
   @override
   TaskEither<Failure, List<Catalog>> getRecommendedPlants(
+    String userId,
     RecommendationAnswers answers,
   ) {
     return TaskEither.tryCatch(
@@ -17,6 +24,7 @@ class RecommendationRepositoryImpl implements RecommendationRepository {
         final querySnapshot = await _firestore
             .collection('catalogs')
             .where('status', isEqualTo: 'published')
+            .limit(_maxCandidates)
             .get();
 
         final allPlants = querySnapshot.docs
@@ -24,6 +32,8 @@ class RecommendationRepositoryImpl implements RecommendationRepository {
             .toList();
 
         return allPlants.where((plant) {
+          if (plant.userId == userId) return false;
+
           final matchEnv = answers.environment.match(
             () => true,
             (env) => switch (env) {
@@ -58,9 +68,8 @@ class RecommendationRepositoryImpl implements RecommendationRepository {
           final matchSafety = answers.petSafety.match(
             () => true,
             (safety) => switch (safety) {
-              SafeForPets() =>
-                !plant.description.toLowerCase().contains('toxique') &&
-                    !plant.name.toLowerCase().contains('toxique'),
+              SafeForPets() => !_mentionsToxicity(plant.description) &&
+                  !_mentionsToxicity(plant.name),
               IndifferentSafety() => true,
             },
           );
@@ -82,10 +91,7 @@ class RecommendationRepositoryImpl implements RecommendationRepository {
   ) {
     return TaskEither.tryCatch(
       () async {
-        await _firestore
-            .collection('user_recommendations')
-            .doc(userId)
-            .set({
+        await _firestore.collection('user_recommendations').doc(userId).set({
           'userId': userId,
           'answers': answers.toJson(),
           'updatedAt': FieldValue.serverTimestamp(),

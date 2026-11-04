@@ -58,7 +58,8 @@ class _HomeLoadedContentState extends State<HomeLoadedContent> {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: HomeAroundMeSection(
                     plants: _getFilteredPlants(),
-                    isGeolocated: _hasValidLoc(widget.currentUser),
+                    isGeolocated:
+                        DistanceHelper.hasValidLocation(widget.currentUser),
                     onSeeAllPressed: () => context
                         .findAncestorStateOfType<TemplatePageState>()
                         ?.onPageChanged(1),
@@ -67,7 +68,8 @@ class _HomeLoadedContentState extends State<HomeLoadedContent> {
                 const SizedBox(height: 24),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: BlocBuilder<SavedRecommendationCubit, SavedRecommendationState>(
+                  child: BlocBuilder<SavedRecommendationCubit,
+                      SavedRecommendationState>(
                     builder: (context, state) {
                       return state.match(
                         initial: (_) => const SizedBox.shrink(),
@@ -92,8 +94,8 @@ class _HomeLoadedContentState extends State<HomeLoadedContent> {
                         error: (errorState) => Center(
                           child: Text(
                             "Erreur de chargement : ${errorState.message}",
-                            style:
-                                const TextStyle(color: Colors.red, fontSize: 12),
+                            style: const TextStyle(
+                                color: Colors.red, fontSize: 12),
                           ),
                         ),
                       );
@@ -120,36 +122,41 @@ class _HomeLoadedContentState extends State<HomeLoadedContent> {
     );
   }
 
-  bool _hasValidLoc(ProfilUser u) =>
-      u.latitude.getOrElse(() => 0.0) != 0.0 &&
-      u.longitude.getOrElse(() => 0.0) != 0.0;
+  Option<ProfilUser> _ownerOf(String uid) =>
+      widget.users.where((user) => user.uid == uid).firstOption;
 
-  List<(Catalog, ProfilUser, double)> _getFilteredPlants() {
-    final list = <(Catalog, ProfilUser, double)>[];
-    widget.userCatalogs.forEach((uid, catalogs) {
-      if (uid == widget.currentUser.uid) return;
-      final owner = widget.users
-          .firstWhere((u) => u.uid == uid, orElse: () => widget.currentUser);
-      if (owner.uid == widget.currentUser.uid) return;
-      for (final cat in catalogs) {
-        if (cat.status != CatalogStatus.published) continue;
-        final dist =
-            DistanceHelper.calculateDistance(widget.currentUser, owner);
-        if (dist > DistanceHelper.maxDistance) continue;
-        final isMatch = switch (_filter) {
-          CatalogFilter.all => true,
-          CatalogFilter.donation => cat.offerType == OfferType.donation,
-          CatalogFilter.exchange => cat.offerType == OfferType.exchange,
-          CatalogFilter.outdoor => cat.environment == Environment.outdoor,
-          CatalogFilter.indoor => cat.environment == Environment.indoor,
-        };
-        if (isMatch) {
-          list.add((cat, owner, dist));
-        }
-      }
-    });
-    return list..sort((a, b) => a.$3.compareTo(b.$3));
-  }
+  bool _matchesFilter(Catalog cat) =>
+      cat.status == CatalogStatus.published &&
+      switch (_filter) {
+        CatalogFilter.all => true,
+        CatalogFilter.donation => cat.offerType == OfferType.donation,
+        CatalogFilter.exchange => cat.offerType == OfferType.exchange,
+        CatalogFilter.outdoor => cat.environment == Environment.outdoor,
+        CatalogFilter.indoor => cat.environment == Environment.indoor,
+      };
+
+  Iterable<(Catalog, ProfilUser, double)> _nearbyPlantsOf(
+    String uid,
+    List<Catalog> catalogs,
+  ) =>
+      _ownerOf(uid)
+          .filter((owner) => owner.uid != widget.currentUser.uid)
+          .flatMap(
+            (owner) => DistanceHelper.distanceBetween(widget.currentUser, owner)
+                .filter((km) => km <= DistanceHelper.maxDistance)
+                .map(
+                  (km) => catalogs
+                      .where(_matchesFilter)
+                      .map((cat) => (cat, owner, km)),
+                ),
+          )
+          .getOrElse(() => const []);
+
+  List<(Catalog, ProfilUser, double)> _getFilteredPlants() =>
+      widget.userCatalogs.entries
+          .expand((entry) => _nearbyPlantsOf(entry.key, entry.value))
+          .toList()
+        ..sort((a, b) => a.$3.compareTo(b.$3));
 
   List<(Catalog, ProfilUser)> _getRecentActivities() {
     final list = <(Catalog, ProfilUser)>[];

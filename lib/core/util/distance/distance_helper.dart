@@ -5,22 +5,30 @@ import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 class DistanceHelper {
   static double maxDistance = 15.0;
 
-  static String get maxDistanceFormatted => maxDistance == double.infinity ? 'National' : '${maxDistance.toInt()} km';
+  static String get maxDistanceFormatted =>
+      maxDistance == double.infinity ? 'National' : '${maxDistance.toInt()} km';
 
-  static double calculateDistance(ProfilUser user1, ProfilUser user2) {
-    if (user1.uid == user2.uid) return 0.0;
+  static Option<LatLng> locationOf(ProfilUser user) => user.latitude
+      .flatMap((lat) => user.longitude.map((lng) => LatLng(lat, lng)))
+      .filter((point) => point.latitude != 0 || point.longitude != 0);
 
-    final lat1 = user1.latitude.getOrElse(() => 0.0);
-    final lon1 = user1.longitude.getOrElse(() => 0.0);
-    final lat2 = user2.latitude.getOrElse(() => 0.0);
-    final lon2 = user2.longitude.getOrElse(() => 0.0);
+  static bool hasValidLocation(ProfilUser user) => locationOf(user).isSome();
 
-    const distance = Distance();
-    final meters = distance.as(
-      LengthUnit.Meter,
-      LatLng(lat1, lon1),
-      LatLng(lat2, lon2),
-    );
-    return double.parse((meters / 1000).toStringAsFixed(2));
-  }
+  static Option<double> distanceBetween(ProfilUser user1, ProfilUser user2) =>
+      user1.uid == user2.uid
+          ? const Some(0.0)
+          : locationOf(user1).flatMap(
+              (from) => locationOf(user2).map((to) => _kilometers(from, to)),
+            );
+
+  static bool isWithin(ProfilUser user1, ProfilUser user2, double radius) =>
+      distanceBetween(user1, user2).match(() => false, (km) => km <= radius);
+
+  static double calculateDistance(ProfilUser user1, ProfilUser user2) =>
+      distanceBetween(user1, user2).getOrElse(() => 0.0);
+
+  static double _kilometers(LatLng from, LatLng to) => double.parse(
+        (const Distance().as(LengthUnit.Meter, from, to) / 1000)
+            .toStringAsFixed(2),
+      );
 }

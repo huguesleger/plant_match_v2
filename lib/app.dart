@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_theme.dart';
-import 'package:plant_match_v2/core/widgets/error/error_page.dart';
+import 'package:plant_match_v2/core/util/distance/distance_helper.dart';
 import 'package:plant_match_v2/core/widgets/template/template_page.dart';
 import 'package:plant_match_v2/features/auth/data/firebase_auth_repository.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
@@ -89,15 +89,15 @@ class _MyAppBodyState extends State<_MyAppBody> with WidgetsBindingObserver {
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.inactive ||
-        state == AppLifecycleState.detached ||
-        state == AppLifecycleState.paused) {
-      _setUserOffline();
-    }
-  }
+  void didChangeAppLifecycleState(AppLifecycleState state) => switch (state) {
+        AppLifecycleState.resumed => _setUserOnline(true),
+        AppLifecycleState.paused ||
+        AppLifecycleState.detached =>
+          _setUserOnline(false),
+        AppLifecycleState.inactive || AppLifecycleState.hidden => null,
+      };
 
-  Future<void> _setUserOffline() async {
+  Future<void> _setUserOnline(bool isOnline) async {
     try {
       final userId = context.read<AuthCubit>().userId;
       if (userId != null) {
@@ -105,12 +105,18 @@ class _MyAppBodyState extends State<_MyAppBody> with WidgetsBindingObserver {
             .collection('users')
             .doc(userId)
             .update({
-          'isOnline': false,
+          'isOnline': isOnline,
         });
       }
     } catch (e) {
-      debugPrint("Erreur lors de la mise hors ligne automatique : $e");
+      debugPrint("Erreur lors de la mise à jour du statut en ligne : $e");
     }
+  }
+
+  void _resetUserSession(BuildContext context) {
+    context.read<ProfilCubit>().reset();
+    context.read<UserPointsCubit>().reset();
+    DistanceHelper.maxDistance = 15.0;
   }
 
   @override
@@ -125,7 +131,11 @@ class _MyAppBodyState extends State<_MyAppBody> with WidgetsBindingObserver {
       home: MultiBlocListener(
         listeners: [
           BlocListener<AuthCubit, AuthState>(
+            listenWhen: (previous, current) => previous is! AuthError,
             listener: (context, authState) {
+              if (authState is Unauthenticated) {
+                _resetUserSession(context);
+              }
               if (authState is Authenticated) {
                 context
                     .read<NotificationCubit>()
@@ -144,6 +154,7 @@ class _MyAppBodyState extends State<_MyAppBody> with WidgetsBindingObserver {
         ],
         child: RewardListener(
           child: BlocBuilder<AuthCubit, AuthState>(
+            buildWhen: (previous, current) => current is! AuthError,
             builder: (context, authState) {
               return Scaffold(
                 body: switch (authState) {
@@ -151,13 +162,9 @@ class _MyAppBodyState extends State<_MyAppBody> with WidgetsBindingObserver {
                       child: CircularProgressIndicator(),
                     ),
                   Authenticated() => const TemplatePage(),
-                  Unauthenticated() => const GetStartedPageRoute(),
-                  AuthError() => ErrorPage(
-                      errorMessage: authState.message,
-                      onRetry: () {
-                        context.read<AuthCubit>().checkCurrentUser();
-                      },
-                    ),
+                  Unauthenticated() ||
+                  AuthError() =>
+                    const GetStartedPageRoute(),
                   AuthEmailVerificationSent(user: var u) ||
                   AuthFinalizing(user: var u) =>
                     EmailVerificationPageRoute(user: u),

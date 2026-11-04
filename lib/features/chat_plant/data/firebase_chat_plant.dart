@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:fpdart/fpdart.dart';
@@ -5,6 +7,7 @@ import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/chat_plant/domain/entities/chat_plant.dart';
 import 'package:plant_match_v2/features/chat_plant/domain/repository/chat_plant_repository.dart';
+import 'package:plant_match_v2/features/chat_plant/presentation/state/chat_plant_state.dart';
 import 'package:plant_match_v2/features/level/utils/user_points_utils.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 
@@ -290,7 +293,7 @@ class FirebaseChatPlant implements ChatPlantRepository {
           ),
           unreadCount: Map<String, int>.from(data['unreadCount'] ?? {}),
           otherUserId: (List<String>.from(data['participants']))
-              .firstWhere((id) => id != uid),
+              .firstWhere((id) => id != uid, orElse: () => ''),
           hasUnreadExchange: false,
           isExchangeCompleted: data['isExchangeCompleted'] ?? false,
           acceptedExchangeId:
@@ -507,6 +510,7 @@ class FirebaseChatPlant implements ChatPlantRepository {
         await chatRef.update({
           'lastMessage': 'Proposition d\'échange',
           'lastMessageAt': FieldValue.serverTimestamp(),
+          'unreadCount.$receiverId': FieldValue.increment(1),
           'deletedFor': FieldValue.arrayRemove([senderId, receiverId]),
         });
         return unit;
@@ -550,6 +554,7 @@ class FirebaseChatPlant implements ChatPlantRepository {
         await chatRef.update({
           'lastMessage': 'Demande de donation',
           'lastMessageAt': FieldValue.serverTimestamp(),
+          'unreadCount.$receiverId': FieldValue.increment(1),
           'deletedFor': FieldValue.arrayRemove([senderId, receiverId]),
         });
         return unit;
@@ -619,16 +624,51 @@ class FirebaseChatPlant implements ChatPlantRepository {
   }
 
   @override
-  Stream<bool> isBlockedStream({
+  Stream<BlockStatus> blockStatusStream({
     required String currentUserId,
     required String otherUserId,
   }) {
-    return _firestore
+    Stream<bool> blockedBy(String blocker, String blocked) => _firestore
         .collection('users')
-        .doc(currentUserId)
+        .doc(blocker)
         .collection('blocked_users')
-        .doc(otherUserId)
+        .doc(blocked)
         .snapshots()
         .map((doc) => doc.exists);
+
+    final latest = <Option<bool>>[const None(), const None()];
+    final subscriptions = <StreamSubscription<bool>>[];
+    late final StreamController<BlockStatus> controller;
+
+    void onValue(int index, bool value) {
+      latest[index] = Some(value);
+      final blockedByMe = latest[0].getOrElse(() => false);
+      final blockedByOther = latest[1].getOrElse(() => false);
+      latest.every((o) => o.isSome())
+          ? controller.add(
+              switch ((blockedByMe, blockedByOther)) {
+                (true, _) => BlockStatus.blockedByMe,
+                (false, true) => BlockStatus.blockedByOther,
+                (false, false) => BlockStatus.none,
+              },
+            )
+          : null;
+    }
+
+    controller = StreamController<BlockStatus>(
+      onListen: () => subscriptions.addAll([
+        blockedBy(currentUserId, otherUserId).listen(
+          (value) => onValue(0, value),
+          onError: controller.addError,
+        ),
+        blockedBy(otherUserId, currentUserId).listen(
+          (value) => onValue(1, value),
+          onError: controller.addError,
+        ),
+      ]),
+      onCancel: () => Future.wait(subscriptions.map((s) => s.cancel())),
+    );
+
+    return controller.stream.distinct();
   }
 }

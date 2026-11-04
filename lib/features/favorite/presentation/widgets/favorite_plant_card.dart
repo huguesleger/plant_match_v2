@@ -22,7 +22,7 @@ class FavoritePlantCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final name = plant.name;
-    final imageUrl = plant.images.first;
+    final imageUrl = plant.images.isEmpty ? '' : plant.images.first;
     final offerTypeRaw = plant.offerType.name;
     final environmentRaw = plant.environment.name;
 

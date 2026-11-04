@@ -71,7 +71,11 @@ class ExchangeCubit extends Cubit<ExchangeState> {
               ExchangeError('Erreur lors de l\'initialisation de l\'échange'),
           (userPlants) {
             _userPlants = userPlants
-                .where((p) => p.offerType == OfferType.exchange)
+                .where(
+                  (p) =>
+                      p.offerType == OfferType.exchange &&
+                      p.status == CatalogStatus.published,
+                )
                 .toList();
 
             return ExchangePickingPlant(

@@ -1,6 +1,6 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
+import 'package:plant_match_v2/core/util/safe_cubit.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catalog/domain/repository/catalog_repository.dart';
 import 'package:plant_match_v2/features/catalog/presentation/cubit/catalog_state.dart';
@@ -8,7 +8,7 @@ import 'package:plant_match_v2/features/catalog/presentation/widgets/catalog_sor
 import 'package:plant_match_v2/features/storage/domain/storage_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class CatalogCubit extends Cubit<CatalogState> {
+class CatalogCubit extends SafeCubit<CatalogState> {
   final CatalogRepository catalogRepository;
   final StorageRepository storageRepository;
 
@@ -56,17 +56,10 @@ class CatalogCubit extends Cubit<CatalogState> {
 
     catalogRepository
         .getCatalogsByUserId(userId)
-        .flatMap((catalogs) => catalogRepository.getCatalogById(userId).map(
-              (option) => option.match(
-                () => CatalogLoaded(catalogs, Catalog.empty(userId),
-                    sortOption: sortOption),
-                (catalog) =>
-                    CatalogLoaded(catalogs, catalog, sortOption: sortOption),
-              ),
-            ))
-        .match(
+        .match<CatalogState>(
           (failure) => CatalogError(failure.message),
-          (state) => state,
+          (catalogs) => CatalogLoaded(catalogs, Catalog.empty(userId),
+              sortOption: sortOption),
         )
         .map(emit)
         .run();
@@ -156,47 +149,63 @@ class CatalogCubit extends Cubit<CatalogState> {
         .run();
   }
 
-  // ─── uploadCatalogImages ───────────────────────────────────────────────────
+  // ─── saveEditedCatalog ─────────────────────────────────────────────────────
 
-  TaskEither<Failure, Catalog> uploadCatalogImages({
-    required Catalog catalog,
-    required List<String> imagePaths,
-    required String catalogId,
-    required List<String> existingImages,
+  TaskEither<Failure, Catalog> saveEditedCatalog({
+    required Catalog original,
+    required Catalog edited,
   }) {
+    final previous = state;
+    final sortOption = _currentSortFromState();
+    final id = edited.catalogId.getOrElse(() => '');
     emit(const CatalogLoading());
 
-    final uploadTasks = imagePaths.map((imagePath) {
-      final fileName = "${catalogId}_${imagePath.split('/').last}";
-      return storageRepository.uploadImageFromUrl(
-        path: imagePath,
-        fileName: fileName,
-        folder: 'catalog_images',
-      );
-    }).toList();
-
-    return TaskEither.sequenceList(uploadTasks).flatMap((uploadedUrls) {
-      final newImageList = [...existingImages, ...uploadedUrls];
-      final updatedCatalog = catalog.copyWith(
-        newCatalogId: Option.fromNullable(catalogId),
-        newImages: newImageList,
-      );
-
-      return catalogRepository
-          .updateCatalog(updatedCatalog)
-          .flatMap((_) => catalogRepository.getCatalogsByUserId(catalog.userId))
-          .flatMap((catalogs) {
-        return TaskEither<Failure, Catalog>.tryCatch(
-          () async {
-            emit(CatalogLoaded(catalogs, updatedCatalog,
-                sortOption: _currentSortFromState()));
-            return updatedCatalog;
-          },
-          (error, _) => UnexpectedFailure(error.toString()),
-        );
-      });
-    });
+    return TaskEither.sequenceList(
+      edited.images
+          .filter((image) => !_isRemote(image))
+          .map(
+            (path) => storageRepository.uploadImageFromUrl(
+              path: path,
+              fileName: '${id}_${path.split('/').last}',
+              folder: 'catalog_images',
+            ),
+          )
+          .toList(),
+    )
+        .flatMap((uploaded) {
+          final saved = edited.copyWith(
+            newImages: [...edited.images.filter(_isRemote), ...uploaded],
+          );
+          return catalogRepository
+              .updateCatalog(saved)
+              .map((_) => saved)
+              .orElse(
+                (failure) => TaskEither<Failure, Catalog>.fromTask(
+                  _discardImages(uploaded).map((_) => saved),
+                ).flatMap((_) => TaskEither.left(failure)),
+              );
+        })
+        .flatMap(
+          (saved) => TaskEither<Failure, Catalog>.fromTask(
+            _discardImages(
+              original.images
+                  .filter(_isRemote)
+                  .filter((image) => !saved.images.contains(image))
+                  .toList(),
+            ).flatMap((_) => _refreshCatalogs(saved.userId)).map((catalogs) {
+              emit(CatalogLoaded(catalogs, saved, sortOption: sortOption));
+              return saved;
+            }),
+          ),
+        )
+        .mapLeft((failure) {
+          emit(previous);
+          return failure;
+        });
   }
+
+  Task<List<Catalog>> _refreshCatalogs(String userId) =>
+      catalogRepository.getCatalogsByUserId(userId).getOrElse((_) => const []);
 
   // ─── deleteImageCatalog ────────────────────────────────────────────────────
 
@@ -250,20 +259,32 @@ class CatalogCubit extends Cubit<CatalogState> {
 
   // ─── deleteCatalog ─────────────────────────────────────────────────────────
 
-  TaskEither<Failure, int> deleteCatalog(String catalogId, String userId) {
+  TaskEither<Failure, Unit> deleteCatalog(Catalog catalog) {
+    final previous = state;
+    final sortOption = _currentSortFromState();
     emit(const CatalogLoading());
 
-    return catalogRepository.deleteCatalog(catalogId).flatMap((_) {
-      return catalogRepository.getCatalogsByUserId(userId).flatMap((catalogs) {
-        return TaskEither<Failure, int>.tryCatch(
-          () async {
-            emit(CatalogLoaded(catalogs, Catalog.empty(userId),
-                sortOption: _currentSortFromState()));
-            return catalogs.length;
-          },
-          (error, stackTrace) => UnexpectedFailure(error.toString()),
-        );
-      });
+    return catalog.catalogId
+        .match(
+          () => TaskEither<Failure, Unit>.left(
+            const NotFoundFailure('Catalogue non trouvé'),
+          ),
+          catalogRepository.deleteCatalog,
+        )
+        .flatMap(
+          (_) => TaskEither<Failure, Unit>.fromTask(
+            _discardImages(catalog.images.filter(_isRemote).toList())
+                .flatMap((_) => _refreshCatalogs(catalog.userId))
+                .map((catalogs) {
+              emit(CatalogLoaded(catalogs, Catalog.empty(catalog.userId),
+                  sortOption: sortOption));
+              return unit;
+            }),
+          ),
+        )
+        .mapLeft((failure) {
+      emit(previous);
+      return failure;
     });
   }
 }

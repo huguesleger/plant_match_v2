@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:plant_match_v2/core/widgets/error/error_page.dart';
 import 'package:plant_match_v2/core/widgets/template/template_page.dart';
 import 'package:plant_match_v2/features/auth/domain/entities/user_auth.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
@@ -17,6 +16,7 @@ class EmailVerificationPageRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthCubit, AuthState>(
+      buildWhen: (previous, current) => current is! AuthError,
       builder: (context, state) {
         return switch (state) {
           AuthInitial() || AuthLoading() => const Scaffold(
@@ -26,17 +26,10 @@ class EmailVerificationPageRoute extends StatelessWidget {
               ),
             ),
           Authenticated() => const TemplatePage(),
-          AuthError() => ErrorPage(
-              errorMessage: state.message,
-              onPressed: () {
-                context.read<AuthCubit>().reset();
-              },
-              onRetry: () {
-                context.read<AuthCubit>().checkCurrentUser();
-              },
-            ),
           Unauthenticated() => const RegisterScreen(),
-          AuthEmailVerificationSent() => EmailVerificationScreen(user: user),
+          AuthEmailVerificationSent() ||
+          AuthError() =>
+            EmailVerificationScreen(user: user),
           AuthFinalizing() => Scaffold(
               body: Center(
                 child: Column(

@@ -20,7 +20,15 @@ abstract class ProfilRepository {
   });
 
   /// Récupère un profil utilisateur par son code de parrainage
-  TaskEither<Failure, Option<ProfilUser>> getProfilUserByReferralCode(String referralCode);
+  TaskEither<Failure, Option<ProfilUser>> getProfilUserByReferralCode(
+      String referralCode);
 
   TaskEither<Failure, Unit> incrementLeaves(String uid, int count);
+
+  TaskEither<Failure, Unit> applyReferral({
+    required String newUserUid,
+    required String referrerUid,
+    required String referralCode,
+    required int bonus,
+  });
 }

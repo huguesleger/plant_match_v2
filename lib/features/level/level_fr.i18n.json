@@ -21,6 +21,7 @@
   },
   "progress": {
     "level_prefix": "Niveau ",
+    "max_level": "Niveau max",
     "pts_suffix": " dons/échanges"
   },
   "detail": {

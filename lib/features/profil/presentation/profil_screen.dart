@@ -11,7 +11,6 @@ import 'package:plant_match_v2/core/widgets/buttons/button_rounded_with_icon.dar
 import 'package:plant_match_v2/core/widgets/error/error_page.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
-import 'package:plant_match_v2/features/get_started/presentation/get_started_page_route.dart';
 import 'package:plant_match_v2/features/notifications/presentation/cubit/notification_cubit.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_state.dart';
@@ -155,16 +154,15 @@ class ProfilScreen extends StatelessWidget {
                         width: double.infinity,
                         child: ButtonRoundedWithIcon(
                           text: t.profil.navigation.logout,
-                          onPressed: () {
-                            context.read<NotificationCubit>().removeTokenAndLogout(userId);
-                            context.read<AuthCubit>().logOut();
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    const GetStartedPageRoute(),
-                              ),
-                            );
+                          onPressed: () async {
+                            final navigator =
+                                Navigator.of(context, rootNavigator: true);
+                            final authCubit = context.read<AuthCubit>();
+                            await context
+                                .read<NotificationCubit>()
+                                .removeTokenAndLogout(userId);
+                            navigator.popUntil((route) => route.isFirst);
+                            await authCubit.logOut();
                           },
                           bgColor: AppColors.greenLight.withValues(alpha: 0.3),
                           textColor: AppColors.blueGreen,

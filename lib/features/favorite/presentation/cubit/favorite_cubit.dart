@@ -17,6 +17,8 @@ class FavoriteCubit extends Cubit<FavoriteState> {
       : super(const FavoriteInitial());
 
   void loadFavorites(String uid) {
+    _plantsSub?.cancel();
+    _usersSub?.cancel();
     emit(const FavoriteLoading());
 
     List<Catalog>? latestPlants;

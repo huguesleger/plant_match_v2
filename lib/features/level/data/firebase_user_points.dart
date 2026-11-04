@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/features/level/domain/entities/points_update.dart';
@@ -65,18 +67,19 @@ class FirebaseUserPoints implements UserPointsRepository {
       () => _firestore.runTransaction((transaction) async {
         final pointsRef = _firestore.collection('userPoints').doc(userId);
         final doc = await transaction.get(pointsRef);
-        final data = Option.fromNullable(doc.data()).getOrElse(
-          () => throw NotFoundFailure('Utilisateur $userId non trouvé'),
-        );
-        final previous = UserPoints.fromJson({...data, 'uid': userId});
+        final previous = _fromData(userId, doc.data());
         final updated = UserPointsUtils.updatePoints(previous, pointsToAdd);
         final bonusLeaves =
             UserPointsUtils.bonusLeavesBetween(previous.level, updated.level);
 
-        transaction.update(pointsRef, {
-          'currentPoints': updated.currentPoints,
-          'level': updated.level,
-        });
+        transaction.set(
+          pointsRef,
+          {
+            'currentPoints': updated.currentPoints,
+            'level': updated.level,
+          },
+          SetOptions(merge: true),
+        );
         transaction.update(
           _firestore.collection('users').doc(userId),
           {'leaves': FieldValue.increment(bonusLeaves + giftedLeaves)},
@@ -92,6 +95,32 @@ class FirebaseUserPoints implements UserPointsRepository {
       (error, stackTrace) => _mapErrorToFailure(error),
     );
   }
+
+  @override
+  Stream<Either<Failure, UserPoints>> watchPoints(String userId) => _firestore
+      .collection('userPoints')
+      .doc(userId)
+      .snapshots()
+      .map<Either<Failure, UserPoints>>(
+        (snapshot) => Either.tryCatch(
+          () => _fromData(userId, snapshot.data()),
+          (error, _) => _mapErrorToFailure(error),
+        ),
+      )
+      .transform(
+        StreamTransformer.fromHandlers(
+          handleError: (error, _, sink) =>
+              sink.add(Left(_mapErrorToFailure(error))),
+        ),
+      );
+
+  UserPoints _fromData(String userId, Map<String, dynamic>? data) =>
+      UserPoints.fromJson({
+        'currentPoints': 0,
+        'level': 1,
+        ...Option.fromNullable(data).getOrElse(() => {}),
+        'uid': userId,
+      });
 
   Failure _mapErrorToFailure(Object error) {
     if (error is Failure) {

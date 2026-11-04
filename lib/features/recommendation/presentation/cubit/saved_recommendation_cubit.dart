@@ -23,7 +23,7 @@ class SavedRecommendationCubit extends SafeCubit<SavedRecommendationState> {
                 (const Option<RecommendationAnswers>.none(), const <Catalog>[]),
               ),
               (answers) => _repository
-                  .getRecommendedPlants(answers)
+                  .getRecommendedPlants(userId, answers)
                   .map((plants) => (some(answers), plants)),
             ))
         .match(
@@ -45,7 +45,7 @@ class SavedRecommendationCubit extends SafeCubit<SavedRecommendationState> {
 
     _repository
         .saveAnswers(userId, answers)
-        .flatMap((_) => _repository.getRecommendedPlants(answers))
+        .flatMap((_) => _repository.getRecommendedPlants(userId, answers))
         .match(
           (failure) => SavedRecommendationError(message: failure.message),
           (plants) => SavedRecommendationLoaded(
