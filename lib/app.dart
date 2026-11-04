@@ -13,11 +13,16 @@ import 'package:plant_match_v2/features/auth/presentation/email_verification/ema
 import 'package:plant_match_v2/features/get_started/presentation/get_started_page_route.dart';
 import 'package:plant_match_v2/features/level/data/firebase_user_points.dart';
 import 'package:plant_match_v2/features/level/presentation/cubit/user_points_cubit.dart';
-import 'package:plant_match_v2/features/level/presentation/cubit/user_points_state.dart';
 import 'package:plant_match_v2/features/level_awarded/presentation/level_awarded_page_route.dart';
 import 'package:plant_match_v2/features/notifications/data/datasources/fcm_remote_datasource.dart';
 import 'package:plant_match_v2/features/notifications/data/repositories/notification_repository_impl.dart';
 import 'package:plant_match_v2/features/notifications/presentation/cubit/notification_cubit.dart';
+import 'package:plant_match_v2/features/profil/data/firebase_profil_repo.dart';
+import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
+import 'package:plant_match_v2/features/profil/presentation/cubit/profil_state.dart';
+import 'package:plant_match_v2/features/storage/data/firebase_storage_repository.dart';
+import 'package:plant_match_v2/core/services/location/location_service.dart';
+
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -51,6 +56,13 @@ class _MyAppState extends State<MyApp> {
           create: (context) => NotificationCubit(
             notificationRepository: notificationRepository,
           )..initialize(),
+        ),
+        BlocProvider(
+          create: (context) => ProfilCubit(
+            profilRepository: FirebaseProfilRepo(),
+            storageRepository: FirebaseStorageRepository(),
+            locationService: LocationServiceImpl(),
+          ),
         ),
       ],
       child: const _MyAppBody(),
@@ -118,10 +130,12 @@ class _MyAppBodyState extends State<_MyAppBody> with WidgetsBindingObserver {
             listener: (context, authState) {
               if (authState is Authenticated) {
                 context.read<NotificationCubit>().requestPermissionAndSaveToken(authState.user.uid);
+                context.read<ProfilCubit>().getProfilUser(authState.user.uid);
+                context.read<ProfilCubit>().checkDailyConnection(authState.user.uid);
                 if (authState.isFirstTime) {
                   context.read<UserPointsCubit>().addUserPoints(
                         authState.user.uid,
-                        25,
+                        0,
                         1,
                         isFromRegistration: true,
                       );
@@ -129,16 +143,16 @@ class _MyAppBodyState extends State<_MyAppBody> with WidgetsBindingObserver {
               }
             },
           ),
-          BlocListener<UserPointsCubit, UserPointsState>(
-            listener: (context, pointsState) {
-              if (pointsState is UserPointsAwarded && pointsState.points > 0) {
+          BlocListener<ProfilCubit, ProfilState>(
+            listener: (context, state) {
+              if (state is ProfilLoaded && state.leavesGained > 0) {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => LevelAwardedPageRoute(
-                      userId: pointsState.userId,
-                      userPoints: pointsState.userPoints,
-                      isFromRegistration: pointsState.isFromRegistration,
+                      leavesGained: state.leavesGained,
+                      title: state.rewardMessage ?? 'Félicitations !',
+                      description: 'Vous venez d\'obtenir des feuilles bonus pour vos interactions.',
                     ),
                     fullscreenDialog: true,
                   ),

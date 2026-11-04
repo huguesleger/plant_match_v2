@@ -6,44 +6,44 @@ import 'package:plant_match_v2/features/level/domain/entities/user_points.dart';
 class UserPointsUtils {
   static Map<int, LevelData> get levelData => {
         1: LevelData(
-          maxPoints: 50,
+          maxPoints: 2,
           name: t.level.levels.names.k1,
           icon: LucideIcons.sprout,
         ),
         2: LevelData(
-          maxPoints: 150,
+          maxPoints: 5,
           name: t.level.levels.names.k2,
           icon: LucideIcons.leaf,
         ),
         3: LevelData(
-          maxPoints: 400,
+          maxPoints: 10,
           name: t.level.levels.names.k3,
           icon: LucideIcons.wheat,
         ),
         4: LevelData(
-          maxPoints: 800,
+          maxPoints: 25,
           name: t.level.levels.names.k4,
           icon: LucideIcons.shovel,
         ),
         5: LevelData(
-          maxPoints: 1500,
+          maxPoints: 50,
           name: t.level.levels.names.k5,
           icon: LucideIcons.flower,
         ),
         6: LevelData(
-          maxPoints: 3000,
+          maxPoints: 100,
           name: t.level.levels.names.k6,
           icon: LucideIcons.tree_pine,
         ),
         7: LevelData(
-          maxPoints: 6000,
+          maxPoints: 100,
           name: t.level.levels.names.k7,
           icon: LucideIcons.trees,
         ),
       };
 
   static LevelData get defaultLevel => LevelData(
-        maxPoints: 50,
+        maxPoints: 2,
         name: t.level.levels.names.k1,
         icon: LucideIcons.sprout,
       );
@@ -67,28 +67,36 @@ class UserPointsUtils {
     return null;
   }
 
+  static int getBonusLeavesForLevel(int level) => switch (level) {
+        1 => 5,
+        2 => 3,
+        3 => 5,
+        4 => 8,
+        5 => 12,
+        6 => 20,
+        7 => 9999, // Représente les feuilles illimitées
+        _ => 0,
+      };
+
   static double calculateLevelProgression(UserPoints userPoints) {
     final currentLevel = userPoints.level;
-    final nextLevel = getNextLevel(currentLevel);
-
-    if (nextLevel == null) {
+    if (currentLevel >= 7) {
       return 1.0;
     }
 
+    final prevMaxPoints =
+        currentLevel > 1 ? getMaxPointsForLevel(currentLevel - 1) : 0;
     final currentLevelMaxPoints = getMaxPointsForLevel(currentLevel);
-    final pointsInCurrentLevel = userPoints.currentPoints;
+    final range = currentLevelMaxPoints - prevMaxPoints;
 
-    if (currentLevelMaxPoints > 0) {
-      return pointsInCurrentLevel / currentLevelMaxPoints;
-    }
+    if (range <= 0) return 0.0;
 
-    return 0.0;
+    final progressInLevel = userPoints.currentPoints - prevMaxPoints;
+    return (progressInLevel / range).clamp(0.0, 1.0);
   }
 
   static double calculateProgress(UserPoints userPoints) {
-    final maxPoints = getMaxPointsForLevel(userPoints.level);
-    if (maxPoints == 0) return 0;
-    return userPoints.currentPoints / maxPoints;
+    return calculateLevelProgression(userPoints);
   }
 
   static UserPoints updatePoints(UserPoints userPoints, int pointsToAdd) {
@@ -131,3 +139,4 @@ class LevelData {
     required this.icon,
   });
 }
+

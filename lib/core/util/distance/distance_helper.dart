@@ -3,9 +3,9 @@ import 'package:latlong2/latlong.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 
 class DistanceHelper {
-  static const double maxDistance = 05.0;
+  static double maxDistance = 15.0;
 
-  static String get maxDistanceFormatted => '${maxDistance.toInt()} km';
+  static String get maxDistanceFormatted => maxDistance == double.infinity ? 'National' : '${maxDistance.toInt()} km';
 
   static double calculateDistance(ProfilUser user1, ProfilUser user2) {
     if (user1.uid == user2.uid) return 0.0;

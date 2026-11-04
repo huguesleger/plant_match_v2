@@ -31,14 +31,16 @@ class WizardView extends StatefulWidget {
 class _WizardViewState extends State<WizardView> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
-  final int _totalPages = 4;
+  final int _totalPages = 5;
 
   final TextEditingController _pseudoController = TextEditingController();
   final TextEditingController _birthdayDateController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
+  final TextEditingController _referralController = TextEditingController();
   final _formKeyPseudo = GlobalKey<FormBuilderState>();
   final _formKeyBirthdayDate = GlobalKey<FormBuilderState>();
   final _formKeyBio = GlobalKey<FormBuilderState>();
+  final _formKeyReferral = GlobalKey<FormBuilderState>();
   final _formKeyCity = GlobalKey<FormBuilderState>();
 
   @override
@@ -50,6 +52,7 @@ class _WizardViewState extends State<WizardView> {
       (date) => DateFormat('dd/MM/yyyy').format(date),
     );
     _bioController.text = widget.profilUser.bio.getOrElse(() => '');
+    _referralController.text = widget.profilUser.referredBy.getOrElse(() => '');
   }
 
   @override
@@ -57,6 +60,7 @@ class _WizardViewState extends State<WizardView> {
     _pseudoController.dispose();
     _birthdayDateController.dispose();
     _bioController.dispose();
+    _referralController.dispose();
     _pageController.dispose();
     super.dispose();
   }
@@ -66,6 +70,7 @@ class _WizardViewState extends State<WizardView> {
       _formKeyPseudo,
       _formKeyBirthdayDate,
       _formKeyBio,
+      _formKeyReferral,
     ];
 
     if (_currentPage < formKeys.length) {
@@ -79,6 +84,8 @@ class _WizardViewState extends State<WizardView> {
               : const None(),
           newBio: Option.fromPredicate(
               _bioController.text.trim(), (String v) => v.isNotEmpty),
+          newReferredBy: Option.fromPredicate(
+              _referralController.text.trim(), (String v) => v.isNotEmpty),
         );
 
         context.read<ProfilCubit>().saveProfilUser(updatedUser);
@@ -151,6 +158,10 @@ class _WizardViewState extends State<WizardView> {
                 WizardBioStep(
                   formKey: _formKeyBio,
                   controller: _bioController,
+                ),
+                WizardReferralStep(
+                  formKey: _formKeyReferral,
+                  controller: _referralController,
                 ),
                 WizardLocationStep(
                   formKey: _formKeyCity,

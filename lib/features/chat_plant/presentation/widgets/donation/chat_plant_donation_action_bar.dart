@@ -14,6 +14,7 @@ import 'package:plant_match_v2/features/chat_plant/presentation/widgets/validati
 import 'package:plant_match_v2/features/donation/domain/entities/donation.dart';
 import 'package:plant_match_v2/features/donation/presentation/cubit/donation_cubit.dart';
 import 'package:plant_match_v2/features/donation/presentation/state/donation_state.dart';
+import 'package:plant_match_v2/features/level/presentation/cubit/user_points_cubit.dart';
 
 class ChatPlantDonationActionBar extends StatelessWidget {
   const ChatPlantDonationActionBar({
@@ -65,6 +66,8 @@ class ChatPlantDonationActionBar extends StatelessWidget {
                 donation.id,
                 code,
                 currentUserId,
+                donation.ownerId,
+                context.read<UserPointsCubit>(),
               ),
         ),
       DonationAccepted() when !isPlantOwner => ChatPlantStatusBanner(

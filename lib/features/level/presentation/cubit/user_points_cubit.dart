@@ -42,6 +42,7 @@ class UserPointsCubit extends Cubit<UserPointsState> {
               userId,
               userPoints,
               isFromRegistration: isFromRegistration,
+              isLevelUp: false,
             ));
             return UserPointsLoaded(
               userPoints.currentPoints,
@@ -55,6 +56,14 @@ class UserPointsCubit extends Cubit<UserPointsState> {
   }
 
   void updateUserPoints(String userId, int pointsToAdd) {
+    final oldState = state;
+    int oldLevel = 1;
+    if (oldState is UserPointsLoaded) {
+      oldLevel = oldState.level;
+    } else if (oldState is UserPointsAwarded) {
+      oldLevel = oldState.userPoints.level;
+    }
+
     emit(UserPointsLoading());
 
     repository
@@ -63,7 +72,13 @@ class UserPointsCubit extends Cubit<UserPointsState> {
         .match(
           (failure) => UserPointsError(failure.message),
           (userPoints) {
-            emit(UserPointsAwarded(pointsToAdd, userId, userPoints));
+            final isLevelUp = userPoints.level > oldLevel;
+            emit(UserPointsAwarded(
+              pointsToAdd,
+              userId,
+              userPoints,
+              isLevelUp: isLevelUp,
+            ));
             return UserPointsLoaded(
               userPoints.currentPoints,
               userPoints.level,

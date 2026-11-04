@@ -18,4 +18,7 @@ abstract class ProfilRepository {
     required String field,
     required dynamic value,
   });
+
+  /// Récupère un profil utilisateur par son code de parrainage
+  TaskEither<Failure, Option<ProfilUser>> getProfilUserByReferralCode(String referralCode);
 }

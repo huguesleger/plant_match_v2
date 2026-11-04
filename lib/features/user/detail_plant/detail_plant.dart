@@ -4,6 +4,7 @@ import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -18,6 +19,8 @@ import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
+import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
+import 'package:plant_match_v2/features/profil/presentation/cubit/profil_state.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/chat_plant_page_route.dart';
 import 'package:plant_match_v2/features/user/data/firebase_user.dart';
 import 'package:plant_match_v2/features/catalog/data/firebase_catalog_repository.dart';
@@ -49,9 +52,47 @@ class _DetailPlantState extends State<DetailPlant> {
     super.initState();
   }
 
-  void openPlantChat(BuildContext context) {
+  void openPlantChat(BuildContext context) async {
     final userId = context.read<AuthCubit>().userId ?? '';
     if (userId.isEmpty) return;
+    if (userId == widget.catalog.userId) return;
+
+    final ids = [userId, widget.catalog.userId]..sort();
+    final chatId =
+        '${widget.catalog.catalogId.getOrElse(() => '')}_${ids[0]}_${ids[1]}';
+
+    final chatDoc = await FirebaseFirestore.instance
+        .collection('plant_chats')
+        .doc(chatId)
+        .get();
+
+    if (!context.mounted) return;
+
+    if (!chatDoc.exists) {
+      final profilState = context.read<ProfilCubit>().state;
+      if (profilState is ProfilLoaded) {
+        final currentUser = profilState.profilUser;
+        if (currentUser.leaves <= 0) {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text("Plus de feuilles disponibles"),
+              content: const Text(
+                "Vous n'avez plus de feuilles pour contacter un donneur.\n\n"
+                "Publiez une plante (+2 feuilles) ou parrainez un ami (+3 feuilles) pour continuer !",
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("D'accord"),
+                ),
+              ],
+            ),
+          );
+          return;
+        }
+      }
+    }
 
     if (widget.owner != null) {
       _startChat(context, userId, widget.owner!);
@@ -104,6 +145,27 @@ class _DetailPlantState extends State<DetailPlant> {
     );
   }
 
+  void _sharePlant(BuildContext context, Catalog catalog) {
+    final name = catalog.name.toUpperCase();
+    final type = catalog.offerType == OfferType.donation ? 'donne' : 'échange';
+    final description = catalog.description;
+    
+    final text = "Regarde cette plante sur PlantMatch !\n\n"
+        "Je $type une magnifique *$name*.\n"
+        "\"$description\"\n\n"
+        "Télécharge l'application PlantMatch pour l'adopter ou l'échanger autour de toi ! 🌿";
+        
+    final box = context.findRenderObject() as RenderBox?;
+    final sharePositionOrigin = box != null 
+        ? box.localToGlobal(Offset.zero) & box.size 
+        : null;
+
+    Share.share(
+      text,
+      sharePositionOrigin: sharePositionOrigin,
+    );
+  }
+
   Future<(Either<Failure, Option<Catalog>>, Either<Failure, ProfilUser>, Either<Failure, ProfilUser>?)> _loadData(
     String currentUserId,
   ) async {
@@ -151,6 +213,23 @@ class _DetailPlantState extends State<DetailPlant> {
           backgroundColor: AppColors.white,
         ),
         actions: [
+          Container(
+            decoration: const BoxDecoration(
+              color: AppColors.white,
+              shape: BoxShape.circle,
+              border: Border.fromBorderSide(
+                BorderSide(color: AppColors.greyLight),
+              ),
+            ),
+            padding: const EdgeInsets.all(2),
+            child: Builder(
+              builder: (buttonContext) => IconButton(
+                icon: const Icon(LucideIcons.share_2, color: AppColors.greyDark, size: 20),
+                onPressed: () => _sharePlant(buttonContext, widget.catalog),
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
           Container(
             decoration: const BoxDecoration(
               color: AppColors.white,

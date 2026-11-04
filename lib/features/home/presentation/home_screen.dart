@@ -60,6 +60,7 @@ class HomeScreen extends StatelessWidget {
                     firstName: currentUser.firstName,
                     profilImg: currentUser.profilImg,
                     userName: currentUser.userName,
+                    leaves: currentUser.leaves,
                   ),
                 ),
               ),

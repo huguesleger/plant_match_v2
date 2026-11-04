@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:plant_match_v2/features/level/data/firebase_user_points.dart';
+import 'package:plant_match_v2/features/level/presentation/cubit/user_points_cubit.dart';
 import 'package:plant_match_v2/features/chat_plant/domain/repository/chat_plant_repository.dart';
 import 'package:plant_match_v2/features/donation/domain/entities/donation.dart';
 import 'package:plant_match_v2/features/donation/domain/repository/donation_repository.dart';
@@ -117,8 +119,14 @@ class DonationCubit extends Cubit<DonationState> {
     repository.generateValidationCode(donationId).run();
   }
 
-  void validateCode(String donationId, String code, String userId) {
-    repository.validateCode(donationId, code, userId).run();
+  void validateCode(String donationId, String code, String userId, String otherUserId, UserPointsCubit pointsCubit) {
+    repository.validateCode(donationId, code, userId).match(
+      (failure) => null,
+      (_) {
+        pointsCubit.updateUserPoints(userId, 1);
+        FirebaseUserPoints().updatePoints(otherUserId, 1).run();
+      },
+    ).run();
   }
 
   @override

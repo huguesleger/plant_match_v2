@@ -15,7 +15,7 @@ class ProfilPlantMatchCategories extends StatelessWidget {
       children: [
         ProfilItemSubCategory(
           title: t.profil.navigation.help,
-          icon: LucideIcons.message_circle_question,
+          icon: LucideIcons.circle_question_mark,
           onTap: () {},
         ),
         ProfilItemSubCategory(

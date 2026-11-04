@@ -94,6 +94,34 @@ class FirebaseProfilRepo implements ProfilRepository {
     );
   }
 
+  @override
+  TaskEither<Failure, Option<ProfilUser>> getProfilUserByReferralCode(String referralCode) {
+    if (referralCode.isEmpty) {
+      return TaskEither.left(const AuthFailure('Code de parrainage vide'));
+    }
+
+    return TaskEither.tryCatch(
+      () async {
+        final querySnapshot = await _firebaseFirestore
+            .collection('users')
+            .where('referralCode', isEqualTo: referralCode)
+            .limit(1)
+            .get();
+
+        if (querySnapshot.docs.isNotEmpty) {
+          final userDoc = querySnapshot.docs.first;
+          final userData = userDoc.data();
+          return Some(ProfilUser.fromJson({
+            ...userData,
+            'uid': userDoc.id,
+          }));
+        }
+        return const None();
+      },
+      (error, _) => _mapErrorToFailure(error),
+    );
+  }
+
   Failure _mapErrorToFailure(Object error) {
     if (error is Failure) return error;
     if (error is FirebaseException) {

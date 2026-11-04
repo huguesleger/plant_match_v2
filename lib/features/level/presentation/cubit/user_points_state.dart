@@ -25,7 +25,8 @@ class UserPointsAwarded extends UserPointsState {
   final String userId;
   final UserPoints userPoints;
   final bool isFromRegistration;
+  final bool isLevelUp;
 
   UserPointsAwarded(this.points, this.userId, this.userPoints,
-      {this.isFromRegistration = false});
+      {this.isFromRegistration = false, this.isLevelUp = false});
 }

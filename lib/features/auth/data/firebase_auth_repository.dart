@@ -151,6 +151,9 @@ class FirebaseAuthRepository implements AuthRepository {
           'isOnline': true,
           'createdAt': FieldValue.serverTimestamp(),
           'emailVerified': true,
+          'leaves': 5,
+          'referralCode': 'PM-${user.uid.substring(0, 5).toUpperCase()}',
+          'referredBy': null,
         });
         return true;
       },
@@ -203,6 +206,9 @@ class FirebaseAuthRepository implements AuthRepository {
             'isOnline': true,
             'createdAt': FieldValue.serverTimestamp(),
             'emailVerified': true,
+            'leaves': 5,
+            'referralCode': 'PM-${userAuth.uid.substring(0, 5).toUpperCase()}',
+            'referredBy': null,
           });
           return (userAuth, true);
         }
@@ -262,6 +268,9 @@ class FirebaseAuthRepository implements AuthRepository {
             'isOnline': true,
             'createdAt': FieldValue.serverTimestamp(),
             'emailVerified': true,
+            'leaves': 5,
+            'referralCode': 'PM-${userAuth.uid.substring(0, 5).toUpperCase()}',
+            'referredBy': null,
           });
           return (userAuth, true);
         }

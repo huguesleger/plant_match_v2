@@ -12,6 +12,7 @@ import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart'
 import 'package:plant_match_v2/features/chat_plant/presentation/cubit/chat_plant_cubit.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/chat_plant_custom_message.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/chat_plant_text_input.dart';
+import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/chat_theme.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/donation/chat_plant_donation_action_bar.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/donation/chat_plant_donation_info_bar.dart';
@@ -97,19 +98,29 @@ class ChatPlantView extends StatelessWidget {
                 isBlocked
                     ? _BlockedBanner(plantOwnerId: plantOwnerId)
                     : ChatPlantTextInput(
-                        onSend: (text) => context.read<ChatPlantCubit>().send(
-                              chatId: chatId,
-                              senderId: userId,
-                              text: text,
-                            ),
+                        onSend: (text) {
+                          if (messages.isEmpty) {
+                            context.read<ProfilCubit>().addLeaves(userId, -1, '');
+                          }
+                          context.read<ChatPlantCubit>().send(
+                                chatId: chatId,
+                                senderId: userId,
+                                text: text,
+                              );
+                        },
                       ),
               ],
             ),
-            onSendPressed: (message) => context.read<ChatPlantCubit>().send(
-                  chatId: chatId,
-                  senderId: userId,
-                  text: message.text,
-                ),
+            onSendPressed: (message) {
+              if (messages.isEmpty) {
+                context.read<ProfilCubit>().addLeaves(userId, -1, '');
+              }
+              context.read<ChatPlantCubit>().send(
+                    chatId: chatId,
+                    senderId: userId,
+                    text: message.text,
+                  );
+            },
             textMessageBuilder: (types.TextMessage message,
                 {required int messageWidth, required bool showName}) {
               return Padding(

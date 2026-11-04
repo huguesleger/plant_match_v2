@@ -11,7 +11,8 @@ import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
 import 'package:plant_match_v2/core/widgets/dialog/dialog_with_image.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catalog/presentation/cubit/catalog_cubit.dart';
-import 'package:plant_match_v2/features/level/presentation/cubit/user_points_cubit.dart';
+
+import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
 import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/steps/step_environment.dart';
 import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/steps/step_description.dart';
 import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/steps/step_family.dart';
@@ -274,9 +275,15 @@ class _AddPlantWizardScreenState extends State<AddPlantWizardScreen> {
       }
 
       if (isFirst && mounted) {
-        context
-            .read<UserPointsCubit>()
-            .updateUserPoints(finalCatalog.userId, 25);
+        // Points attribution removed: only donations/exchanges give points now.
+      }
+
+      if (finalCatalog.status == CatalogStatus.published && mounted) {
+        context.read<ProfilCubit>().addLeaves(
+              finalCatalog.userId,
+              2,
+              'Plante publiée !',
+            );
       }
 
       if (mounted) {

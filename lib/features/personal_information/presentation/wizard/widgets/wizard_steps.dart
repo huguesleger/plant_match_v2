@@ -175,3 +175,32 @@ class WizardLocationStep extends StatelessWidget {
     );
   }
 }
+
+class WizardReferralStep extends StatelessWidget {
+  const WizardReferralStep({
+    super.key,
+    required this.formKey,
+    required this.controller,
+  });
+
+  final GlobalKey<FormBuilderState> formKey;
+  final TextEditingController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return DetailWizardItem(
+      title: 'Code de parrainage',
+      description: 'Si un ami vous a parrainé, saisissez son code pour gagner tous les deux 3 feuilles supplémentaires !',
+      formKey: formKey,
+      child: FormBuilderTextField(
+        name: 'referredBy',
+        decoration: DecorationInput.inputDecoration(
+          hintText: 'Ex : PM-XYZ12',
+          labelText: 'Code de parrainage (Optionnel)',
+        ),
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        controller: controller,
+      ),
+    );
+  }
+}

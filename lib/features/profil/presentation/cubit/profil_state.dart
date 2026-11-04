@@ -10,8 +10,10 @@ class ProfilLoading extends ProfilState {}
 
 class ProfilLoaded extends ProfilState {
   final ProfilUser profilUser;
+  final int leavesGained;
+  final String? rewardMessage;
 
-  ProfilLoaded(this.profilUser);
+  ProfilLoaded(this.profilUser, {this.leavesGained = 0, this.rewardMessage});
 }
 
 class ProfilError extends ProfilState {

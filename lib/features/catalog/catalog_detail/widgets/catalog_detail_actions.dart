@@ -9,7 +9,7 @@ import 'package:plant_match_v2/core/widgets/buttons/button_rounded_with_icon.dar
 import 'package:plant_match_v2/features/catalog/catalog_edit/catalog_edit_page_route.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catalog/presentation/cubit/catalog_cubit.dart';
-import 'package:plant_match_v2/features/level/presentation/cubit/user_points_cubit.dart';
+
 
 class CatalogDetailActions extends StatelessWidget {
   const CatalogDetailActions({
@@ -72,7 +72,7 @@ class _DeleteButton extends StatelessWidget {
             onPressed: () async {
               final navigator = Navigator.of(context);
               final catalogCubit = context.read<CatalogCubit>();
-              final userPointsCubit = context.read<UserPointsCubit>();
+              // Removed unused userPointsCubit variable
 
               final result = await catalogCubit
                   .deleteCatalog(
@@ -83,9 +83,7 @@ class _DeleteButton extends StatelessWidget {
 
               result.match(
                 (failure) => null,
-                (remainingCount) => remainingCount == 0
-                    ? userPointsCubit.updateUserPoints(catalog.userId, -25)
-                    : null,
+                (remainingCount) => null, // Points decrement removed: only donations/exchanges give points now.
               );
 
               navigator.pop();

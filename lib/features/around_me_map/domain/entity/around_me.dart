@@ -19,6 +19,10 @@ class AroundMe extends ProfilUser {
     required super.createdAt,
     super.bio = const None(),
     super.birthdayDate = const None(),
+    super.leaves = 5,
+    super.referralCode = '',
+    super.referredBy = const None(),
+    super.lastConnectionDate = const None(),
   });
 
   @override
@@ -61,6 +65,15 @@ class AroundMe extends ProfilUser {
                   DateTime.now()),
       bio: Option.fromNullable(json['bio'] as String?),
       birthdayDate: Option.fromNullable(json['birthdayDate']).map((d) {
+        if (d is Timestamp) return d.toDate();
+        if (d is String) return DateTime.tryParse(d) ?? DateTime.now();
+        return DateTime.now();
+      }),
+      leaves: json['leaves'] as int? ?? 5,
+      referralCode: json['referralCode'] as String? ?? '',
+      referredBy: Option.fromNullable(json['referredBy'] as String?),
+      lastConnectionDate:
+          Option.fromNullable(json['lastConnectionDate']).map((d) {
         if (d is Timestamp) return d.toDate();
         if (d is String) return DateTime.tryParse(d) ?? DateTime.now();
         return DateTime.now();

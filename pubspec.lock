@@ -743,10 +743,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_lucide
-      sha256: e3771c78c49b50d3d776852e064a742499df46690bfbfecf614bf4d1e0e61beb
+      sha256: d2866c9ba75b2300e73a888489f0d7ef1d225e1c352d7e7f5c7fdff7d04e294c
       url: "https://pub.dev"
     source: hosted
-    version: "1.6.1"
+    version: "1.11.0"
   flutter_map:
     dependency: "direct main"
     description:
@@ -1605,6 +1605,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.5.2"
+  share_plus:
+    dependency: "direct main"
+    description:
+      name: share_plus
+      sha256: fce43200aa03ea87b91ce4c3ac79f0cecd52e2a7a56c7a4185023c271fbfa6da
+      url: "https://pub.dev"
+    source: hosted
+    version: "10.1.4"
+  share_plus_platform_interface:
+    dependency: transitive
+    description:
+      name: share_plus_platform_interface
+      sha256: cc012a23fc2d479854e6c80150696c4a5f5bb62cb89af4de1c505cf78d0a5d0b
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.0.2"
   shared_preferences:
     dependency: "direct main"
     description:

@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/features/profil/domain/repository/profil_repository.dart';
@@ -173,20 +174,34 @@ class ProfilCubit extends Cubit<ProfilState> {
         .run();
   }
 
-  // ─── saveProfilUser ────────────────────────────────────────────────────────
-
   void saveProfilUser(ProfilUser profilUser) {
     emit(ProfilLoading());
 
     profilRepository
         .getProfilUser(profilUser.uid)
-        .flatMap((option) => option.match(
-              () => profilRepository.createProfilUser(profilUser),
-              (existing) => profilRepository.updateProfilUser(profilUser),
+        .flatMap((existingOption) => existingOption.match(
+              () => profilUser.referredBy.match(
+                () => profilRepository.createProfilUser(profilUser).map((_) => (profilUser, 0, null as String?)),
+                (code) => profilRepository.getProfilUserByReferralCode(code).flatMap((parrainOption) => parrainOption.match(
+                      () => profilRepository.createProfilUser(profilUser).map((_) => (profilUser, 0, null as String?)),
+                      (parrain) {
+                        final updatedUser = profilUser.copyWith(newLeaves: profilUser.leaves + 3);
+                        return profilRepository
+                            .createProfilUser(updatedUser)
+                            .flatMap((_) => profilRepository.updateProfilField(
+                                  uid: parrain.uid,
+                                  field: 'leaves',
+                                  value: parrain.leaves + 3,
+                                ))
+                            .map((_) => (updatedUser, 3, 'Code de parrainage validé !'));
+                      },
+                    )),
+              ),
+              (existing) => profilRepository.updateProfilUser(profilUser).map((_) => (profilUser, 0, null as String?)),
             ))
         .match(
           (failure) => ProfilError(failure.message),
-          (_) => ProfilLoaded(profilUser),
+          (result) => ProfilLoaded(result.$1, leavesGained: result.$2, rewardMessage: result.$3),
         )
         .map(emit)
         .run();
@@ -294,6 +309,69 @@ class ProfilCubit extends Cubit<ProfilState> {
         .match(
           (failure) => ProfilError(failure.message),
           (user) => ProfilLoaded(user),
+        )
+        .map(emit)
+        .run();
+  }
+
+  void checkDailyConnection(String uid) {
+    profilRepository
+        .getProfilUser(uid)
+        .flatMap((option) => option.match(
+              () => TaskEither.left(const AuthFailure('Profil introuvable')),
+              (user) {
+                final now = DateTime.now();
+                final lastConn = user.lastConnectionDate.toNullable();
+
+                final isSameDay = lastConn != null &&
+                    lastConn.year == now.year &&
+                    lastConn.month == now.month &&
+                    lastConn.day == now.day;
+
+                if (isSameDay) {
+                  return TaskEither.right((user, 0, null as String?));
+                }
+
+                final updatedUser = user.copyWith(
+                  newLeaves: user.leaves + 1,
+                  newLastConnectionDate: Some(now),
+                );
+
+                return profilRepository
+                    .updateProfilUser(updatedUser)
+                    .flatMap((_) => profilRepository.updateProfilField(
+                          uid: uid,
+                          field: 'lastConnectionDate',
+                          value: Timestamp.fromDate(now),
+                        ))
+                    .map((_) => (updatedUser, 1, 'Soleil Quotidien !'));
+              },
+            ))
+        .match(
+          (failure) => ProfilError(failure.message),
+          (result) => ProfilLoaded(result.$1, leavesGained: result.$2, rewardMessage: result.$3),
+        )
+        .map(emit)
+        .run();
+  }
+
+  void addLeaves(String uid, int count, String message) {
+    profilRepository
+        .getProfilUser(uid)
+        .flatMap((option) => option.match(
+              () => TaskEither.left(const AuthFailure('Profil introuvable')),
+              (user) {
+                final updatedUser = user.copyWith(
+                  newLeaves: user.leaves + count,
+                );
+                return profilRepository
+                    .updateProfilUser(updatedUser)
+                    .map((_) => updatedUser);
+              },
+            ))
+        .match(
+          (failure) => ProfilError(failure.message),
+          (user) => ProfilLoaded(user, leavesGained: count, rewardMessage: message),
         )
         .map(emit)
         .run();

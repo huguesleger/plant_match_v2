@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:plant_match_v2/features/level/data/firebase_user_points.dart';
+import 'package:plant_match_v2/features/level/presentation/cubit/user_points_cubit.dart';
 import 'package:plant_match_v2/features/catalog/data/firebase_catalog_repository.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/chat_plant/domain/repository/chat_plant_repository.dart';
@@ -169,8 +171,14 @@ class ExchangeCubit extends Cubit<ExchangeState> {
     repository.generateValidationCode(exchangeId).run();
   }
 
-  void validateCode(String exchangeId, String code, String userId) {
-    repository.validateCode(exchangeId, code, userId).run();
+  void validateCode(String exchangeId, String code, String userId, String otherUserId, UserPointsCubit pointsCubit) {
+    repository.validateCode(exchangeId, code, userId).match(
+      (failure) => null,
+      (_) {
+        pointsCubit.updateUserPoints(userId, 1);
+        FirebaseUserPoints().updatePoints(otherUserId, 1).run();
+      },
+    ).run();
   }
 
   @override

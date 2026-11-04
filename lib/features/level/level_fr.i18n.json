@@ -5,7 +5,7 @@
     "my_badges": "Mes badges"
   },
   "header": {
-    "points": "Points",
+    "points": "Dons & Échanges",
     "level": "Niveau $level"
   },
   "cards": {
@@ -15,40 +15,74 @@
     },
     "gifts": {
       "title": "Choisir mes cadeaux",
-      "description": "Transformer vos points en cadeaux"
+      "description": "Transformer vos dons en feuilles bonus"
     },
     "discover": "Découvrir"
   },
   "progress": {
     "level_prefix": "Niveau ",
-    "pts_suffix": "pts"
+    "pts_suffix": " dons/échanges"
   },
   "detail": {
     "level_title": "Niveau $level",
     "conditions": "Conditions : ",
     "description": "Description : ",
-    "required_points": "Points nécessaires : ",
-    "rewarded_actions_title": "Actions principales récompensées :",
+    "required_points": "Dons/Échanges requis : ",
+    "rewarded_actions_title": "Actions récompensées :",
     "points": {
-      "one": " $n point",
-      "other": " $n points"
+      "one": " $n don ou échange",
+      "other": " $n dons ou échanges"
     }
   },
   "levels": {
     "1": {
-      "condition": "Inscription et ajout de la première plante dans le catalogue.",
+      "condition": "Inscription sur PlantMatch.",
       "description": "Bienvenue dans la communauté ! Tu viens de planter ta première graine.",
       "actions": {
         "registration": "Inscription",
-        "first_plant": "Ajout d’une première plante"
+        "first_plant": "Pack de bienvenue (5 feuilles)"
       }
     },
     "2": {
-      "condition": "Réaliser 4 échanges ou dons.",
-      "description": "Tu commences à échanger tes plantes et à partager ta passion !",
+      "condition": "Réaliser 2 dons ou échanges confirmés.",
+      "description": "Tu commences à échanger et donner tes plantes avec la communauté !",
       "actions": {
-        "first_exchange": "1 échange ou dons réussi",
-        "extra_exchange": "Chaque échange ou dons supplémentaire"
+        "first_exchange": "2 dons ou échanges réussis (+3 feuilles bonus)"
+      }
+    },
+    "3": {
+      "condition": "Réaliser 5 dons ou échanges confirmés.",
+      "description": "Un cultivateur actif qui partage régulièrement ses boutures !",
+      "actions": {
+        "exchange": "5 dons ou échanges réussis (+5 feuilles bonus)"
+      }
+    },
+    "4": {
+      "condition": "Réaliser 10 dons ou échanges confirmés.",
+      "description": "Un jardinier confirmé réputé pour sa générosité !",
+      "actions": {
+        "exchange": "10 dons ou échanges réussis (+8 feuilles bonus)"
+      }
+    },
+    "5": {
+      "condition": "Réaliser 25 dons ou échanges confirmés.",
+      "description": "Expert des plantes de la communauté PlantMatch !",
+      "actions": {
+        "exchange": "25 dons ou échanges réussis (+12 feuilles bonus)"
+      }
+    },
+    "6": {
+      "condition": "Réaliser 50 dons ou échanges confirmés.",
+      "description": "Maître du jardinage d'exception !",
+      "actions": {
+        "exchange": "50 dons ou échanges réussis (+20 feuilles bonus)"
+      }
+    },
+    "7": {
+      "condition": "Réaliser 100 dons ou échanges confirmés.",
+      "description": "Gardien de la nature légendaire de PlantMatch !",
+      "actions": {
+        "exchange": "100 dons ou échanges réussis (Feuilles illimitées)"
       }
     },
     "unknown": {

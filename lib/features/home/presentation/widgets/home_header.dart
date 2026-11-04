@@ -13,11 +13,13 @@ class HomeHeader extends StatelessWidget {
     required this.firstName,
     required this.profilImg,
     required this.userName,
+    required this.leaves,
   });
 
   final String firstName;
   final String profilImg;
   final Option<String> userName;
+  final int leaves;
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +50,7 @@ class HomeHeader extends StatelessWidget {
         ),
         Row(
           children: [
-            _buildNotificationButton(),
+            _buildLeavesBadge(),
             const SizedBox(width: 12),
             _buildUserAvatar(),
           ],
@@ -57,7 +59,7 @@ class HomeHeader extends StatelessWidget {
     );
   }
 
-  Widget _buildNotificationButton() {
+  Widget _buildLeavesBadge() {
     return Stack(
       children: [
         Container(
@@ -69,7 +71,7 @@ class HomeHeader extends StatelessWidget {
             border:
                 Border.all(color: AppColors.greyLight.withValues(alpha: 0.5)),
           ),
-          child: const Icon(LucideIcons.bell, color: AppColors.black, size: 24),
+          child: const Icon(LucideIcons.leaf, color: AppColors.black, size: 24),
         ),
         Positioned(
           top: 0,
@@ -79,9 +81,9 @@ class HomeHeader extends StatelessWidget {
             decoration: const BoxDecoration(
                 color: AppColors.greenMedium, shape: BoxShape.circle),
             constraints: const BoxConstraints(minWidth: 18, minHeight: 18),
-            child: const Text(
-              "3",
-              style: TextStyle(
+            child: Text(
+              leaves.toString(),
+              style: const TextStyle(
                   color: AppColors.white,
                   fontSize: AppTypo.textXxs,
                   fontWeight: FontWeight.bold),

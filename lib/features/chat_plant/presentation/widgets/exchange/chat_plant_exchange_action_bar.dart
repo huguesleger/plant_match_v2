@@ -9,6 +9,7 @@ import 'package:plant_match_v2/features/chat_plant/presentation/widgets/common/c
 import 'package:plant_match_v2/features/exchange/presentation/cubit/exchange_cubit.dart';
 import 'package:plant_match_v2/features/exchange/presentation/exchange_page_route.dart';
 import 'package:plant_match_v2/features/exchange/presentation/state/exchange_state.dart';
+import 'package:plant_match_v2/features/level/presentation/cubit/user_points_cubit.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/validation_code_display.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/validation_code_input.dart';
 
@@ -57,6 +58,8 @@ class ChatPlantExchangeActionBar extends StatelessWidget {
                 exchange.id,
                 code,
                 currentUserId,
+                exchange.ownerId,
+                context.read<UserPointsCubit>(),
               ),
         ),
       ExchangeAccepted() when !isPlantOwner => ChatPlantStatusBanner(
