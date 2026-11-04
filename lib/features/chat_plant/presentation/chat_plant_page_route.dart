@@ -67,6 +67,7 @@ class ChatPlantPageRoute extends StatelessWidget {
       ],
       child: ChatPlantScreen(
         chatId: chatId,
+        otherUserId: otherUserId,
         plantId: plantId,
         plantOwnerName: plantOwnerName,
         plantOwnerAvatar: plantOwnerAvatar,

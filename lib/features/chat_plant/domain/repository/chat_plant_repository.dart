@@ -17,6 +17,12 @@ abstract class ChatPlantRepository {
 
   TaskEither<Failure, bool> chatExists(String chatId);
 
+  TaskEither<Failure, int> payFirstContact({
+    required String chatId,
+    required String senderId,
+    required String receiverId,
+  });
+
   Stream<List<types.Message>> messagesStream(String chatId);
 
   TaskEither<Failure, Unit> sendMessage({

@@ -16,11 +16,11 @@ class ChatPlantMenu extends StatelessWidget {
   const ChatPlantMenu({
     super.key,
     required this.chatId,
-    required this.plantOwnerId,
+    required this.otherUserId,
   });
 
   final String chatId;
-  final String plantOwnerId;
+  final String otherUserId;
 
   String _currentUserId(BuildContext context) =>
       context.read<AuthCubit>().userId ?? '';
@@ -78,7 +78,7 @@ class ChatPlantMenu extends StatelessWidget {
       context.read<ChatPlantCubit>().reportChat(
             chatId: chatId,
             reporterUserId: _currentUserId(context),
-            reportedUserId: plantOwnerId,
+            reportedUserId: otherUserId,
           );
     }
   }
@@ -150,7 +150,7 @@ class ChatPlantMenu extends StatelessWidget {
     if (confirm == true && context.mounted) {
       context.read<ChatPlantCubit>().blockUser(
             blockerUserId: _currentUserId(context),
-            blockedUserId: plantOwnerId,
+            blockedUserId: otherUserId,
           );
     }
   }
@@ -178,7 +178,7 @@ class ChatPlantMenu extends StatelessWidget {
     if (confirm == true && context.mounted) {
       context.read<ChatPlantCubit>().unblockUser(
             blockerUserId: _currentUserId(context),
-            blockedUserId: plantOwnerId,
+            blockedUserId: otherUserId,
           );
     }
   }
@@ -187,7 +187,7 @@ class ChatPlantMenu extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => UserPageRoute(uid: plantOwnerId),
+        builder: (_) => UserPageRoute(uid: otherUserId),
       ),
     );
   }

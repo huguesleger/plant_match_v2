@@ -70,12 +70,19 @@ class FirebaseCatalogRepository implements CatalogRepository {
       () async {
         final data = catalog.toJson();
         data['createdAt'] = FieldValue.serverTimestamp();
-        final docRef = await firestore.collection('catalogs').add(data);
+        final docRef = catalog.catalogId.match(
+          () => firestore.collection('catalogs').doc(),
+          (id) => firestore.collection('catalogs').doc(id),
+        );
+        await docRef.set(data);
         return docRef.id;
       },
       (error, _) => _mapErrorToFailure(error),
     );
   }
+
+  @override
+  String reserveCatalogId() => firestore.collection('catalogs').doc().id;
 
   @override
   TaskEither<Failure, Unit> deleteCatalog(String catalogId) {

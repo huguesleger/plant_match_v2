@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
@@ -75,7 +76,10 @@ class ExchangeConfirmation extends StatelessWidget {
                   validationCode: const None(),
                 );
 
-                exchangeCubit.propose(exchange);
+                final profilCubit = context.read<ProfilCubit>();
+                exchangeCubit
+                    .propose(exchange)
+                    .then((_) => profilCubit.refreshLeaves(exchange.requestedBy));
               }
             },
             child: Text(t.exchange.confirmation.confirm_btn),

@@ -15,6 +15,8 @@ abstract class CatalogRepository {
   /// Crée un catalogue et retourne son ID
   TaskEither<Failure, String> createCatalog(Catalog catalog);
 
+  String reserveCatalogId();
+
   /// Supprime un catalogue
   TaskEither<Failure, Unit> deleteCatalog(String catalogId);
 

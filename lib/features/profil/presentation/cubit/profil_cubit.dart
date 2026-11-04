@@ -355,7 +355,6 @@ class ProfilCubit extends Cubit<ProfilState> {
   }
 
   static const int referralBonus = 3;
-  static const int contactCost = 1;
 
   void addLeaves(String uid, int count, Option<String> message) {
     profilRepository
@@ -379,7 +378,4 @@ class ProfilCubit extends Cubit<ProfilState> {
         .map(emit)
         .run();
   }
-
-  void payFirstContact(String uid, {required bool unlimited}) =>
-      unlimited ? null : addLeaves(uid, -contactCost, const None());
 }

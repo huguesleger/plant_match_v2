@@ -13,11 +13,10 @@ abstract class DonationRepository {
 
   TaskEither<Failure, Unit> markSeenByRequester(String donationId);
 
-  TaskEither<Failure, Unit> markAsCompleted(String donationId, String completedBy);
-
   TaskEither<Failure, Unit> generateValidationCode(String donationId);
 
-  TaskEither<Failure, Unit> validateCode(String donationId, String code, String userId);
+  TaskEither<Failure, Unit> validateCode(
+      String donationId, String code, String userId);
 
   TaskEither<Failure, List<Donation>> getCompletedDonations(String uid);
 

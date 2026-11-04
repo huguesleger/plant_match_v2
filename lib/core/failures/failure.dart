@@ -33,6 +33,14 @@ class AuthEmailNotVerifiedFailure extends AuthFailure {
   const AuthEmailNotVerifiedFailure() : super("Email non vérifié");
 }
 
+class ValidationFailure extends Failure {
+  const ValidationFailure(super.message);
+}
+
+class AuthProfileMissingFailure extends AuthFailure {
+  const AuthProfileMissingFailure() : super("Profil non finalisé");
+}
+
 /// Erreur spécifique à la localisation
 class LocationFailure extends Failure {
   const LocationFailure(super.message);

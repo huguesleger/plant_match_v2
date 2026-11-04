@@ -5,9 +5,12 @@ import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/chat_plant/domain/entities/chat_plant.dart';
 import 'package:plant_match_v2/features/chat_plant/domain/repository/chat_plant_repository.dart';
+import 'package:plant_match_v2/features/level/utils/user_points_utils.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 
 class FirebaseChatPlant implements ChatPlantRepository {
+  static const int contactCost = 1;
+
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   CollectionReference<Map<String, dynamic>> get _chats =>
@@ -163,8 +166,7 @@ class FirebaseChatPlant implements ChatPlantRepository {
     if (parts.length < 3) throw Exception('chatId invalide');
     final plantId = parts[0];
 
-    final plantDoc =
-        await _firestore.collection('catalogs').doc(plantId).get();
+    final plantDoc = await _firestore.collection('catalogs').doc(plantId).get();
     final plantData = plantDoc.data();
     if (plantData == null) throw Exception('Plante introuvable');
 
@@ -195,9 +197,8 @@ class FirebaseChatPlant implements ChatPlantRepository {
     }
 
     final images = plantData['images'] as List?;
-    final plantImage = (images != null && images.isNotEmpty)
-        ? images.first as String
-        : '';
+    final plantImage =
+        (images != null && images.isNotEmpty) ? images.first as String : '';
 
     await _chats.doc(chatId).set({
       'participants': [senderId, receiverId]..sort(),
@@ -381,6 +382,58 @@ class FirebaseChatPlant implements ChatPlantRepository {
       );
 
   @override
+  TaskEither<Failure, int> payFirstContact({
+    required String chatId,
+    required String senderId,
+    required String receiverId,
+  }) =>
+      TaskEither.tryCatch(
+        () async {
+          await _ensureChatExists(chatId, senderId, receiverId);
+          return _firestore.runTransaction((transaction) async {
+            final chatRef = _chats.doc(chatId);
+            final userRef = _firestore.collection('users').doc(senderId);
+            final pointsRef = _firestore.collection('userPoints').doc(senderId);
+            final chat = Option.fromNullable(
+              (await transaction.get(chatRef)).data(),
+            ).getOrElse(() => const {});
+            final user = Option.fromNullable(
+              (await transaction.get(userRef)).data(),
+            ).getOrElse(() => const {});
+            final points = Option.fromNullable(
+              (await transaction.get(pointsRef)).data(),
+            ).getOrElse(() => const {});
+            final alreadyPaid = chat['plantOwnerId'] == senderId ||
+                chat['contactPaid'] == true ||
+                chat['lastMessage'] != null;
+            final unlimited = UserPointsUtils.hasUnlimitedContacts(
+              points['level'] as int? ?? 1,
+            );
+            final cost = alreadyPaid || unlimited ? 0 : contactCost;
+            (user['leaves'] as int? ?? 0) < cost
+                ? throw const ValidationFailure(
+                    'Plus de feuilles disponibles pour contacter ce donneur',
+                  )
+                : null;
+            alreadyPaid
+                ? null
+                : transaction.update(chatRef, {'contactPaid': true});
+            cost > 0
+                ? transaction.update(
+                    userRef,
+                    {'leaves': FieldValue.increment(-cost)},
+                  )
+                : null;
+            return cost;
+          });
+        },
+        (error, _) => switch (error) {
+          Failure() => error,
+          _ => UnexpectedFailure('Erreur paiement du contact: $error'),
+        },
+      );
+
+  @override
   TaskEither<Failure, List<String>> getParticipants(String chatId) {
     return TaskEither.tryCatch(
       () async {
@@ -474,7 +527,8 @@ class FirebaseChatPlant implements ChatPlantRepository {
     return TaskEither.tryCatch(
       () async {
         if (chatId.isEmpty || senderId.isEmpty || receiverId.isEmpty) {
-          throw Exception('Paramètres invalides pour l\'envoi du message de donation');
+          throw Exception(
+              'Paramètres invalides pour l\'envoi du message de donation');
         }
 
         await _ensureChatExists(chatId, senderId, receiverId);

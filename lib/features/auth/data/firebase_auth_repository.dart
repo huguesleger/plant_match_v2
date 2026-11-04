@@ -72,23 +72,11 @@ class FirebaseAuthRepository implements AuthRepository {
               'Une erreur inattendue est survenue. Veuillez réessayer.');
         }
 
-        final userDoc =
-            await _firebaseFirestore.collection('users').doc(user.uid).get();
-        final data = userDoc.data();
+        final userRef = _firebaseFirestore.collection('users').doc(user.uid);
+        final data = Option.fromNullable((await userRef.get()).data())
+            .getOrElse(() => throw const AuthProfileMissingFailure());
 
-        await _firebaseFirestore
-            .collection('users')
-            .doc(user.uid)
-            .update({'isOnline': true});
-
-        if (data == null) {
-          return UserAuth(
-            uid: user.uid,
-            email: Option.fromNullable(user.email),
-            firstName: '',
-            lastName: '',
-          );
-        }
+        await userRef.update({'isOnline': true});
 
         return UserAuth.fromJson({
           ...data,

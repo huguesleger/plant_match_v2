@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/features/level/presentation/cubit/user_points_cubit.dart';
 import 'package:plant_match_v2/features/catalog/data/firebase_catalog_repository.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
@@ -125,11 +126,16 @@ class ExchangeCubit extends Cubit<ExchangeState> {
 
   // ─── propose ───────────────────────────────────────────────────────────────
 
-  void propose(Exchange exchange) {
+  Future<void> propose(Exchange exchange) {
     emit(ExchangeLoading());
 
-    repository
-        .createExchange(exchange)
+    return chatRepository
+        .payFirstContact(
+          chatId: exchange.chatId,
+          senderId: exchange.requestedBy,
+          receiverId: exchange.ownerId,
+        )
+        .flatMap((_) => repository.createExchange(exchange))
         .flatMap((_) => chatRepository.sendPlantExchangeMessage(
               chatId: exchange.chatId,
               senderId: exchange.requestedBy,
@@ -162,34 +168,35 @@ class ExchangeCubit extends Cubit<ExchangeState> {
     repository.markSeenByRequester(exchangeId).run();
   }
 
-  void complete(String exchangeId, String completedBy) {
-    repository.markAsCompleted(exchangeId, completedBy).run();
-  }
-
   void generateCode(String exchangeId) {
     repository.generateValidationCode(exchangeId).run();
   }
 
-  void validateCode(String exchangeId, String code, String userId,
-      String otherUserId, UserPointsCubit pointsCubit) {
-    repository.validateCode(exchangeId, code, userId).match(
-      (failure) => null,
-      (_) {
-        pointsCubit.updateUserPoints(
-          userId,
-          1,
-          giftedLeaves: UserPointsCubit.plantGivenLeaves,
-        );
-        pointsCubit
-            .rewardPartner(
-              otherUserId,
-              1,
-              giftedLeaves: UserPointsCubit.plantGivenLeaves,
-            )
-            .run();
-      },
-    ).run();
-  }
+  Future<Option<String>> validateCode(
+    String exchangeId,
+    String code,
+    String userId,
+    String otherUserId,
+    UserPointsCubit pointsCubit,
+  ) =>
+      repository.validateCode(exchangeId, code, userId).match<Option<String>>(
+        (failure) => Some(failure.message),
+        (_) {
+          pointsCubit.updateUserPoints(
+            userId,
+            1,
+            giftedLeaves: UserPointsCubit.plantGivenLeaves,
+          );
+          pointsCubit
+              .rewardPartner(
+                otherUserId,
+                1,
+                giftedLeaves: UserPointsCubit.plantGivenLeaves,
+              )
+              .run();
+          return const None();
+        },
+      ).run();
 
   @override
   Future<void> close() {

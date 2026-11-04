@@ -21,7 +21,8 @@ class PlantContact {
     required Option<ProfilUser> owner,
   }) async {
     final userId = Option.fromNullable(context.read<AuthCubit>().userId)
-        .filter((id) => id.isNotEmpty && id != catalog.userId);
+        .filter((id) => id.isNotEmpty && id != catalog.userId)
+        .filter((_) => catalog.status == CatalogStatus.published);
     await userId.match(
       () async {},
       (id) => _contact(context, catalog, owner, id),
@@ -99,6 +100,6 @@ class PlantContact {
         ProfilLoading() ||
         ProfilError() ||
         ProfilImageUploading() =>
-          true,
+          false,
       };
 }

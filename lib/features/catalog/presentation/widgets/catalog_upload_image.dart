@@ -36,7 +36,7 @@ class _CatalogUploadImageState extends State<CatalogUploadImage> {
   @override
   void initState() {
     super.initState();
-    catalogImages = widget.catalog.images;
+    catalogImages = List.of(widget.catalog.images);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _notifyFieldChanged(catalogImages);

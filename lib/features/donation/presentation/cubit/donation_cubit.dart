@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/features/level/presentation/cubit/user_points_cubit.dart';
 import 'package:plant_match_v2/features/chat_plant/domain/repository/chat_plant_repository.dart';
 import 'package:plant_match_v2/features/donation/domain/entities/donation.dart';
@@ -46,11 +47,16 @@ class DonationCubit extends Cubit<DonationState> {
 
   // ─── request ───────────────────────────────────────────────────────────────
 
-  void request(Donation donation) {
+  Future<void> request(Donation donation) {
     emit(DonationLoading());
 
-    repository
-        .createDonation(donation)
+    return chatRepository
+        .payFirstContact(
+          chatId: donation.chatId,
+          senderId: donation.requestedBy,
+          receiverId: donation.ownerId,
+        )
+        .flatMap((_) => repository.createDonation(donation))
         .flatMap((_) => chatRepository.sendPlantDonationMessage(
               chatId: donation.chatId,
               senderId: donation.requestedBy,
@@ -93,19 +99,6 @@ class DonationCubit extends Cubit<DonationState> {
         .run();
   }
 
-  // ─── complete ──────────────────────────────────────────────────────────────
-
-  void complete(String donationId, String completedBy) {
-    repository
-        .markAsCompleted(donationId, completedBy)
-        .match(
-          (failure) => DonationError(failure.message),
-          (_) => state,
-        )
-        .map((s) => emit(s))
-        .run();
-  }
-
   void markSeenByOwner(String donationId) {
     repository.markSeenByOwner(donationId).run();
   }
@@ -118,22 +111,27 @@ class DonationCubit extends Cubit<DonationState> {
     repository.generateValidationCode(donationId).run();
   }
 
-  void validateCode(String donationId, String code, String userId,
-      String otherUserId, UserPointsCubit pointsCubit) {
-    repository.validateCode(donationId, code, userId).match(
-      (failure) => null,
-      (_) {
-        pointsCubit.updateUserPoints(userId, 1);
-        pointsCubit
-            .rewardPartner(
-              otherUserId,
-              1,
-              giftedLeaves: UserPointsCubit.plantGivenLeaves,
-            )
-            .run();
-      },
-    ).run();
-  }
+  Future<Option<String>> validateCode(
+    String donationId,
+    String code,
+    String userId,
+    String otherUserId,
+    UserPointsCubit pointsCubit,
+  ) =>
+      repository.validateCode(donationId, code, userId).match<Option<String>>(
+        (failure) => Some(failure.message),
+        (_) {
+          pointsCubit.updateUserPoints(userId, 1);
+          pointsCubit
+              .rewardPartner(
+                otherUserId,
+                1,
+                giftedLeaves: UserPointsCubit.plantGivenLeaves,
+              )
+              .run();
+          return const None();
+        },
+      ).run();
 
   @override
   Future<void> close() {

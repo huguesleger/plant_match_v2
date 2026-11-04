@@ -4,18 +4,25 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
+import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/donation/domain/entities/donation.dart';
 import 'package:plant_match_v2/features/donation/domain/repository/donation_repository.dart';
 
 class FirebaseDonation implements DonationRepository {
-  final _col = FirebaseFirestore.instance.collection('plant_donations');
+  final _firestore = FirebaseFirestore.instance;
+  late final _col = _firestore.collection('plant_donations');
 
   @override
   Stream<Donation?> watchDonation(String chatId) {
     return _col
         .where('chatId', isEqualTo: chatId)
-        .where('status',
-            whereIn: ['pending', 'accepted', 'rejected', 'waitingValidation', 'completed'])
+        .where('status', whereIn: [
+          'pending',
+          'accepted',
+          'rejected',
+          'waitingValidation',
+          'completed'
+        ])
         .orderBy('createdAt', descending: true)
         .limit(1)
         .snapshots()
@@ -40,7 +47,8 @@ class FirebaseDonation implements DonationRepository {
   }
 
   @override
-  TaskEither<Failure, Unit> setStatus(String donationId, DonationStatus status) {
+  TaskEither<Failure, Unit> setStatus(
+      String donationId, DonationStatus status) {
     return TaskEither.tryCatch(
       () async {
         await _col.doc(donationId).update({
@@ -76,42 +84,6 @@ class FirebaseDonation implements DonationRepository {
   }
 
   @override
-  TaskEither<Failure, Unit> markAsCompleted(String donationId, String completedBy) {
-    return TaskEither.tryCatch(
-      () async {
-        final doc = await _col.doc(donationId).get();
-        final data = doc.data();
-        if (data == null) throw Exception('Donation introuvable');
-
-        final chatId = data['chatId'] as String;
-        final plantId = data['plantId'] as String;
-
-        // Marquer la donation comme terminée
-        await _col.doc(donationId).update({
-          'status': DonationStatus.completed.name,
-          'completedAt': FieldValue.serverTimestamp(),
-          'completedBy': completedBy,
-        });
-
-        // Marquer le chat comme clôturé
-        await FirebaseFirestore.instance
-            .collection('plant_chats')
-            .doc(chatId)
-            .update({'isDonationCompleted': true});
-
-        // Archiver la plante donnée
-        await FirebaseFirestore.instance
-            .collection('catalogs')
-            .doc(plantId)
-            .update({'status': 'archived'});
-            
-        return unit;
-      },
-      (error, _) => UnexpectedFailure('Erreur complétion donation: $error'),
-    );
-  }
-
-  @override
   TaskEither<Failure, Unit> generateValidationCode(String donationId) {
     return TaskEither.tryCatch(
       () async {
@@ -127,33 +99,65 @@ class FirebaseDonation implements DonationRepository {
   }
 
   @override
-  TaskEither<Failure, Unit> validateCode(String donationId, String code, String userId) {
-    return TaskEither.tryCatch(
-      () async {
-        final doc = await _col.doc(donationId).get();
-        if (!doc.exists) throw Exception('Donation introuvable');
-        
-        final data = doc.data();
-        if (data == null) throw Exception('Données corrompues');
+  TaskEither<Failure, Unit> validateCode(
+    String donationId,
+    String code,
+    String userId,
+  ) =>
+      TaskEither.tryCatch(
+        () => _firestore.runTransaction((transaction) async {
+          final donationRef = _col.doc(donationId);
+          final donationDoc = await transaction.get(donationRef);
+          final donation = Donation.fromJson(
+            donationDoc.id,
+            Option.fromNullable(donationDoc.data()).getOrElse(
+              () => throw const NotFoundFailure('Don introuvable'),
+            ),
+          );
+          final plantRef =
+              _firestore.collection('catalogs').doc(donation.plantId);
+          final plantDoc = await transaction.get(plantRef);
 
-        if (data['status'] == DonationStatus.completed.name) {
-          throw Exception('Don déjà validé');
-        }
+          _ensure(
+            donation.status == DonationStatus.waitingValidation,
+            'Ce don a déjà été validé',
+          );
+          _ensure(
+            donation.requestedBy == userId,
+            'Seul le demandeur peut valider ce don',
+          );
+          _ensure(
+            donation.validationCode.getOrElse(() => '') == code,
+            'Code incorrect',
+          );
+          _ensure(
+            plantDoc.data()?['status'] == CatalogStatus.published.name,
+            'Cette plante n\'est plus disponible',
+          );
 
-        if (data['validationCode'] != code) {
-          throw Exception('Code incorrect');
-        }
+          transaction.update(donationRef, {
+            'status': DonationStatus.completed.name,
+            'completedAt': FieldValue.serverTimestamp(),
+            'completedBy': userId,
+          });
+          transaction.update(
+            _firestore.collection('plant_chats').doc(donation.chatId),
+            {'isDonationCompleted': true},
+          );
+          transaction.update(
+            plantRef,
+            {'status': CatalogStatus.archived.name},
+          );
+          return unit;
+        }),
+        (error, _) => switch (error) {
+          Failure() => error,
+          _ => UnexpectedFailure('Erreur validation don: $error'),
+        },
+      );
 
-        // Si le code est bon, on marque comme complété
-        final result = await markAsCompleted(donationId, userId).run();
-        return result.match(
-          (failure) => throw Exception(failure.message),
-          (_) => unit,
-        );
-      },
-      (error, _) => UnexpectedFailure(error.toString()),
-    );
-  }
+  void _ensure(bool condition, String message) =>
+      condition ? null : throw ValidationFailure(message);
 
   @override
   TaskEither<Failure, List<Donation>> getCompletedDonations(String uid) {
@@ -187,7 +191,8 @@ class FirebaseDonation implements DonationRepository {
 
         return uniqueDonations;
       },
-      (error, _) => UnexpectedFailure('Erreur lors de la récupération des donations : $error'),
+      (error, _) => UnexpectedFailure(
+          'Erreur lors de la récupération des donations : $error'),
     );
   }
 

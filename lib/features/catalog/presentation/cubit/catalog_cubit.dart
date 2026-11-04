@@ -58,8 +58,10 @@ class CatalogCubit extends Cubit<CatalogState> {
         .getCatalogsByUserId(userId)
         .flatMap((catalogs) => catalogRepository.getCatalogById(userId).map(
               (option) => option.match(
-                () => CatalogLoaded(catalogs, Catalog.empty(userId), sortOption: sortOption),
-                (catalog) => CatalogLoaded(catalogs, catalog, sortOption: sortOption),
+                () => CatalogLoaded(catalogs, Catalog.empty(userId),
+                    sortOption: sortOption),
+                (catalog) =>
+                    CatalogLoaded(catalogs, catalog, sortOption: sortOption),
               ),
             ))
         .match(
@@ -70,27 +72,55 @@ class CatalogCubit extends Cubit<CatalogState> {
         .run();
   }
 
-  // ─── addCatalog ────────────────────────────────────────────────────────────
-
-  TaskEither<Failure, (String, bool)> addCatalog(Catalog catalog) {
+  TaskEither<Failure, String> publishNewCatalog(Catalog catalog) {
+    final previous = state;
+    final sortOption = _currentSortFromState();
+    final id = catalogRepository.reserveCatalogId();
     emit(const CatalogLoading());
 
-    return catalogRepository.createCatalog(catalog).flatMap((id) {
-      final updatedCatalog = catalog.copyWith(newCatalogId: Option.fromNullable(id));
-      return catalogRepository
-          .getCatalogsByUserId(catalog.userId)
-          .flatMap((catalogs) {
-        final isFirstPlant = catalogs.length == 1;
-        return TaskEither<Failure, (String, bool)>.tryCatch(
-          () async {
-            emit(CatalogLoaded(catalogs, updatedCatalog, sortOption: _currentSortFromState()));
-            return (id, isFirstPlant);
-          },
-          (error, _) => UnexpectedFailure(error.toString()),
-        );
-      });
+    return TaskEither.sequenceList(
+      catalog.images
+          .filter((image) => !_isRemote(image))
+          .map(
+            (path) => storageRepository.uploadImageFromUrl(
+              path: path,
+              fileName: '${id}_${path.split('/').last}',
+              folder: 'catalog_images',
+            ),
+          )
+          .toList(),
+    )
+        .flatMap(
+          (uploaded) => catalogRepository
+              .createCatalog(
+                catalog.copyWith(
+                  newCatalogId: Some(id),
+                  newImages: [...catalog.images.filter(_isRemote), ...uploaded],
+                ),
+              )
+              .orElse(
+                (failure) => TaskEither<Failure, String>.fromTask(
+                  _discardImages(uploaded).map((_) => id),
+                ).flatMap((_) => TaskEither.left(failure)),
+              ),
+        )
+        .flatMap((_) => catalogRepository.getCatalogsByUserId(catalog.userId))
+        .map((catalogs) {
+      emit(CatalogLoaded(catalogs, catalog, sortOption: sortOption));
+      return id;
+    }).mapLeft((failure) {
+      emit(previous);
+      return failure;
     });
   }
+
+  static bool _isRemote(String image) => image.startsWith('http');
+
+  Task<Unit> _discardImages(List<String> urls) => TaskEither.sequenceList(
+        urls
+            .map((url) => storageRepository.deleteImage(imageUrl: url))
+            .toList(),
+      ).match((_) => unit, (_) => unit);
 
   // ─── updateCatalog ─────────────────────────────────────────────────────────
 
@@ -102,7 +132,8 @@ class CatalogCubit extends Cubit<CatalogState> {
         .flatMap((_) => catalogRepository.getCatalogsByUserId(catalog.userId))
         .match(
           (failure) => CatalogError(failure.message),
-          (catalogs) => CatalogLoaded(catalogs, catalog, sortOption: _currentSortFromState()),
+          (catalogs) => CatalogLoaded(catalogs, catalog,
+              sortOption: _currentSortFromState()),
         )
         .map(emit)
         .run();
@@ -118,7 +149,8 @@ class CatalogCubit extends Cubit<CatalogState> {
         .flatMap((_) => catalogRepository.getCatalogsByUserId(catalog.userId))
         .match(
           (failure) => CatalogError(failure.message),
-          (catalogs) => CatalogLoaded(catalogs, catalog, sortOption: _currentSortFromState()),
+          (catalogs) => CatalogLoaded(catalogs, catalog,
+              sortOption: _currentSortFromState()),
         )
         .map(emit)
         .run();
@@ -156,7 +188,8 @@ class CatalogCubit extends Cubit<CatalogState> {
           .flatMap((catalogs) {
         return TaskEither<Failure, Catalog>.tryCatch(
           () async {
-            emit(CatalogLoaded(catalogs, updatedCatalog, sortOption: _currentSortFromState()));
+            emit(CatalogLoaded(catalogs, updatedCatalog,
+                sortOption: _currentSortFromState()));
             return updatedCatalog;
           },
           (error, _) => UnexpectedFailure(error.toString()),
@@ -184,7 +217,8 @@ class CatalogCubit extends Cubit<CatalogState> {
           .flatMap((catalogs) {
         return TaskEither<Failure, Catalog>.tryCatch(
           () async {
-            emit(CatalogLoaded(catalogs, updatedCatalog, sortOption: _currentSortFromState()));
+            emit(CatalogLoaded(catalogs, updatedCatalog,
+                sortOption: _currentSortFromState()));
             return updatedCatalog;
           },
           (error, _) => UnexpectedFailure(error.toString()),
@@ -204,7 +238,8 @@ class CatalogCubit extends Cubit<CatalogState> {
           (catalog) {
             return TaskEither<Failure, Catalog>.tryCatch(
               () async {
-                emit(CatalogLoaded([catalog], catalog, sortOption: _currentSortFromState()));
+                emit(CatalogLoaded([catalog], catalog,
+                    sortOption: _currentSortFromState()));
                 return catalog;
               },
               (error, _) => UnexpectedFailure(error.toString()),
@@ -222,7 +257,8 @@ class CatalogCubit extends Cubit<CatalogState> {
       return catalogRepository.getCatalogsByUserId(userId).flatMap((catalogs) {
         return TaskEither<Failure, int>.tryCatch(
           () async {
-            emit(CatalogLoaded(catalogs, Catalog.empty(userId), sortOption: _currentSortFromState()));
+            emit(CatalogLoaded(catalogs, Catalog.empty(userId),
+                sortOption: _currentSortFromState()));
             return catalogs.length;
           },
           (error, stackTrace) => UnexpectedFailure(error.toString()),

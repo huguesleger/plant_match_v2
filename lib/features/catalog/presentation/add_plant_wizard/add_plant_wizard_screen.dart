@@ -244,45 +244,31 @@ class _AddPlantWizardScreenState extends State<AddPlantWizardScreen> {
       barrierColor: Colors.black54,
       builder: (_) => const LoadingOverlay(),
     );
-    try {
-      final cubit = context.read<CatalogCubit>();
-      final finalCatalog = _wizardCatalog.copyWith(
-        newName: _nameController.text,
-        newDescription: _descriptionController.text,
-        newEnvironment: _selectedEnvironment ?? Environment.indoor,
-        newFamily: _selectedFamilies,
-        newLevelMaintenance: _selectedMaintenance ?? LevelMaintenance.low,
-        newWatering: _selectedWatering ?? Watering.little,
-        newLighting: _selectedLighting ?? Lighting.sun,
-        newOfferType: _selectedOfferType ?? OfferType.exchange,
-        newStatus: _isPublishController.text == 'true'
-            ? CatalogStatus.published
-            : CatalogStatus.draft,
-      );
+    final cubit = context.read<CatalogCubit>();
+    final finalCatalog = _wizardCatalog.copyWith(
+      newName: _nameController.text,
+      newDescription: _descriptionController.text,
+      newEnvironment: _selectedEnvironment ?? Environment.indoor,
+      newFamily: _selectedFamilies,
+      newLevelMaintenance: _selectedMaintenance ?? LevelMaintenance.low,
+      newWatering: _selectedWatering ?? Watering.little,
+      newLighting: _selectedLighting ?? Lighting.sun,
+      newOfferType: _selectedOfferType ?? OfferType.exchange,
+      newStatus: _isPublishController.text == 'true'
+          ? CatalogStatus.published
+          : CatalogStatus.draft,
+    );
 
-      final saveRes = await cubit.addCatalog(finalCatalog).run();
-      final (id, _) = saveRes.getOrElse((_) => ("", false));
-
-      final localImages =
-          finalCatalog.images.where((img) => !img.startsWith('http')).toList();
-      if (localImages.isNotEmpty) {
-        await cubit.uploadCatalogImages(
-            catalog: finalCatalog,
-            catalogId: id,
-            imagePaths: localImages,
-            existingImages: []).run();
-      }
-
-      if (mounted) {
-        Navigator.pop(context); // loading
-        Navigator.pop(context, true); // catalog
-      }
-    } catch (e) {
-      if (mounted) {
-        Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(t.catalog.wizard.error_generic(error: e))));
-      }
-    }
+    final result = await cubit.publishNewCatalog(finalCatalog).run();
+    if (!mounted) return;
+    Navigator.pop(context);
+    result.match(
+      (failure) => ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(t.catalog.wizard.error_generic(error: failure.message)),
+        ),
+      ),
+      (_) => Navigator.pop(context, true),
+    );
   }
 }

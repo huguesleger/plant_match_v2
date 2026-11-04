@@ -12,8 +12,6 @@ import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart'
 import 'package:plant_match_v2/features/chat_plant/presentation/cubit/chat_plant_cubit.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/chat_plant_custom_message.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/chat_plant_text_input.dart';
-import 'package:plant_match_v2/features/level/presentation/cubit/user_points_cubit.dart';
-import 'package:plant_match_v2/features/level/utils/user_points_utils.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/chat_theme.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/donation/chat_plant_donation_action_bar.dart';
@@ -31,6 +29,7 @@ class ChatPlantView extends StatelessWidget {
     required this.plantName,
     required this.plantImage,
     required this.plantOwnerId,
+    required this.otherUserId,
     required this.plantOwnerName,
     required this.plantOfferType,
     required this.messages,
@@ -42,25 +41,18 @@ class ChatPlantView extends StatelessWidget {
   final String plantName;
   final String plantImage;
   final String plantOwnerId;
+  final String otherUserId;
   final String plantOwnerName;
   final OfferType plantOfferType;
   final List<types.Message> messages;
   final bool isBlocked;
 
   void _send(BuildContext context, String userId, String text) {
-    messages.isEmpty && userId != plantOwnerId
-        ? context.read<ProfilCubit>().payFirstContact(
-              userId,
-              unlimited: UserPointsUtils.hasUnlimitedContacts(
-                context.read<UserPointsCubit>().currentLevel,
-              ),
-            )
-        : null;
-    context.read<ChatPlantCubit>().send(
-          chatId: chatId,
-          senderId: userId,
-          text: text,
-        );
+    final profilCubit = context.read<ProfilCubit>();
+    context
+        .read<ChatPlantCubit>()
+        .send(chatId: chatId, senderId: userId, text: text)
+        .then((_) => profilCubit.refreshLeaves(userId));
   }
 
   @override
@@ -114,7 +106,7 @@ class ChatPlantView extends StatelessWidget {
                   state: donationState,
                 ),
                 isBlocked
-                    ? _BlockedBanner(plantOwnerId: plantOwnerId)
+                    ? _BlockedBanner(blockedUserId: otherUserId)
                     : ChatPlantTextInput(
                         onSend: (text) => _send(context, userId, text),
                       ),
@@ -226,25 +218,25 @@ class _StatusIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return switch (status) {
-      types.Status.delivered => const Icon(LucideIcons.check_check,
-          size: 12, color: Colors.grey),
+      types.Status.delivered =>
+        const Icon(LucideIcons.check_check, size: 12, color: Colors.grey),
       types.Status.seen => const Icon(LucideIcons.check_check,
           size: 12, color: AppColors.blueGreen),
       types.Status.sent =>
         const Icon(LucideIcons.check, size: 12, color: Colors.grey),
       types.Status.sending =>
         const Icon(LucideIcons.clock, size: 10, color: Colors.grey),
-      types.Status.error => const Icon(LucideIcons.circle_alert,
-          size: 12, color: Colors.red),
+      types.Status.error =>
+        const Icon(LucideIcons.circle_alert, size: 12, color: Colors.red),
       _ => const SizedBox.shrink(),
     };
   }
 }
 
 class _BlockedBanner extends StatelessWidget {
-  const _BlockedBanner({required this.plantOwnerId});
+  const _BlockedBanner({required this.blockedUserId});
 
-  final String plantOwnerId;
+  final String blockedUserId;
 
   String _currentUserId(BuildContext context) =>
       context.read<AuthCubit>().userId ?? '';
@@ -272,7 +264,7 @@ class _BlockedBanner extends StatelessWidget {
     if (confirm == true && context.mounted) {
       context.read<ChatPlantCubit>().unblockUser(
             blockerUserId: _currentUserId(context),
-            blockedUserId: plantOwnerId,
+            blockedUserId: blockedUserId,
           );
     }
   }

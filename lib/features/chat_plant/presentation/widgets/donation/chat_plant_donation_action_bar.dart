@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
@@ -53,7 +54,8 @@ class ChatPlantDonationActionBar extends StatelessWidget {
         ),
       DonationAccepted(:final donation) when isPlantOwner =>
         ValidationCodeDisplay(
-          onGenerate: () => context.read<DonationCubit>().generateCode(donation.id),
+          onGenerate: () =>
+              context.read<DonationCubit>().generateCode(donation.id),
         ),
       DonationWaitingValidation(:final donation) when isPlantOwner =>
         ValidationCodeDisplay(
@@ -134,8 +136,8 @@ class ChatPlantDonationActionBar extends StatelessWidget {
             Text(
               'Souhaitez-vous envoyer une demande de donation pour "$plantName" ?',
               textAlign: TextAlign.center,
-              style:
-                  InterTextStyle.inter(AppTypo.textS, color: AppColors.greyDark),
+              style: InterTextStyle.inter(AppTypo.textS,
+                  color: AppColors.greyDark),
             ),
           ],
         ),
@@ -147,7 +149,10 @@ class ChatPlantDonationActionBar extends StatelessWidget {
           ElevatedButton(
             onPressed: () {
               Navigator.pop(ctx);
-              context.read<DonationCubit>().request(
+              final profilCubit = context.read<ProfilCubit>();
+              context
+                  .read<DonationCubit>()
+                  .request(
                     Donation(
                       chatId: chatId,
                       requestedBy: currentUserId,
@@ -163,7 +168,8 @@ class ChatPlantDonationActionBar extends StatelessWidget {
                       completedBy: const None(),
                       validationCode: const None(),
                     ),
-                  );
+                  )
+                  .then((_) => profilCubit.refreshLeaves(currentUserId));
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.greenDark,

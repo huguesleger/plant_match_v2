@@ -47,15 +47,33 @@ class AuthCubit extends Cubit<AuthState> {
     authRepository
         .signInWithEmailAndPassword(email: email, password: password)
         .match(
-          (failure) => AuthError(failure.message),
+          (failure) => failure is AuthProfileMissingFailure
+              ? _resumeRegistration()
+              : emit(AuthError(failure.message)),
           (user) {
             _currentUser = user;
-            return Authenticated(user);
+            emit(Authenticated(user));
           },
         )
-        .map(emit)
         .run();
   }
+
+  void _resumeRegistration() => Option.fromNullable(
+        FirebaseAuth.instance.currentUser,
+      ).match(
+        () => emit(const Unauthenticated()),
+        (firebaseUser) {
+          final user = UserAuth(
+            uid: firebaseUser.uid,
+            email: Option.fromNullable(firebaseUser.email),
+            firstName: '',
+            lastName: '',
+          );
+          _currentUser = user;
+          emit(AuthEmailVerificationSent(user));
+          checkEmailVerified();
+        },
+      );
 
   void registerWithEmailAndPassword({
     required String email,

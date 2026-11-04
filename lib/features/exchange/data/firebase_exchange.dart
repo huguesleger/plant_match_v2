@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
+import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/exchange/domain/entities/exchange.dart';
 import 'package:plant_match_v2/features/exchange/domain/repository/exchange_repository.dart';
 
@@ -14,8 +15,13 @@ class FirebaseExchange implements ExchangeRepository {
   Stream<Exchange?> watchExchange(String chatId) {
     return _col
         .where('chatId', isEqualTo: chatId)
-        .where('status',
-            whereIn: ['pending', 'accepted', 'rejected', 'waitingValidation', 'completed'])
+        .where('status', whereIn: [
+          'pending',
+          'accepted',
+          'rejected',
+          'waitingValidation',
+          'completed'
+        ])
         .orderBy('createdAt', descending: true)
         .limit(1)
         .snapshots()
@@ -120,50 +126,6 @@ class FirebaseExchange implements ExchangeRepository {
   }
 
   @override
-  TaskEither<Failure, Unit> markAsCompleted(String exchangeId, String completedBy) {
-    return TaskEither.tryCatch(
-      () async {
-        final exchangeDoc = await _col.doc(exchangeId).get();
-        final exchangeData = exchangeDoc.data();
-
-        if (exchangeData == null) throw Exception('Echange introuvable');
-
-        final exchange = Exchange.fromJson(exchangeDoc.id, exchangeData);
-        final chatId = exchange.chatId;
-        final targetPlantId = exchange.targetPlantId;
-        final offeredPlantId = exchange.offeredPlantId;
-
-        // Marquer l'échange comme terminé
-        await _col.doc(exchangeId).update({
-          'status': ExchangeStatus.completed.name,
-          'completedAt': FieldValue.serverTimestamp(),
-          'completedBy': completedBy,
-        });
-
-        // Marquer le chat comme clôturé
-        await FirebaseFirestore.instance
-            .collection('plant_chats')
-            .doc(chatId)
-            .update({'isExchangeCompleted': true});
-
-        // Marquer les deux plantes comme archivées (retirées du catalogue public)
-        await FirebaseFirestore.instance
-            .collection('catalogs')
-            .doc(targetPlantId)
-            .update({'status': 'archived'});
-
-        await FirebaseFirestore.instance
-            .collection('catalogs')
-            .doc(offeredPlantId)
-            .update({'status': 'archived'});
-            
-        return unit;
-      },
-      (error, _) => UnexpectedFailure('Erreur complétion échange: $error'),
-    );
-  }
-
-  @override
   TaskEither<Failure, Unit> generateValidationCode(String exchangeId) {
     return TaskEither.tryCatch(
       () async {
@@ -179,34 +141,70 @@ class FirebaseExchange implements ExchangeRepository {
   }
 
   @override
-  TaskEither<Failure, Unit> validateCode(String exchangeId, String code, String userId) {
-    return TaskEither.tryCatch(
-      () async {
-        final doc = await _col.doc(exchangeId).get();
-        if (!doc.exists) throw Exception('Échange introuvable');
-        
-        final data = doc.data();
-        if (data == null) throw Exception('Données corrompues');
+  TaskEither<Failure, Unit> validateCode(
+    String exchangeId,
+    String code,
+    String userId,
+  ) =>
+      TaskEither.tryCatch(
+        () => FirebaseFirestore.instance.runTransaction((transaction) async {
+          final firestore = FirebaseFirestore.instance;
+          final exchangeRef = _col.doc(exchangeId);
+          final exchangeDoc = await transaction.get(exchangeRef);
+          final exchange = Exchange.fromJson(
+            exchangeDoc.id,
+            Option.fromNullable(exchangeDoc.data()).getOrElse(
+              () => throw const NotFoundFailure('Échange introuvable'),
+            ),
+          );
+          final plantRefs = [exchange.targetPlantId, exchange.offeredPlantId]
+              .map((id) => firestore.collection('catalogs').doc(id))
+              .toList();
+          final plantDocs = [
+            for (final ref in plantRefs) await transaction.get(ref),
+          ];
 
-        final exchange = Exchange.fromJson(doc.id, data);
+          _ensure(
+            exchange.status == ExchangeStatus.waitingValidation,
+            'Cet échange a déjà été validé',
+          );
+          _ensure(
+            exchange.requestedBy == userId,
+            'Seul le demandeur peut valider cet échange',
+          );
+          _ensure(
+            exchange.validationCode.getOrElse(() => '') == code,
+            'Code incorrect',
+          );
+          _ensure(
+            plantDocs.every(
+              (doc) => doc.data()?['status'] == CatalogStatus.published.name,
+            ),
+            'Une des plantes n\'est plus disponible',
+          );
 
-        if (exchange.status == ExchangeStatus.completed) {
-          throw Exception('Échange déjà validé');
-        }
+          transaction.update(exchangeRef, {
+            'status': ExchangeStatus.completed.name,
+            'completedAt': FieldValue.serverTimestamp(),
+            'completedBy': userId,
+          });
+          transaction.update(
+            firestore.collection('plant_chats').doc(exchange.chatId),
+            {'isExchangeCompleted': true},
+          );
+          for (final ref in plantRefs) {
+            transaction.update(ref, {'status': CatalogStatus.archived.name});
+          }
+          return unit;
+        }),
+        (error, _) => switch (error) {
+          Failure() => error,
+          _ => UnexpectedFailure('Erreur validation échange: $error'),
+        },
+      );
 
-        if (exchange.validationCode.getOrElse(() => '') != code) {
-          throw Exception('Code incorrect');
-        }
-
-        final result = await markAsCompleted(exchangeId, userId).run();
-        return result.match(
-          (failure) => throw Exception(failure.message),
-          (_) => unit,
-        );
-      },
-      (error, _) => UnexpectedFailure(error.toString()),
-    );
-  }
+  void _ensure(bool condition, String message) =>
+      condition ? null : throw ValidationFailure(message);
 
   @override
   TaskEither<Failure, List<Exchange>> getCompletedExchanges(String uid) {
@@ -240,7 +238,8 @@ class FirebaseExchange implements ExchangeRepository {
 
         return uniqueExchanges;
       },
-      (error, _) => UnexpectedFailure('Erreur lors de la récupération des échanges : $error'),
+      (error, _) => UnexpectedFailure(
+          'Erreur lors de la récupération des échanges : $error'),
     );
   }
 }

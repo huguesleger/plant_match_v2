@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 
@@ -8,7 +9,7 @@ class ValidationCodeInput extends StatefulWidget {
     required this.onValidate,
   });
 
-  final Function(String) onValidate;
+  final Future<Option<String>> Function(String code) onValidate;
 
   @override
   State<ValidationCodeInput> createState() => _ValidationCodeInputState();
@@ -17,16 +18,20 @@ class ValidationCodeInput extends StatefulWidget {
 class _ValidationCodeInputState extends State<ValidationCodeInput> {
   final TextEditingController _controller = TextEditingController();
   bool _isValidating = false;
+  Option<String> _error = const None();
 
-  void _handleValidate() {
-    if (_controller.text.length == 6) {
-      setState(() => _isValidating = true);
-      widget.onValidate(_controller.text);
-      // On remet à false après un délai pour permettre de re-tenter si erreur
-      Future.delayed(const Duration(seconds: 2), () {
-        if (mounted) setState(() => _isValidating = false);
-      });
-    }
+  Future<void> _handleValidate() async {
+    if (_isValidating || _controller.text.length != 6) return;
+    setState(() {
+      _isValidating = true;
+      _error = const None();
+    });
+    final error = await widget.onValidate(_controller.text);
+    if (!mounted) return;
+    setState(() {
+      _isValidating = false;
+      _error = error;
+    });
   }
 
   @override
@@ -73,19 +78,31 @@ class _ValidationCodeInputState extends State<ValidationCodeInput> {
               decoration: InputDecoration(
                 counterText: '',
                 hintText: t.chatPlant.validation.hint,
-                hintStyle: TextStyle(color: AppColors.grey.withValues(alpha: 0.3)),
+                hintStyle:
+                    TextStyle(color: AppColors.grey.withValues(alpha: 0.3)),
                 contentPadding: const EdgeInsets.symmetric(vertical: 8),
                 enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: AppColors.blueGreen.withValues(alpha: 0.3)),
+                  borderSide: BorderSide(
+                      color: AppColors.blueGreen.withValues(alpha: 0.3)),
                 ),
                 focusedBorder: const UnderlineInputBorder(
                   borderSide: BorderSide(color: AppColors.blueGreen, width: 2),
                 ),
               ),
-              onChanged: (value) {
-                if (value.length == 6) _handleValidate();
-              },
+              onChanged: (value) =>
+                  value.length == 6 ? _handleValidate() : null,
             ),
+          ),
+          ..._error.match(
+            () => const <Widget>[],
+            (message) => [
+              const SizedBox(height: 8),
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 12, color: AppColors.error),
+              ),
+            ],
           ),
           const SizedBox(height: 16),
           ElevatedButton(

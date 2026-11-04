@@ -28,12 +28,14 @@ class ChatPlantScreen extends StatelessWidget {
     required this.plantId,
     required this.plantOwnerName,
     required this.plantOwnerAvatar,
+    required this.otherUserId,
   });
 
   final String chatId;
   final String plantId;
   final String plantOwnerName;
   final String plantOwnerAvatar;
+  final String otherUserId;
 
   void _handleExchangeState(
       BuildContext context, Exchange ex, ExchangeState state, String userId) {
@@ -169,7 +171,7 @@ class ChatPlantScreen extends StatelessWidget {
                 ],
               ),
               actions: [
-                ChatPlantMenu(chatId: chatId, plantOwnerId: plant.userId),
+                ChatPlantMenu(chatId: chatId, otherUserId: otherUserId),
               ],
             ),
             body: BlocBuilder<ChatPlantCubit, ChatPlantState>(
@@ -182,7 +184,7 @@ class ChatPlantScreen extends StatelessWidget {
                     onRetry: () => context.read<ChatPlantCubit>().subscribe(
                           chatId: chatId,
                           currentUserId: userId,
-                          otherUserId: plant.userId,
+                          otherUserId: otherUserId,
                         ),
                   ),
                 ChatPlantBlocked() => ChatPlantView(
@@ -192,6 +194,7 @@ class ChatPlantScreen extends StatelessWidget {
                     plantImage:
                         plant.images.isNotEmpty ? plant.images.first : '',
                     plantOwnerId: plant.userId,
+                    otherUserId: otherUserId,
                     plantOwnerName: plantOwnerName,
                     plantOfferType: plant.offerType,
                     messages: const [],
@@ -204,6 +207,7 @@ class ChatPlantScreen extends StatelessWidget {
                     plantImage:
                         plant.images.isNotEmpty ? plant.images.first : '',
                     plantOwnerId: plant.userId,
+                    otherUserId: otherUserId,
                     plantOwnerName: plantOwnerName,
                     plantOfferType: plant.offerType,
                     messages: s.messages,

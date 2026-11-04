@@ -30,9 +30,9 @@ class ChatPlantCubit extends Cubit<ChatPlantState> {
     _blockedSub?.cancel();
     _blockedSub = repository
         .isBlockedStream(
-          currentUserId: currentUserId,
-          otherUserId: otherUserId,
-        )
+      currentUserId: currentUserId,
+      otherUserId: otherUserId,
+    )
         .listen((isBlocked) {
       if (isClosed) return;
       _isBlocked = isBlocked;
@@ -63,20 +63,28 @@ class ChatPlantCubit extends Cubit<ChatPlantState> {
     );
   }
 
-  void send({
+  Future<void> send({
     required String chatId,
     required String senderId,
     required String text,
-  }) {
+  }) async {
     if (_otherUserId == null || _otherUserId!.isEmpty) return;
     if (_isBlocked) return;
+    final receiverId = _otherUserId!;
 
-    repository
-        .sendMessage(
+    await repository
+        .payFirstContact(
           chatId: chatId,
           senderId: senderId,
-          receiverId: _otherUserId!,
-          text: text,
+          receiverId: receiverId,
+        )
+        .flatMap(
+          (_) => repository.sendMessage(
+            chatId: chatId,
+            senderId: senderId,
+            receiverId: receiverId,
+            text: text,
+          ),
         )
         .match(
           (failure) => ChatPlantError(failure.message),
@@ -102,7 +110,8 @@ class ChatPlantCubit extends Cubit<ChatPlantState> {
     repository
         .softDeleteChat(chatId: chatId, userId: userId)
         .match(
-          (failure) => ChatPlantError('Impossible de supprimer la conversation'),
+          (failure) =>
+              ChatPlantError('Impossible de supprimer la conversation'),
           (_) => state,
         )
         .map((s) => emit(s))

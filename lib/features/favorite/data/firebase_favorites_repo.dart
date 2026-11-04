@@ -49,18 +49,18 @@ class FirebaseFavoritesRepo implements FavoritesRepository {
         .orderBy('addedAt', descending: true)
         .snapshots()
         .asyncMap((snap) async {
-      final catalogTasks = snap.docs.map((d) async {
-        final catalogId = d.id;
-        final catalogDoc = await _db.collection('catalogs').doc(catalogId).get();
-
-        if (catalogDoc.exists && catalogDoc.data() != null) {
-          return Catalog.fromJson(catalogDoc.data()!, catalogId);
-        }
-        return null;
-      }).toList();
-
-      final results = await Future.wait(catalogTasks);
-      return results.whereType<Catalog>().toList();
+      final catalogs = await Future.wait(
+        snap.docs.map(
+          (d) async => Option.fromNullable(
+            (await _db.collection('catalogs').doc(d.id).get()).data(),
+          ).map((data) => Catalog.fromJson(data, d.id)),
+        ),
+      );
+      return catalogs
+          .whereType<Some<Catalog>>()
+          .map((found) => found.value)
+          .where((catalog) => catalog.status == CatalogStatus.published)
+          .toList();
     });
   }
 
