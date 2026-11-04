@@ -114,24 +114,17 @@ class DonationCubit extends Cubit<DonationState> {
   Future<Option<String>> validateCode(
     String donationId,
     String code,
-    String userId,
-    String otherUserId,
     UserPointsCubit pointsCubit,
   ) =>
-      repository.validateCode(donationId, code, userId).match<Option<String>>(
-        (failure) => Some(failure.message),
-        (_) {
-          pointsCubit.updateUserPoints(userId, 1);
-          pointsCubit
-              .rewardPartner(
-                otherUserId,
-                1,
-                giftedLeaves: UserPointsCubit.plantGivenLeaves,
-              )
-              .run();
-          return const None();
-        },
-      ).run();
+      pointsCubit
+          .track(repository.validateCode(donationId, code))
+          .then((result) => result.match(
+                (failure) => Some(failure.message),
+                (_) => const None(),
+              ));
+
+  Stream<Option<String>> validationCode(String donationId) =>
+      repository.watchValidationCode(donationId);
 
   @override
   Future<void> close() {

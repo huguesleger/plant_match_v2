@@ -1,10 +1,15 @@
 import {onDocumentCreated} from "firebase-functions/v2/firestore";
 import * as admin from "firebase-admin";
+import {FieldValue} from "firebase-admin/firestore";
+import {REGION} from "./config";
 
 admin.initializeApp();
 
+export {generateHandoverCode, validateHandover} from "./handover";
+export {applyReferral, payFirstContact} from "./leaves";
+
 export const sendChatNotification = onDocumentCreated(
-  "plant_chats/{chatId}/messages/{messageId}",
+  {document: "plant_chats/{chatId}/messages/{messageId}", region: REGION},
   async (event) => {
     const snapshot = event.data;
     if (!snapshot) {
@@ -17,12 +22,37 @@ export const sendChatNotification = onDocumentCreated(
     const senderId = messageData.senderId;
     const text = messageData.text || "Nouveau message";
 
-    if (receiverId === senderId) {
-      console.log("Sender and receiver are identical. Skipping.");
+    if (!receiverId || !senderId || receiverId === senderId) {
+      console.log("Invalid sender/receiver. Skipping.");
       return;
     }
 
     try {
+      const db = admin.firestore();
+      const chatDoc = await db
+        .collection("plant_chats")
+        .doc(event.params.chatId)
+        .get();
+      const participants: string[] = chatDoc.data()?.participants ?? [];
+      if (
+        !participants.includes(senderId) ||
+        !participants.includes(receiverId)
+      ) {
+        console.log("Sender or receiver not in chat. Skipping.");
+        return;
+      }
+
+      const blocked = await db
+        .collection("users")
+        .doc(receiverId)
+        .collection("blocked_users")
+        .doc(senderId)
+        .get();
+      if (blocked.exists) {
+        console.log("Receiver blocked sender. Skipping.");
+        return;
+      }
+
       const senderDoc = await admin
         .firestore()
         .collection("users")
@@ -97,7 +127,7 @@ export const sendChatNotification = onDocumentCreated(
             .collection("users")
             .doc(receiverId)
             .update({
-              fcmTokens: admin.firestore.FieldValue.arrayRemove(
+              fcmTokens: FieldValue.arrayRemove(
                 ...tokensToRemove
               ),
             });

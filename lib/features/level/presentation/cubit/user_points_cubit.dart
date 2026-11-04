@@ -12,8 +12,6 @@ import 'package:plant_match_v2/features/level/utils/user_points_utils.dart';
 class UserPointsCubit extends Cubit<UserPointsState> {
   final UserPointsRepository repository;
 
-  static const int plantGivenLeaves = 2;
-
   Option<UserPoints> _known = const None();
   Option<StreamSubscription<Either<Failure, UserPoints>>> _subscription =
       const None();
@@ -50,32 +48,20 @@ class UserPointsCubit extends Cubit<UserPointsState> {
         .run();
   }
 
-  void updateUserPoints(
-    String userId,
-    int pointsToAdd, {
-    int giftedLeaves = 0,
-  }) {
+  Future<Either<Failure, PointsUpdate>> track(
+    TaskEither<Failure, PointsUpdate> update,
+  ) async {
     _pendingUpdates++;
-    repository
-        .updatePoints(userId, pointsToAdd, giftedLeaves: giftedLeaves)
-        .match(
-          _fallback,
-          (update) => _remember(update.userPoints, UserPointsAwarded(update)),
-        )
-        .map((state) {
-      _pendingUpdates--;
-      _safeEmit(state);
-    }).run();
+    final result = await update.run();
+    _pendingUpdates--;
+    result.match(
+      (_) => null,
+      (points) => _safeEmit(
+        _remember(points.userPoints, UserPointsAwarded(points)),
+      ),
+    );
+    return result;
   }
-
-  Task<Unit> rewardPartner(
-    String userId,
-    int pointsToAdd, {
-    int giftedLeaves = 0,
-  }) =>
-      repository
-          .updatePoints(userId, pointsToAdd, giftedLeaves: giftedLeaves)
-          .match((_) => unit, (_) => unit);
 
   void reset() {
     _cancelSubscription();

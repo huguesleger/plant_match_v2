@@ -4,16 +4,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
+import 'package:plant_match_v2/core/firebase/cloud_function.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/chat_plant/domain/entities/chat_plant.dart';
 import 'package:plant_match_v2/features/chat_plant/domain/repository/chat_plant_repository.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/state/chat_plant_state.dart';
-import 'package:plant_match_v2/features/level/utils/user_points_utils.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 
 class FirebaseChatPlant implements ChatPlantRepository {
-  static const int contactCost = 1;
-
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   CollectionReference<Map<String, dynamic>> get _chats =>
@@ -390,51 +388,14 @@ class FirebaseChatPlant implements ChatPlantRepository {
     required String senderId,
     required String receiverId,
   }) =>
-      TaskEither.tryCatch(
-        () async {
-          await _ensureChatExists(chatId, senderId, receiverId);
-          return _firestore.runTransaction((transaction) async {
-            final chatRef = _chats.doc(chatId);
-            final userRef = _firestore.collection('users').doc(senderId);
-            final pointsRef = _firestore.collection('userPoints').doc(senderId);
-            final chat = Option.fromNullable(
-              (await transaction.get(chatRef)).data(),
-            ).getOrElse(() => const {});
-            final user = Option.fromNullable(
-              (await transaction.get(userRef)).data(),
-            ).getOrElse(() => const {});
-            final points = Option.fromNullable(
-              (await transaction.get(pointsRef)).data(),
-            ).getOrElse(() => const {});
-            final alreadyPaid = chat['plantOwnerId'] == senderId ||
-                chat['contactPaid'] == true ||
-                chat['lastMessage'] != null;
-            final unlimited = UserPointsUtils.hasUnlimitedContacts(
-              points['level'] as int? ?? 1,
-            );
-            final cost = alreadyPaid || unlimited ? 0 : contactCost;
-            (user['leaves'] as int? ?? 0) < cost
-                ? throw const ValidationFailure(
-                    'Plus de feuilles disponibles pour contacter ce donneur',
-                  )
-                : null;
-            alreadyPaid
-                ? null
-                : transaction.update(chatRef, {'contactPaid': true});
-            cost > 0
-                ? transaction.update(
-                    userRef,
-                    {'leaves': FieldValue.increment(-cost)},
-                  )
-                : null;
-            return cost;
-          });
-        },
-        (error, _) => switch (error) {
-          Failure() => error,
-          _ => UnexpectedFailure('Erreur paiement du contact: $error'),
-        },
-      );
+      TaskEither<Failure, Unit>.tryCatch(
+        () => _ensureChatExists(chatId, senderId, receiverId).then((_) => unit),
+        (error, _) => UnexpectedFailure('Erreur création conversation: $error'),
+      )
+          .flatMap(
+            (_) => CloudFunction.call('payFirstContact', {'chatId': chatId}),
+          )
+          .map((result) => result['cost'] as int? ?? 0);
 
   @override
   TaskEither<Failure, List<String>> getParticipants(String chatId) {

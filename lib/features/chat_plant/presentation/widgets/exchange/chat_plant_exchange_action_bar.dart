@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
@@ -48,17 +49,20 @@ class ChatPlantExchangeActionBar extends StatelessWidget {
               context.read<ExchangeCubit>().generateCode(exchange.id),
         ),
       ExchangeWaitingValidation(:final exchange) when isPlantOwner =>
-        ValidationCodeDisplay(
-          onGenerate: () {}, // Déjà généré
-          code: exchange.validationCode.toNullable(),
+        StreamBuilder<Option<String>>(
+          stream: context.read<ExchangeCubit>().validationCode(exchange.id),
+          builder: (context, snapshot) => ValidationCodeDisplay(
+            onGenerate: () => context.read<ExchangeCubit>().generateCode(exchange.id),
+            code: Option.fromNullable(snapshot.data)
+                .flatMap((code) => code)
+                .toNullable(),
+          ),
         ),
       ExchangeWaitingValidation(:final exchange) when !isPlantOwner =>
         ValidationCodeInput(
           onValidate: (code) => context.read<ExchangeCubit>().validateCode(
                 exchange.id,
                 code,
-                currentUserId,
-                exchange.ownerId,
                 context.read<UserPointsCubit>(),
               ),
         ),

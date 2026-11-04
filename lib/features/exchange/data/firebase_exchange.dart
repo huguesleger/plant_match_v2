@@ -1,10 +1,10 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
-import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
+import 'package:plant_match_v2/core/firebase/cloud_function.dart';
+import 'package:plant_match_v2/features/level/domain/entities/points_update.dart';
 import 'package:plant_match_v2/features/exchange/domain/entities/exchange.dart';
 import 'package:plant_match_v2/features/exchange/domain/repository/exchange_repository.dart';
 
@@ -126,85 +126,33 @@ class FirebaseExchange implements ExchangeRepository {
   }
 
   @override
-  TaskEither<Failure, Unit> generateValidationCode(String exchangeId) {
-    return TaskEither.tryCatch(
-      () async {
-        final code = (100000 + Random().nextInt(900000)).toString();
-        await _col.doc(exchangeId).update({
-          'validationCode': code,
-          'status': ExchangeStatus.waitingValidation.name,
-        });
-        return unit;
-      },
-      (error, _) => UnexpectedFailure('Erreur génération code PIN: $error'),
-    );
-  }
+  TaskEither<Failure, Unit> generateValidationCode(String exchangeId) =>
+      CloudFunction.call(
+        'generateHandoverCode',
+        {'kind': 'exchange', 'id': exchangeId},
+      ).map((_) => unit);
 
   @override
-  TaskEither<Failure, Unit> validateCode(
+  Stream<Option<String>> watchValidationCode(String exchangeId) => _col
+      .doc(exchangeId)
+      .collection('private')
+      .doc('validation')
+      .snapshots()
+      .map(
+        (doc) => Option.fromNullable(doc.data())
+            .flatMap((data) => Option.fromNullable(data['code'] as String?)),
+      )
+      .handleError((_) => const None());
+
+  @override
+  TaskEither<Failure, PointsUpdate> validateCode(
     String exchangeId,
     String code,
-    String userId,
   ) =>
-      TaskEither.tryCatch(
-        () => FirebaseFirestore.instance.runTransaction((transaction) async {
-          final firestore = FirebaseFirestore.instance;
-          final exchangeRef = _col.doc(exchangeId);
-          final exchangeDoc = await transaction.get(exchangeRef);
-          final exchange = Exchange.fromJson(
-            exchangeDoc.id,
-            Option.fromNullable(exchangeDoc.data()).getOrElse(
-              () => throw const NotFoundFailure('Échange introuvable'),
-            ),
-          );
-          final plantRefs = [exchange.targetPlantId, exchange.offeredPlantId]
-              .map((id) => firestore.collection('catalogs').doc(id))
-              .toList();
-          final plantDocs = [
-            for (final ref in plantRefs) await transaction.get(ref),
-          ];
-
-          _ensure(
-            exchange.status == ExchangeStatus.waitingValidation,
-            'Cet échange a déjà été validé',
-          );
-          _ensure(
-            exchange.requestedBy == userId,
-            'Seul le demandeur peut valider cet échange',
-          );
-          _ensure(
-            exchange.validationCode.getOrElse(() => '') == code,
-            'Code incorrect',
-          );
-          _ensure(
-            plantDocs.every(
-              (doc) => doc.data()?['status'] == CatalogStatus.published.name,
-            ),
-            'Une des plantes n\'est plus disponible',
-          );
-
-          transaction.update(exchangeRef, {
-            'status': ExchangeStatus.completed.name,
-            'completedAt': FieldValue.serverTimestamp(),
-            'completedBy': userId,
-          });
-          transaction.update(
-            firestore.collection('plant_chats').doc(exchange.chatId),
-            {'isExchangeCompleted': true},
-          );
-          for (final ref in plantRefs) {
-            transaction.update(ref, {'status': CatalogStatus.archived.name});
-          }
-          return unit;
-        }),
-        (error, _) => switch (error) {
-          Failure() => error,
-          _ => UnexpectedFailure('Erreur validation échange: $error'),
-        },
-      );
-
-  void _ensure(bool condition, String message) =>
-      condition ? null : throw ValidationFailure(message);
+      CloudFunction.call(
+        'validateHandover',
+        {'kind': 'exchange', 'id': exchangeId, 'code': code},
+      ).map(PointsUpdate.fromJson);
 
   @override
   TaskEither<Failure, List<Exchange>> getCompletedExchanges(String uid) {

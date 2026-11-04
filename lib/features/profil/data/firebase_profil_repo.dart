@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
+import 'package:plant_match_v2/core/firebase/cloud_function.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/features/profil/domain/repository/profil_repository.dart';
 
@@ -67,7 +68,9 @@ class FirebaseProfilRepo implements ProfilRepository {
 
     return TaskEither.tryCatch(
       () async {
-        final data = profilUser.toJson();
+        final data = profilUser.toJson()
+          ..['leaves'] = 5
+          ..remove('referredBy');
         await _firebaseFirestore
             .collection('users')
             .doc(profilUser.uid)
@@ -101,70 +104,9 @@ class FirebaseProfilRepo implements ProfilRepository {
   }
 
   @override
-  TaskEither<Failure, Option<ProfilUser>> getProfilUserByReferralCode(
-      String referralCode) {
-    if (referralCode.isEmpty) {
-      return TaskEither.left(const AuthFailure('Code de parrainage vide'));
-    }
-
-    return TaskEither.tryCatch(
-      () async {
-        final querySnapshot = await _firebaseFirestore
-            .collection('users')
-            .where('referralCode', isEqualTo: referralCode)
-            .limit(1)
-            .get();
-
-        if (querySnapshot.docs.isNotEmpty) {
-          final userDoc = querySnapshot.docs.first;
-          final userData = userDoc.data();
-          return Some(ProfilUser.fromJson({
-            ...userData,
-            'uid': userDoc.id,
-          }));
-        }
-        return const None();
-      },
-      (error, _) => _mapErrorToFailure(error),
-    );
-  }
-
-  @override
-  TaskEither<Failure, Unit> incrementLeaves(String uid, int count) =>
-      uid.isEmpty
-          ? TaskEither.left(const AuthFailure('UID invalide pour les feuilles'))
-          : TaskEither.tryCatch(
-              () => _firebaseFirestore.collection('users').doc(uid).update(
-                  {'leaves': FieldValue.increment(count)}).then((_) => unit),
-              (error, _) => _mapErrorToFailure(error),
-            );
-
-  @override
-  TaskEither<Failure, Unit> applyReferral({
-    required String newUserUid,
-    required String referrerUid,
-    required String referralCode,
-    required int bonus,
-  }) =>
-      newUserUid.isEmpty || referrerUid.isEmpty
-          ? TaskEither.left(
-              const AuthFailure('UID invalide pour le parrainage'))
-          : TaskEither.tryCatch(
-              () {
-                final users = _firebaseFirestore.collection('users');
-                return (_firebaseFirestore.batch()
-                      ..update(users.doc(newUserUid), {
-                        'referredBy': referralCode,
-                        'leaves': FieldValue.increment(bonus),
-                      })
-                      ..update(users.doc(referrerUid), {
-                        'leaves': FieldValue.increment(bonus),
-                      }))
-                    .commit()
-                    .then((_) => unit);
-              },
-              (error, _) => _mapErrorToFailure(error),
-            );
+  TaskEither<Failure, int> applyReferral(String referralCode) =>
+      CloudFunction.call('applyReferral', {'code': referralCode})
+          .map((result) => result['bonus'] as int? ?? 0);
 
   Failure _mapErrorToFailure(Object error) {
     if (error is Failure) return error;

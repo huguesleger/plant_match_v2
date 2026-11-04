@@ -179,28 +179,17 @@ class ExchangeCubit extends Cubit<ExchangeState> {
   Future<Option<String>> validateCode(
     String exchangeId,
     String code,
-    String userId,
-    String otherUserId,
     UserPointsCubit pointsCubit,
   ) =>
-      repository.validateCode(exchangeId, code, userId).match<Option<String>>(
-        (failure) => Some(failure.message),
-        (_) {
-          pointsCubit.updateUserPoints(
-            userId,
-            1,
-            giftedLeaves: UserPointsCubit.plantGivenLeaves,
-          );
-          pointsCubit
-              .rewardPartner(
-                otherUserId,
-                1,
-                giftedLeaves: UserPointsCubit.plantGivenLeaves,
-              )
-              .run();
-          return const None();
-        },
-      ).run();
+      pointsCubit
+          .track(repository.validateCode(exchangeId, code))
+          .then((result) => result.match(
+                (failure) => Some(failure.message),
+                (_) => const None(),
+              ));
+
+  Stream<Option<String>> validationCode(String exchangeId) =>
+      repository.watchValidationCode(exchangeId);
 
   @override
   Future<void> close() {

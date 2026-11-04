@@ -1,5 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
+import 'package:plant_match_v2/features/level/domain/entities/points_update.dart';
 import 'package:plant_match_v2/features/donation/domain/entities/donation.dart';
 
 abstract class DonationRepository {
@@ -15,8 +16,9 @@ abstract class DonationRepository {
 
   TaskEither<Failure, Unit> generateValidationCode(String donationId);
 
-  TaskEither<Failure, Unit> validateCode(
-      String donationId, String code, String userId);
+  TaskEither<Failure, PointsUpdate> validateCode(String donationId, String code);
+
+  Stream<Option<String>> watchValidationCode(String donationId);
 
   TaskEither<Failure, List<Donation>> getCompletedDonations(String uid);
 

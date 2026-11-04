@@ -29,12 +29,7 @@ class _FakeRepository implements UserPointsRepository {
   TaskEither<Failure, UserPoints> getPoints(String userId) =>
       TaskEither.left(const NotFoundFailure('unused'));
 
-  @override
-  TaskEither<Failure, PointsUpdate> updatePoints(
-    String userId,
-    int pointsToAdd, {
-    int giftedLeaves = 0,
-  }) =>
+  TaskEither<Failure, PointsUpdate> pendingUpdate() =>
       TaskEither(() => updateGate.future.then((_) => nextUpdate));
 
   @override
@@ -71,7 +66,7 @@ void main() {
     repository.controller.add(Right(_points(120, 7)));
     await _flush();
 
-    cubit.updateUserPoints(_uid, 1);
+    cubit.track(repository.pendingUpdate());
     repository.updateGate.complete(unit);
     await _flush();
 
@@ -104,7 +99,7 @@ void main() {
         giftedLeaves: 0,
       ),
     );
-    cubit.updateUserPoints(_uid, 1);
+    cubit.track(repository.pendingUpdate());
     repository.controller.add(Right(_points(2, 2)));
     await _flush();
     repository.updateGate.complete(unit);

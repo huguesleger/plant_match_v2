@@ -58,17 +58,20 @@ class ChatPlantDonationActionBar extends StatelessWidget {
               context.read<DonationCubit>().generateCode(donation.id),
         ),
       DonationWaitingValidation(:final donation) when isPlantOwner =>
-        ValidationCodeDisplay(
-          onGenerate: () {}, // Déjà généré
-          code: donation.validationCode.toNullable(),
+        StreamBuilder<Option<String>>(
+          stream: context.read<DonationCubit>().validationCode(donation.id),
+          builder: (context, snapshot) => ValidationCodeDisplay(
+            onGenerate: () => context.read<DonationCubit>().generateCode(donation.id),
+            code: Option.fromNullable(snapshot.data)
+                .flatMap((code) => code)
+                .toNullable(),
+          ),
         ),
       DonationWaitingValidation(:final donation) when !isPlantOwner =>
         ValidationCodeInput(
           onValidate: (code) => context.read<DonationCubit>().validateCode(
                 donation.id,
                 code,
-                currentUserId,
-                donation.ownerId,
                 context.read<UserPointsCubit>(),
               ),
         ),

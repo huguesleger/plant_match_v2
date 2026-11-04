@@ -1,10 +1,10 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
-import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
+import 'package:plant_match_v2/core/firebase/cloud_function.dart';
+import 'package:plant_match_v2/features/level/domain/entities/points_update.dart';
 import 'package:plant_match_v2/features/donation/domain/entities/donation.dart';
 import 'package:plant_match_v2/features/donation/domain/repository/donation_repository.dart';
 
@@ -84,80 +84,33 @@ class FirebaseDonation implements DonationRepository {
   }
 
   @override
-  TaskEither<Failure, Unit> generateValidationCode(String donationId) {
-    return TaskEither.tryCatch(
-      () async {
-        final code = (100000 + Random().nextInt(900000)).toString();
-        await _col.doc(donationId).update({
-          'validationCode': code,
-          'status': DonationStatus.waitingValidation.name,
-        });
-        return unit;
-      },
-      (error, _) => UnexpectedFailure('Erreur génération code PIN: $error'),
-    );
-  }
+  TaskEither<Failure, Unit> generateValidationCode(String donationId) =>
+      CloudFunction.call(
+        'generateHandoverCode',
+        {'kind': 'donation', 'id': donationId},
+      ).map((_) => unit);
 
   @override
-  TaskEither<Failure, Unit> validateCode(
+  Stream<Option<String>> watchValidationCode(String donationId) => _col
+      .doc(donationId)
+      .collection('private')
+      .doc('validation')
+      .snapshots()
+      .map(
+        (doc) => Option.fromNullable(doc.data())
+            .flatMap((data) => Option.fromNullable(data['code'] as String?)),
+      )
+      .handleError((_) => const None());
+
+  @override
+  TaskEither<Failure, PointsUpdate> validateCode(
     String donationId,
     String code,
-    String userId,
   ) =>
-      TaskEither.tryCatch(
-        () => _firestore.runTransaction((transaction) async {
-          final donationRef = _col.doc(donationId);
-          final donationDoc = await transaction.get(donationRef);
-          final donation = Donation.fromJson(
-            donationDoc.id,
-            Option.fromNullable(donationDoc.data()).getOrElse(
-              () => throw const NotFoundFailure('Don introuvable'),
-            ),
-          );
-          final plantRef =
-              _firestore.collection('catalogs').doc(donation.plantId);
-          final plantDoc = await transaction.get(plantRef);
-
-          _ensure(
-            donation.status == DonationStatus.waitingValidation,
-            'Ce don a déjà été validé',
-          );
-          _ensure(
-            donation.requestedBy == userId,
-            'Seul le demandeur peut valider ce don',
-          );
-          _ensure(
-            donation.validationCode.getOrElse(() => '') == code,
-            'Code incorrect',
-          );
-          _ensure(
-            plantDoc.data()?['status'] == CatalogStatus.published.name,
-            'Cette plante n\'est plus disponible',
-          );
-
-          transaction.update(donationRef, {
-            'status': DonationStatus.completed.name,
-            'completedAt': FieldValue.serverTimestamp(),
-            'completedBy': userId,
-          });
-          transaction.update(
-            _firestore.collection('plant_chats').doc(donation.chatId),
-            {'isDonationCompleted': true},
-          );
-          transaction.update(
-            plantRef,
-            {'status': CatalogStatus.archived.name},
-          );
-          return unit;
-        }),
-        (error, _) => switch (error) {
-          Failure() => error,
-          _ => UnexpectedFailure('Erreur validation don: $error'),
-        },
-      );
-
-  void _ensure(bool condition, String message) =>
-      condition ? null : throw ValidationFailure(message);
+      CloudFunction.call(
+        'validateHandover',
+        {'kind': 'donation', 'id': donationId, 'code': code},
+      ).map(PointsUpdate.fromJson);
 
   @override
   TaskEither<Failure, List<Donation>> getCompletedDonations(String uid) {

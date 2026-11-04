@@ -153,23 +153,10 @@ class ProfilCubit extends Cubit<ProfilState> {
           ? TaskEither.right(0)
           : user.referredBy
               .map((code) => code.trim().toUpperCase())
-              .filter((code) => code != user.referralCode)
+              .filter((code) => code.isNotEmpty && code != user.referralCode)
               .match(
                 () => TaskEither.right(0),
-                (code) => profilRepository
-                    .getProfilUserByReferralCode(code)
-                    .flatMap((sponsor) =>
-                        sponsor.filter((p) => p.uid != user.uid).match(
-                              () => TaskEither.right(0),
-                              (p) => profilRepository
-                                  .applyReferral(
-                                    newUserUid: user.uid,
-                                    referrerUid: p.uid,
-                                    referralCode: code,
-                                    bonus: referralBonus,
-                                  )
-                                  .map((_) => referralBonus),
-                            )),
+                profilRepository.applyReferral,
               );
 
   TaskEither<Failure, ProfilUser> _loadUser(String uid) =>
@@ -299,24 +286,9 @@ class ProfilCubit extends Cubit<ProfilState> {
         .run();
   }
 
-  static const int referralBonus = 3;
-
   static const Duration _locationTimeLimit = Duration(seconds: 15);
 
   void reset() => emit(ProfilInitial());
-
-  void addLeaves(String uid, int count, Option<String> message) {
-    profilRepository
-        .incrementLeaves(uid, count)
-        .flatMap((_) => _loadUser(uid))
-        .match(
-          (failure) => ProfilError(failure.message),
-          (user) =>
-              ProfilLoaded(user, leavesGained: count, rewardMessage: message),
-        )
-        .map(emit)
-        .run();
-  }
 
   void refreshLeaves(String uid) {
     _loadUser(uid)

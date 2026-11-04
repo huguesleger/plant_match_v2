@@ -1,5 +1,4 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:plant_match_v2/features/level/domain/entities/points_update.dart';
 import 'package:plant_match_v2/features/level/domain/entities/user_points.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
 
@@ -10,11 +9,6 @@ abstract class UserPointsRepository {
     int level,
   );
 
-  TaskEither<Failure, PointsUpdate> updatePoints(
-    String userId,
-    int pointsToAdd, {
-    int giftedLeaves = 0,
-  });
 
   TaskEither<Failure, UserPoints> getPoints(String userId);
 

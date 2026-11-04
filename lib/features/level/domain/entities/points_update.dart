@@ -15,5 +15,16 @@ class PointsUpdate {
 
   int get totalLeaves => bonusLeaves + giftedLeaves;
 
+  factory PointsUpdate.fromJson(Map<String, dynamic> json) => PointsUpdate(
+        userPoints: UserPoints(
+          uid: json['uid'] as String? ?? '',
+          currentPoints: json['currentPoints'] as int? ?? 0,
+          level: json['level'] as int? ?? 1,
+        ),
+        previousLevel: json['previousLevel'] as int? ?? 1,
+        bonusLeaves: json['bonusLeaves'] as int? ?? 0,
+        giftedLeaves: json['giftedLeaves'] as int? ?? 0,
+      );
+
   bool get isLevelUp => userPoints.level > previousLevel;
 }
