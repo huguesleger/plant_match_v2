@@ -13,16 +13,14 @@ import 'package:plant_match_v2/features/auth/presentation/email_verification/ema
 import 'package:plant_match_v2/features/get_started/presentation/get_started_page_route.dart';
 import 'package:plant_match_v2/features/level/data/firebase_user_points.dart';
 import 'package:plant_match_v2/features/level/presentation/cubit/user_points_cubit.dart';
-import 'package:plant_match_v2/features/level_awarded/presentation/level_awarded_page_route.dart';
+import 'package:plant_match_v2/features/level_awarded/presentation/reward_listener.dart';
 import 'package:plant_match_v2/features/notifications/data/datasources/fcm_remote_datasource.dart';
 import 'package:plant_match_v2/features/notifications/data/repositories/notification_repository_impl.dart';
 import 'package:plant_match_v2/features/notifications/presentation/cubit/notification_cubit.dart';
 import 'package:plant_match_v2/features/profil/data/firebase_profil_repo.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
-import 'package:plant_match_v2/features/profil/presentation/cubit/profil_state.dart';
 import 'package:plant_match_v2/features/storage/data/firebase_storage_repository.dart';
 import 'package:plant_match_v2/core/services/location/location_service.dart';
-
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -129,59 +127,47 @@ class _MyAppBodyState extends State<_MyAppBody> with WidgetsBindingObserver {
           BlocListener<AuthCubit, AuthState>(
             listener: (context, authState) {
               if (authState is Authenticated) {
-                context.read<NotificationCubit>().requestPermissionAndSaveToken(authState.user.uid);
+                context
+                    .read<NotificationCubit>()
+                    .requestPermissionAndSaveToken(authState.user.uid);
                 context.read<ProfilCubit>().getProfilUser(authState.user.uid);
-                context.read<ProfilCubit>().checkDailyConnection(authState.user.uid);
-                if (authState.isFirstTime) {
-                  context.read<UserPointsCubit>().addUserPoints(
-                        authState.user.uid,
-                        0,
-                        1,
-                        isFromRegistration: true,
-                      );
-                }
-              }
-            },
-          ),
-          BlocListener<ProfilCubit, ProfilState>(
-            listener: (context, state) {
-              if (state is ProfilLoaded && state.leavesGained > 0) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => LevelAwardedPageRoute(
-                      leavesGained: state.leavesGained,
-                      title: state.rewardMessage ?? 'Félicitations !',
-                      description: 'Vous venez d\'obtenir des feuilles bonus pour vos interactions.',
-                    ),
-                    fullscreenDialog: true,
-                  ),
-                );
+                context
+                    .read<ProfilCubit>()
+                    .checkDailyConnection(authState.user.uid);
+                authState.isFirstTime
+                    ? context
+                        .read<UserPointsCubit>()
+                        .addUserPoints(authState.user.uid, 0, 1)
+                    : context
+                        .read<UserPointsCubit>()
+                        .fetchUserPoints(authState.user.uid);
               }
             },
           ),
         ],
-        child: BlocBuilder<AuthCubit, AuthState>(
-          builder: (context, authState) {
-            return Scaffold(
-              body: switch (authState) {
-                AuthInitial() || AuthLoading() => const Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                Authenticated() => const TemplatePage(),
-                Unauthenticated() => const GetStartedPageRoute(),
-                AuthError() => ErrorPage(
-                    errorMessage: authState.message,
-                    onRetry: () {
-                      context.read<AuthCubit>().checkCurrentUser();
-                    },
-                  ),
-                AuthEmailVerificationSent(user: var u) ||
-                AuthFinalizing(user: var u) =>
-                  EmailVerificationPageRoute(user: u),
-              },
-            );
-          },
+        child: RewardListener(
+          child: BlocBuilder<AuthCubit, AuthState>(
+            builder: (context, authState) {
+              return Scaffold(
+                body: switch (authState) {
+                  AuthInitial() || AuthLoading() => const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  Authenticated() => const TemplatePage(),
+                  Unauthenticated() => const GetStartedPageRoute(),
+                  AuthError() => ErrorPage(
+                      errorMessage: authState.message,
+                      onRetry: () {
+                        context.read<AuthCubit>().checkCurrentUser();
+                      },
+                    ),
+                  AuthEmailVerificationSent(user: var u) ||
+                  AuthFinalizing(user: var u) =>
+                    EmailVerificationPageRoute(user: u),
+                },
+              );
+            },
+          ),
         ),
       ),
     );

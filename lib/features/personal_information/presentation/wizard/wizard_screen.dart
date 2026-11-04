@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
-import 'package:plant_match_v2/features/level_awarded/presentation/level_awarded_page_route.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_state.dart';
@@ -23,20 +22,6 @@ class _DetailWizardScreenState extends State<DetailWizardScreen> {
   Widget build(BuildContext context) {
     return BlocListener<ProfilCubit, ProfilState>(
       listener: (context, state) {
-        if (state is ProfilLoaded && state.leavesGained > 0) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => LevelAwardedPageRoute(
-                leavesGained: state.leavesGained,
-                title: state.rewardMessage ?? 'Félicitations !',
-                description: 'Vous venez d\'obtenir des feuilles bonus pour vos interactions.',
-              ),
-              fullscreenDialog: true,
-            ),
-          );
-        }
-        
         switch (state) {
           case ProfilLoaded() when _isLocating:
             if (Navigator.canPop(context)) {

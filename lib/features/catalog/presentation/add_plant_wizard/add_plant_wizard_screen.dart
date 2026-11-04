@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -24,6 +25,8 @@ import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/st
 import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/steps/step_publish.dart';
 import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/steps/step_watering.dart';
 import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/widgets/loading_overlay.dart';
+
+const int publishBonus = 2;
 
 class AddPlantWizardScreen extends StatefulWidget {
   const AddPlantWizardScreen({super.key, required this.catalog});
@@ -262,7 +265,7 @@ class _AddPlantWizardScreenState extends State<AddPlantWizardScreen> {
       );
 
       final saveRes = await cubit.addCatalog(finalCatalog).run();
-      final (id, isFirst) = saveRes.getOrElse((_) => ("", false));
+      final (id, _) = saveRes.getOrElse((_) => ("", false));
 
       final localImages =
           finalCatalog.images.where((img) => !img.startsWith('http')).toList();
@@ -274,17 +277,13 @@ class _AddPlantWizardScreenState extends State<AddPlantWizardScreen> {
             existingImages: []).run();
       }
 
-      if (isFirst && mounted) {
-        // Points attribution removed: only donations/exchanges give points now.
-      }
-
-      if (finalCatalog.status == CatalogStatus.published && mounted) {
-        context.read<ProfilCubit>().addLeaves(
-              finalCatalog.userId,
-              2,
-              'Plante publiée !',
-            );
-      }
+      finalCatalog.status == CatalogStatus.published && id.isNotEmpty && mounted
+          ? context.read<ProfilCubit>().addLeaves(
+                finalCatalog.userId,
+                publishBonus,
+                Some(t.levelAwarded.rewards.plant_published),
+              )
+          : null;
 
       if (mounted) {
         Navigator.pop(context); // loading

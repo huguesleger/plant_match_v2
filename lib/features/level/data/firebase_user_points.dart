@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:plant_match_v2/features/level/domain/entities/points_update.dart';
 import 'package:plant_match_v2/features/level/domain/entities/user_points.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/features/level/domain/repository/user_points_repository.dart';
@@ -55,53 +56,35 @@ class FirebaseUserPoints implements UserPointsRepository {
   }
 
   @override
-  TaskEither<Failure, Unit> updatePoints(String userId, int pointsToAdd) {
+  TaskEither<Failure, PointsUpdate> updatePoints(
+      String userId, int pointsToAdd) {
     return TaskEither.tryCatch(
-      () async {
-        final doc = await _firestore.collection('userPoints').doc(userId).get();
+      () => _firestore.runTransaction((transaction) async {
+        final pointsRef = _firestore.collection('userPoints').doc(userId);
+        final doc = await transaction.get(pointsRef);
+        final data = Option.fromNullable(doc.data()).getOrElse(
+          () => throw NotFoundFailure('Utilisateur $userId non trouvé'),
+        );
+        final previous = UserPoints.fromJson({...data, 'uid': userId});
+        final updated = UserPointsUtils.updatePoints(previous, pointsToAdd);
+        final bonusLeaves =
+            UserPointsUtils.bonusLeavesBetween(previous.level, updated.level);
 
-        if (!doc.exists) {
-          throw NotFoundFailure('Utilisateur $userId non trouvé');
-        }
-
-        final data = doc.data();
-        if (data == null) {
-          throw NotFoundFailure('Données utilisateur $userId vides');
-        }
-
-        final userPoints = UserPoints.fromJson({
-          ...data,
-          'uid': userId,
+        transaction.update(pointsRef, {
+          'currentPoints': updated.currentPoints,
+          'level': updated.level,
         });
-
-        int currentPoints = userPoints.currentPoints + pointsToAdd;
-        if (currentPoints < 0) currentPoints = 0;
-
-        int level = 1;
-        final Map<int, LevelData> reversedLevels = Map.fromEntries(
-          UserPointsUtils.levelData.entries.toList().reversed,
+        transaction.update(
+          _firestore.collection('users').doc(userId),
+          {'leaves': FieldValue.increment(bonusLeaves)},
         );
 
-        for (final entry in reversedLevels.entries) {
-          final l = entry.key;
-          final prevLevel = l - 1;
-          final prevMaxPoints = prevLevel > 0
-              ? UserPointsUtils.getMaxPointsForLevel(prevLevel)
-              : 0;
-
-          if (currentPoints >= prevMaxPoints) {
-            level = l;
-            break;
-          }
-        }
-
-        await _firestore.collection('userPoints').doc(userId).update({
-          'currentPoints': currentPoints,
-          'level': level,
-        });
-
-        return unit;
-      },
+        return PointsUpdate(
+          userPoints: updated,
+          previousLevel: previous.level,
+          bonusLeaves: bonusLeaves,
+        );
+      }),
       (error, stackTrace) => _mapErrorToFailure(error),
     );
   }

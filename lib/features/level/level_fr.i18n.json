@@ -28,11 +28,17 @@
     "conditions": "Conditions : ",
     "description": "Description : ",
     "required_points": "Dons/Échanges requis : ",
-    "rewarded_actions_title": "Actions récompensées :",
+    "rewarded_actions_title": "Récompense du palier :",
     "points": {
       "one": " $n don ou échange",
       "other": " $n dons ou échanges"
-    }
+    },
+    "bonus_leaves": {
+      "one": "+$n feuille bonus",
+      "other": "+$n feuilles bonus"
+    },
+    "welcome_pack": "Pack de bienvenue (5 feuilles)",
+    "unlimited_contacts": "Contacts illimités, sans dépenser de feuilles"
   },
   "levels": {
     "1": {

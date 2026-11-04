@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
@@ -92,7 +93,7 @@ class HomeAroundMeSection extends StatelessWidget {
                             MaterialPageRoute(
                                 builder: (_) => DetailPlant(
                                       catalog: catalog,
-                                      owner: owner,
+                                      owner: Some(owner),
                                     )),
                           ),
                         );

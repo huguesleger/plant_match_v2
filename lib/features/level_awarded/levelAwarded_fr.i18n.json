@@ -9,5 +9,18 @@
       "other": " $n points"
     },
     "view_progression": "Voir ma progression"
+  },
+  "rewards": {
+    "default_title": "Félicitations !",
+    "default_description": "Vous venez d'obtenir des feuilles bonus pour vos interactions.",
+    "daily": "Soleil quotidien !",
+    "plant_published": "Plante publiée !",
+    "referral": "Code de parrainage validé !",
+    "level_up_title": "Niveau $level atteint !",
+    "level_up_description": "Vous êtes maintenant $name. Voici vos feuilles bonus pour continuer vos adoptions.",
+    "leaves": {
+      "one": "+$n feuille",
+      "other": "+$n feuilles"
+    }
   }
 }

@@ -1,3 +1,4 @@
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 
 sealed class ProfilState {
@@ -11,9 +12,13 @@ class ProfilLoading extends ProfilState {}
 class ProfilLoaded extends ProfilState {
   final ProfilUser profilUser;
   final int leavesGained;
-  final String? rewardMessage;
+  final Option<String> rewardMessage;
 
-  ProfilLoaded(this.profilUser, {this.leavesGained = 0, this.rewardMessage});
+  ProfilLoaded(
+    this.profilUser, {
+    this.leavesGained = 0,
+    this.rewardMessage = const None(),
+  });
 }
 
 class ProfilError extends ProfilState {

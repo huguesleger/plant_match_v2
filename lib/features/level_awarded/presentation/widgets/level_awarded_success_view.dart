@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/gen/assets.gen.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
@@ -53,32 +54,34 @@ class LevelAwardedSuccessView extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                decoration: BoxDecoration(
-                  color: AppColors.greenLight.withValues(alpha: 0.5),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      LucideIcons.leaf,
-                      color: AppColors.greenDark,
-                      size: 24,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      '+$leavesGained ${leavesGained > 1 ? "feuilles" : "feuille"}',
-                      style: InterTextStyle.inter(
-                        AppTypo.textL,
-                        fontWeight: FontWeight.bold,
+              if (leavesGained > 0)
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: AppColors.greenLight.withValues(alpha: 0.5),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        LucideIcons.leaf,
                         color: AppColors.greenDark,
+                        size: 24,
                       ),
-                    ),
-                  ],
+                      const SizedBox(width: 8),
+                      Text(
+                        t.levelAwarded.rewards.leaves(n: leavesGained),
+                        style: InterTextStyle.inter(
+                          AppTypo.textL,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.greenDark,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
               const Spacer(),
               SafeArea(
                 child: Column(
@@ -86,7 +89,7 @@ class LevelAwardedSuccessView extends StatelessWidget {
                     SizedBox(
                       width: double.infinity,
                       child: ButtonRounded(
-                        text: 'Voir ma progression',
+                        text: t.levelAwarded.success.view_progression,
                         onPressed: () => Navigator.push(
                           context,
                           MaterialPageRoute(

@@ -34,6 +34,7 @@ class WizardPseudoStep extends StatelessWidget {
           labelText: t.personalInformation.wizard.pseudo.label,
         ),
         autovalidateMode: AutovalidateMode.onUserInteraction,
+        textCapitalization: TextCapitalization.characters,
         controller: controller,
       ),
     );
@@ -189,16 +190,17 @@ class WizardReferralStep extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DetailWizardItem(
-      title: 'Code de parrainage',
-      description: 'Si un ami vous a parrainé, saisissez son code pour gagner tous les deux 3 feuilles supplémentaires !',
+      title: t.personalInformation.wizard.referral.title,
+      description: t.personalInformation.wizard.referral.description,
       formKey: formKey,
       child: FormBuilderTextField(
         name: 'referredBy',
         decoration: DecorationInput.inputDecoration(
-          hintText: 'Ex : PM-XYZ12',
-          labelText: 'Code de parrainage (Optionnel)',
+          hintText: t.personalInformation.wizard.referral.hint,
+          labelText: t.personalInformation.wizard.referral.label,
         ),
         autovalidateMode: AutovalidateMode.onUserInteraction,
+        textCapitalization: TextCapitalization.characters,
         controller: controller,
       ),
     );

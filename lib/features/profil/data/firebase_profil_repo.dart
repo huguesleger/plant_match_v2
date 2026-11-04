@@ -42,9 +42,13 @@ class FirebaseProfilRepo implements ProfilRepository {
 
     return TaskEither.tryCatch(
       () async {
-        final data = updateProfilUser.toJson();
-        data.remove('uid');
-        
+        final data = updateProfilUser.toJson()
+          ..remove('uid')
+          ..remove('leaves')
+          ..remove('referralCode')
+          ..remove('referredBy')
+          ..remove('lastConnectionDate');
+
         await _firebaseFirestore
             .collection('users')
             .doc(updateProfilUser.uid)
@@ -121,6 +125,19 @@ class FirebaseProfilRepo implements ProfilRepository {
       (error, _) => _mapErrorToFailure(error),
     );
   }
+
+  @override
+  TaskEither<Failure, Unit> incrementLeaves(String uid, int count) =>
+      uid.isEmpty
+          ? TaskEither.left(const AuthFailure('UID invalide pour les feuilles'))
+          : TaskEither.tryCatch(
+              () => _firebaseFirestore
+                  .collection('users')
+                  .doc(uid)
+                  .update({'leaves': FieldValue.increment(count)})
+                  .then((_) => unit),
+              (error, _) => _mapErrorToFailure(error),
+            );
 
   Failure _mapErrorToFailure(Object error) {
     if (error is Failure) return error;

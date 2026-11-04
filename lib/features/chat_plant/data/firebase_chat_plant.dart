@@ -375,6 +375,12 @@ class FirebaseChatPlant implements ChatPlantRepository {
   }
 
   @override
+  TaskEither<Failure, bool> chatExists(String chatId) => TaskEither.tryCatch(
+        () async => (await _chats.doc(chatId).get()).exists,
+        (error, _) => UnexpectedFailure('Erreur vérification chat: $error'),
+      );
+
+  @override
   TaskEither<Failure, List<String>> getParticipants(String chatId) {
     return TaskEither.tryCatch(
       () async {

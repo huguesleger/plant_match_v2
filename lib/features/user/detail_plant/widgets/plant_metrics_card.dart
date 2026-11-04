@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
@@ -17,18 +18,18 @@ class PlantMetricsCard extends StatelessWidget {
 
   final Catalog catalog;
   final ProfilUser owner;
-  final ProfilUser? currentUser;
+  final Option<ProfilUser> currentUser;
 
-  String _getDistanceText() {
-    if (currentUser == null) return '-- km';
-    final hasLoc = currentUser!.latitude.isSome() &&
-        currentUser!.longitude.isSome() &&
-        owner.latitude.isSome() &&
-        owner.longitude.isSome();
-    return hasLoc
-        ? '${DistanceHelper.calculateDistance(currentUser!, owner).toStringAsFixed(0)} km'
-        : '-- km';
-  }
+  bool _hasLocation(ProfilUser user) =>
+      user.latitude.isSome() && user.longitude.isSome();
+
+  String _getDistanceText() => currentUser
+      .filter((user) => _hasLocation(user) && _hasLocation(owner))
+      .match(
+        () => '-- km',
+        (user) =>
+            '${DistanceHelper.calculateDistance(user, owner).toStringAsFixed(0)} km',
+      );
 
   String _getElapsedTimeText(DateTime dateTime) {
     final difference = DateTime.now().difference(dateTime);

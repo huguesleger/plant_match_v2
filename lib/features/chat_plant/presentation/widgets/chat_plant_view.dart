@@ -12,6 +12,8 @@ import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart'
 import 'package:plant_match_v2/features/chat_plant/presentation/cubit/chat_plant_cubit.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/chat_plant_custom_message.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/chat_plant_text_input.dart';
+import 'package:plant_match_v2/features/level/presentation/cubit/user_points_cubit.dart';
+import 'package:plant_match_v2/features/level/utils/user_points_utils.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/chat_theme.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/donation/chat_plant_donation_action_bar.dart';
@@ -44,6 +46,22 @@ class ChatPlantView extends StatelessWidget {
   final OfferType plantOfferType;
   final List<types.Message> messages;
   final bool isBlocked;
+
+  void _send(BuildContext context, String userId, String text) {
+    messages.isEmpty && userId != plantOwnerId
+        ? context.read<ProfilCubit>().payFirstContact(
+              userId,
+              unlimited: UserPointsUtils.hasUnlimitedContacts(
+                context.read<UserPointsCubit>().currentLevel,
+              ),
+            )
+        : null;
+    context.read<ChatPlantCubit>().send(
+          chatId: chatId,
+          senderId: userId,
+          text: text,
+        );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -98,29 +116,11 @@ class ChatPlantView extends StatelessWidget {
                 isBlocked
                     ? _BlockedBanner(plantOwnerId: plantOwnerId)
                     : ChatPlantTextInput(
-                        onSend: (text) {
-                          if (messages.isEmpty) {
-                            context.read<ProfilCubit>().addLeaves(userId, -1, '');
-                          }
-                          context.read<ChatPlantCubit>().send(
-                                chatId: chatId,
-                                senderId: userId,
-                                text: text,
-                              );
-                        },
+                        onSend: (text) => _send(context, userId, text),
                       ),
               ],
             ),
-            onSendPressed: (message) {
-              if (messages.isEmpty) {
-                context.read<ProfilCubit>().addLeaves(userId, -1, '');
-              }
-              context.read<ChatPlantCubit>().send(
-                    chatId: chatId,
-                    senderId: userId,
-                    text: message.text,
-                  );
-            },
+            onSendPressed: (message) => _send(context, userId, message.text),
             textMessageBuilder: (types.TextMessage message,
                 {required int messageWidth, required bool showName}) {
               return Padding(

@@ -38,6 +38,12 @@
       "required": "Ce champ est requis",
       "next": "Suivant",
       "geolocate": "Me géolocaliser"
+    },
+    "referral": {
+      "title": "Code de parrainage",
+      "description": "Si un ami vous a parrainé, saisissez son code pour gagner tous les deux 3 feuilles supplémentaires !",
+      "hint": "Ex : PM-XYZ12",
+      "label": "Code de parrainage (Optionnel)"
     }
   },
   "avatar": {

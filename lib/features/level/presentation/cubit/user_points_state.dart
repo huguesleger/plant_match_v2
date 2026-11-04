@@ -1,3 +1,4 @@
+import 'package:plant_match_v2/features/level/domain/entities/points_update.dart';
 import 'package:plant_match_v2/features/level/domain/entities/user_points.dart';
 
 sealed class UserPointsState {}
@@ -21,12 +22,9 @@ class UserPointsError extends UserPointsState {
 }
 
 class UserPointsAwarded extends UserPointsState {
-  final int points;
-  final String userId;
-  final UserPoints userPoints;
-  final bool isFromRegistration;
-  final bool isLevelUp;
+  final PointsUpdate update;
 
-  UserPointsAwarded(this.points, this.userId, this.userPoints,
-      {this.isFromRegistration = false, this.isLevelUp = false});
+  UserPointsAwarded(this.update);
+
+  UserPoints get userPoints => update.userPoints;
 }

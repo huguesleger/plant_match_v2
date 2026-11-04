@@ -24,5 +24,10 @@
     "online": "En ligne",
     "offline": "Hors ligne"
   },
-  "distance": "${value} km"
+  "distance": "${value} km",
+  "map": {
+    "empty_title": "Aucune plante trouvée dans ce rayon",
+    "empty_widen": "Élargissez le rayon de recherche pour découvrir plus de plantes autour de vous.",
+    "empty_first": "Soyez le premier à publier une plante dans l'application !"
+  }
 }

@@ -30,7 +30,7 @@ class RecentActivityTile extends StatelessWidget {
         MaterialPageRoute(
           builder: (_) => DetailPlant(
             catalog: catalog,
-            owner: owner,
+            owner: Some(owner),
           ),
         ),
       ),

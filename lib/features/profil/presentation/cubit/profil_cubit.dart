@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart' show DateUtils;
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
@@ -153,7 +155,8 @@ class ProfilCubit extends Cubit<ProfilState> {
     }
 
     final currentUser = currentState.profilUser;
-    final isStorageUrl = imageUrl.startsWith('http') || imageUrl.startsWith('gs://');
+    final isStorageUrl =
+        imageUrl.startsWith('http') || imageUrl.startsWith('gs://');
 
     final TaskEither<Failure, String> deleteStorageTask = isStorageUrl
         ? storageRepository.deleteImage(imageUrl: imageUrl)
@@ -179,33 +182,72 @@ class ProfilCubit extends Cubit<ProfilState> {
 
     profilRepository
         .getProfilUser(profilUser.uid)
-        .flatMap((existingOption) => existingOption.match(
-              () => profilUser.referredBy.match(
-                () => profilRepository.createProfilUser(profilUser).map((_) => (profilUser, 0, null as String?)),
-                (code) => profilRepository.getProfilUserByReferralCode(code).flatMap((parrainOption) => parrainOption.match(
-                      () => profilRepository.createProfilUser(profilUser).map((_) => (profilUser, 0, null as String?)),
-                      (parrain) {
-                        final updatedUser = profilUser.copyWith(newLeaves: profilUser.leaves + 3);
-                        return profilRepository
-                            .createProfilUser(updatedUser)
-                            .flatMap((_) => profilRepository.updateProfilField(
-                                  uid: parrain.uid,
-                                  field: 'leaves',
-                                  value: parrain.leaves + 3,
-                                ))
-                            .map((_) => (updatedUser, 3, 'Code de parrainage validé !'));
-                      },
-                    )),
-              ),
-              (existing) => profilRepository.updateProfilUser(profilUser).map((_) => (profilUser, 0, null as String?)),
-            ))
+        .flatMap((existing) => existing
+            .match(
+              () => profilRepository.createProfilUser(profilUser),
+              (_) => profilRepository.updateProfilUser(profilUser),
+            )
+            .flatMap((_) => _applyReferral(
+                  profilUser,
+                  existing.flatMap((user) => user.referredBy),
+                )))
+        .flatMap(
+            (gained) => _loadUser(profilUser.uid).map((user) => (user, gained)))
         .match(
           (failure) => ProfilError(failure.message),
-          (result) => ProfilLoaded(result.$1, leavesGained: result.$2, rewardMessage: result.$3),
+          (result) => ProfilLoaded(
+            result.$1,
+            leavesGained: result.$2,
+            rewardMessage: Option.fromPredicate(
+              t.levelAwarded.rewards.referral,
+              (_) => result.$2 > 0,
+            ),
+          ),
         )
         .map(emit)
         .run();
   }
+
+  TaskEither<Failure, int> _applyReferral(
+    ProfilUser user,
+    Option<String> alreadyReferredBy,
+  ) =>
+      alreadyReferredBy.isSome()
+          ? TaskEither.right(0)
+          : user.referredBy
+              .map((code) => code.trim().toUpperCase())
+              .filter((code) => code != user.referralCode)
+              .match(
+                () => TaskEither.right(0),
+                (code) => profilRepository
+                    .getProfilUserByReferralCode(code)
+                    .flatMap((sponsor) => sponsor
+                        .filter((p) => p.uid != user.uid)
+                        .match(
+                          () => TaskEither.right(0),
+                          (p) => profilRepository
+                              .updateProfilField(
+                                uid: user.uid,
+                                field: 'referredBy',
+                                value: code,
+                              )
+                              .flatMap((_) => profilRepository.incrementLeaves(
+                                    p.uid,
+                                    referralBonus,
+                                  ))
+                              .flatMap((_) => profilRepository.incrementLeaves(
+                                    user.uid,
+                                    referralBonus,
+                                  ))
+                              .map((_) => referralBonus),
+                        )),
+              );
+
+  TaskEither<Failure, ProfilUser> _loadUser(String uid) =>
+      profilRepository.getProfilUser(uid).flatMap((option) => option.match(
+            () => TaskEither.left(const AuthFailure('Profil introuvable')),
+            TaskEither.right,
+          ));
 
   // ─── clearField ────────────────────────────────────────────────────────────
 
@@ -314,66 +356,71 @@ class ProfilCubit extends Cubit<ProfilState> {
         .run();
   }
 
+  static const int referralBonus = 3;
+  static const int dailyBonus = 1;
+  static const int contactCost = 1;
+
   void checkDailyConnection(String uid) {
-    profilRepository
-        .getProfilUser(uid)
-        .flatMap((option) => option.match(
-              () => TaskEither.left(const AuthFailure('Profil introuvable')),
-              (user) {
-                final now = DateTime.now();
-                final lastConn = user.lastConnectionDate.toNullable();
+    final now = DateTime.now();
 
-                final isSameDay = lastConn != null &&
-                    lastConn.year == now.year &&
-                    lastConn.month == now.month &&
-                    lastConn.day == now.day;
-
-                if (isSameDay) {
-                  return TaskEither.right((user, 0, null as String?));
-                }
-
-                final updatedUser = user.copyWith(
-                  newLeaves: user.leaves + 1,
-                  newLastConnectionDate: Some(now),
-                );
-
-                return profilRepository
-                    .updateProfilUser(updatedUser)
-                    .flatMap((_) => profilRepository.updateProfilField(
-                          uid: uid,
-                          field: 'lastConnectionDate',
-                          value: Timestamp.fromDate(now),
-                        ))
-                    .map((_) => (updatedUser, 1, 'Soleil Quotidien !'));
-              },
-            ))
+    _loadUser(uid)
+        .flatMap((user) => user.lastConnectionDate
+                .filter((last) => DateUtils.isSameDay(last, now))
+                .isSome()
+            ? TaskEither<Failure, (ProfilUser, int)>.right((user, 0))
+            : profilRepository
+                .updateProfilField(
+                  uid: uid,
+                  field: 'lastConnectionDate',
+                  value: Timestamp.fromDate(now),
+                )
+                .flatMap(
+                    (_) => profilRepository.incrementLeaves(uid, dailyBonus))
+                .map((_) => (
+                      user.copyWith(
+                        newLeaves: user.leaves + dailyBonus,
+                        newLastConnectionDate: Some(now),
+                      ),
+                      dailyBonus,
+                    )))
         .match(
           (failure) => ProfilError(failure.message),
-          (result) => ProfilLoaded(result.$1, leavesGained: result.$2, rewardMessage: result.$3),
+          (result) => ProfilLoaded(
+            result.$1,
+            leavesGained: result.$2,
+            rewardMessage: Option.fromPredicate(
+              t.levelAwarded.rewards.daily,
+              (_) => result.$2 > 0,
+            ),
+          ),
         )
         .map(emit)
         .run();
   }
 
-  void addLeaves(String uid, int count, String message) {
+  void addLeaves(String uid, int count, Option<String> message) {
     profilRepository
-        .getProfilUser(uid)
-        .flatMap((option) => option.match(
-              () => TaskEither.left(const AuthFailure('Profil introuvable')),
-              (user) {
-                final updatedUser = user.copyWith(
-                  newLeaves: user.leaves + count,
-                );
-                return profilRepository
-                    .updateProfilUser(updatedUser)
-                    .map((_) => updatedUser);
-              },
-            ))
+        .incrementLeaves(uid, count)
+        .flatMap((_) => _loadUser(uid))
         .match(
           (failure) => ProfilError(failure.message),
-          (user) => ProfilLoaded(user, leavesGained: count, rewardMessage: message),
+          (user) =>
+              ProfilLoaded(user, leavesGained: count, rewardMessage: message),
         )
         .map(emit)
         .run();
   }
+
+  void refreshLeaves(String uid) {
+    _loadUser(uid)
+        .match(
+          (failure) => ProfilError(failure.message),
+          (user) => ProfilLoaded(user),
+        )
+        .map(emit)
+        .run();
+  }
+
+  void payFirstContact(String uid, {required bool unlimited}) =>
+      unlimited ? null : addLeaves(uid, -contactCost, const None());
 }

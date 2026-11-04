@@ -30,7 +30,19 @@
     "env_prefix": "plante $env",
     "lighting": "lumière",
     "watering": "arrosage",
-    "maintenance": "entretien"
+    "maintenance": "entretien",
+    "description_title": "Description",
+    "key_info_title": "Les informations clés",
+    "no_leaves": {
+      "title": "Plus de feuilles disponibles",
+      "content": "Vous n'avez plus de feuilles pour contacter un donneur.\n\nPubliez une plante (+2 feuilles) ou parrainez un ami (+3 feuilles) pour continuer !",
+      "ok": "D'accord"
+    },
+    "share": {
+      "donation": "donne",
+      "exchange": "échange",
+      "text": "Regarde cette plante sur PlantMatch !\n\nJe $type une magnifique *$name*.\n\"$description\"\n\nTélécharge l'application PlantMatch pour l'adopter ou l'échanger autour de toi ! 🌿"
+    }
   },
   "filters": {
     "all": "Tous",

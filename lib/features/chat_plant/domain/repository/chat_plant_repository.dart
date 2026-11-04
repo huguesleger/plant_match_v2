@@ -15,6 +15,8 @@ abstract class ChatPlantRepository {
     required OfferType plantExchangeType,
   });
 
+  TaskEither<Failure, bool> chatExists(String chatId);
+
   Stream<List<types.Message>> messagesStream(String chatId);
 
   TaskEither<Failure, Unit> sendMessage({

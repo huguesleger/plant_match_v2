@@ -1,34 +1,50 @@
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
+import 'package:plant_match_v2/features/level/utils/user_points_utils.dart';
+
+class LevelDetail {
+  final String condition;
+  final String description;
+  final int requiredTransactions;
+  final String reward;
+
+  const LevelDetail({
+    required this.condition,
+    required this.description,
+    required this.requiredTransactions,
+    required this.reward,
+  });
+}
 
 class UserLevelDetails {
-  static Map<int, Map<String, dynamic>> get levelDetails => {
-        1: {
-          "condition": t.level.levels.k1.condition,
-          "description": t.level.levels.k1.description,
-          "requiredPoints": 50,
-          "rewardedActions": {
-            t.level.levels.k1.actions.registration: 25,
-            t.level.levels.k1.actions.first_plant: 25,
-          },
-        },
-        2: {
-          "condition": t.level.levels.k2.condition,
-          "description": t.level.levels.k2.description,
-          "requiredPoints": 150,
-          "rewardedActions": {
-            t.level.levels.k2.actions.first_exchange: 50,
-            t.level.levels.k2.actions.extra_exchange: 25,
-          },
-        },
+  static (String, String) _texts(int level) => switch (level) {
+        1 => (t.level.levels.k1.condition, t.level.levels.k1.description),
+        2 => (t.level.levels.k2.condition, t.level.levels.k2.description),
+        3 => (t.level.levels.k3.condition, t.level.levels.k3.description),
+        4 => (t.level.levels.k4.condition, t.level.levels.k4.description),
+        5 => (t.level.levels.k5.condition, t.level.levels.k5.description),
+        6 => (t.level.levels.k6.condition, t.level.levels.k6.description),
+        7 => (t.level.levels.k7.condition, t.level.levels.k7.description),
+        _ => (
+            t.level.levels.unknown.condition,
+            t.level.levels.unknown.description
+          ),
       };
 
-  static Map<String, dynamic> getLevelDetails(int level) {
-    return levelDetails[level] ??
-        {
-          "condition": t.level.levels.unknown.condition,
-          "description": t.level.levels.unknown.description,
-          "requiredPoints": 0,
-          "rewardedActions": {},
-        };
+  static String _reward(int level) => switch (level) {
+        1 => t.level.detail.welcome_pack,
+        UserPointsUtils.maxLevel => t.level.detail.unlimited_contacts,
+        _ => t.level.detail.bonus_leaves(
+            n: UserPointsUtils.getBonusLeavesForLevel(level),
+          ),
+      };
+
+  static LevelDetail getLevelDetails(int level) {
+    final (condition, description) = _texts(level);
+    return LevelDetail(
+      condition: condition,
+      description: description,
+      requiredTransactions: UserPointsUtils.requiredPointsFor(level),
+      reward: _reward(level),
+    );
   }
 }
