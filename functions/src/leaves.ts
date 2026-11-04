@@ -21,10 +21,11 @@ export const payFirstContact = onCall({region: REGION}, async (request) => {
   const pointsRef = db.collection("userPoints").doc(uid);
 
   return db.runTransaction(async (tx) => {
-    const [chat, user, points] = await Promise.all([
+    const [chat, user, points, existingMessages] = await Promise.all([
       tx.get(chatRef),
       tx.get(userRef),
       tx.get(pointsRef),
+      tx.get(chatRef.collection("messages").limit(1)),
     ]);
     const chatData = chat.data();
     if (!chatData) {
@@ -34,9 +35,13 @@ export const payFirstContact = onCall({region: REGION}, async (request) => {
     if (!participants.includes(uid)) {
       throw new HttpsError("permission-denied", "Conversation inaccessible");
     }
+    // lastMessage est modifiable par le client : on ne s'y fie pas.
+    // Un message existant suffit (conversations antérieures à contactPaid),
+    // car les règles n'autorisent un message que si le contact est payé
+    // ou envoyé par le propriétaire de la plante.
     const alreadyPaid = chatData.plantOwnerId === uid ||
       chatData.contactPaid === true ||
-      chatData.lastMessage != null;
+      !existingMessages.empty;
     const unlimited = hasUnlimitedContacts(points.data()?.level ?? 1);
     const cost = alreadyPaid || unlimited ? 0 : CONTACT_COST;
     if ((user.data()?.leaves ?? 0) < cost) {

@@ -29,6 +29,53 @@ const ensure = (condition: boolean, message: string) => {
   if (!condition) throw new HttpsError("failed-precondition", message);
 };
 
+const MAX_ATTEMPTS = 5;
+
+type Doc = FirebaseFirestore.DocumentData;
+
+// Vérifie que la transaction n'a pas été forgée par le client :
+// deux parties distinctes, toutes deux dans la conversation,
+// et chaque plante appartient bien à la bonne partie.
+const ensureIntegrity = (
+  kind: Kind,
+  data: Doc,
+  chat: Doc | undefined,
+  plants: (Doc | undefined)[],
+) => {
+  const ownerId: string = data.ownerId;
+  const requesterId: string = data.requestedBy;
+  ensure(
+    typeof ownerId === "string" &&
+      typeof requesterId === "string" &&
+      ownerId !== requesterId,
+    "Transaction invalide",
+  );
+  const participants: string[] = chat?.participants ?? [];
+  ensure(
+    participants.includes(ownerId) && participants.includes(requesterId),
+    "Transaction invalide",
+  );
+  const expectedOwners = kind === "donation" ?
+    [ownerId] :
+    [ownerId, requesterId];
+  ensure(
+    plants.length === expectedOwners.length &&
+      plants.every((p, i) => p?.userId === expectedOwners[i]),
+    "Transaction invalide",
+  );
+};
+
+const plantIdsOf = (kind: Kind, data: Doc): string[] => {
+  const ids: unknown[] = kind === "donation" ?
+    [data.plantId] :
+    [data.targetPlantId, data.offeredPlantId];
+  ensure(
+    ids.every((id) => typeof id === "string" && id.length > 0),
+    "Transaction invalide",
+  );
+  return ids as string[];
+};
+
 export const generateHandoverCode = onCall(
   {region: REGION},
   async (request) => {
@@ -43,6 +90,18 @@ export const generateHandoverCode = onCall(
       const data = doc.data();
       if (!data) throw new HttpsError("not-found", "Transaction introuvable");
       ensure(data.ownerId === uid, "Seul le propriétaire peut générer le code");
+      ensure(typeof data.chatId === "string", "Transaction invalide");
+      const plantRefs = plantIdsOf(kind, data)
+        .map((p) => db.collection("catalogs").doc(p));
+      const [chat, ...plants] = await Promise.all([
+        tx.get(db.collection("plant_chats").doc(data.chatId)),
+        ...plantRefs.map((r) => tx.get(r)),
+      ]);
+      ensureIntegrity(kind, data, chat.data(), plants.map((p) => p.data()));
+      ensure(
+        plants.every((p) => p.data()?.status === "published"),
+        "Cette plante n'est plus disponible",
+      );
       ensure(
         data.status === "accepted" || data.status === "waitingValidation",
         "La demande doit être acceptée avant de générer un code",
@@ -50,6 +109,7 @@ export const generateHandoverCode = onCall(
       tx.set(ref.collection("private").doc("validation"), {
         code: randomInt(100000, 1000000).toString(),
         ownerId: uid,
+        attempts: 0,
         createdAt: FieldValue.serverTimestamp(),
       });
       tx.update(ref, {status: "waitingValidation", seenByRequester: false});
@@ -66,17 +126,19 @@ export const validateHandover = onCall({region: REGION}, async (request) => {
   const db = admin.firestore();
   const ref = db.collection(collectionFor(kind)).doc(id);
 
-  return db.runTransaction(async (tx) => {
+  const outcome = await db.runTransaction(async (tx) => {
     const doc = await tx.get(ref);
     const data = doc.data();
     if (!data) throw new HttpsError("not-found", "Transaction introuvable");
-    const secret = await tx.get(ref.collection("private").doc("validation"));
+    const secretRef = ref.collection("private").doc("validation");
+    const secret = await tx.get(secretRef);
 
     const ownerId: string = data.ownerId;
     const requesterId: string = data.requestedBy;
-    const plantIds: string[] = kind === "donation" ?
-      [data.plantId] :
-      [data.targetPlantId, data.offeredPlantId];
+    ensure(typeof data.chatId === "string", "Transaction invalide");
+    const chatRef = db.collection("plant_chats").doc(data.chatId);
+    const chat = await tx.get(chatRef);
+    const plantIds = plantIdsOf(kind, data);
     const plantRefs = plantIds.map((p) => db.collection("catalogs").doc(p));
     const plants = await Promise.all(plantRefs.map((r) => tx.get(r)));
     const ownerPointsRef = db.collection("userPoints").doc(ownerId);
@@ -88,7 +150,18 @@ export const validateHandover = onCall({region: REGION}, async (request) => {
 
     ensure(data.status === "waitingValidation", "Ce code a déjà été utilisé");
     ensure(requesterId === uid, "Seul le demandeur peut valider");
-    ensure(secret.data()?.code === code, "Code incorrect");
+    ensureIntegrity(kind, data, chat.data(), plants.map((p) => p.data()));
+    const secretData = secret.data();
+    ensure(secretData != null, "Aucun code actif, demandez-en un nouveau");
+    const attempts: number = secretData?.attempts ?? 0;
+    ensure(
+      attempts < MAX_ATTEMPTS,
+      "Trop d'essais, demandez un nouveau code au propriétaire",
+    );
+    if (secretData?.code !== code) {
+      tx.update(secretRef, {attempts: FieldValue.increment(1)});
+      return {wrongCode: true} as const;
+    }
     ensure(
       plants.every((p) => p.data()?.status === "published"),
       "Cette plante n'est plus disponible",
@@ -109,8 +182,8 @@ export const validateHandover = onCall({region: REGION}, async (request) => {
       completedAt: FieldValue.serverTimestamp(),
       completedBy: uid,
     });
-    tx.delete(ref.collection("private").doc("validation"));
-    tx.update(db.collection("plant_chats").doc(data.chatId), {
+    tx.delete(secretRef);
+    tx.update(chatRef, {
       [kind === "donation" ? "isDonationCompleted" : "isExchangeCompleted"]:
         true,
     });
@@ -135,4 +208,9 @@ export const validateHandover = onCall({region: REGION}, async (request) => {
     const result: PointsUpdate = requesterUpdate;
     return result;
   });
+
+  if ("wrongCode" in outcome) {
+    throw new HttpsError("failed-precondition", "Code incorrect");
+  }
+  return outcome;
 });

@@ -21,4 +21,7 @@ abstract class ExchangeRepository {
 
   Stream<Option<String>> watchValidationCode(String exchangeId);
   TaskEither<Failure, List<Exchange>> getCompletedExchanges(String uid);
+
+  /// Nombre d'échanges terminés de n'importe quel utilisateur (agrégé côté serveur).
+  TaskEither<Failure, int> completedExchangeCount(String uid);
 }

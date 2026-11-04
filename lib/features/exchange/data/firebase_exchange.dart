@@ -155,6 +155,11 @@ class FirebaseExchange implements ExchangeRepository {
       ).map(PointsUpdate.fromJson);
 
   @override
+  TaskEither<Failure, int> completedExchangeCount(String uid) =>
+      CloudFunction.call('getCompletedExchangeCount', {'uid': uid})
+          .map((data) => (data['count'] as num?)?.toInt() ?? 0);
+
+  @override
   TaskEither<Failure, List<Exchange>> getCompletedExchanges(String uid) {
     const statuses = ['accepted', 'waitingValidation', 'completed', 'rejected'];
 

@@ -5,7 +5,6 @@ import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/features/auth/domain/entities/user_auth.dart';
 import 'package:plant_match_v2/features/auth/domain/repository/auth_repository.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_state.dart';
-import 'package:plant_match_v2/features/emailing/email_welcome.dart';
 import 'package:plant_match_v2/features/level/data/firebase_user_points.dart';
 
 class AuthCubit extends Cubit<AuthState> {
@@ -127,18 +126,8 @@ class AuthCubit extends Cubit<AuthState> {
           authRepository
               .finalizeRegistration(firebaseUser, u.firstName, u.lastName)
               .flatMap<Authenticated>((isFirst) {
-            if (isFirst) {
-              return TaskEither<Failure, Unit>.tryCatch(
-                () async {
-                  await welcomeEmail(u.email.getOrElse(() => ''), resolvedName);
-                  return unit;
-                },
-                (error, _) => UnexpectedFailure(
-                    'Erreur lors de l’envoi de l’email de bienvenue : $error'),
-              )
-                  .alt(() => TaskEither<Failure, Unit>.right(unit))
-                  .map((_) => Authenticated(u, isFirstTime: true));
-            }
+            // L'email de bienvenue est envoyé par la Cloud Function
+            // sendWelcomeEmail à la création du document users/{uid}.
             return TaskEither<Failure, Authenticated>.right(
                 Authenticated(u, isFirstTime: isFirst));
           }));
@@ -163,22 +152,7 @@ class AuthCubit extends Cubit<AuthState> {
   void signInWithGoogle() {
     emit(const AuthLoading());
 
-    authRepository.signInWithGoogle().flatMap((result) {
-      final user = result.$1;
-      final isFirst = result.$2;
-
-      if (isFirst) {
-        return TaskEither<Failure, Unit>.tryCatch(
-          () async {
-            await welcomeEmail(user.email.getOrElse(() => ''), user.fullName);
-            return unit;
-          },
-          (error, _) => UnexpectedFailure(
-              'Erreur lors de l’envoi de l’email de bienvenue : $error'),
-        ).alt(() => TaskEither.right(unit)).map((_) => result);
-      }
-      return TaskEither.right(result);
-    }).match(
+    authRepository.signInWithGoogle().match(
       (failure) => _fail(failure.message, const Unauthenticated()),
       (result) {
         _currentUser = result.$1;
@@ -190,22 +164,7 @@ class AuthCubit extends Cubit<AuthState> {
   void signInWithFacebook() {
     emit(const AuthLoading());
 
-    authRepository.signInWithFacebook().flatMap((result) {
-      final user = result.$1;
-      final isFirst = result.$2;
-
-      if (isFirst) {
-        return TaskEither<Failure, Unit>.tryCatch(
-          () async {
-            await welcomeEmail(user.email.getOrElse(() => ''), user.fullName);
-            return unit;
-          },
-          (error, _) => UnexpectedFailure(
-              'Erreur lors de l’envoi de l’email de bienvenue : $error'),
-        ).alt(() => TaskEither.right(unit)).map((_) => result);
-      }
-      return TaskEither.right(result);
-    }).match(
+    authRepository.signInWithFacebook().match(
       (failure) => _fail(failure.message, const Unauthenticated()),
       (result) {
         _currentUser = result.$1;

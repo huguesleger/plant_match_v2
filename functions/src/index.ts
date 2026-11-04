@@ -7,6 +7,8 @@ admin.initializeApp();
 
 export {generateHandoverCode, validateHandover} from "./handover";
 export {applyReferral, payFirstContact} from "./leaves";
+export {getCompletedExchangeCount} from "./stats";
+export {sendWelcomeEmail} from "./welcome";
 
 export const sendChatNotification = onDocumentCreated(
   {document: "plant_chats/{chatId}/messages/{messageId}", region: REGION},

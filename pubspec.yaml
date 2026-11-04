@@ -72,8 +72,6 @@ dependencies:
   skeletonizer: ^2.1.0+1
   path_provider: ^2.1.5
   toastification: ^3.0.3
-  flutter_dotenv: ^6.0.0
-  http: ^1.5.0
   shared_preferences: ^2.5.3
   share_plus: ^10.0.0
   date_format: ^2.0.9
@@ -139,7 +137,6 @@ flutter:
     - res/images/onboarding/
     - res/images/auth/
     - res/images/avatar/
-    - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
