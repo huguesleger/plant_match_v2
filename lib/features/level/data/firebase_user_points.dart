@@ -57,7 +57,10 @@ class FirebaseUserPoints implements UserPointsRepository {
 
   @override
   TaskEither<Failure, PointsUpdate> updatePoints(
-      String userId, int pointsToAdd) {
+    String userId,
+    int pointsToAdd, {
+    int giftedLeaves = 0,
+  }) {
     return TaskEither.tryCatch(
       () => _firestore.runTransaction((transaction) async {
         final pointsRef = _firestore.collection('userPoints').doc(userId);
@@ -76,13 +79,14 @@ class FirebaseUserPoints implements UserPointsRepository {
         });
         transaction.update(
           _firestore.collection('users').doc(userId),
-          {'leaves': FieldValue.increment(bonusLeaves)},
+          {'leaves': FieldValue.increment(bonusLeaves + giftedLeaves)},
         );
 
         return PointsUpdate(
           userPoints: updated,
           previousLevel: previous.level,
           bonusLeaves: bonusLeaves,
+          giftedLeaves: giftedLeaves,
         );
       }),
       (error, stackTrace) => _mapErrorToFailure(error),

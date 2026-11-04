@@ -136,6 +136,10 @@ class FirebaseDonation implements DonationRepository {
         final data = doc.data();
         if (data == null) throw Exception('Données corrompues');
 
+        if (data['status'] == DonationStatus.completed.name) {
+          throw Exception('Don déjà validé');
+        }
+
         if (data['validationCode'] != code) {
           throw Exception('Code incorrect');
         }

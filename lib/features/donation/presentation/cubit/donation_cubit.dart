@@ -118,12 +118,19 @@ class DonationCubit extends Cubit<DonationState> {
     repository.generateValidationCode(donationId).run();
   }
 
-  void validateCode(String donationId, String code, String userId, String otherUserId, UserPointsCubit pointsCubit) {
+  void validateCode(String donationId, String code, String userId,
+      String otherUserId, UserPointsCubit pointsCubit) {
     repository.validateCode(donationId, code, userId).match(
       (failure) => null,
       (_) {
         pointsCubit.updateUserPoints(userId, 1);
-        pointsCubit.rewardPartner(otherUserId, 1).run();
+        pointsCubit
+            .rewardPartner(
+              otherUserId,
+              1,
+              giftedLeaves: UserPointsCubit.plantGivenLeaves,
+            )
+            .run();
       },
     ).run();
   }

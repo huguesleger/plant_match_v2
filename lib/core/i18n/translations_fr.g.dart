@@ -1394,11 +1394,11 @@ class TranslationsLevelAwardedRewardsFr {
 	/// fr: 'Vous venez d'obtenir des feuilles bonus pour vos interactions.'
 	String get default_description => 'Vous venez d\'obtenir des feuilles bonus pour vos interactions.';
 
-	/// fr: 'Soleil quotidien !'
-	String get daily => 'Soleil quotidien !';
+	/// fr: 'Plante donnée !'
+	String get plant_given => 'Plante donnée !';
 
-	/// fr: 'Plante publiée !'
-	String get plant_published => 'Plante publiée !';
+	/// fr: 'Merci d'avoir fait vivre la communauté. Voici vos feuilles pour continuer vos adoptions.'
+	String get plant_given_description => 'Merci d\'avoir fait vivre la communauté. Voici vos feuilles pour continuer vos adoptions.';
 
 	/// fr: 'Code de parrainage validé !'
 	String get referral => 'Code de parrainage validé !';
@@ -2884,8 +2884,8 @@ class TranslationsUserDetailPlantNoLeavesFr {
 	/// fr: 'Plus de feuilles disponibles'
 	String get title => 'Plus de feuilles disponibles';
 
-	/// fr: 'Vous n'avez plus de feuilles pour contacter un donneur. Publiez une plante (+2 feuilles) ou parrainez un ami (+3 feuilles) pour continuer !'
-	String get content => 'Vous n\'avez plus de feuilles pour contacter un donneur.\n\nPubliez une plante (+2 feuilles) ou parrainez un ami (+3 feuilles) pour continuer !';
+	/// fr: 'Vous n'avez plus de feuilles pour contacter un donneur. Donnez ou échangez une plante (+2 feuilles) ou parrainez un ami (+3 feuilles) pour continuer !'
+	String get content => 'Vous n\'avez plus de feuilles pour contacter un donneur.\n\nDonnez ou échangez une plante (+2 feuilles) ou parrainez un ami (+3 feuilles) pour continuer !';
 
 	/// fr: 'D'accord'
 	String get ok => 'D\'accord';
@@ -3601,8 +3601,8 @@ extension on Translations {
 			'levelAwarded.success.view_progression' => 'Voir ma progression',
 			'levelAwarded.rewards.default_title' => 'Félicitations !',
 			'levelAwarded.rewards.default_description' => 'Vous venez d\'obtenir des feuilles bonus pour vos interactions.',
-			'levelAwarded.rewards.daily' => 'Soleil quotidien !',
-			'levelAwarded.rewards.plant_published' => 'Plante publiée !',
+			'levelAwarded.rewards.plant_given' => 'Plante donnée !',
+			'levelAwarded.rewards.plant_given_description' => 'Merci d\'avoir fait vivre la communauté. Voici vos feuilles pour continuer vos adoptions.',
 			'levelAwarded.rewards.referral' => 'Code de parrainage validé !',
 			'levelAwarded.rewards.level_up_title' => ({required Object level}) => 'Niveau ${level} atteint !',
 			'levelAwarded.rewards.level_up_description' => ({required Object name}) => 'Vous êtes maintenant ${name}. Voici vos feuilles bonus pour continuer vos adoptions.',
@@ -3695,7 +3695,7 @@ extension on Translations {
 			'user.detail_plant.description_title' => 'Description',
 			'user.detail_plant.key_info_title' => 'Les informations clés',
 			'user.detail_plant.no_leaves.title' => 'Plus de feuilles disponibles',
-			'user.detail_plant.no_leaves.content' => 'Vous n\'avez plus de feuilles pour contacter un donneur.\n\nPubliez une plante (+2 feuilles) ou parrainez un ami (+3 feuilles) pour continuer !',
+			'user.detail_plant.no_leaves.content' => 'Vous n\'avez plus de feuilles pour contacter un donneur.\n\nDonnez ou échangez une plante (+2 feuilles) ou parrainez un ami (+3 feuilles) pour continuer !',
 			'user.detail_plant.no_leaves.ok' => 'D\'accord',
 			'user.detail_plant.share.donation' => 'donne',
 			'user.detail_plant.share.exchange' => 'échange',

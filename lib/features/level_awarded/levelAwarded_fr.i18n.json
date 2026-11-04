@@ -13,8 +13,8 @@
   "rewards": {
     "default_title": "Félicitations !",
     "default_description": "Vous venez d'obtenir des feuilles bonus pour vos interactions.",
-    "daily": "Soleil quotidien !",
-    "plant_published": "Plante publiée !",
+    "plant_given": "Plante donnée !",
+    "plant_given_description": "Merci d'avoir fait vivre la communauté. Voici vos feuilles pour continuer vos adoptions.",
     "referral": "Code de parrainage validé !",
     "level_up_title": "Niveau $level atteint !",
     "level_up_description": "Vous êtes maintenant $name. Voici vos feuilles bonus pour continuer vos adoptions.",

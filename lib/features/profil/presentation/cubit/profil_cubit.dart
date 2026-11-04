@@ -1,8 +1,6 @@
-import 'package:flutter/material.dart' show DateUtils;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/features/profil/domain/repository/profil_repository.dart';
@@ -357,46 +355,7 @@ class ProfilCubit extends Cubit<ProfilState> {
   }
 
   static const int referralBonus = 3;
-  static const int dailyBonus = 1;
   static const int contactCost = 1;
-
-  void checkDailyConnection(String uid) {
-    final now = DateTime.now();
-
-    _loadUser(uid)
-        .flatMap((user) => user.lastConnectionDate
-                .filter((last) => DateUtils.isSameDay(last, now))
-                .isSome()
-            ? TaskEither<Failure, (ProfilUser, int)>.right((user, 0))
-            : profilRepository
-                .updateProfilField(
-                  uid: uid,
-                  field: 'lastConnectionDate',
-                  value: Timestamp.fromDate(now),
-                )
-                .flatMap(
-                    (_) => profilRepository.incrementLeaves(uid, dailyBonus))
-                .map((_) => (
-                      user.copyWith(
-                        newLeaves: user.leaves + dailyBonus,
-                        newLastConnectionDate: Some(now),
-                      ),
-                      dailyBonus,
-                    )))
-        .match(
-          (failure) => ProfilError(failure.message),
-          (result) => ProfilLoaded(
-            result.$1,
-            leavesGained: result.$2,
-            rewardMessage: Option.fromPredicate(
-              t.levelAwarded.rewards.daily,
-              (_) => result.$2 > 0,
-            ),
-          ),
-        )
-        .map(emit)
-        .run();
-  }
 
   void addLeaves(String uid, int count, Option<String> message) {
     profilRepository

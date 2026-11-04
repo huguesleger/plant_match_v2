@@ -6,6 +6,8 @@ import 'package:plant_match_v2/features/level/presentation/cubit/user_points_sta
 class UserPointsCubit extends Cubit<UserPointsState> {
   final UserPointsRepository repository;
 
+  static const int plantGivenLeaves = 2;
+
   UserPointsCubit({required this.repository}) : super(UserPointsInitial());
 
   int get currentLevel => switch (state) {
@@ -48,9 +50,13 @@ class UserPointsCubit extends Cubit<UserPointsState> {
         .run();
   }
 
-  void updateUserPoints(String userId, int pointsToAdd) {
+  void updateUserPoints(
+    String userId,
+    int pointsToAdd, {
+    int giftedLeaves = 0,
+  }) {
     repository
-        .updatePoints(userId, pointsToAdd)
+        .updatePoints(userId, pointsToAdd, giftedLeaves: giftedLeaves)
         .match(
           (failure) => UserPointsError(failure.message),
           UserPointsAwarded.new,
@@ -59,7 +65,12 @@ class UserPointsCubit extends Cubit<UserPointsState> {
         .run();
   }
 
-  Task<Unit> rewardPartner(String userId, int pointsToAdd) => repository
-      .updatePoints(userId, pointsToAdd)
-      .match((_) => unit, (_) => unit);
+  Task<Unit> rewardPartner(
+    String userId,
+    int pointsToAdd, {
+    int giftedLeaves = 0,
+  }) =>
+      repository
+          .updatePoints(userId, pointsToAdd, giftedLeaves: giftedLeaves)
+          .match((_) => unit, (_) => unit);
 }

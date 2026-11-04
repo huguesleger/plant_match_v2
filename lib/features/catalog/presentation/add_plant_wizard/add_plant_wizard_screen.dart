@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fpdart/fpdart.dart' hide State;
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -13,7 +12,6 @@ import 'package:plant_match_v2/core/widgets/dialog/dialog_with_image.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catalog/presentation/cubit/catalog_cubit.dart';
 
-import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
 import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/steps/step_environment.dart';
 import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/steps/step_description.dart';
 import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/steps/step_family.dart';
@@ -25,8 +23,6 @@ import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/st
 import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/steps/step_publish.dart';
 import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/steps/step_watering.dart';
 import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/widgets/loading_overlay.dart';
-
-const int publishBonus = 2;
 
 class AddPlantWizardScreen extends StatefulWidget {
   const AddPlantWizardScreen({super.key, required this.catalog});
@@ -276,14 +272,6 @@ class _AddPlantWizardScreenState extends State<AddPlantWizardScreen> {
             imagePaths: localImages,
             existingImages: []).run();
       }
-
-      finalCatalog.status == CatalogStatus.published && id.isNotEmpty && mounted
-          ? context.read<ProfilCubit>().addLeaves(
-                finalCatalog.userId,
-                publishBonus,
-                Some(t.levelAwarded.rewards.plant_published),
-              )
-          : null;
 
       if (mounted) {
         Navigator.pop(context); // loading

@@ -131,9 +131,6 @@ class _MyAppBodyState extends State<_MyAppBody> with WidgetsBindingObserver {
                     .read<NotificationCubit>()
                     .requestPermissionAndSaveToken(authState.user.uid);
                 context.read<ProfilCubit>().getProfilUser(authState.user.uid);
-                context
-                    .read<ProfilCubit>()
-                    .checkDailyConnection(authState.user.uid);
                 authState.isFirstTime
                     ? context
                         .read<UserPointsCubit>()

@@ -55,7 +55,7 @@ class RewardListener extends StatelessWidget {
     context.read<ProfilCubit>().refreshLeaves(update.userPoints.uid);
     return _show(
       context,
-      leaves: update.bonusLeaves,
+      leaves: update.totalLeaves,
       title:
           t.levelAwarded.rewards.level_up_title(level: update.userPoints.level),
       description: t.levelAwarded.rewards.level_up_description(
@@ -64,10 +64,25 @@ class RewardListener extends StatelessWidget {
     );
   }
 
+  Future<Unit> _celebratePlantGiven(
+    BuildContext context,
+    PointsUpdate update,
+  ) {
+    context.read<ProfilCubit>().refreshLeaves(update.userPoints.uid);
+    return _show(
+      context,
+      leaves: update.giftedLeaves,
+      title: t.levelAwarded.rewards.plant_given,
+      description: t.levelAwarded.rewards.plant_given_description,
+    );
+  }
+
   void _onPoints(BuildContext context, UserPointsState state) =>
       switch (state) {
         UserPointsAwarded(:final update) when update.isLevelUp =>
           _celebrateLevelUp(context, update),
+        UserPointsAwarded(:final update) when update.giftedLeaves > 0 =>
+          _celebratePlantGiven(context, update),
         UserPointsAwarded() ||
         UserPointsInitial() ||
         UserPointsLoading() ||

@@ -17,7 +17,6 @@ class ProfilUser extends UserAuth {
   final int leaves;
   final String referralCode;
   final Option<String> referredBy;
-  final Option<DateTime> lastConnectionDate;
 
   ProfilUser({
     required super.uid,
@@ -38,7 +37,6 @@ class ProfilUser extends UserAuth {
     required this.leaves,
     required this.referralCode,
     required this.referredBy,
-    required this.lastConnectionDate,
   });
 
   ProfilUser copyWith({
@@ -58,7 +56,6 @@ class ProfilUser extends UserAuth {
     int? newLeaves,
     String? newReferralCode,
     Option<String>? newReferredBy,
-    Option<DateTime>? newLastConnectionDate,
   }) {
     return ProfilUser(
       uid: uid,
@@ -79,7 +76,6 @@ class ProfilUser extends UserAuth {
       leaves: newLeaves ?? leaves,
       referralCode: newReferralCode ?? referralCode,
       referredBy: newReferredBy ?? referredBy,
-      lastConnectionDate: newLastConnectionDate ?? lastConnectionDate,
     );
   }
 
@@ -107,10 +103,6 @@ class ProfilUser extends UserAuth {
       'leaves': leaves,
       'referralCode': referralCode,
       'referredBy': referredBy.toNullable(),
-      'lastConnectionDate': lastConnectionDate.match(
-        () => null,
-        (date) => Timestamp.fromDate(date),
-      ),
     };
   }
 
@@ -161,11 +153,6 @@ class ProfilUser extends UserAuth {
       leaves: json['leaves'] as int? ?? 5,
       referralCode: json['referralCode'] as String? ?? '',
       referredBy: Option.fromNullable(json['referredBy'] as String?),
-      lastConnectionDate: Option.fromNullable(json['lastConnectionDate']).map((d) {
-        if (d is Timestamp) return d.toDate();
-        if (d is String) return DateTime.tryParse(d) ?? DateTime.now();
-        return DateTime.now();
-      }),
     );
   }
 }

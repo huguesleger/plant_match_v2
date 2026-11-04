@@ -12,8 +12,9 @@ abstract class UserPointsRepository {
 
   TaskEither<Failure, PointsUpdate> updatePoints(
     String userId,
-    int pointsToAdd,
-  );
+    int pointsToAdd, {
+    int giftedLeaves = 0,
+  });
 
   TaskEither<Failure, UserPoints> getPoints(String userId);
 }

@@ -170,12 +170,23 @@ class ExchangeCubit extends Cubit<ExchangeState> {
     repository.generateValidationCode(exchangeId).run();
   }
 
-  void validateCode(String exchangeId, String code, String userId, String otherUserId, UserPointsCubit pointsCubit) {
+  void validateCode(String exchangeId, String code, String userId,
+      String otherUserId, UserPointsCubit pointsCubit) {
     repository.validateCode(exchangeId, code, userId).match(
       (failure) => null,
       (_) {
-        pointsCubit.updateUserPoints(userId, 1);
-        pointsCubit.rewardPartner(otherUserId, 1).run();
+        pointsCubit.updateUserPoints(
+          userId,
+          1,
+          giftedLeaves: UserPointsCubit.plantGivenLeaves,
+        );
+        pointsCubit
+            .rewardPartner(
+              otherUserId,
+              1,
+              giftedLeaves: UserPointsCubit.plantGivenLeaves,
+            )
+            .run();
       },
     ).run();
   }

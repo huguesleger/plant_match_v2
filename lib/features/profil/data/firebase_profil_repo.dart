@@ -46,8 +46,7 @@ class FirebaseProfilRepo implements ProfilRepository {
           ..remove('uid')
           ..remove('leaves')
           ..remove('referralCode')
-          ..remove('referredBy')
-          ..remove('lastConnectionDate');
+          ..remove('referredBy');
 
         await _firebaseFirestore
             .collection('users')
