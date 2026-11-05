@@ -84,6 +84,23 @@ class FirebaseCatalogRepository implements CatalogRepository {
   }
 
   @override
+  TaskEither<Failure, List<Catalog>> getPublishedCatalogs({
+    required int limit,
+  }) =>
+      TaskEither.tryCatch(
+        () async => (await firestore
+                .collection('catalogs')
+                .where('status', isEqualTo: CatalogStatus.published.name)
+                .orderBy('createdAt', descending: true)
+                .limit(limit)
+                .get())
+            .docs
+            .map((doc) => Catalog.fromJson(doc.data(), doc.id))
+            .toList(),
+        (error, _) => _mapErrorToFailure(error),
+      );
+
+  @override
   String reserveCatalogId() => firestore.collection('catalogs').doc().id;
 
   @override

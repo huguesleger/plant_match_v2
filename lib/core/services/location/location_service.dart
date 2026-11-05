@@ -12,6 +12,8 @@ abstract class LocationService {
 }
 
 class LocationServiceImpl implements LocationService {
+  static const Duration _timeLimit = Duration(seconds: 15);
+
   @override
   TaskEither<Failure, Position> getCurrentPosition() => TaskEither.tryCatch(
         () async {
@@ -29,10 +31,17 @@ class LocationServiceImpl implements LocationService {
           }
 
           if (permission == LocationPermission.deniedForever) {
-            throw Exception('Permission de localisation refusée définitivement');
+            throw Exception(
+                'Permission de localisation refusée définitivement');
           }
 
-          return await Geolocator.getCurrentPosition();
+          return Geolocator.getCurrentPosition(
+            locationSettings: const LocationSettings(timeLimit: _timeLimit),
+          ).catchError(
+            (_) async => Option.fromNullable(
+              await Geolocator.getLastKnownPosition(),
+            ).getOrElse(() => throw Exception('Délai de localisation dépassé')),
+          );
         },
         (error, stackTrace) => LocationFailure(error.toString()),
       );

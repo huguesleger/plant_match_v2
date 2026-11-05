@@ -1,6 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
@@ -239,14 +238,8 @@ class ProfilCubit extends Cubit<ProfilState> {
   void updateLocation(String uid) {
     emit(ProfilLoading());
 
-    TaskEither<Failure, Position>(
-      () => locationService.getCurrentPosition().run().timeout(
-            _locationTimeLimit,
-            onTimeout: () => Either.left(
-              const LocationFailure('Délai de localisation dépassé'),
-            ),
-          ),
-    )
+    locationService
+        .getCurrentPosition()
         .flatMap((position) => locationService
             .getPlacemarkFromPosition(position)
             .map<Option<Placemark>>(Some.new)
@@ -285,8 +278,6 @@ class ProfilCubit extends Cubit<ProfilState> {
         .map(emit)
         .run();
   }
-
-  static const Duration _locationTimeLimit = Duration(seconds: 15);
 
   void reset() => emit(ProfilInitial());
 

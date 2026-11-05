@@ -28,7 +28,8 @@ class FirebaseFavoritesRepo implements FavoritesRepository {
         });
         return unit;
       },
-      (error, _) => UnexpectedFailure('Erreur lors de l’ajout du favori: $error'),
+      (error, _) =>
+          UnexpectedFailure('Erreur lors de l’ajout du favori: $error'),
     );
   }
 
@@ -39,32 +40,60 @@ class FirebaseFavoritesRepo implements FavoritesRepository {
         await _plantsRef(uid).doc(catalogId).delete();
         return unit;
       },
-      (error, _) => UnexpectedFailure('Erreur lors de la suppression du favori: $error'),
+      (error, _) =>
+          UnexpectedFailure('Erreur lors de la suppression du favori: $error'),
     );
   }
 
-  @override
-  Stream<List<Catalog>> getFavoritePlants(String uid) {
-    return _plantsRef(uid)
+  static const int _whereInLimit = 30;
+
+  Stream<List<T>> _resolveFavorites<T>({
+    required CollectionReference favorites,
+    required String collection,
+    required T Function(Map<String, dynamic> data, String id) parse,
+  }) {
+    final cache = <String, T>{};
+    return favorites
         .orderBy('addedAt', descending: true)
         .snapshots()
+        .where((snap) => !snap.metadata.hasPendingWrites)
         .asyncMap((snap) async {
-      final catalogs = await Future.wait(
-        snap.docs.map(
-          (d) async => Option.fromNullable(
-            (await _db.collection('catalogs').doc(d.id).get()).data(),
-          ).map((data) => Catalog.fromJson(data, d.id)),
+      final ids = snap.docs.map((doc) => doc.id).toList();
+      final missing = ids.where((id) => !cache.containsKey(id)).toList();
+      final chunks = [
+        for (var i = 0; i < missing.length; i += _whereInLimit)
+          missing.sublist(i, (i + _whereInLimit).clamp(0, missing.length)),
+      ];
+      final fetched = await Future.wait(
+        chunks.map(
+          (chunk) => _db
+              .collection(collection)
+              .where(FieldPath.documentId, whereIn: chunk)
+              .get(),
         ),
       );
-      return catalogs
-          .whereType<Some<Catalog>>()
+      for (final doc in fetched.expand((result) => result.docs)) {
+        cache[doc.id] = parse(doc.data(), doc.id);
+      }
+      return ids
+          .map((id) => Option.fromNullable(cache[id]))
+          .whereType<Some<T>>()
           .map((found) => found.value)
-          .where((catalog) => catalog.status == CatalogStatus.published)
           .toList();
     });
   }
 
-
+  @override
+  Stream<List<Catalog>> getFavoritePlants(String uid) =>
+      _resolveFavorites<Catalog>(
+        favorites: _plantsRef(uid),
+        collection: 'catalogs',
+        parse: Catalog.fromJson,
+      ).map(
+        (catalogs) => catalogs
+            .where((catalog) => catalog.status == CatalogStatus.published)
+            .toList(),
+      );
 
   @override
   TaskEither<Failure, bool> isFavoritePlant(String uid, String catalogId) {
@@ -73,11 +102,10 @@ class FirebaseFavoritesRepo implements FavoritesRepository {
         final doc = await _plantsRef(uid).doc(catalogId).get();
         return doc.exists;
       },
-      (error, _) => UnexpectedFailure('Erreur lors de la vérification du favori: $error'),
+      (error, _) =>
+          UnexpectedFailure('Erreur lors de la vérification du favori: $error'),
     );
   }
-
-
 
   // ─── Profils utilisateurs ───────────────────────────────────────────────────
 
@@ -91,7 +119,8 @@ class FirebaseFavoritesRepo implements FavoritesRepository {
         });
         return unit;
       },
-      (error, _) => UnexpectedFailure('Erreur lors de l’ajout de l’utilisateur favori: $error'),
+      (error, _) => UnexpectedFailure(
+          'Erreur lors de l’ajout de l’utilisateur favori: $error'),
     );
   }
 
@@ -102,33 +131,18 @@ class FirebaseFavoritesRepo implements FavoritesRepository {
         await _usersRef(uid).doc(targetUid).delete();
         return unit;
       },
-      (error, _) => UnexpectedFailure('Erreur lors de la suppression de l’utilisateur favori: $error'),
+      (error, _) => UnexpectedFailure(
+          'Erreur lors de la suppression de l’utilisateur favori: $error'),
     );
   }
 
   @override
-  Stream<List<ProfilUser>> getFavoriteUsers(String uid) {
-    return _usersRef(uid)
-        .orderBy('addedAt', descending: true)
-        .snapshots()
-        .asyncMap((snap) async {
-      final userTasks = snap.docs.map((d) async {
-        final targetUid = d.id;
-        final userDoc = await _db.collection('users').doc(targetUid).get();
-
-        if (userDoc.exists && userDoc.data() != null) {
-          return ProfilUser.fromJson({
-            ...userDoc.data()!,
-            'uid': targetUid,
-          });
-        }
-        return null;
-      }).toList();
-
-      final results = await Future.wait(userTasks);
-      return results.whereType<ProfilUser>().toList();
-    });
-  }
+  Stream<List<ProfilUser>> getFavoriteUsers(String uid) =>
+      _resolveFavorites<ProfilUser>(
+        favorites: _usersRef(uid),
+        collection: 'users',
+        parse: (data, id) => ProfilUser.fromJson({...data, 'uid': id}),
+      );
 
   @override
   TaskEither<Failure, bool> isFavoriteUser(String uid, String targetUid) {
@@ -137,7 +151,8 @@ class FirebaseFavoritesRepo implements FavoritesRepository {
         final doc = await _usersRef(uid).doc(targetUid).get();
         return doc.exists;
       },
-      (error, _) => UnexpectedFailure('Erreur lors de la vérification de l’utilisateur favori: $error'),
+      (error, _) => UnexpectedFailure(
+          'Erreur lors de la vérification de l’utilisateur favori: $error'),
     );
   }
 }

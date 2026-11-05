@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/features/around_me_map/presentation/cubit/around_me_cubit.dart';
 import 'package:fpdart/fpdart.dart' hide State;
 import 'package:plant_match_v2/core/util/distance/distance_helper.dart';
 import 'package:plant_match_v2/core/widgets/template/template_page.dart';
@@ -107,11 +108,17 @@ class _HomeLoadedContentState extends State<HomeLoadedContent> {
                   padding: const EdgeInsets.symmetric(horizontal: 4),
                   child: HomeRecentActivity(
                     activities: _getRecentActivities(),
-                    onSeeAllPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => const RecentActivityPageRoute()),
-                    ),
+                    onSeeAllPressed: () {
+                      final aroundMeCubit = context.read<AroundMeCubit>();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => RecentActivityPageRoute(
+                            aroundMeCubit: aroundMeCubit,
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
               ],

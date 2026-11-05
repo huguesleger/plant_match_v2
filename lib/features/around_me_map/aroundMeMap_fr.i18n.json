@@ -6,7 +6,8 @@
   "empty": {
     "title": "Oups ! vous n'êtes pas localisé",
     "description": "Veuillez activer votre localisation pour voir les utilisateurs autour de vous",
-    "button": "Me géolocaliser"
+    "button": "Me géolocaliser",
+    "location_error": "Impossible d'obtenir ta position. Vérifie que la localisation est activée puis réessaie."
   },
   "bottomSheet": {
     "title": "Plantes & Boutures",

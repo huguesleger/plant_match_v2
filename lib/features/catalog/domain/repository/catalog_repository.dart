@@ -17,6 +17,8 @@ abstract class CatalogRepository {
 
   String reserveCatalogId();
 
+  TaskEither<Failure, List<Catalog>> getPublishedCatalogs({required int limit});
+
   /// Supprime un catalogue
   TaskEither<Failure, Unit> deleteCatalog(String catalogId);
 

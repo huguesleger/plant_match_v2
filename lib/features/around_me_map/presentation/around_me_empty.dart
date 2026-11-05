@@ -8,15 +8,15 @@ import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/cubit/around_me_cubit.dart';
-import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
+import 'package:plant_match_v2/features/around_me_map/presentation/cubit/around_me_state.dart';
 
 class AroundMeEmpty extends StatelessWidget {
   const AroundMeEmpty({
     super.key,
-    required this.profilUser,
+    required this.state,
   });
 
-  final ProfilUser profilUser;
+  final AroundMeLoaded state;
 
   @override
   Widget build(BuildContext context) {
@@ -42,21 +42,32 @@ class AroundMeEmpty extends StatelessWidget {
             child: Assets.res.images.illuLocation.image(),
           ),
           SizedBox(height: MediaQuery.of(context).size.height > 700 ? 45 : 25),
+          ...state.locationError.match(
+            () => const <Widget>[],
+            (message) => [
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: AppColors.error),
+              ),
+              const SizedBox(height: 12),
+            ],
+          ),
           SizedBox(
             width: double.infinity,
-            child: ButtonRounded(
-              onPressed: () => _updateLocationAndSave(context, profilUser),
-              bgColor: AppColors.greenLight,
-              textColor: AppColors.blueGreen,
-              text: t.aroundMeMap.empty.button,
-            ),
+            child: state.locating
+                ? const Center(child: CircularProgressIndicator())
+                : ButtonRounded(
+                    onPressed: () => context
+                        .read<AroundMeCubit>()
+                        .updateUserLocation(state.currentUser),
+                    bgColor: AppColors.greenLight,
+                    textColor: AppColors.blueGreen,
+                    text: t.aroundMeMap.empty.button,
+                  ),
           ),
         ],
       ),
     );
-  }
-
-  void _updateLocationAndSave(BuildContext context, ProfilUser profilUser) {
-    context.read<AroundMeCubit>().updateUserLocation(profilUser);
   }
 }

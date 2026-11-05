@@ -14,75 +14,81 @@ class RecommendationRepositoryImpl implements RecommendationRepository {
   static bool _mentionsToxicity(String text) =>
       text.toLowerCase().replaceAll(_nonToxic, '').contains('toxique');
 
+  static Option<String> _environmentFilter(RecommendationAnswers answers) =>
+      answers.environment.flatMap(
+        (env) => switch (env) {
+          IndoorEnv() => Some(Environment.indoor.name),
+          OutdoorEnv() => Some(Environment.outdoor.name),
+          BothEnv() => const None(),
+        },
+      );
+
+  static Option<String> _lightingFilter(RecommendationAnswers answers) =>
+      answers.light.map(
+        (light) => switch (light) {
+          LowLight() => Lighting.shade.name,
+          IndirectLight() => Lighting.indirectLight.name,
+          DirectLight() => Lighting.sun.name,
+        },
+      );
+
+  static Option<String> _careFilter(RecommendationAnswers answers) =>
+      answers.careLevel.map(
+        (care) => switch (care) {
+          BeginnerCare() => LevelMaintenance.low.name,
+          IntermediateCare() => LevelMaintenance.medium.name,
+          ExpertCare() => LevelMaintenance.high.name,
+        },
+      );
+
+  static Query<Map<String, dynamic>> _whereOption(
+    Query<Map<String, dynamic>> query,
+    String field,
+    Option<String> value,
+  ) =>
+      value.match(() => query, (v) => query.where(field, isEqualTo: v));
+
+  static bool _isPetSafe(Catalog plant, RecommendationAnswers answers) =>
+      answers.petSafety.match(
+        () => true,
+        (safety) => switch (safety) {
+          SafeForPets() => !_mentionsToxicity(plant.description) &&
+              !_mentionsToxicity(plant.name),
+          IndifferentSafety() => true,
+        },
+      );
+
   @override
   TaskEither<Failure, List<Catalog>> getRecommendedPlants(
     String userId,
     RecommendationAnswers answers,
-  ) {
-    return TaskEither.tryCatch(
-      () async {
-        final querySnapshot = await _firestore
-            .collection('catalogs')
-            .where('status', isEqualTo: 'published')
-            .limit(_maxCandidates)
-            .get();
-
-        final allPlants = querySnapshot.docs
-            .map((doc) => Catalog.fromJson(doc.data(), doc.id))
-            .toList();
-
-        return allPlants.where((plant) {
-          if (plant.userId == userId) return false;
-
-          final matchEnv = answers.environment.match(
-            () => true,
-            (env) => switch (env) {
-              IndoorEnv() => plant.environment == Environment.indoor,
-              OutdoorEnv() => plant.environment == Environment.outdoor,
-              BothEnv() => true,
-            },
+  ) =>
+      TaskEither.tryCatch(
+        () async {
+          final filtered = [
+            ('environment', _environmentFilter(answers)),
+            ('lighting', _lightingFilter(answers)),
+            ('levelMaintenance', _careFilter(answers)),
+          ].fold<Query<Map<String, dynamic>>>(
+            _firestore
+                .collection('catalogs')
+                .where('status', isEqualTo: CatalogStatus.published.name),
+            (query, filter) => _whereOption(query, filter.$1, filter.$2),
           );
-          if (!matchEnv) return false;
-
-          final matchLight = answers.light.match(
-            () => true,
-            (light) => switch (light) {
-              LowLight() => plant.lighting == Lighting.shade,
-              IndirectLight() => plant.lighting == Lighting.indirectLight,
-              DirectLight() => plant.lighting == Lighting.sun,
-            },
-          );
-          if (!matchLight) return false;
-
-          final matchCare = answers.careLevel.match(
-            () => true,
-            (care) => switch (care) {
-              BeginnerCare() => plant.levelMaintenance == LevelMaintenance.low,
-              IntermediateCare() =>
-                plant.levelMaintenance == LevelMaintenance.medium,
-              ExpertCare() => plant.levelMaintenance == LevelMaintenance.high,
-            },
-          );
-          if (!matchCare) return false;
-
-          final matchSafety = answers.petSafety.match(
-            () => true,
-            (safety) => switch (safety) {
-              SafeForPets() => !_mentionsToxicity(plant.description) &&
-                  !_mentionsToxicity(plant.name),
-              IndifferentSafety() => true,
-            },
-          );
-          if (!matchSafety) return false;
-
-          return true;
-        }).toList();
-      },
-      (error, stackTrace) => FirebaseFailure(
-        'Erreur lors du calcul des recommandations : $error',
-      ),
-    );
-  }
+          final snapshot = await filtered
+              .orderBy('createdAt', descending: true)
+              .limit(_maxCandidates)
+              .get();
+          return snapshot.docs
+              .map((doc) => Catalog.fromJson(doc.data(), doc.id))
+              .where((plant) => plant.userId != userId)
+              .where((plant) => _isPetSafe(plant, answers))
+              .toList();
+        },
+        (error, stackTrace) => FirebaseFailure(
+          'Erreur lors du calcul des recommandations : $error',
+        ),
+      );
 
   @override
   TaskEither<Failure, Unit> saveAnswers(

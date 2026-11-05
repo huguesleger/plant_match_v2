@@ -1,5 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/features/around_me_map/domain/repository/around_me_repository.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/cubit/around_me_state.dart';
@@ -23,52 +25,22 @@ class AroundMeCubit extends Cubit<AroundMeState> {
     required this.locationService,
   }) : super(const AroundMeInitial());
 
-  // ─── getAllUserProfiles ────────────────────────────────────────────────────
+  static const int _catalogLimit = 300;
 
   void getAllUserProfiles(String uid) {
     emit(const AroundMeLoading());
-
-    aroundMeRepository
-        .getAllUserUids()
-        .flatMap((users) => profilRepository.getProfilUser(uid).flatMap(
-              (option) => option.match(
-                () => TaskEither<Failure, AroundMeState>.left(
-                  const AuthFailure('Utilisateur introuvable'),
-                ),
-                (currentUser) => _getUsersWithCatalogs(users, currentUser),
-              ),
-            ))
-        .match(
-          (failure) => AroundMeError(failure.message),
-          (state) => state,
+    profilRepository
+        .getProfilUser(uid)
+        .flatMap(
+          (option) => option.match(
+            () => TaskEither<Failure, ProfilUser>.left(
+              const AuthFailure('Utilisateur introuvable'),
+            ),
+            TaskEither.right,
+          ),
         )
-        .map(emit)
-        .run();
-  }
-
-  // ─── fetchConnectedUsers ──────────────────────────────────────────────────
-
-  void fetchConnectedUsers(String uid) {
-    emit(const AroundMeLoading());
-
-    aroundMeRepository
-        .getAllUserUids()
-        .flatMap((users) => profilRepository.getProfilUser(uid).flatMap(
-              (option) => option.match(
-                () => TaskEither<Failure, AroundMeState>.left(
-                  const AuthFailure('Utilisateur introuvable'),
-                ),
-                (currentUser) {
-                  final connectedUsers =
-                      users.where((user) => user.uid != uid).toList();
-                  return _getUsersWithCatalogs(connectedUsers, currentUser);
-                },
-              ),
-            ))
-        .match(
-          (failure) => AroundMeError(failure.message),
-          (state) => state,
-        )
+        .flatMap(_loadAround)
+        .match((failure) => AroundMeError(failure.message), (state) => state)
         .map(emit)
         .run();
   }
@@ -76,19 +48,39 @@ class AroundMeCubit extends Cubit<AroundMeState> {
   // ─── updateUserLocation ───────────────────────────────────────────────────
 
   void updateUserLocation(ProfilUser user) {
-    emit(const AroundMeLoading());
+    final previous = state;
+    emit(
+      switch (previous) {
+        AroundMeLoaded() =>
+          previous.copyWith(locating: true, locationError: const None()),
+        AroundMeInitial() ||
+        AroundMeLoading() ||
+        AroundMeError() =>
+          const AroundMeLoading(),
+      },
+    );
 
     locationService
         .getCurrentPosition()
-        .flatMap((position) => locationService
-            .getPlacemarkFromPosition(position)
-            .map((placemark) => (position, placemark)))
+        .flatMap(
+          (position) => locationService
+              .getPlacemarkFromPosition(position)
+              .map<Option<Placemark>>(Some.new)
+              .alt(() => TaskEither.right(const None()))
+              .map((placemark) => (position, placemark)),
+        )
+        .mapLeft<Failure>(
+          (_) => LocationFailure(t.aroundMeMap.empty.location_error),
+        )
         .flatMap((data) {
-          final position = data.$1;
-          final placemark = data.$2;
+          final (position, placemark) = data;
           final updatedUser = user.copyWith(
-            newLocalisation: placemark.locality ?? '',
-            newCountry: placemark.country ?? '',
+            newLocalisation: placemark
+                .flatMap((p) => Option.fromNullable(p.locality))
+                .getOrElse(() => user.localisation),
+            newCountry: placemark
+                .flatMap((p) => Option.fromNullable(p.country))
+                .getOrElse(() => user.country),
             newLatitude: Some(position.latitude),
             newLongitude: Some(position.longitude),
           );
@@ -96,36 +88,51 @@ class AroundMeCubit extends Cubit<AroundMeState> {
               .updateUserLocation(updatedUser)
               .map((_) => updatedUser);
         })
-        .flatMap((updatedUser) => aroundMeRepository
-            .getAllUserUids()
-            .flatMap((users) => _getUsersWithCatalogs(users, updatedUser)))
+        .flatMap(_loadAround)
         .match(
-          (failure) => AroundMeError(failure.message),
+          (failure) => switch (previous) {
+            AroundMeLoaded() => previous.copyWith(
+                locating: false,
+                locationError: Some(failure.message),
+              ),
+            AroundMeInitial() ||
+            AroundMeLoading() ||
+            AroundMeError() =>
+              AroundMeError(failure.message),
+          },
           (state) => state,
         )
         .map(emit)
         .run();
   }
 
-  // ─── helpers ──────────────────────────────────────────────────────────────
-
-  TaskEither<Failure, AroundMeState> _getUsersWithCatalogs(
-    List<ProfilUser> users,
-    ProfilUser currentUser,
-  ) =>
-      TaskEither.sequenceList(users.map(_catalogsOrEmpty).toList()).map(
-        (allCatalogs) => AroundMeLoaded(
-          currentUser: currentUser,
-          users: users,
-          userCatalogs: Map.fromIterables(
-            users.map((user) => user.uid),
-            allCatalogs,
-          ),
-        ),
-      );
-
-  TaskEither<Failure, List<Catalog>> _catalogsOrEmpty(ProfilUser user) =>
-      catalogRepository
-          .getCatalogsByUserId(user.uid)
-          .orElse((_) => TaskEither.right(const <Catalog>[]));
+  TaskEither<Failure, AroundMeState> _loadAround(ProfilUser currentUser) =>
+      catalogRepository.getPublishedCatalogs(limit: _catalogLimit).flatMap(
+            (published) => aroundMeRepository
+                .getUsersByIds(
+                  published
+                      .map((catalog) => catalog.userId)
+                      .where((owner) => owner != currentUser.uid)
+                      .toSet(),
+                )
+                .flatMap(
+                  (owners) => catalogRepository
+                      .getCatalogsByUserId(currentUser.uid)
+                      .orElse((_) =>
+                          TaskEither<Failure, List<Catalog>>.right(const []))
+                      .map<AroundMeState>(
+                        (ownCatalogs) => AroundMeLoaded(
+                          currentUser: currentUser,
+                          users: [currentUser, ...owners],
+                          userCatalogs: {
+                            for (final owner in owners)
+                              owner.uid: published
+                                  .where((c) => c.userId == owner.uid)
+                                  .toList(),
+                            currentUser.uid: ownCatalogs,
+                          },
+                        ),
+                      ),
+                ),
+          );
 }

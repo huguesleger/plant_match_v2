@@ -46,7 +46,7 @@ class AroundMeScreen extends StatelessWidget {
                         ),
                       ],
                     )
-                  : AroundMeEmpty(profilUser: currentUser),
+                  : AroundMeEmpty(state: state),
           },
         ),
       ),

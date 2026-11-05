@@ -340,6 +340,9 @@ class TranslationsAroundMeMapEmptyFr {
 
 	/// fr: 'Me géolocaliser'
 	String get button => 'Me géolocaliser';
+
+	/// fr: 'Impossible d'obtenir ta position. Vérifie que la localisation est activée puis réessaie.'
+	String get location_error => 'Impossible d\'obtenir ta position. Vérifie que la localisation est activée puis réessaie.';
 }
 
 // Path: aroundMeMap.bottomSheet
@@ -3267,6 +3270,7 @@ extension on Translations {
 			'aroundMeMap.empty.title' => 'Oups ! vous n\'êtes pas localisé',
 			'aroundMeMap.empty.description' => 'Veuillez activer votre localisation pour voir les utilisateurs autour de vous',
 			'aroundMeMap.empty.button' => 'Me géolocaliser',
+			'aroundMeMap.empty.location_error' => 'Impossible d\'obtenir ta position. Vérifie que la localisation est activée puis réessaie.',
 			'aroundMeMap.bottomSheet.title' => 'Plantes & Boutures',
 			'aroundMeMap.bottomSheet.description' => 'Mon catalogue de ce que j’ai à partager',
 			'aroundMeMap.bottomSheet.viewProfile' => 'Voir le profil',

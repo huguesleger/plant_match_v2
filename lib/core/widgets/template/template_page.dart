@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:plant_match_v2/core/services/location/location_service.dart';
+import 'package:plant_match_v2/features/around_me_map/data/firebase_around_me_repository.dart';
+import 'package:plant_match_v2/features/around_me_map/presentation/cubit/around_me_cubit.dart';
+import 'package:plant_match_v2/features/catalog/data/firebase_catalog_repository.dart';
+import 'package:plant_match_v2/features/profil/data/firebase_profil_repo.dart';
 import 'package:plant_match_v2/core/widgets/navigation_bottom_bar/navigation_bottom_bar.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/add_plant_wizard_page_route.dart';
@@ -64,7 +69,8 @@ class TemplatePageState extends State<TemplatePage> {
   }
 
   Future<void> _openAddPlantWizard() async {
-    await Navigator.push(
+    final aroundMeCubit = context.read<AroundMeCubit>();
+    final created = await Navigator.push<bool>(
       context,
       MaterialPageRoute(
         builder: (_) => AddPlantWizardPageRoute(
@@ -72,12 +78,21 @@ class TemplatePageState extends State<TemplatePage> {
         ),
       ),
     );
+    if (created == true) aroundMeCubit.getAllUserProfiles(uid);
   }
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider(
+          create: (_) => AroundMeCubit(
+            aroundMeRepository: FirebaseAroundMeRepository(),
+            profilRepository: FirebaseProfilRepo(),
+            catalogRepository: FirebaseCatalogRepository(),
+            locationService: LocationServiceImpl(),
+          )..getAllUserProfiles(uid),
+        ),
         BlocProvider(
           create: (_) => UnreadMessagesCubit(
             repository: chatRepository,
