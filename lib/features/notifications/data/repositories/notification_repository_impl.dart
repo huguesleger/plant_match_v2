@@ -88,6 +88,9 @@ class NotificationRepositoryImpl implements NotificationRepository {
   }
 
   @override
+  Stream<String> get onTokenRefresh => _remoteDataSource.onTokenRefresh;
+
+  @override
   Stream<AppNotification> get onNotificationReceived {
     return _remoteDataSource.onMessage.map(_mapRemoteMessage);
   }

@@ -56,40 +56,57 @@ class _DeleteButton extends StatelessWidget {
   }
 
   void _showDeleteDialog(BuildContext context) {
+    var deleting = false;
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(t.catalog.detail.delete_dialog.title),
-        content:
-            Text(t.catalog.detail.delete_dialog.content(name: catalog.name)),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(t.catalog.detail.delete_dialog.cancel),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              final navigator = Navigator.of(context);
-              final messenger = ScaffoldMessenger.of(context);
-              final result = await context
-                  .read<CatalogCubit>()
-                  .deleteCatalog(catalog)
-                  .run();
-              navigator.pop();
-              result.match<void>(
-                (_) => messenger.showSnackBar(
-                  SnackBar(content: Text(t.catalog.detail.delete_error)),
-                ),
-                (_) => navigator.pop(true),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white,
+      barrierDismissible: false,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AlertDialog(
+          title: Text(t.catalog.detail.delete_dialog.title),
+          content:
+              Text(t.catalog.detail.delete_dialog.content(name: catalog.name)),
+          actions: [
+            TextButton(
+              onPressed: deleting ? null : () => Navigator.pop(ctx),
+              child: Text(t.catalog.detail.delete_dialog.cancel),
             ),
-            child: Text(t.catalog.detail.delete),
-          ),
-        ],
+            ElevatedButton(
+              onPressed: deleting
+                  ? null
+                  : () async {
+                      setDialogState(() => deleting = true);
+                      final navigator = Navigator.of(context);
+                      final messenger = ScaffoldMessenger.of(context);
+                      final result = await context
+                          .read<CatalogCubit>()
+                          .deleteCatalog(catalog)
+                          .run();
+                      navigator.pop();
+                      result.match<void>(
+                        (_) => messenger.showSnackBar(
+                          SnackBar(
+                              content: Text(t.catalog.detail.delete_error)),
+                        ),
+                        (_) => navigator.pop(true),
+                      );
+                    },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+              ),
+              child: deleting
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : Text(t.catalog.detail.delete),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -74,6 +74,8 @@ void main() {
             .thenReturn(TaskEither.right(const Some('fcm_token_123')));
         when(() => mockRepository.saveTokenToUser('user_id', 'fcm_token_123'))
             .thenReturn(TaskEither.right(unit));
+        when(() => mockRepository.onTokenRefresh)
+            .thenAnswer((_) => const Stream.empty());
         return cubit;
       },
       act: (cubit) => cubit.requestPermissionAndSaveToken('user_id'),

@@ -9,10 +9,12 @@ class ValidationCodeDisplay extends StatelessWidget {
     super.key,
     required this.onGenerate,
     this.code,
+    this.generating = false,
   });
 
   final VoidCallback onGenerate;
   final String? code;
+  final bool generating;
 
   @override
   Widget build(BuildContext context) {
@@ -38,12 +40,14 @@ class ValidationCodeDisplay extends StatelessWidget {
               style: const TextStyle(fontSize: 12, color: AppColors.greyDark),
             ),
             const SizedBox(height: 12),
-            ButtonRounded(
-              text: t.chatPlant.display_code.generate_btn,
-              onPressed: onGenerate,
-              bgColor: AppColors.greenDark,
-              textColor: AppColors.white,
-            ),
+            generating
+                ? const CircularProgressIndicator()
+                : ButtonRounded(
+                    text: t.chatPlant.display_code.generate_btn,
+                    onPressed: onGenerate,
+                    bgColor: AppColors.greenDark,
+                    textColor: AppColors.white,
+                  ),
           ] else ...[
             Text(
               t.chatPlant.display_code.code_title,

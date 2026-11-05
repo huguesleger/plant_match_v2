@@ -116,45 +116,41 @@ class Catalog {
     );
   }
 
+  static T _enumOr<T extends Enum>(List<T> values, dynamic raw, T fallback) =>
+      Option.fromNullable(values.asNameMap()[raw]).getOrElse(() => fallback);
+
   factory Catalog.fromJson(Map<String, dynamic> json, String id) {
-    CatalogStatus status;
-    if (json['status'] != null) {
-      status = CatalogStatus.values.byName(json['status']);
-    } else {
-      final isPublish = json['isPublish'] ?? false;
-      status = isPublish ? CatalogStatus.published : CatalogStatus.draft;
-    }
+    final legacyStatus = json['isPublish'] == true
+        ? CatalogStatus.published
+        : CatalogStatus.draft;
+    final createdAt = json['createdAt'];
 
     return Catalog(
-      userId: json['userId'] ?? '',
+      userId: json['userId'] as String? ?? '',
       catalogId: Option.fromNullable(id),
-      name: json['name'] ?? '',
-      description: json['description'] ?? '',
-      images: json['images'] != null ? List<String>.from(json['images']) : [],
-      environment: json['environment'] != null
-          ? Environment.values.byName(json['environment'])
-          : Environment.outdoor,
-      family: json['family'] != null
-          ? (json['family'] as List)
-              .map((e) => Family.values.byName(e))
-              .toList()
-          : [],
-      levelMaintenance: json['levelMaintenance'] != null
-          ? LevelMaintenance.values.byName(json['levelMaintenance'])
-          : LevelMaintenance.low,
-      watering: json['watering'] != null
-          ? Watering.values.byName(json['watering'])
-          : Watering.regularly,
-      lighting: json['lighting'] != null
-          ? Lighting.values.byName(json['lighting'])
-          : Lighting.indirectLight,
-      status: status,
-      createdAt: json['createdAt'] != null
-          ? (json['createdAt'] as Timestamp).toDate()
-          : DateTime.now(),
-      offerType: json['offerType'] != null
-          ? OfferType.values.byName(json['offerType'])
-          : OfferType.exchange,
+      name: json['name'] as String? ?? '',
+      description: json['description'] as String? ?? '',
+      images:
+          (json['images'] as List? ?? const []).whereType<String>().toList(),
+      environment:
+          _enumOr(Environment.values, json['environment'], Environment.outdoor),
+      family: (json['family'] as List? ?? const [])
+          .map((e) => Option.fromNullable(Family.values.asNameMap()[e]))
+          .whereType<Some<Family>>()
+          .map((found) => found.value)
+          .toList(),
+      levelMaintenance: _enumOr(
+        LevelMaintenance.values,
+        json['levelMaintenance'],
+        LevelMaintenance.low,
+      ),
+      watering: _enumOr(Watering.values, json['watering'], Watering.regularly),
+      lighting:
+          _enumOr(Lighting.values, json['lighting'], Lighting.indirectLight),
+      status: _enumOr(CatalogStatus.values, json['status'], legacyStatus),
+      createdAt: createdAt is Timestamp ? createdAt.toDate() : DateTime.now(),
+      offerType:
+          _enumOr(OfferType.values, json['offerType'], OfferType.exchange),
       views: json['views'] as int? ?? 0,
     );
   }

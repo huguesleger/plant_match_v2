@@ -756,6 +756,9 @@ class TranslationsCatalogWizardFr {
 	/// fr: 'Création...'
 	String get loading => 'Création...';
 
+	/// fr: 'La connexion est trop lente ou coupée. Vérifie ton réseau et réessaie.'
+	String get timeout => 'La connexion est trop lente ou coupée. Vérifie ton réseau et réessaie.';
+
 	/// fr: 'Erreur lors de la sélection d’image.'
 	String get error_image => 'Erreur lors de la sélection d’image.';
 
@@ -3389,6 +3392,7 @@ extension on Translations {
 			'catalog.edit.image.title' => 'Sélectionner une à trois photos de votre plante',
 			'catalog.wizard.title' => 'Ajouter une plante',
 			'catalog.wizard.loading' => 'Création...',
+			'catalog.wizard.timeout' => 'La connexion est trop lente ou coupée. Vérifie ton réseau et réessaie.',
 			'catalog.wizard.error_image' => 'Erreur lors de la sélection d’image.',
 			'catalog.wizard.select_images' => 'Sélectionner des images',
 			'catalog.wizard.image_count' => ({required Object index}) => 'Image ${index}',

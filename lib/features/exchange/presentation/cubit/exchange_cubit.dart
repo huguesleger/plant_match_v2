@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:plant_match_v2/core/util/safe_cubit.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/features/level/presentation/cubit/user_points_cubit.dart';
 import 'package:plant_match_v2/features/catalog/data/firebase_catalog_repository.dart';
@@ -9,7 +9,7 @@ import 'package:plant_match_v2/features/exchange/domain/entities/exchange.dart';
 import 'package:plant_match_v2/features/exchange/domain/repository/exchange_repository.dart';
 import 'package:plant_match_v2/features/exchange/presentation/state/exchange_state.dart';
 
-class ExchangeCubit extends Cubit<ExchangeState> {
+class ExchangeCubit extends SafeCubit<ExchangeState> {
   final ExchangeRepository repository;
   final ChatPlantRepository chatRepository;
   StreamSubscription<Exchange?>? _sub;
@@ -172,9 +172,13 @@ class ExchangeCubit extends Cubit<ExchangeState> {
     repository.markSeenByRequester(exchangeId).run();
   }
 
-  void generateCode(String exchangeId) {
-    repository.generateValidationCode(exchangeId).run();
-  }
+  Future<Option<String>> generateCode(String exchangeId) => repository
+      .generateValidationCode(exchangeId)
+      .match<Option<String>>(
+        (failure) => Some(failure.message),
+        (_) => const None(),
+      )
+      .run();
 
   Future<Option<String>> validateCode(
     String exchangeId,

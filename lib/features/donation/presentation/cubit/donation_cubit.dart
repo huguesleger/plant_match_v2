@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:plant_match_v2/core/util/safe_cubit.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/features/level/presentation/cubit/user_points_cubit.dart';
 import 'package:plant_match_v2/features/chat_plant/domain/repository/chat_plant_repository.dart';
@@ -8,7 +8,7 @@ import 'package:plant_match_v2/features/donation/domain/entities/donation.dart';
 import 'package:plant_match_v2/features/donation/domain/repository/donation_repository.dart';
 import 'package:plant_match_v2/features/donation/presentation/state/donation_state.dart';
 
-class DonationCubit extends Cubit<DonationState> {
+class DonationCubit extends SafeCubit<DonationState> {
   final DonationRepository repository;
   final ChatPlantRepository chatRepository;
   StreamSubscription<Donation?>? _sub;
@@ -107,9 +107,13 @@ class DonationCubit extends Cubit<DonationState> {
     repository.markSeenByRequester(donationId).run();
   }
 
-  void generateCode(String donationId) {
-    repository.generateValidationCode(donationId).run();
-  }
+  Future<Option<String>> generateCode(String donationId) => repository
+      .generateValidationCode(donationId)
+      .match<Option<String>>(
+        (failure) => Some(failure.message),
+        (_) => const None(),
+      )
+      .run();
 
   Future<Option<String>> validateCode(
     String donationId,

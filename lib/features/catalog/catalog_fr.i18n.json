@@ -84,6 +84,7 @@
   "wizard": {
     "title": "Ajouter une plante",
     "loading": "Création...",
+    "timeout": "La connexion est trop lente ou coupée. Vérifie ton réseau et réessaie.",
     "error_image": "Erreur lors de la sélection d’image.",
     "select_images": "Sélectionner des images",
     "image_count": "Image ${index}",

@@ -1,4 +1,5 @@
 import 'package:fpdart/fpdart.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/core/util/safe_cubit.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
@@ -65,7 +66,10 @@ class CatalogCubit extends SafeCubit<CatalogState> {
         .run();
   }
 
-  TaskEither<Failure, String> publishNewCatalog(Catalog catalog) {
+  TaskEither<Failure, String> publishNewCatalog(Catalog catalog) =>
+      _withTimeout(_publishNewCatalog(catalog));
+
+  TaskEither<Failure, String> _publishNewCatalog(Catalog catalog) {
     final previous = state;
     final sortOption = _currentSortFromState();
     final id = catalogRepository.reserveCatalogId();
@@ -74,10 +78,12 @@ class CatalogCubit extends SafeCubit<CatalogState> {
     return TaskEither.sequenceList(
       catalog.images
           .filter((image) => !_isRemote(image))
+          .toList()
+          .indexed
           .map(
-            (path) => storageRepository.uploadImageFromUrl(
-              path: path,
-              fileName: '${id}_${path.split('/').last}',
+            (entry) => storageRepository.uploadImageFromUrl(
+              path: entry.$2,
+              fileName: _uniqueFileName(id, entry.$1, entry.$2),
               folder: 'catalog_images',
             ),
           )
@@ -111,7 +117,23 @@ class CatalogCubit extends SafeCubit<CatalogState> {
     });
   }
 
+  static const Duration _saveTimeout = Duration(seconds: 90);
+
+  static TaskEither<Failure, T> _withTimeout<T>(TaskEither<Failure, T> task) =>
+      TaskEither(
+        () => task.run().timeout(
+              _saveTimeout,
+              onTimeout: () =>
+                  Left(UnexpectedFailure(t.catalog.wizard.timeout)),
+            ),
+      );
+
   static bool _isRemote(String image) => image.startsWith('http');
+
+  static String _uniqueFileName(String id, int index, String path) {
+    final extension = path.contains('.') ? path.split('.').last : 'jpg';
+    return '${id}_${DateTime.now().microsecondsSinceEpoch}_$index.$extension';
+  }
 
   Task<Unit> _discardImages(List<String> urls) => TaskEither.sequenceList(
         urls
@@ -158,6 +180,12 @@ class CatalogCubit extends SafeCubit<CatalogState> {
   TaskEither<Failure, Catalog> saveEditedCatalog({
     required Catalog original,
     required Catalog edited,
+  }) =>
+      _withTimeout(_saveEditedCatalog(original: original, edited: edited));
+
+  TaskEither<Failure, Catalog> _saveEditedCatalog({
+    required Catalog original,
+    required Catalog edited,
   }) {
     final previous = state;
     final sortOption = _currentSortFromState();
@@ -167,10 +195,12 @@ class CatalogCubit extends SafeCubit<CatalogState> {
     return TaskEither.sequenceList(
       edited.images
           .filter((image) => !_isRemote(image))
+          .toList()
+          .indexed
           .map(
-            (path) => storageRepository.uploadImageFromUrl(
-              path: path,
-              fileName: '${id}_${path.split('/').last}',
+            (entry) => storageRepository.uploadImageFromUrl(
+              path: entry.$2,
+              fileName: _uniqueFileName(id, entry.$1, entry.$2),
               folder: 'catalog_images',
             ),
           )

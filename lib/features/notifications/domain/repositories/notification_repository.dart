@@ -22,4 +22,6 @@ abstract class NotificationRepository {
 
   /// Retourne un flux (Stream) de notifications reçues lorsque l'application est active.
   Stream<AppNotification> get onNotificationReceived;
+
+  Stream<String> get onTokenRefresh;
 }

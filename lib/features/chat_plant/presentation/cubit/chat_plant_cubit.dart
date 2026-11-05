@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:plant_match_v2/core/util/safe_cubit.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:plant_match_v2/features/chat_plant/domain/repository/chat_plant_repository.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/state/chat_plant_state.dart';
 
-class ChatPlantCubit extends Cubit<ChatPlantState> {
+class ChatPlantCubit extends SafeCubit<ChatPlantState> {
   final ChatPlantRepository repository;
 
   StreamSubscription<List<types.Message>>? _messagesSub;

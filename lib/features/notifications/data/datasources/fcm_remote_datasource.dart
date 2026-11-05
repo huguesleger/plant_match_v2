@@ -28,6 +28,8 @@ class FcmRemoteDataSource {
     return await _firebaseMessaging.getToken();
   }
 
+  Stream<String> get onTokenRefresh => _firebaseMessaging.onTokenRefresh;
+
   /// Flux de notifications reçues lorsque l'app est au premier plan (FCM direct).
   Stream<RemoteMessage> get onMessage => FirebaseMessaging.onMessage;
 

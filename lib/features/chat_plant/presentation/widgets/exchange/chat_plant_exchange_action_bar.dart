@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fpdart/fpdart.dart' hide State;
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
@@ -11,7 +10,7 @@ import 'package:plant_match_v2/features/exchange/presentation/cubit/exchange_cub
 import 'package:plant_match_v2/features/exchange/presentation/exchange_page_route.dart';
 import 'package:plant_match_v2/features/exchange/presentation/state/exchange_state.dart';
 import 'package:plant_match_v2/features/level/presentation/cubit/user_points_cubit.dart';
-import 'package:plant_match_v2/features/chat_plant/presentation/widgets/validation_code_display.dart';
+import 'package:plant_match_v2/features/chat_plant/presentation/widgets/owner_validation_code.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/validation_code_input.dart';
 
 class ChatPlantExchangeActionBar extends StatelessWidget {
@@ -43,20 +42,12 @@ class ChatPlantExchangeActionBar extends StatelessWidget {
           onAccept: () => context.read<ExchangeCubit>().accept(exchange.id),
           onRefuse: () => context.read<ExchangeCubit>().reject(exchange.id),
         ),
-      ExchangeAccepted(:final exchange) when isPlantOwner =>
-        ValidationCodeDisplay(
-          onGenerate: () =>
-              context.read<ExchangeCubit>().generateCode(exchange.id),
-        ),
+      ExchangeAccepted(:final exchange) ||
       ExchangeWaitingValidation(:final exchange) when isPlantOwner =>
-        StreamBuilder<Option<String>>(
-          stream: context.read<ExchangeCubit>().validationCode(exchange.id),
-          builder: (context, snapshot) => ValidationCodeDisplay(
-            onGenerate: () => context.read<ExchangeCubit>().generateCode(exchange.id),
-            code: Option.fromNullable(snapshot.data)
-                .flatMap((code) => code)
-                .toNullable(),
-          ),
+        OwnerValidationCode(
+          key: ValueKey(exchange.id),
+          watchCode: () => context.read<ExchangeCubit>().validationCode(exchange.id),
+          generate: () => context.read<ExchangeCubit>().generateCode(exchange.id),
         ),
       ExchangeWaitingValidation(:final exchange) when !isPlantOwner =>
         ValidationCodeInput(

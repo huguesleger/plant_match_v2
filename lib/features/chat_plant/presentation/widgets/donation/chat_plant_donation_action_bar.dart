@@ -10,7 +10,7 @@ import 'package:plant_match_v2/core/theme/inter_text_style.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/common/chat_plant_action_button.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/common/chat_plant_action_button_templates.dart';
-import 'package:plant_match_v2/features/chat_plant/presentation/widgets/validation_code_display.dart';
+import 'package:plant_match_v2/features/chat_plant/presentation/widgets/owner_validation_code.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/validation_code_input.dart';
 import 'package:plant_match_v2/features/donation/domain/entities/donation.dart';
 import 'package:plant_match_v2/features/donation/presentation/cubit/donation_cubit.dart';
@@ -52,20 +52,12 @@ class ChatPlantDonationActionBar extends StatelessWidget {
           onAccept: () => context.read<DonationCubit>().accept(donation.id),
           onRefuse: () => context.read<DonationCubit>().reject(donation.id),
         ),
-      DonationAccepted(:final donation) when isPlantOwner =>
-        ValidationCodeDisplay(
-          onGenerate: () =>
-              context.read<DonationCubit>().generateCode(donation.id),
-        ),
+      DonationAccepted(:final donation) ||
       DonationWaitingValidation(:final donation) when isPlantOwner =>
-        StreamBuilder<Option<String>>(
-          stream: context.read<DonationCubit>().validationCode(donation.id),
-          builder: (context, snapshot) => ValidationCodeDisplay(
-            onGenerate: () => context.read<DonationCubit>().generateCode(donation.id),
-            code: Option.fromNullable(snapshot.data)
-                .flatMap((code) => code)
-                .toNullable(),
-          ),
+        OwnerValidationCode(
+          key: ValueKey(donation.id),
+          watchCode: () => context.read<DonationCubit>().validationCode(donation.id),
+          generate: () => context.read<DonationCubit>().generateCode(donation.id),
         ),
       DonationWaitingValidation(:final donation) when !isPlantOwner =>
         ValidationCodeInput(

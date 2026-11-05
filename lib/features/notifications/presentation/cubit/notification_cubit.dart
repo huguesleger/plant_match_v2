@@ -9,6 +9,7 @@ import 'package:plant_match_v2/features/notifications/presentation/cubit/notific
 class NotificationCubit extends SafeCubit<NotificationState> {
   final NotificationRepository _notificationRepository;
   StreamSubscription<AppNotification>? _notificationSubscription;
+  Option<StreamSubscription<String>> _tokenRefreshSubscription = const None();
 
   NotificationCubit({required NotificationRepository notificationRepository})
       : _notificationRepository = notificationRepository,
@@ -45,6 +46,7 @@ class NotificationCubit extends SafeCubit<NotificationState> {
                   const NotificationPermissionDenied()),
               (token) => _notificationRepository
                   .saveTokenToUser(userId, token)
+                  .map((_) => _watchTokenRefresh(userId))
                   .map((_) => NotificationPermissionGranted(token)),
             );
           });
@@ -57,23 +59,41 @@ class NotificationCubit extends SafeCubit<NotificationState> {
         .run();
   }
 
+  void _watchTokenRefresh(String userId) {
+    _cancelTokenRefresh();
+    _tokenRefreshSubscription = Some(
+      _notificationRepository.onTokenRefresh.listen(
+        (token) => _notificationRepository.saveTokenToUser(userId, token).run(),
+      ),
+    );
+  }
+
+  void _cancelTokenRefresh() {
+    _tokenRefreshSubscription.map((subscription) => subscription.cancel());
+    _tokenRefreshSubscription = const None();
+  }
+
   /// Supprime le jeton FCM de l'utilisateur (lors de la déconnexion).
-  Future<void> removeTokenAndLogout(String userId) => _notificationRepository
-      .getFCMToken()
-      .flatMap((optionToken) => optionToken.match(
-            () => TaskEither<Failure, Unit>.right(unit),
-            (token) =>
-                _notificationRepository.deleteTokenFromUser(userId, token),
-          ))
-      .match(
-        (failure) => emit(NotificationError(failure.message)),
-        (_) => emit(const NotificationInitial()),
-      )
-      .run();
+  Future<void> removeTokenAndLogout(String userId) {
+    _cancelTokenRefresh();
+    return _notificationRepository
+        .getFCMToken()
+        .flatMap((optionToken) => optionToken.match(
+              () => TaskEither<Failure, Unit>.right(unit),
+              (token) =>
+                  _notificationRepository.deleteTokenFromUser(userId, token),
+            ))
+        .match(
+          (failure) => emit(NotificationError(failure.message)),
+          (_) => emit(const NotificationInitial()),
+        )
+        .run();
+  }
 
   @override
   Future<void> close() {
     _notificationSubscription?.cancel();
+    _cancelTokenRefresh();
     return super.close();
   }
 }
