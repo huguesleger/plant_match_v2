@@ -7,6 +7,8 @@ import 'package:plant_match_v2/features/around_me_map/presentation/cubit/around_
 import 'package:plant_match_v2/features/around_me_map/presentation/cubit/around_me_state.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/features/home/presentation/widgets/home_header.dart';
+import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
+import 'package:plant_match_v2/features/profil/presentation/cubit/profil_state.dart';
 import 'package:plant_match_v2/features/home/presentation/widgets/home_loaded_content.dart';
 import 'package:plant_match_v2/features/recommendation/data/repositories/recommendation_repository_impl.dart';
 import 'package:plant_match_v2/features/recommendation/presentation/cubit/saved_recommendation_cubit.dart';
@@ -56,11 +58,21 @@ class HomeScreen extends StatelessWidget {
                 preferredHeight: 100,
                 titleWidget: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: HomeHeader(
-                    firstName: currentUser.firstName,
-                    profilImg: currentUser.profilImg,
-                    userName: currentUser.userName,
-                    leaves: currentUser.leaves,
+                  child: BlocBuilder<ProfilCubit, ProfilState>(
+                    buildWhen: (_, current) => current is ProfilLoaded,
+                    builder: (context, profilState) => HomeHeader(
+                      firstName: currentUser.firstName,
+                      profilImg: currentUser.profilImg,
+                      userName: currentUser.userName,
+                      leaves: switch (profilState) {
+                        ProfilLoaded(:final profilUser) => profilUser.leaves,
+                        ProfilInitial() ||
+                        ProfilLoading() ||
+                        ProfilError() ||
+                        ProfilImageUploading() =>
+                          currentUser.leaves,
+                      },
+                    ),
                   ),
                 ),
               ),

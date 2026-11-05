@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:plant_match_v2/core/widgets/template/template_page.dart';
 import 'package:plant_match_v2/features/auth/domain/entities/user_auth.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_state.dart';
@@ -25,7 +24,9 @@ class EmailVerificationPageRoute extends StatelessWidget {
                 child: Center(child: CircularProgressIndicator()),
               ),
             ),
-          Authenticated() => const TemplatePage(),
+          Authenticated() => const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            ),
           Unauthenticated() => const RegisterScreen(),
           AuthEmailVerificationSent() ||
           AuthError() =>

@@ -50,10 +50,19 @@ class ChatPlantView extends StatelessWidget {
 
   void _send(BuildContext context, String userId, String text) {
     final profilCubit = context.read<ProfilCubit>();
+    final messenger = ScaffoldMessenger.of(context);
     context
         .read<ChatPlantCubit>()
         .send(chatId: chatId, senderId: userId, text: text)
-        .then((_) => profilCubit.refreshLeaves(userId));
+        .then((error) {
+      profilCubit.refreshLeaves(userId);
+      error.match(
+        () => null,
+        (message) => messenger.showSnackBar(
+          SnackBar(content: Text(t.chatPlant.view.send_error(error: message))),
+        ),
+      );
+    });
   }
 
   @override

@@ -97,7 +97,11 @@ class CatalogCubit extends SafeCubit<CatalogState> {
                 ).flatMap((_) => TaskEither.left(failure)),
               ),
         )
-        .flatMap((_) => catalogRepository.getCatalogsByUserId(catalog.userId))
+        .flatMap(
+          (_) => TaskEither<Failure, List<Catalog>>.fromTask(
+            _refreshCatalogs(catalog.userId),
+          ),
+        )
         .map((catalogs) {
       emit(CatalogLoaded(catalogs, catalog, sortOption: sortOption));
       return id;

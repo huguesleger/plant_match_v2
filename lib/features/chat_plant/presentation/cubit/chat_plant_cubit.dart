@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:plant_match_v2/features/chat_plant/domain/repository/chat_plant_repository.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/state/chat_plant_state.dart';
@@ -63,16 +64,16 @@ class ChatPlantCubit extends Cubit<ChatPlantState> {
     );
   }
 
-  Future<void> send({
+  Future<Option<String>> send({
     required String chatId,
     required String senderId,
     required String text,
   }) async {
-    if (_otherUserId == null || _otherUserId!.isEmpty) return;
-    if (_blockStatus != BlockStatus.none) return;
+    if (_otherUserId == null || _otherUserId!.isEmpty) return const None();
+    if (_blockStatus != BlockStatus.none) return const None();
     final receiverId = _otherUserId!;
 
-    await repository
+    return repository
         .payFirstContact(
           chatId: chatId,
           senderId: senderId,
@@ -86,11 +87,10 @@ class ChatPlantCubit extends Cubit<ChatPlantState> {
             text: text,
           ),
         )
-        .match(
-          (failure) => ChatPlantError(failure.message),
-          (_) => state,
+        .match<Option<String>>(
+          (failure) => Some(failure.message),
+          (_) => const None(),
         )
-        .map((s) => emit(s))
         .run();
   }
 

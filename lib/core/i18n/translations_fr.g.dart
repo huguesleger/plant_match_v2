@@ -887,6 +887,9 @@ class TranslationsChatPlantViewFr {
 	/// fr: 'Vous avez bloqué cet utilisateur'
 	String get blocked_user_banner => 'Vous avez bloqué cet utilisateur';
 
+	/// fr: 'Message non envoyé : $error'
+	String send_error({required Object error}) => 'Message non envoyé : ${error}';
+
 	/// fr: 'Vous ne pouvez plus écrire à cet utilisateur'
 	String get blocked_by_other_banner => 'Vous ne pouvez plus écrire à cet utilisateur';
 
@@ -3467,6 +3470,7 @@ extension on Translations {
 			'chatPlant.screen.plant_unavailable' => 'Cette plante n\'est plus disponible.',
 			'chatPlant.view.empty_messages' => 'Aucun message pour le moment.\nDémarrez la conversation.',
 			'chatPlant.view.blocked_user_banner' => 'Vous avez bloqué cet utilisateur',
+			'chatPlant.view.send_error' => ({required Object error}) => 'Message non envoyé : ${error}',
 			'chatPlant.view.blocked_by_other_banner' => 'Vous ne pouvez plus écrire à cet utilisateur',
 			'chatPlant.view.unblock_btn' => 'Débloquer',
 			'chatPlant.view.unblock_dialog.title' => 'Débloquer cet utilisateur ?',

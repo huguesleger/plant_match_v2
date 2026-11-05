@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:plant_match_v2/core/widgets/template/template_page.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_state.dart';
 import 'package:plant_match_v2/features/auth/presentation/email_verification/email_verification_page_route.dart';
@@ -23,7 +22,9 @@ class ForgotPasswordPageRoute extends StatelessWidget {
                   ),
                 ),
               ),
-            Authenticated() => const TemplatePage(),
+            Authenticated() => const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            ),
             Unauthenticated() || AuthError() => const ForgotPasswordScreen(),
             AuthEmailVerificationSent(user: var u) ||
             AuthFinalizing(user: var u) =>

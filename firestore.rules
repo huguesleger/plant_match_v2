@@ -150,7 +150,7 @@ service cloud.firestore {
 
       match /messages/{messageId} {
         allow read: if signedIn()
-          && request.auth.uid in chatOf(chatId).participants;
+          && request.auth.uid in chatId.split('_');
         allow create: if signedIn()
           && request.resource.data.senderId == request.auth.uid
           && request.resource.data.text is string

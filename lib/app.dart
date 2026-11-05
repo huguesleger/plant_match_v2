@@ -137,6 +137,7 @@ class _MyAppBodyState extends State<_MyAppBody> with WidgetsBindingObserver {
                 _resetUserSession(context);
               }
               if (authState is Authenticated) {
+                Navigator.of(context).popUntil((route) => route.isFirst);
                 context
                     .read<NotificationCubit>()
                     .requestPermissionAndSaveToken(authState.user.uid);
