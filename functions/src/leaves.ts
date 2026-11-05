@@ -50,13 +50,18 @@ export const payFirstContact = onCall({region: REGION}, async (request) => {
         "Plus de feuilles disponibles pour contacter ce donneur",
       );
     }
-    if (!alreadyPaid) tx.update(chatRef, {contactPaid: true});
+    if (chatData.contactPaid !== true && chatData.plantOwnerId !== uid) {
+      tx.update(chatRef, {contactPaid: true});
+    }
     if (cost > 0) {
-      tx.update(userRef, {leaves: FieldValue.increment(-cost)});
+      tx.set(userRef, {leaves: FieldValue.increment(-cost)}, {merge: true});
     }
     return {cost};
   });
 });
+
+const REFERRAL_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
+const MAX_SPONSOR_REWARDS = 20;
 
 export const applyReferral = onCall({region: REGION}, async (request) => {
   const uid = requireAuth(request.auth?.uid);
@@ -64,26 +69,45 @@ export const applyReferral = onCall({region: REGION}, async (request) => {
   const code = typeof raw === "string" ? raw.trim().toUpperCase() : "";
   if (code.length === 0) return {bonus: 0};
 
+  const authUser = await admin.auth().getUser(uid);
+  const createdAt = Date.parse(authUser.metadata.creationTime);
+  if (Date.now() - createdAt > REFERRAL_WINDOW_MS) return {bonus: 0};
+
   const db = admin.firestore();
   const users = db.collection("users");
-  const sponsors = await users.where("referralCode", "==", code).limit(2).get();
-  if (sponsors.size !== 1 || sponsors.docs[0].id === uid) return {bonus: 0};
-  const sponsorRef = sponsors.docs[0].ref;
+  const codeRef = db.collection("referralCodes").doc(code);
   const userRef = users.doc(uid);
 
   return db.runTransaction(async (tx) => {
-    const user = await tx.get(userRef);
-    const data = user.data();
-    if (!data || data.referredBy != null || data.referralCode === code) {
+    const codeDoc = await tx.get(codeRef);
+    const sponsorId: unknown = codeDoc.data()?.uid;
+    if (typeof sponsorId !== "string" || sponsorId === uid) {
       return {bonus: 0};
     }
-    tx.update(userRef, {
+    const sponsorRef = users.doc(sponsorId);
+    const statsRef = sponsorRef.collection("private").doc("referral");
+    const [user, sponsor, stats] = await Promise.all([
+      tx.get(userRef),
+      tx.get(sponsorRef),
+      tx.get(statsRef),
+    ]);
+    const data = user.data();
+    const crossReferral = data?.referralCode != null &&
+      sponsor.data()?.referredBy === data.referralCode;
+    if (!data || data.referredBy != null || crossReferral) {
+      return {bonus: 0};
+    }
+    const sponsorRewarded = (stats.data()?.count ?? 0) < MAX_SPONSOR_REWARDS;
+    tx.set(userRef, {
       referredBy: code,
       leaves: FieldValue.increment(REFERRAL_BONUS),
-    });
-    tx.update(sponsorRef, {
-      leaves: FieldValue.increment(REFERRAL_BONUS),
-    });
+    }, {merge: true});
+    if (sponsorRewarded) {
+      tx.set(sponsorRef, {
+        leaves: FieldValue.increment(REFERRAL_BONUS),
+      }, {merge: true});
+      tx.set(statsRef, {count: FieldValue.increment(1)}, {merge: true});
+    }
     return {bonus: REFERRAL_BONUS};
   });
 });

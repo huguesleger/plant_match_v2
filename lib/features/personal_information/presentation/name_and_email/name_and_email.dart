@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -27,7 +29,9 @@ class NameAndEmail extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           Text(
-            profilUser.email.getOrElse(() => ''),
+            Option.fromNullable(context.read<AuthCubit>().currentUser)
+                .flatMap((user) => user.email)
+                .getOrElse(() => ''),
             style: const TextStyle(
               fontSize: AppTypo.textXs,
               color: AppColors.white,

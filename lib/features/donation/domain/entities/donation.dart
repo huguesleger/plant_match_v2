@@ -57,7 +57,9 @@ class Donation {
         (e) => e.name == json['status'],
         orElse: () => DonationStatus.pending,
       ),
-      createdAt: (json['createdAt'] as Timestamp).toDate(),
+      createdAt: Option.fromNullable(json['createdAt'] as Timestamp?)
+          .map((t) => t.toDate())
+          .getOrElse(DateTime.now),
       seenByOwner: json['seenByOwner'] ?? false,
       seenByRequester: json['seenByRequester'] ?? false,
       completedAt: Option.fromNullable(json['completedAt']).map(

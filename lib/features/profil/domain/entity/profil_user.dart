@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:plant_match_v2/core/util/distance/distance_helper.dart';
 import 'package:plant_match_v2/features/auth/domain/entities/user_auth.dart';
 
 class ProfilUser extends UserAuth {
@@ -96,8 +97,8 @@ class ProfilUser extends UserAuth {
         () => null,
         (date) => Timestamp.fromDate(date),
       ),
-      'latitude': latitude.toNullable(),
-      'longitude': longitude.toNullable(),
+      'latitude': latitude.map(DistanceHelper.coarse).toNullable(),
+      'longitude': longitude.map(DistanceHelper.coarse).toNullable(),
       'isOnline': isOnline,
       'createdAt': Timestamp.fromDate(createdAt),
       'leaves': leaves,

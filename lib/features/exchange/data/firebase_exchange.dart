@@ -36,7 +36,10 @@ class FirebaseExchange implements ExchangeRepository {
   TaskEither<Failure, Unit> createExchange(Exchange exchange) {
     return TaskEither.tryCatch(
       () async {
-        await _col.add(exchange.toJson());
+        await _col.add({
+          ...exchange.toJson(),
+          'createdAt': FieldValue.serverTimestamp(),
+        });
         return unit;
       },
       (error, _) => UnexpectedFailure('Erreur création échange: $error'),

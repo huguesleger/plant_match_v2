@@ -9,6 +9,7 @@ export {generateHandoverCode, validateHandover} from "./handover";
 export {applyReferral, payFirstContact} from "./leaves";
 export {getCompletedExchangeCount} from "./stats";
 export {sendWelcomeEmail} from "./welcome";
+export {assignReferralCode} from "./referral";
 
 export const sendChatNotification = onDocumentCreated(
   {document: "plant_chats/{chatId}/messages/{messageId}", region: REGION},
@@ -66,13 +67,13 @@ export const sendChatNotification = onDocumentCreated(
         senderData?.firstName ||
         "Un utilisateur";
 
-      const receiverDoc = await admin
-        .firestore()
+      const messagingRef = db
         .collection("users")
         .doc(receiverId)
-        .get();
-      const receiverData = receiverDoc.data();
-      const fcmTokens: string[] = receiverData?.fcmTokens || [];
+        .collection("private")
+        .doc("messaging");
+      const messagingDoc = await messagingRef.get();
+      const fcmTokens: string[] = messagingDoc.data()?.fcmTokens || [];
 
       if (fcmTokens.length === 0) {
         console.log(`No tokens for: ${receiverId}`);
@@ -124,15 +125,9 @@ export const sendChatNotification = onDocumentCreated(
         });
 
         if (tokensToRemove.length > 0) {
-          await admin
-            .firestore()
-            .collection("users")
-            .doc(receiverId)
-            .update({
-              fcmTokens: FieldValue.arrayRemove(
-                ...tokensToRemove
-              ),
-            });
+          await messagingRef.set({
+            fcmTokens: FieldValue.arrayRemove(...tokensToRemove),
+          }, {merge: true});
           console.log(`Cleaned ${tokensToRemove.length} tokens.`);
         }
       }

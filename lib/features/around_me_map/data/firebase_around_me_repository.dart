@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:plant_match_v2/core/util/distance/distance_helper.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/features/around_me_map/domain/repository/around_me_repository.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
@@ -32,8 +33,8 @@ class FirebaseAroundMeRepository implements AroundMeRepository {
             .collection('users')
             .doc(user.uid)
             .update({
-          'latitude': user.latitude.toNullable(),
-          'longitude': user.longitude.toNullable(),
+          'latitude': user.latitude.map(DistanceHelper.coarse).toNullable(),
+          'longitude': user.longitude.map(DistanceHelper.coarse).toNullable(),
           'localisation': user.localisation,
           'country': user.country,
         });

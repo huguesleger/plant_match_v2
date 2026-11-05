@@ -45,6 +45,8 @@ class FirebaseProfilRepo implements ProfilRepository {
       () async {
         final data = updateProfilUser.toJson()
           ..remove('uid')
+          ..remove('email')
+          ..remove('createdAt')
           ..remove('leaves')
           ..remove('referralCode')
           ..remove('referredBy');
@@ -70,6 +72,8 @@ class FirebaseProfilRepo implements ProfilRepository {
       () async {
         final data = profilUser.toJson()
           ..['leaves'] = 5
+          ..remove('email')
+          ..remove('referralCode')
           ..remove('referredBy');
         await _firebaseFirestore
             .collection('users')

@@ -30,6 +30,12 @@ const ensure = (condition: boolean, message: string) => {
 };
 
 const MAX_ATTEMPTS = 5;
+const PAIR_REWARD_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
+
+const completedFlagFor = (kind: Kind) =>
+  kind === "donation" ? "isDonationCompleted" : "isExchangeCompleted";
+
+const pairKey = (a: string, b: string) => [a, b].sort().join("_");
 
 type Doc = FirebaseFirestore.DocumentData;
 
@@ -40,6 +46,7 @@ const ensureIntegrity = (
   kind: Kind,
   data: Doc,
   chat: Doc | undefined,
+  plantIds: string[],
   plants: (Doc | undefined)[],
 ) => {
   const ownerId: string = data.ownerId;
@@ -54,6 +61,11 @@ const ensureIntegrity = (
   ensure(
     participants.includes(ownerId) && participants.includes(requesterId),
     "Transaction invalide",
+  );
+  ensure(chat?.plantId === plantIds[0], "Transaction invalide");
+  ensure(
+    chat?.[completedFlagFor(kind)] !== true,
+    "Cette conversation a déjà abouti",
   );
   const expectedOwners = kind === "donation" ?
     [ownerId] :
@@ -97,7 +109,13 @@ export const generateHandoverCode = onCall(
         tx.get(db.collection("plant_chats").doc(data.chatId)),
         ...plantRefs.map((r) => tx.get(r)),
       ]);
-      ensureIntegrity(kind, data, chat.data(), plants.map((p) => p.data()));
+      ensureIntegrity(
+        kind,
+        data,
+        chat.data(),
+        plantIdsOf(kind, data),
+        plants.map((p) => p.data()),
+      );
       ensure(
         plants.every((p) => p.data()?.status === "published"),
         "Cette plante n'est plus disponible",
@@ -143,14 +161,19 @@ export const validateHandover = onCall({region: REGION}, async (request) => {
     const plants = await Promise.all(plantRefs.map((r) => tx.get(r)));
     const ownerPointsRef = db.collection("userPoints").doc(ownerId);
     const requesterPointsRef = db.collection("userPoints").doc(requesterId);
-    const [ownerPoints, requesterPoints] = await Promise.all([
+    const rewardRef = db.collection("rewardLog")
+      .doc(pairKey(ownerId, requesterId));
+    const [ownerPoints, requesterPoints, rewardLog] = await Promise.all([
       tx.get(ownerPointsRef),
       tx.get(requesterPointsRef),
+      tx.get(rewardRef),
     ]);
 
     ensure(data.status === "waitingValidation", "Ce code a déjà été utilisé");
     ensure(requesterId === uid, "Seul le demandeur peut valider");
-    ensureIntegrity(kind, data, chat.data(), plants.map((p) => p.data()));
+    ensureIntegrity(
+      kind, data, chat.data(), plantIds, plants.map((p) => p.data()),
+    );
     const secretData = secret.data();
     ensure(secretData != null, "Aucun code actif, demandez-en un nouveau");
     const attempts: number = secretData?.attempts ?? 0;
@@ -167,14 +190,20 @@ export const validateHandover = onCall({region: REGION}, async (request) => {
       "Cette plante n'est plus disponible",
     );
 
+    const lastRewardAt: number =
+      rewardLog.data()?.lastAt?.toMillis?.() ?? 0;
+    const rewarded = Date.now() - lastRewardAt >= PAIR_REWARD_COOLDOWN_MS;
+    const points = rewarded ? 1 : 0;
+    const gift = rewarded ? PLANT_GIVEN_LEAVES : 0;
+
     const ownerUpdate = computeUpdate(
-      ownerId, ownerPoints.data(), 1, PLANT_GIVEN_LEAVES,
+      ownerId, ownerPoints.data(), points, gift,
     );
     const requesterUpdate = computeUpdate(
       requesterId,
       requesterPoints.data(),
-      1,
-      kind === "exchange" ? PLANT_GIVEN_LEAVES : 0,
+      points,
+      kind === "exchange" ? gift : 0,
     );
 
     tx.update(ref, {
@@ -188,6 +217,12 @@ export const validateHandover = onCall({region: REGION}, async (request) => {
         true,
     });
     plantRefs.forEach((r) => tx.update(r, {status: "archived"}));
+    if (rewarded) {
+      tx.set(rewardRef, {
+        lastAt: FieldValue.serverTimestamp(),
+        count: FieldValue.increment(1),
+      }, {merge: true});
+    }
     [
       [ownerPointsRef, ownerUpdate] as const,
       [requesterPointsRef, requesterUpdate] as const,
@@ -199,9 +234,9 @@ export const validateHandover = onCall({region: REGION}, async (request) => {
       );
       const leaves = update.bonusLeaves + update.giftedLeaves;
       if (leaves > 0) {
-        tx.update(db.collection("users").doc(update.uid), {
+        tx.set(db.collection("users").doc(update.uid), {
           leaves: FieldValue.increment(leaves),
-        });
+        }, {merge: true});
       }
     });
 

@@ -1,5 +1,7 @@
 import {defineSecret, defineString} from "firebase-functions/params";
 import {onDocumentCreated} from "firebase-functions/v2/firestore";
+import * as admin from "firebase-admin";
+import {FieldValue} from "firebase-admin/firestore";
 import {REGION} from "./config";
 
 const BREVO_API_KEY = defineSecret("BREVO_API_KEY");
@@ -19,12 +21,23 @@ export const sendWelcomeEmail = onDocumentCreated(
     secrets: [BREVO_API_KEY],
   },
   async (event) => {
+    const uid = event.params.uid;
     const data = event.data?.data();
-    const email = data?.email;
-    if (typeof email !== "string" || email.length === 0) {
-      console.log(`Pas d'email pour ${event.params.uid}, envoi ignoré.`);
+    const authUser = await admin.auth().getUser(uid).catch(() => null);
+    const email = authUser?.email;
+    const verified = authUser != null && (
+      authUser.emailVerified ||
+      authUser.providerData.some((p) => p.providerId !== "password")
+    );
+    if (!email || !verified) {
+      console.log(`Email absent ou non vérifié pour ${uid}, envoi ignoré.`);
       return;
     }
+    const alreadySent = await admin.firestore()
+      .doc(`users/${uid}/private/welcome`)
+      .create({sentAt: FieldValue.serverTimestamp()})
+      .then(() => false, () => true);
+    if (alreadySent) return;
     const fullName = [data?.firstName, data?.lastName]
       .filter((s) => typeof s === "string" && s.trim().length > 0)
       .join(" ");

@@ -40,11 +40,18 @@ class NotificationRepositoryImpl implements NotificationRepository {
     );
   }
 
+  DocumentReference<Map<String, dynamic>> _messagingDoc(String userId) =>
+      _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('private')
+          .doc('messaging');
+
   @override
   TaskEither<Failure, Unit> saveTokenToUser(String userId, String token) {
     return TaskEither.tryCatch(
       () async {
-        await _firestore.collection('users').doc(userId).set({
+        await _messagingDoc(userId).set({
           'fcmTokens': FieldValue.arrayUnion([token]),
         }, SetOptions(merge: true));
         return unit;
@@ -58,9 +65,9 @@ class NotificationRepositoryImpl implements NotificationRepository {
   TaskEither<Failure, Unit> deleteTokenFromUser(String userId, String token) {
     return TaskEither.tryCatch(
       () async {
-        await _firestore.collection('users').doc(userId).update({
+        await _messagingDoc(userId).set({
           'fcmTokens': FieldValue.arrayRemove([token]),
-        });
+        }, SetOptions(merge: true));
         return unit;
       },
       (error, stackTrace) => FirebaseFailure(

@@ -5,6 +5,9 @@ import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 class DistanceHelper {
   static double maxDistance = 15.0;
 
+  static double coarse(double coordinate) =>
+      (coordinate * 100).roundToDouble() / 100;
+
   static String get maxDistanceFormatted =>
       maxDistance == double.infinity ? 'National' : '${maxDistance.toInt()} km';
 
