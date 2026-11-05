@@ -1520,6 +1520,8 @@ class TranslationsPersonalInformationDetailFr {
 
 	/// fr: 'Modifier mon profil'
 	String get edit_button => 'Modifier mon profil';
+
+	late final TranslationsPersonalInformationDetailClearFr clear = TranslationsPersonalInformationDetailClearFr.internal(_root);
 }
 
 // Path: personalInformation.wizard
@@ -1744,6 +1746,9 @@ class TranslationsUserDetailPlantFr {
 
 	late final TranslationsUserDetailPlantNoLeavesFr no_leaves = TranslationsUserDetailPlantNoLeavesFr.internal(_root);
 	late final TranslationsUserDetailPlantShareFr share = TranslationsUserDetailPlantShareFr.internal(_root);
+
+	/// fr: 'Impossible d'afficher cette plante. Elle a peut-être été retirée, ou la connexion est indisponible.'
+	String get load_error => 'Impossible d\'afficher cette plante. Elle a peut-être été retirée, ou la connexion est indisponible.';
 }
 
 // Path: user.filters
@@ -2717,6 +2722,27 @@ class TranslationsOnboardingItemsAdviceFr {
 	String get description => 'Posez des questions et obtenez des conseils personnalisés de la part de la communauté pour mieux prendre soin de vos plantes ou résoudre des problèmes.';
 }
 
+// Path: personalInformation.detail.clear
+class TranslationsPersonalInformationDetailClearFr {
+	TranslationsPersonalInformationDetailClearFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Effacer « $field » ?'
+	String title({required Object field}) => 'Effacer « ${field} » ?';
+
+	/// fr: 'Cette information sera supprimée de votre profil.'
+	String get content => 'Cette information sera supprimée de votre profil.';
+
+	/// fr: 'Annuler'
+	String get cancel => 'Annuler';
+
+	/// fr: 'Effacer'
+	String get confirm => 'Effacer';
+}
+
 // Path: personalInformation.wizard.pseudo
 class TranslationsPersonalInformationWizardPseudoFr {
 	TranslationsPersonalInformationWizardPseudoFr.internal(this._root);
@@ -3661,6 +3687,10 @@ extension on Translations {
 			'personalInformation.detail.location' => 'Localisation',
 			'personalInformation.detail.empty_field' => 'À renseigner',
 			'personalInformation.detail.edit_button' => 'Modifier mon profil',
+			'personalInformation.detail.clear.title' => ({required Object field}) => 'Effacer « ${field} » ?',
+			'personalInformation.detail.clear.content' => 'Cette information sera supprimée de votre profil.',
+			'personalInformation.detail.clear.cancel' => 'Annuler',
+			'personalInformation.detail.clear.confirm' => 'Effacer',
 			'personalInformation.wizard.pseudo.title' => 'Pseudo d\'affichage',
 			'personalInformation.wizard.pseudo.description' => 'Choisissez votre pseudo qui sera visible par les autres utilisateurs.',
 			'personalInformation.wizard.pseudo.hint' => 'Entrez votre pseudo',
@@ -3732,6 +3762,7 @@ extension on Translations {
 			'user.detail_plant.share.donation' => 'donne',
 			'user.detail_plant.share.exchange' => 'échange',
 			'user.detail_plant.share.text' => ({required Object type, required Object name, required Object description}) => 'Regarde cette plante sur PlantMatch !\n\nJe ${type} une magnifique *${name}*.\n"${description}"\n\nTélécharge l\'application PlantMatch pour l\'adopter ou l\'échanger autour de toi ! 🌿',
+			'user.detail_plant.load_error' => 'Impossible d\'afficher cette plante. Elle a peut-être été retirée, ou la connexion est indisponible.',
 			'user.filters.all' => 'Tous',
 			'user.filters.donation' => 'Donations',
 			'user.filters.exchange' => 'Échanges',

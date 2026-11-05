@@ -1,3 +1,4 @@
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/features/user/domain/entities/catalog_filter.dart';
@@ -6,14 +7,14 @@ class User {
   final ProfilUser user;
   final Map<String, List<Catalog>> userCatalogs;
   final int level;
-  final int exchangeCount;
+  final Option<int> exchangeCount;
   final CatalogFilter selectedFilter;
 
   const User({
     required this.user,
     required this.userCatalogs,
     required this.level,
-    this.exchangeCount = 0,
+    this.exchangeCount = const None(),
     this.selectedFilter = CatalogFilter.all,
   });
 
@@ -21,7 +22,7 @@ class User {
     ProfilUser? user,
     Map<String, List<Catalog>>? userCatalogs,
     int? level,
-    int? exchangeCount,
+    Option<int>? exchangeCount,
     CatalogFilter? selectedFilter,
   }) {
     return User(

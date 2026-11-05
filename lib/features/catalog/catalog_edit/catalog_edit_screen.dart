@@ -60,6 +60,13 @@ class _CatalogEditScreenState extends State<CatalogEditScreen> {
   }
 
   @override
+  void dispose() {
+    _nameController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocBuilder<CatalogCubit, CatalogState>(
       builder: (context, state) => switch (state) {

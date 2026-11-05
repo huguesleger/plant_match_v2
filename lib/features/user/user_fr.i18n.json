@@ -42,7 +42,8 @@
       "donation": "donne",
       "exchange": "échange",
       "text": "Regarde cette plante sur PlantMatch !\n\nJe $type une magnifique *$name*.\n\"$description\"\n\nTélécharge l'application PlantMatch pour l'adopter ou l'échanger autour de toi ! 🌿"
-    }
+    },
+    "load_error": "Impossible d'afficher cette plante. Elle a peut-être été retirée, ou la connexion est indisponible."
   },
   "filters": {
     "all": "Tous",

@@ -16,6 +16,7 @@ class UserPointsCubit extends Cubit<UserPointsState> {
   Option<StreamSubscription<Either<Failure, UserPoints>>> _subscription =
       const None();
   int _pendingUpdates = 0;
+  int _session = 0;
 
   UserPointsCubit({required this.repository}) : super(UserPointsInitial());
 
@@ -51,8 +52,10 @@ class UserPointsCubit extends Cubit<UserPointsState> {
   Future<Either<Failure, PointsUpdate>> track(
     TaskEither<Failure, PointsUpdate> update,
   ) async {
+    final session = _session;
     _pendingUpdates++;
     final result = await update.run();
+    if (session != _session) return result;
     _pendingUpdates--;
     result.match(
       (_) => null,
@@ -64,6 +67,7 @@ class UserPointsCubit extends Cubit<UserPointsState> {
   }
 
   void reset() {
+    _session++;
     _cancelSubscription();
     _known = const None();
     _pendingUpdates = 0;

@@ -156,13 +156,21 @@ class ExchangeCubit extends SafeCubit<ExchangeState> {
         .run();
   }
 
-  void accept(String requestId) {
-    repository.setStatus(requestId, ExchangeStatus.accepted).run();
-  }
+  Future<Option<String>> accept(String requestId) => repository
+      .setStatus(requestId, ExchangeStatus.accepted)
+      .match<Option<String>>(
+        (failure) => Some(failure.message),
+        (_) => const None(),
+      )
+      .run();
 
-  void reject(String requestId) {
-    repository.setStatus(requestId, ExchangeStatus.rejected).run();
-  }
+  Future<Option<String>> reject(String requestId) => repository
+      .setStatus(requestId, ExchangeStatus.rejected)
+      .match<Option<String>>(
+        (failure) => Some(failure.message),
+        (_) => const None(),
+      )
+      .run();
 
   void markSeenByOwner(String exchangeId) {
     repository.markSeenByOwner(exchangeId).run();

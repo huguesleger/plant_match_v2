@@ -23,17 +23,18 @@ class DetailPlantLoader {
     required String currentUserId,
   }) =>
       Task(() async {
-        await _incrementViews(catalog, currentUserId).run();
         final (resolvedCatalog, resolvedOwner, currentUser) = await (
           _resolveCatalog(catalog).run(),
           _resolveOwner(catalog.userId, owner).run(),
           _fetchUser(currentUserId).run(),
         ).wait;
-        return resolvedOwner.map(
-          (found) => DetailPlantData(
-            catalog: resolvedCatalog,
-            owner: found,
-            currentUser: currentUser,
+        return resolvedCatalog.flatMap(
+          (found) => resolvedOwner.map(
+            (foundOwner) => DetailPlantData(
+              catalog: found,
+              owner: foundOwner,
+              currentUser: currentUser,
+            ),
           ),
         );
       });
@@ -41,7 +42,7 @@ class DetailPlantLoader {
   static Option<String> _catalogId(Catalog catalog) =>
       catalog.catalogId.filter((id) => id.isNotEmpty);
 
-  static Task<Unit> _incrementViews(Catalog catalog, String currentUserId) =>
+  static Task<Unit> incrementViews(Catalog catalog, String currentUserId) =>
       _catalogId(catalog)
           .filter(
             (_) => currentUserId.isNotEmpty && currentUserId != catalog.userId,
@@ -53,13 +54,12 @@ class DetailPlantLoader {
                 .match((_) => unit, (_) => unit),
           );
 
-  static Task<Catalog> _resolveCatalog(Catalog catalog) =>
+  static Task<Option<Catalog>> _resolveCatalog(Catalog catalog) =>
       _catalogId(catalog).match(
-        () => Task.of(catalog),
-        (id) => FirebaseCatalogRepository().getCatalogById(id).match(
-              (_) => catalog,
-              (found) => found.getOrElse(() => catalog),
-            ),
+        () => Task.of(Some(catalog)),
+        (id) => FirebaseCatalogRepository()
+            .getCatalogById(id)
+            .getOrElse((_) => const None()),
       );
 
   static Task<Option<ProfilUser>> _resolveOwner(

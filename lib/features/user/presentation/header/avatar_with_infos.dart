@@ -70,7 +70,10 @@ class AvatarWithInfos extends StatelessWidget {
           ),
         ),
         Text(
-          '${user.localisation} (${user.zipCode})',
+          [
+            user.localisation,
+            if (user.zipCode.isNotEmpty) '(${user.zipCode})',
+          ].join(' ').trim(),
           style: InterTextStyle.inter(
             AppTypo.textXs,
             color: AppColors.greyDark,

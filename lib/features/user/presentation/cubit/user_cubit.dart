@@ -42,7 +42,8 @@ class UserCubit extends Cubit<UserState> {
           final (user, catalogs, level) = data;
           return exchangeRepository
               .completedExchangeCount(user.uid)
-              .orElse((_) => TaskEither<Failure, int>.right(0))
+              .map<Option<int>>(Some.new)
+              .orElse((_) => TaskEither<Failure, Option<int>>.right(const None()))
               .map((completedCount) => (user, catalogs, level, completedCount));
         })
         .map((data) {

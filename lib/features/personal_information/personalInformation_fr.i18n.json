@@ -9,7 +9,13 @@
     "bio": "Bio",
     "location": "Localisation",
     "empty_field": "À renseigner",
-    "edit_button": "Modifier mon profil"
+    "edit_button": "Modifier mon profil",
+    "clear": {
+      "title": "Effacer « $field » ?",
+      "content": "Cette information sera supprimée de votre profil.",
+      "cancel": "Annuler",
+      "confirm": "Effacer"
+    }
   },
   "wizard": {
     "pseudo": {

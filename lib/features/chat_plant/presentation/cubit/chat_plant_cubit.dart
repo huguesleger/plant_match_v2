@@ -34,16 +34,19 @@ class ChatPlantCubit extends SafeCubit<ChatPlantState> {
       currentUserId: currentUserId,
       otherUserId: otherUserId,
     )
-        .listen((blockStatus) {
-      if (isClosed) return;
-      _blockStatus = blockStatus;
-      if (state is ChatPlantLoaded) {
-        emit(ChatPlantLoaded(
-          messages: _currentMessages,
-          blockStatus: _blockStatus,
-        ));
-      }
-    });
+        .listen(
+      (blockStatus) {
+        if (isClosed) return;
+        _blockStatus = blockStatus;
+        if (state is ChatPlantLoaded) {
+          emit(ChatPlantLoaded(
+            messages: _currentMessages,
+            blockStatus: _blockStatus,
+          ));
+        }
+      },
+      onError: (_) {},
+    );
 
     _messagesSub?.cancel();
     _messagesSub = repository.messagesStream(chatId).listen(

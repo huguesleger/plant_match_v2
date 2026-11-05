@@ -61,11 +61,10 @@ class AuthCubit extends Cubit<AuthState> {
       ).match(
         () => emit(const Unauthenticated()),
         (firebaseUser) {
-          final user = UserAuth(
+          final user = UserAuth.fromFullName(
             uid: firebaseUser.uid,
             email: Option.fromNullable(firebaseUser.email),
-            firstName: '',
-            lastName: '',
+            fullName: firebaseUser.displayName ?? '',
           );
           _currentUser = user;
           emit(AuthEmailVerificationSent(user));

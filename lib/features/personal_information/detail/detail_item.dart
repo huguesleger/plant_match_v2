@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 
@@ -49,7 +50,7 @@ class DetailItem extends StatelessWidget {
                 color: Colors.transparent,
                 shape: const CircleBorder(),
                 child: InkWell(
-                  onTap: onTap,
+                  onTap: () => _confirmClear(context),
                   child: const Padding(
                     padding: EdgeInsets.all(4),
                     child: Icon(LucideIcons.x, size: AppTypo.text),
@@ -61,5 +62,29 @@ class DetailItem extends StatelessWidget {
       ),
       contentPadding: const EdgeInsets.symmetric(vertical: 10),
     );
+  }
+
+  Future<void> _confirmClear(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(t.personalInformation.detail.clear.title(field: title)),
+        content: Text(t.personalInformation.detail.clear.content),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: Text(t.personalInformation.detail.clear.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: Text(
+              t.personalInformation.detail.clear.confirm,
+              style: const TextStyle(color: AppColors.red),
+            ),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true) onTap?.call();
   }
 }

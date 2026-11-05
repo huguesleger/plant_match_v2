@@ -6,6 +6,7 @@ import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/common/chat_plant_action_button.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/common/chat_plant_action_button_templates.dart';
+import 'package:plant_match_v2/features/chat_plant/presentation/widgets/common/chat_plant_accept_or_refuse_bar.dart';
 import 'package:plant_match_v2/features/exchange/presentation/cubit/exchange_cubit.dart';
 import 'package:plant_match_v2/features/exchange/presentation/exchange_page_route.dart';
 import 'package:plant_match_v2/features/exchange/presentation/state/exchange_state.dart';
@@ -38,7 +39,6 @@ class ChatPlantExchangeActionBar extends StatelessWidget {
     return switch (state) {
       ExchangePending(:final exchange) when isPlantOwner =>
         ChatPlantAcceptOrRefuseBar(
-          label: t.chatPlant.actions.labels.exchange,
           onAccept: () => context.read<ExchangeCubit>().accept(exchange.id),
           onRefuse: () => context.read<ExchangeCubit>().reject(exchange.id),
         ),

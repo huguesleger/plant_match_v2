@@ -319,11 +319,7 @@ class $ResImagesOnboardingGen {
 class Assets {
   const Assets._();
 
-  static const String aEnv = '.env';
   static const $ResGen res = $ResGen();
-
-  /// List of all assets
-  static List<String> get values => [aEnv];
 }
 
 class AssetGenImage {

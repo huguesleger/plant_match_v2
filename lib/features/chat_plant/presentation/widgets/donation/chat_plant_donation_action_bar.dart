@@ -10,6 +10,7 @@ import 'package:plant_match_v2/core/theme/inter_text_style.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/common/chat_plant_action_button.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/common/chat_plant_action_button_templates.dart';
+import 'package:plant_match_v2/features/chat_plant/presentation/widgets/common/chat_plant_accept_or_refuse_bar.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/owner_validation_code.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/validation_code_input.dart';
 import 'package:plant_match_v2/features/donation/domain/entities/donation.dart';
@@ -48,7 +49,6 @@ class ChatPlantDonationActionBar extends StatelessWidget {
     return switch (state) {
       DonationPending(:final donation) when isPlantOwner =>
         ChatPlantAcceptOrRefuseBar(
-          label: t.chatPlant.actions.labels.donation,
           onAccept: () => context.read<DonationCubit>().accept(donation.id),
           onRefuse: () => context.read<DonationCubit>().reject(donation.id),
         ),

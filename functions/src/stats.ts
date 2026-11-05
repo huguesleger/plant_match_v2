@@ -3,9 +3,25 @@ import {Filter} from "firebase-admin/firestore";
 import {HttpsError, onCall} from "firebase-functions/v2/https";
 import {REGION} from "./config";
 
+const completedCount = async (collection: string, uid: string) => {
+  const snapshot = await admin
+    .firestore()
+    .collection(collection)
+    .where("status", "==", "completed")
+    .where(
+      Filter.or(
+        Filter.where("ownerId", "==", uid),
+        Filter.where("requestedBy", "==", uid),
+      ),
+    )
+    .count()
+    .get();
+  return snapshot.data().count;
+};
+
 /**
- * Nombre d'échanges terminés d'un utilisateur.
- * Les documents plant_exchanges ne sont lisibles que par leurs participants,
+ * Nombre d'échanges et de dons terminés d'un utilisateur.
+ * Ces documents ne sont lisibles que par leurs participants,
  * on agrège donc côté serveur pour l'afficher sur n'importe quel profil.
  */
 export const getCompletedExchangeCount = onCall(
@@ -19,19 +35,11 @@ export const getCompletedExchangeCount = onCall(
       throw new HttpsError("invalid-argument", "Paramètre manquant : uid");
     }
 
-    const snapshot = await admin
-      .firestore()
-      .collection("plant_exchanges")
-      .where("status", "==", "completed")
-      .where(
-        Filter.or(
-          Filter.where("ownerId", "==", uid),
-          Filter.where("requestedBy", "==", uid),
-        ),
-      )
-      .count()
-      .get();
+    const [exchanges, donations] = await Promise.all([
+      completedCount("plant_exchanges", uid),
+      completedCount("plant_donations", uid),
+    ]);
 
-    return {count: snapshot.data().count};
+    return {count: exchanges + donations};
   },
 );

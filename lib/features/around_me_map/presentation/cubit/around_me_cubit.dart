@@ -47,7 +47,7 @@ class AroundMeCubit extends Cubit<AroundMeState> {
 
   // ─── updateUserLocation ───────────────────────────────────────────────────
 
-  void updateUserLocation(ProfilUser user) {
+  Future<void> updateUserLocation(ProfilUser user) {
     final previous = state;
     emit(
       switch (previous) {
@@ -60,7 +60,7 @@ class AroundMeCubit extends Cubit<AroundMeState> {
       },
     );
 
-    locationService
+    return locationService
         .getCurrentPosition()
         .flatMap(
           (position) => locationService
@@ -81,6 +81,9 @@ class AroundMeCubit extends Cubit<AroundMeState> {
             newCountry: placemark
                 .flatMap((p) => Option.fromNullable(p.country))
                 .getOrElse(() => user.country),
+            newZipCode: placemark
+                .flatMap((p) => Option.fromNullable(p.postalCode))
+                .getOrElse(() => user.zipCode),
             newLatitude: Some(position.latitude),
             newLongitude: Some(position.longitude),
           );

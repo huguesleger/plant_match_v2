@@ -75,29 +75,23 @@ class DonationCubit extends SafeCubit<DonationState> {
 
   // ─── accept ────────────────────────────────────────────────────────────────
 
-  void accept(String donationId) {
-    repository
-        .setStatus(donationId, DonationStatus.accepted)
-        .match(
-          (failure) => DonationError(failure.message),
-          (_) => state,
-        )
-        .map((s) => emit(s))
-        .run();
-  }
+  Future<Option<String>> accept(String donationId) => repository
+      .setStatus(donationId, DonationStatus.accepted)
+      .match<Option<String>>(
+        (failure) => Some(failure.message),
+        (_) => const None(),
+      )
+      .run();
 
   // ─── reject ────────────────────────────────────────────────────────────────
 
-  void reject(String donationId) {
-    repository
-        .setStatus(donationId, DonationStatus.rejected)
-        .match(
-          (failure) => DonationError(failure.message),
-          (_) => state,
-        )
-        .map((s) => emit(s))
-        .run();
-  }
+  Future<Option<String>> reject(String donationId) => repository
+      .setStatus(donationId, DonationStatus.rejected)
+      .match<Option<String>>(
+        (failure) => Some(failure.message),
+        (_) => const None(),
+      )
+      .run();
 
   void markSeenByOwner(String donationId) {
     repository.markSeenByOwner(donationId).run();

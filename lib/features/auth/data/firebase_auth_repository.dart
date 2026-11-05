@@ -106,6 +106,7 @@ class FirebaseAuthRepository implements AuthRepository {
         if (user == null) {
           throw const AuthFailure("Impossible de créer l'utilisateur.");
         }
+        await user.updateDisplayName('$firstName $lastName'.trim());
 
         return UserAuth(
           email: Option.fromNullable(email),

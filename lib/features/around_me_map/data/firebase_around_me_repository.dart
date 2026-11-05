@@ -44,6 +44,7 @@ class FirebaseAroundMeRepository implements AroundMeRepository {
           'longitude': user.longitude.map(DistanceHelper.coarse).toNullable(),
           'localisation': user.localisation,
           'country': user.country,
+          'zipCode': user.zipCode,
         });
         return unit;
       },

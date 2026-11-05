@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
@@ -15,7 +16,7 @@ class ItemsCount extends StatelessWidget {
 
   final List<Catalog> catalog;
   final int level;
-  final int exchangeCount;
+  final Option<int> exchangeCount;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +31,7 @@ class ItemsCount extends StatelessWidget {
           ),
           const SizedBox(width: 10),
           ItemCount(
-            count: exchangeCount.toString(),
+            count: exchangeCount.match(() => '–', (n) => n.toString()),
             text: t.user.stats.matches,
             icon: LucideIcons.heart_handshake,
           ),

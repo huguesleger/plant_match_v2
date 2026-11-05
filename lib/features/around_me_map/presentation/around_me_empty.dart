@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
 import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
@@ -58,9 +59,7 @@ class AroundMeEmpty extends StatelessWidget {
             child: state.locating
                 ? const Center(child: CircularProgressIndicator())
                 : ButtonRounded(
-                    onPressed: () => context
-                        .read<AroundMeCubit>()
-                        .updateUserLocation(state.currentUser),
+                    onPressed: () => _locate(context),
                     bgColor: AppColors.greenLight,
                     textColor: AppColors.blueGreen,
                     text: t.aroundMeMap.empty.button,
@@ -69,5 +68,13 @@ class AroundMeEmpty extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void _locate(BuildContext context) {
+    final profilCubit = context.read<ProfilCubit>();
+    context
+        .read<AroundMeCubit>()
+        .updateUserLocation(state.currentUser)
+        .then((_) => profilCubit.refreshLeaves(state.currentUser.uid));
   }
 }

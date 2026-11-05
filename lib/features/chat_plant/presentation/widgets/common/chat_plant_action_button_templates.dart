@@ -1,56 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
-import 'package:plant_match_v2/core/widgets/buttons/button_outlined_rounded.dart';
-import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
-
-class ChatPlantAcceptOrRefuseBar extends StatelessWidget {
-  const ChatPlantAcceptOrRefuseBar({
-    super.key,
-    required this.label,
-    required this.onAccept,
-    required this.onRefuse,
-  });
-
-  final String label;
-  final VoidCallback onAccept;
-  final VoidCallback onRefuse;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(12),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: AppColors.greyLight)),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: ButtonRounded(
-              onPressed: onAccept,
-              bgColor: AppColors.greenLight,
-              textColor: AppColors.blueGreen,
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              text: t.chatPlant.actions.accept,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: ButtonOutlinedRounded(
-              onPressed: onRefuse,
-              borderColor: AppColors.blueGreen,
-              textColor: AppColors.blueGreen,
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              text: t.chatPlant.actions.refuse,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 class ChatPlantCompleteActionBar extends StatelessWidget {
   const ChatPlantCompleteActionBar({
