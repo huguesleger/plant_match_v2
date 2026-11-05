@@ -17,15 +17,23 @@ class CguCheckboxField extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       overlayColor: WidgetStateProperty.all(Colors.transparent),
+      onTap: () => onChanged(!value),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Checkbox(
-            value: value,
-            onChanged: (value) {
-              onChanged(value == true);
-            },
+          SizedBox(
+            width: 24,
+            height: 24,
+            child: Checkbox(
+              value: value,
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              visualDensity: VisualDensity.compact,
+              onChanged: (value) {
+                onChanged(value == true);
+              },
+            ),
           ),
+          const SizedBox(width: 10),
           Expanded(
             child: RichText(
               strutStyle: const StrutStyle(height: 1.5),
@@ -34,7 +42,9 @@ class CguCheckboxField extends StatelessWidget {
                 style: const TextStyle(color: AppColors.greyDark, fontSize: 14),
                 children: [
                   TextSpan(
-                    recognizer: TapGestureRecognizer()..onTap = () {},
+                    recognizer: TapGestureRecognizer()..onTap = () {
+                      //TODO page terms and conditions
+                    },
                     text: t.auth.register.cgu.terms,
                     style: const TextStyle(
                         color: AppColors.greyDark,

@@ -29,30 +29,31 @@ class AuthCguCheckbox extends StatelessWidget {
             ).toNullable(),
       ]),
       builder: (field) {
-        return Padding(
-          padding: const EdgeInsets.only(left: 16),
-          child: InputDecorator(
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              enabledBorder: InputBorder.none,
-              errorBorder: InputBorder.none,
-              focusedBorder: InputBorder.none,
-              focusedErrorBorder: InputBorder.none,
-              errorText: field.errorText,
-              errorStyle: const TextStyle(
-                color: AppColors.error,
-              ),
+        return InputDecorator(
+          decoration: InputDecoration(
+            border: InputBorder.none,
+            enabledBorder: InputBorder.none,
+            errorBorder: InputBorder.none,
+            focusedBorder: InputBorder.none,
+            focusedErrorBorder: InputBorder.none,
+            error: Option.fromNullable(field.errorText)
+                .map<Widget>(
+                  (message) => Padding(
+                    padding: const EdgeInsets.only(left: 16),
+                    child: Text(message),
+                  ),
+                )
+                .toNullable(),
+            errorStyle: const TextStyle(
+              color: AppColors.error,
             ),
-            child: Transform(
-              transform: Matrix4.translationValues(-30, 0.0, 0.0),
-              child: CguCheckboxField(
-                value: isChecked,
-                onChanged: (val) {
-                  field.didChange(val);
-                  onChanged(val);
-                },
-              ),
-            ),
+          ),
+          child: CguCheckboxField(
+            value: isChecked,
+            onChanged: (val) {
+              field.didChange(val);
+              onChanged(val);
+            },
           ),
         );
       },
