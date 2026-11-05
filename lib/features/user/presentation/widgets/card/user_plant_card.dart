@@ -35,6 +35,18 @@ class UserPlantCard extends StatelessWidget {
   final DateTime createdDate;
   final Option<Catalog> catalog;
 
+  // Image indisponible (hors ligne, supprimée du Storage…).
+  Widget _placeholder() => Container(
+        width: 120,
+        height: 130,
+        color: AppColors.greyUltraLight,
+        child: const Icon(
+          Icons.eco_rounded,
+          color: AppColors.greyLight,
+          size: 32,
+        ),
+      );
+
   @override
   Widget build(BuildContext context) {
     final date = DateFormat('d/MM/y', 'fr_FR');
@@ -67,6 +79,7 @@ class UserPlantCard extends StatelessWidget {
                     fit: BoxFit.cover,
                     width: 120,
                     height: 130,
+                    errorBuilder: (_, __, ___) => _placeholder(),
                   ),
                 ),
                 Positioned(

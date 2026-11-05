@@ -89,6 +89,23 @@ class ValidationCodeDisplay extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: const TextStyle(fontSize: 12, color: AppColors.grey),
               ),
+              // Le code est bloqué après 5 essais erronés : le propriétaire
+              // doit pouvoir en générer un nouveau.
+              generating
+                  ? const Padding(
+                      padding: EdgeInsets.only(top: 8),
+                      child: CircularProgressIndicator(),
+                    )
+                  : TextButton(
+                      onPressed: onGenerate,
+                      child: Text(
+                        t.chatPlant.display_code.regenerate_btn,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: AppColors.greenDark,
+                        ),
+                      ),
+                    ),
             ],
           ),
         ],

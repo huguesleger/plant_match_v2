@@ -29,6 +29,18 @@ class RecentCard extends StatelessWidget {
   final OfferType offerType;
   final Option<Catalog> catalog;
 
+  // Image indisponible (hors ligne, supprimée du Storage…).
+  Widget _placeholder() => Container(
+        height: 150,
+        width: double.infinity,
+        color: AppColors.greyUltraLight,
+        child: const Icon(
+          Icons.eco_rounded,
+          color: AppColors.greyLight,
+          size: 32,
+        ),
+      );
+
   @override
   Widget build(BuildContext context) {
     final date = DateFormat('d/MM/y', 'fr_FR');
@@ -57,6 +69,7 @@ class RecentCard extends StatelessWidget {
                     height: 150,
                     width: double.infinity,
                     fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => _placeholder(),
                   ),
                 ),
                 Positioned(

@@ -64,7 +64,8 @@
     "ready_subtitle": "Générez le code une fois que vous êtes avec la personne.",
     "generate_btn": "Générer le code de remise",
     "code_title": "Code de confirmation",
-    "code_subtitle": "Montrez ce code au receveur pour finaliser l'échange."
+    "code_subtitle": "Montrez ce code au receveur pour finaliser l'échange.",
+    "regenerate_btn": "Générer un nouveau code"
   },
   "plant_card": {
     "proposed_plant": "Plante proposée",

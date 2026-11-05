@@ -1034,6 +1034,9 @@ class TranslationsChatPlantDisplayCodeFr {
 
 	/// fr: 'Montrez ce code au receveur pour finaliser l'échange.'
 	String get code_subtitle => 'Montrez ce code au receveur pour finaliser l\'échange.';
+
+	/// fr: 'Générer un nouveau code'
+	String get regenerate_btn => 'Générer un nouveau code';
 }
 
 // Path: chatPlant.plant_card
@@ -3560,6 +3563,7 @@ extension on Translations {
 			'chatPlant.display_code.generate_btn' => 'Générer le code de remise',
 			'chatPlant.display_code.code_title' => 'Code de confirmation',
 			'chatPlant.display_code.code_subtitle' => 'Montrez ce code au receveur pour finaliser l\'échange.',
+			'chatPlant.display_code.regenerate_btn' => 'Générer un nouveau code',
 			'chatPlant.plant_card.proposed_plant' => 'Plante proposée',
 			'chatPlant.plant_card.exchange_proposal' => 'Proposition d\'échange',
 			'chatPlant.plant_card.view_detail' => 'Voir le détail',
