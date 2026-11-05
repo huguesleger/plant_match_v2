@@ -422,6 +422,12 @@ class TranslationsAroundMeMapMapFr {
 
 	/// fr: 'Soyez le premier à publier une plante dans l'application !'
 	String get empty_first => 'Soyez le premier à publier une plante dans l\'application !';
+
+	/// fr: 'Élargir le rayon'
+	String get empty_widen_btn => 'Élargir le rayon';
+
+	/// fr: 'Compris'
+	String get empty_close_btn => 'Compris';
 }
 
 // Path: aroundMeMap.radius
@@ -3325,6 +3331,8 @@ extension on Translations {
 			'aroundMeMap.map.empty_title' => 'Aucune plante trouvée dans ce rayon',
 			'aroundMeMap.map.empty_widen' => 'Élargissez le rayon de recherche pour découvrir plus de plantes autour de vous.',
 			'aroundMeMap.map.empty_first' => 'Soyez le premier à publier une plante dans l\'application !',
+			'aroundMeMap.map.empty_widen_btn' => 'Élargir le rayon',
+			'aroundMeMap.map.empty_close_btn' => 'Compris',
 			'aroundMeMap.radius.title' => 'Rayon de recherche',
 			'aroundMeMap.radius.description' => 'Définissez la distance maximale pour découvrir des plantes autour de vous.',
 			'aroundMeMap.radius.within' => 'Dans un rayon de',

@@ -29,7 +29,9 @@
   "map": {
     "empty_title": "Aucune plante trouvée dans ce rayon",
     "empty_widen": "Élargissez le rayon de recherche pour découvrir plus de plantes autour de vous.",
-    "empty_first": "Soyez le premier à publier une plante dans l'application !"
+    "empty_first": "Soyez le premier à publier une plante dans l'application !",
+    "empty_widen_btn": "Élargir le rayon",
+    "empty_close_btn": "Compris"
   },
   "radius": {
     "title": "Rayon de recherche",

@@ -6,7 +6,7 @@ import 'package:plant_match_v2/features/around_me_map/presentation/map/around_me
 import 'package:plant_match_v2/features/around_me_map/presentation/map/map_controls.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/map/map_geo.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/map/map_markers.dart';
-import 'package:plant_match_v2/features/around_me_map/presentation/map/no_plants_banner.dart';
+import 'package:plant_match_v2/features/around_me_map/presentation/map/no_plants_bottom_sheet.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/map/radius_filter_button.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/map/radius_filter_page.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
@@ -36,6 +36,8 @@ class _AroundMeMapState extends State<AroundMeMap>
   double _currentZoom = 12.0;
   static const double _minZoom = 6.0;
   static const double _maxZoom = 16.0;
+  // Évite de rouvrir la bottomSheet à chaque rebuild pour un même rayon vide.
+  bool _emptySheetShown = false;
 
   @override
   void dispose() {
@@ -61,11 +63,38 @@ class _AroundMeMapState extends State<AroundMeMap>
       ),
     );
     Option.fromNullable(result).match(() {}, (newRadius) {
-      setState(() => _selectedRadius = newRadius);
+      setState(() {
+        _selectedRadius = newRadius;
+        _emptySheetShown = false;
+      });
       MapGeo.fitRadius(
         _controller,
         MapGeo.positionOf(widget.currentUser),
         newRadius,
+      );
+    });
+  }
+
+  /// La map vit dans l'IndexedStack de TemplatePage : elle peut être
+  /// reconstruite en arrière-plan. On n'ouvre la bottomSheet que si l'onglet
+  /// est visible (TickerMode) et qu'aucune page n'est poussée par-dessus.
+  /// Les deux lookups créent une dépendance : un retour sur l'onglet ou la
+  /// fermeture d'une page relance le build et donc cette vérification.
+  void _syncEmptySheet({required bool isEmpty}) {
+    final isVisible = TickerMode.of(context);
+    final isCurrent = ModalRoute.of(context)?.isCurrent ?? true;
+    if (!isEmpty) {
+      _emptySheetShown = false;
+      return;
+    }
+    if (_emptySheetShown || !isVisible || !isCurrent) return;
+    _emptySheetShown = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      showNoPlantsBottomSheet(
+        context: context,
+        isRadiusLimited: MapGeo.isLimited(_selectedRadius),
+        onWidenRadius: _openRadiusFilter,
       );
     });
   }
@@ -77,6 +106,7 @@ class _AroundMeMapState extends State<AroundMeMap>
       userCatalogs: widget.userCatalogs,
     );
     final otherMarkers = markers.around(widget.users, _selectedRadius);
+    _syncEmptySheet(isEmpty: otherMarkers.isEmpty);
 
     return Stack(
       children: [
@@ -97,15 +127,6 @@ class _AroundMeMapState extends State<AroundMeMap>
             ),
           ),
         ),
-        if (otherMarkers.isEmpty)
-          Positioned(
-            top: 30,
-            left: 30,
-            right: 30,
-            child: NoPlantsBanner(
-              isRadiusLimited: MapGeo.isLimited(_selectedRadius),
-            ),
-          ),
         Positioned(
           top: 40,
           left: 30,
