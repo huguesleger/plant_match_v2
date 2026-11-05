@@ -33,7 +33,7 @@ class AuthErrorListener extends StatelessWidget {
         Unauthenticated() ||
         AuthEmailVerificationSent() ||
         AuthFinalizing() =>
-          null,
+          Future<void>.value(),
       },
       child: child,
     );
@@ -59,7 +59,7 @@ class _AuthErrorDialog extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ButtonRounded(
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: Some(() => Navigator.of(context).pop()),
                 text: t.auth.common.ok,
                 bgColor: AppColors.greenLight,
                 textColor: AppColors.blueGreen,

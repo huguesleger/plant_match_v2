@@ -20,7 +20,9 @@ class PlantContact {
     required Catalog catalog,
     required Option<ProfilUser> owner,
   }) async {
-    final userId = Option.fromNullable(context.read<AuthCubit>().userId)
+    final userId = context
+        .read<AuthCubit>()
+        .userId
         .filter((id) => id.isNotEmpty && id != catalog.userId)
         .filter((_) => catalog.status == CatalogStatus.published);
     await userId.match(

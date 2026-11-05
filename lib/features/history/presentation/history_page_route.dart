@@ -1,3 +1,4 @@
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/features/donation/data/firebase_donation.dart';
@@ -11,7 +12,8 @@ class HistoryPageRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentUserId = context.read<AuthCubit>().userId ?? '';
+    final currentUserId =
+        context.read<AuthCubit>().userId.getOrElse(() => '');
 
     return BlocProvider(
       create: (context) => HistoryCubit(

@@ -27,8 +27,7 @@ class _OwnerValidationCodeState extends State<OwnerValidationCode> {
     final error = await widget.generate();
     if (!mounted) return;
     setState(() => _generating = false);
-    error.match(
-      () => null,
+    error.map(
       (message) => messenger.showSnackBar(SnackBar(content: Text(message))),
     );
   }
@@ -45,7 +44,7 @@ class _OwnerValidationCodeState extends State<OwnerValidationCode> {
           (code) => ValidationCodeDisplay(
             onGenerate: _generate,
             generating: _generating,
-            code: code.toNullable(),
+            code: code,
           ),
         ),
       );

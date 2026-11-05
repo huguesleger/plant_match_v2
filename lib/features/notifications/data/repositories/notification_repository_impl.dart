@@ -31,10 +31,7 @@ class NotificationRepositoryImpl implements NotificationRepository {
   @override
   TaskEither<Failure, Option<String>> getFCMToken() {
     return TaskEither.tryCatch(
-      () async {
-        final token = await _remoteDataSource.getToken();
-        return Option.fromNullable(token);
-      },
+      () => _remoteDataSource.getToken(),
       (error, stackTrace) => FirebaseFailure(
           'Erreur lors de la récupération du token FCM : $error'),
     );
@@ -97,9 +94,12 @@ class NotificationRepositoryImpl implements NotificationRepository {
 
   AppNotification _mapRemoteMessage(RemoteMessage message) {
     return AppNotification(
-      id: message.messageId ?? _uuid.v4(),
-      title: message.notification?.title ?? '',
-      body: Option.fromNullable(message.notification?.body),
+      id: Option.fromNullable(message.messageId).getOrElse(() => _uuid.v4()),
+      title: Option.fromNullable(message.notification)
+          .flatMap((notification) => Option.fromNullable(notification.title))
+          .getOrElse(() => ''),
+      body: Option.fromNullable(message.notification)
+          .flatMap((notification) => Option.fromNullable(notification.body)),
       payload: message.data,
     );
   }

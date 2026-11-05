@@ -14,14 +14,12 @@ class FirebaseFavoritesRepo implements FavoritesRepository {
   CollectionReference _usersRef(String uid) =>
       _db.collection('users').doc(uid).collection('favorites_users');
 
-  // ─── Plantes ────────────────────────────────────────────────────────────────
-
   @override
   TaskEither<Failure, Unit> addFavoritePlant(String uid, Catalog catalog) {
     return TaskEither.tryCatch(
       () async {
-        final id = catalog.catalogId.toNullable();
-        if (id == null) throw Exception('ID catalogue manquant');
+        final id = catalog.catalogId
+            .getOrElse(() => throw Exception('ID catalogue manquant'));
         await _plantsRef(uid).doc(id).set({
           'catalogId': id,
           'addedAt': FieldValue.serverTimestamp(),
@@ -106,8 +104,6 @@ class FirebaseFavoritesRepo implements FavoritesRepository {
           UnexpectedFailure('Erreur lors de la vérification du favori: $error'),
     );
   }
-
-  // ─── Profils utilisateurs ───────────────────────────────────────────────────
 
   @override
   TaskEither<Failure, Unit> addFavoriteUser(String uid, ProfilUser targetUser) {

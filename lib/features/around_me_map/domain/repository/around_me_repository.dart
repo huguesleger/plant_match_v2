@@ -5,6 +5,5 @@ import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 abstract class AroundMeRepository {
   TaskEither<Failure, List<ProfilUser>> getUsersByIds(Set<String> uids);
 
-  /// Met à jour la localisation de l'utilisateur
   TaskEither<Failure, Unit> updateUserLocation(ProfilUser user);
 }

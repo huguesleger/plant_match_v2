@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:intl/intl.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
@@ -34,7 +35,6 @@ class DetailView extends StatelessWidget {
               .map<VoidCallback>((_) => () => context
                   .read<ProfilCubit>()
                   .clearField(uid: profilUser.uid, fieldName: 'userName'))
-              .toNullable(),
         ),
         const Divider(height: 0),
         DetailItem(
@@ -47,7 +47,6 @@ class DetailView extends StatelessWidget {
               .map<VoidCallback>((_) => () => context
                   .read<ProfilCubit>()
                   .clearField(uid: profilUser.uid, fieldName: 'birthdayDate'))
-              .toNullable(),
         ),
         const Divider(height: 0),
         DetailItem(
@@ -61,7 +60,6 @@ class DetailView extends StatelessWidget {
               .map<VoidCallback>((_) => () => context
                   .read<ProfilCubit>()
                   .clearField(uid: profilUser.uid, fieldName: 'bio'))
-              .toNullable(),
         ),
         const Divider(height: 0),
         DetailItem(
@@ -69,9 +67,10 @@ class DetailView extends StatelessWidget {
           subtitle: profilUser.localisation.isEmpty
               ? t.personalInformation.detail.empty_field
               : '${profilUser.localisation} ${(profilUser.zipCode)} - ${profilUser.country}',
-          onTap: profilUser.localisation.isEmpty
-              ? null
-              : () => context.read<ProfilCubit>().clearLocation(profilUser.uid),
+          onTap: Option<VoidCallback>.fromPredicate(
+            () => context.read<ProfilCubit>().clearLocation(profilUser.uid),
+            (_) => profilUser.localisation.isNotEmpty,
+          ),
         ),
         const Divider(height: 0),
         const SizedBox(height: 30),

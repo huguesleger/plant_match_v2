@@ -1,3 +1,4 @@
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -13,8 +14,8 @@ class MaintenanceField extends StatelessWidget {
     required this.onChanged,
   });
 
-  final LevelMaintenance? selectedMaintenance;
-  final ValueChanged<LevelMaintenance?> onChanged;
+  final LevelMaintenance selectedMaintenance;
+  final ValueChanged<LevelMaintenance> onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -32,9 +33,9 @@ class MaintenanceField extends StatelessWidget {
               children: [
                 ItemRadio<LevelMaintenance>(
                   title: t.catalog.wizard.steps.maintenance.low,
-                  subtitle: t.catalog.edit.maintenance.low_subtitle,
+                  subtitle: Some(t.catalog.edit.maintenance.low_subtitle),
                   value: LevelMaintenance.low,
-                  selectedItem: selectedMaintenance,
+                  selectedItem: Some(selectedMaintenance),
                   onItemSelected: (val) {
                     onChanged(val);
                     field.didChange(val);
@@ -44,9 +45,9 @@ class MaintenanceField extends StatelessWidget {
                 const SizedBox(height: 20),
                 ItemRadio<LevelMaintenance>(
                   title: t.catalog.wizard.steps.maintenance.medium,
-                  subtitle: t.catalog.edit.maintenance.medium_subtitle,
+                  subtitle: Some(t.catalog.edit.maintenance.medium_subtitle),
                   value: LevelMaintenance.medium,
-                  selectedItem: selectedMaintenance,
+                  selectedItem: Some(selectedMaintenance),
                   onItemSelected: (val) {
                     onChanged(val);
                     field.didChange(val);
@@ -56,9 +57,9 @@ class MaintenanceField extends StatelessWidget {
                 const SizedBox(height: 20),
                 ItemRadio<LevelMaintenance>(
                   title: t.catalog.wizard.steps.maintenance.high,
-                  subtitle: t.catalog.edit.maintenance.high_subtitle,
+                  subtitle: Some(t.catalog.edit.maintenance.high_subtitle),
                   value: LevelMaintenance.high,
-                  selectedItem: selectedMaintenance,
+                  selectedItem: Some(selectedMaintenance),
                   onItemSelected: (val) {
                     onChanged(val);
                     field.didChange(val);
@@ -71,7 +72,7 @@ class MaintenanceField extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(top: 8.0, left: 12.0),
                 child: Text(
-                  field.errorText ?? '',
+                  Option.fromNullable(field.errorText).getOrElse(() => ''),
                   style: const TextStyle(color: Colors.red, fontSize: 12),
                 ),
               ),

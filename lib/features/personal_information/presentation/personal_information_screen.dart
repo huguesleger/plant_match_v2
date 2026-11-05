@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/gen/assets.gen.dart';
@@ -44,16 +45,16 @@ class PersonalInformationScreen extends StatelessWidget {
         return Scaffold(
           appBar: AppBarHeaderImageWithContent(
             headerHeight: 350,
-            title: t.personalInformation.screen.title,
+            title: Some(t.personalInformation.screen.title),
             titleColor: AppColors.white,
             image: Assets.res.images.bgHeaderProfil.image(),
             onPressed: () => Navigator.pop(context),
-            styleIconButton: IconButton.styleFrom(
+            styleIconButton: Some(IconButton.styleFrom(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
               backgroundColor: AppColors.white,
-            ),
+            )),
             child: PersonalInformationHeader(
               state: state,
               profilUser: profilUserState,

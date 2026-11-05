@@ -1,3 +1,4 @@
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:flutter_map/flutter_map.dart';
 import 'package:plant_match_v2/core/util/distance/distance_helper.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/map/map_geo.dart';
@@ -30,7 +31,8 @@ class MapMarkers {
           distance: isCurrentUser
               ? 0
               : DistanceHelper.calculateDistance(currentUser, user),
-          catalogs: userCatalogs[user.uid] ?? [],
+          catalogs: Option.fromNullable(userCatalogs[user.uid])
+              .getOrElse(() => []),
         ),
       );
 }

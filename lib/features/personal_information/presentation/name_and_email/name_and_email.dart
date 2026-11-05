@@ -26,10 +26,10 @@ class NameAndEmail extends StatelessWidget {
             ),
             fontSize: AppTypo.textL,
             color: AppColors.white,
-            textAlign: TextAlign.center,
+            textAlign: const Some(TextAlign.center),
           ),
           Text(
-            Option.fromNullable(context.read<AuthCubit>().currentUser)
+            context.read<AuthCubit>().currentUser
                 .flatMap((user) => user.email)
                 .getOrElse(() => ''),
             style: const TextStyle(

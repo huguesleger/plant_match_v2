@@ -10,7 +10,7 @@ class HistoryCardData {
   final String typeLabel;
   final Color typeColor;
   final String plantName;
-  final String? imageUrl;
+  final String imageUrl;
   final String roleText;
 
   const HistoryCardData({

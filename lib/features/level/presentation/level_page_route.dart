@@ -13,18 +13,16 @@ class LevelPageRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userId = context.read<AuthCubit>().userId;
-
-    if (userId == null) {
-      return Scaffold(
-        body: Center(child: Text(t.common.notConnected)),
-      );
-    }
-
-    return BlocProvider(
-      create: (context) => UserPointsCubit(repository: userPointsRepository)
-        ..fetchUserPoints(userId),
-      child: LevelScreen(userId: userId),
-    );
+    return context.read<AuthCubit>().userId.match(
+          () => Scaffold(
+            body: Center(child: Text(t.common.notConnected)),
+          ),
+          (userId) => BlocProvider(
+            create: (context) =>
+                UserPointsCubit(repository: userPointsRepository)
+                  ..fetchUserPoints(userId),
+            child: LevelScreen(userId: userId),
+          ),
+        );
   }
 }

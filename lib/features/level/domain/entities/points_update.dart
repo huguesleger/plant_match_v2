@@ -1,3 +1,4 @@
+import 'package:plant_match_v2/core/util/json_reader.dart';
 import 'package:plant_match_v2/features/level/domain/entities/user_points.dart';
 
 class PointsUpdate {
@@ -17,13 +18,13 @@ class PointsUpdate {
 
   factory PointsUpdate.fromJson(Map<String, dynamic> json) => PointsUpdate(
         userPoints: UserPoints(
-          uid: json['uid'] as String? ?? '',
-          currentPoints: json['currentPoints'] as int? ?? 0,
-          level: json['level'] as int? ?? 1,
+          uid: json.string('uid'),
+          currentPoints: json.integer('currentPoints'),
+          level: json.integer('level', 1),
         ),
-        previousLevel: json['previousLevel'] as int? ?? 1,
-        bonusLeaves: json['bonusLeaves'] as int? ?? 0,
-        giftedLeaves: json['giftedLeaves'] as int? ?? 0,
+        previousLevel: json.integer('previousLevel', 1),
+        bonusLeaves: json.integer('bonusLeaves'),
+        giftedLeaves: json.integer('giftedLeaves'),
       );
 
   bool get isLevelUp => userPoints.level > previousLevel;

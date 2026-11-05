@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
@@ -90,12 +91,12 @@ class LevelAwardedSuccessView extends StatelessWidget {
                       width: double.infinity,
                       child: ButtonRounded(
                         text: t.levelAwarded.success.view_progression,
-                        onPressed: () => Navigator.push(
+                        onPressed: Some(() => Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => LevelPageRoute(),
                           ),
-                        ),
+                        )),
                         bgColor: AppColors.white,
                         textColor: AppColors.blueGreen,
                       ),

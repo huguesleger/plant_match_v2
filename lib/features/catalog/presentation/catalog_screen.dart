@@ -22,10 +22,8 @@ class CatalogScreen extends StatelessWidget {
             body: ErrorPage(
               errorMessage: message,
               onRetry: () {
-                final userId = context.read<AuthCubit>().userId;
-                if (userId != null) {
-                  context.read<CatalogCubit>().getCatalogsByUserId(userId);
-                }
+                context.read<AuthCubit>().userId.map(
+                    context.read<CatalogCubit>().getCatalogsByUserId);
               },
             ),
           ),

@@ -1,3 +1,4 @@
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -34,14 +35,14 @@ class _CatalogEditScreenState extends State<CatalogEditScreen> {
   late TextEditingController _nameController;
   late TextEditingController _descriptionController;
 
-  Environment? _environment;
-  OfferType? _offerType;
+  late Environment _environment;
+  late OfferType _offerType;
   List<Family> _selectedFamilies = [];
-  LevelMaintenance? _maintenance;
-  Watering? _watering;
-  Lighting? _lighting;
+  late LevelMaintenance _maintenance;
+  late Watering _watering;
+  late Lighting _lighting;
   late List<String> _updatedImages;
-  bool? _isPublish;
+  late bool _isPublish;
 
   @override
   void initState() {
@@ -85,16 +86,16 @@ class _CatalogEditScreenState extends State<CatalogEditScreen> {
         CatalogInitial() || CatalogLoaded() => Scaffold(
             appBar: AppBarTemplate(
               title:
-                  t.catalog.edit.modifier_with_name(name: widget.catalog.name),
+                  Some(t.catalog.edit.modifier_with_name(name: widget.catalog.name)),
               centerTitle: true,
               backgroundColor: AppColors.white,
               surfaceTintColor: AppColors.white,
-              onPressed: () => Navigator.pop(context),
-              styleIconButton: IconButton.styleFrom(
+              onPressed: Some(() => Navigator.pop(context)),
+              styleIconButton: Some(IconButton.styleFrom(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
                 side: const BorderSide(color: AppColors.greyLight),
-              ),
+              )),
             ),
             body: SingleChildScrollView(
               padding: AppSpacing.paddingAll,
@@ -152,7 +153,7 @@ class _CatalogEditScreenState extends State<CatalogEditScreen> {
                     ),
                     const SizedBox(height: 25),
                     PublishField(
-                      isPublish: _isPublish ?? false,
+                      isPublish: _isPublish,
                       onChanged: (val) => setState(() => _isPublish = val),
                     ),
                   ],
@@ -166,7 +167,10 @@ class _CatalogEditScreenState extends State<CatalogEditScreen> {
   }
 
   Future<void> _save() async {
-    if (!(_formKey.currentState?.saveAndValidate() ?? false)) return;
+    if (!Option.fromNullable(_formKey.currentState)
+        .match(() => false, (s) => s.saveAndValidate())) {
+      return;
+    }
     final messenger = ScaffoldMessenger.of(context);
     final navigator = Navigator.of(context);
     final result = await context
@@ -182,16 +186,16 @@ class _CatalogEditScreenState extends State<CatalogEditScreen> {
   }
 
   Catalog _editedCatalog() => widget.catalog.copyWith(
-        newImages: _updatedImages,
-        newName: _nameController.text,
-        newDescription: _descriptionController.text,
-        newEnvironment: _environment ?? Environment.indoor,
-        newFamily: _selectedFamilies,
-        newLevelMaintenance: _maintenance ?? LevelMaintenance.low,
-        newWatering: _watering ?? Watering.little,
-        newLighting: _lighting ?? Lighting.sun,
-        newOfferType: _offerType ?? OfferType.exchange,
+        newImages: Some(_updatedImages),
+        newName: Some(_nameController.text),
+        newDescription: Some(_descriptionController.text),
+        newEnvironment: Some(_environment),
+        newFamily: Some(_selectedFamilies),
+        newLevelMaintenance: Some(_maintenance),
+        newWatering: Some(_watering),
+        newLighting: Some(_lighting),
+        newOfferType: Some(_offerType),
         newStatus:
-            _isPublish == true ? CatalogStatus.published : CatalogStatus.draft,
+            Some(_isPublish ? CatalogStatus.published : CatalogStatus.draft),
       );
 }

@@ -24,7 +24,6 @@ class SelectableItem<T> extends StatelessWidget {
       onTap: () => onTap(value),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-        //height: 124,
         decoration: BoxDecoration(
           color: isSelected
               ? AppColors.greenDark.withValues(alpha: 0.1)

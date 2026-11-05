@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
@@ -59,7 +60,7 @@ class AroundMeEmpty extends StatelessWidget {
             child: state.locating
                 ? const Center(child: CircularProgressIndicator())
                 : ButtonRounded(
-                    onPressed: () => _locate(context),
+                    onPressed: Some(() => _locate(context)),
                     bgColor: AppColors.greenLight,
                     textColor: AppColors.blueGreen,
                     text: t.aroundMeMap.empty.button,

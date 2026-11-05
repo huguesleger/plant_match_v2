@@ -9,9 +9,9 @@ import 'package:plant_match_v2/features/chat_plant/presentation/state/chat_plant
 class ChatPlantCubit extends SafeCubit<ChatPlantState> {
   final ChatPlantRepository repository;
 
-  StreamSubscription<List<types.Message>>? _messagesSub;
-  StreamSubscription<BlockStatus>? _blockedSub;
-  String? _otherUserId;
+  Option<StreamSubscription<List<types.Message>>> _messagesSub = const None();
+  Option<StreamSubscription<BlockStatus>> _blockedSub = const None();
+  Option<String> _otherUserId = const None();
   BlockStatus _blockStatus = BlockStatus.none;
   List<types.Message> _currentMessages = [];
 
@@ -26,10 +26,10 @@ class ChatPlantCubit extends SafeCubit<ChatPlantState> {
   }) {
     emit(ChatPlantLoading());
 
-    _otherUserId = otherUserId;
+    _otherUserId = Some(otherUserId);
 
-    _blockedSub?.cancel();
-    _blockedSub = repository
+    _blockedSub.map((sub) => sub.cancel());
+    _blockedSub = Some(repository
         .blockStatusStream(
       currentUserId: currentUserId,
       otherUserId: otherUserId,
@@ -46,10 +46,10 @@ class ChatPlantCubit extends SafeCubit<ChatPlantState> {
         }
       },
       onError: (_) {},
-    );
+    ));
 
-    _messagesSub?.cancel();
-    _messagesSub = repository.messagesStream(chatId).listen(
+    _messagesSub.map((sub) => sub.cancel());
+    _messagesSub = Some(repository.messagesStream(chatId).listen(
       (messages) {
         if (!isClosed) {
           _currentMessages = messages;
@@ -64,38 +64,40 @@ class ChatPlantCubit extends SafeCubit<ChatPlantState> {
           emit(ChatPlantError(e.toString()));
         }
       },
-    );
+    ));
   }
 
   Future<Option<String>> send({
     required String chatId,
     required String senderId,
     required String text,
-  }) async {
-    if (_otherUserId == null || _otherUserId!.isEmpty) return const None();
-    if (_blockStatus != BlockStatus.none) return const None();
-    final receiverId = _otherUserId!;
+  }) =>
+      _sendableReceiverId.match(
+        () async => const None(),
+        (receiverId) => repository
+            .payFirstContact(
+              chatId: chatId,
+              senderId: senderId,
+              receiverId: receiverId,
+            )
+            .flatMap(
+              (_) => repository.sendMessage(
+                chatId: chatId,
+                senderId: senderId,
+                receiverId: receiverId,
+                text: text,
+              ),
+            )
+            .match<Option<String>>(
+              (failure) => Some(failure.message),
+              (_) => const None(),
+            )
+            .run(),
+      );
 
-    return repository
-        .payFirstContact(
-          chatId: chatId,
-          senderId: senderId,
-          receiverId: receiverId,
-        )
-        .flatMap(
-          (_) => repository.sendMessage(
-            chatId: chatId,
-            senderId: senderId,
-            receiverId: receiverId,
-            text: text,
-          ),
-        )
-        .match<Option<String>>(
-          (failure) => Some(failure.message),
-          (_) => const None(),
-        )
-        .run();
-  }
+  Option<String> get _sendableReceiverId => _otherUserId
+      .filter((id) => id.isNotEmpty)
+      .filter((_) => _blockStatus == BlockStatus.none);
 
   void markMessagesAsRead({
     required String chatId,
@@ -128,24 +130,23 @@ class ChatPlantCubit extends SafeCubit<ChatPlantState> {
     required String plantName,
     required String plantImage,
   }) {
-    if (_otherUserId == null || _otherUserId!.isEmpty) return;
-    if (_blockStatus != BlockStatus.none) return;
-
-    repository
-        .sendPlantExchangeMessage(
-          chatId: chatId,
-          senderId: senderId,
-          receiverId: _otherUserId!,
-          plantId: plantId,
-          plantName: plantName,
-          plantImage: plantImage,
-        )
-        .match(
-          (failure) => ChatPlantError(failure.message),
-          (_) => state,
-        )
-        .map((s) => emit(s))
-        .run();
+    _sendableReceiverId.map(
+      (receiverId) => repository
+          .sendPlantExchangeMessage(
+            chatId: chatId,
+            senderId: senderId,
+            receiverId: receiverId,
+            plantId: plantId,
+            plantName: plantName,
+            plantImage: plantImage,
+          )
+          .match(
+            (failure) => ChatPlantError(failure.message),
+            (_) => state,
+          )
+          .map((s) => emit(s))
+          .run(),
+    );
   }
 
   void reportChat({
@@ -188,8 +189,8 @@ class ChatPlantCubit extends SafeCubit<ChatPlantState> {
 
   @override
   Future<void> close() {
-    _messagesSub?.cancel();
-    _blockedSub?.cancel();
+    _messagesSub.map((sub) => sub.cancel());
+    _blockedSub.map((sub) => sub.cancel());
     return super.close();
   }
 }

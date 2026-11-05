@@ -23,22 +23,19 @@ class MessagesPageRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userId = context.read<AuthCubit>().userId;
-
-    if (userId == null) {
-      return Scaffold(
-        body: Center(child: Text(t.common.notConnected)),
-      );
-    }
-
-    return BlocProvider(
-      create: (_) => MessagesCubit(
-        chatPlantRepository: chatPlantRepository,
-        userRepository: userRepository,
-        exchangeRepository: exchangeRepository,
-        donationRepository: donationRepository,
-      )..load(userId),
-      child: const MessagesScreen(),
-    );
+    return context.read<AuthCubit>().userId.match(
+          () => Scaffold(
+            body: Center(child: Text(t.common.notConnected)),
+          ),
+          (userId) => BlocProvider(
+            create: (_) => MessagesCubit(
+              chatPlantRepository: chatPlantRepository,
+              userRepository: userRepository,
+              exchangeRepository: exchangeRepository,
+              donationRepository: donationRepository,
+            )..load(userId),
+            child: const MessagesScreen(),
+          ),
+        );
   }
 }

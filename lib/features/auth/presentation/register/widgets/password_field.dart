@@ -1,5 +1,6 @@
 import 'package:fancy_password_field/fancy_password_field.dart';
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -23,22 +24,22 @@ class PasswordField extends StatelessWidget {
     return FancyPasswordField(
       controller: controller,
       autovalidateMode: AutovalidateMode.onUserInteraction,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return showErrors ? t.auth.common.password.required : null;
-        }
-        final rules = {
-          MinCharactersValidationRule(8),
-          DigitValidationRule(),
-          UppercaseValidationRule(),
-          SpecialCharacterValidationRule(),
-        };
-        final isAllValid = rules.every((rule) => rule.validate(value));
-        if (!isAllValid) {
-          return showErrors ? t.auth.register.passwordRules.error_rules : null;
-        }
-        return null;
-      },
+      validator: (value) => Option.fromNullable(value)
+          .filter((password) => password.isNotEmpty)
+          .match(
+            () => Some(t.auth.common.password.required),
+            (password) => Option.fromPredicate(
+              t.auth.register.passwordRules.error_rules,
+              (_) => !{
+                MinCharactersValidationRule(8),
+                DigitValidationRule(),
+                UppercaseValidationRule(),
+                SpecialCharacterValidationRule(),
+              }.every((rule) => rule.validate(password)),
+            ),
+          )
+          .filter((_) => showErrors)
+          .toNullable(),
       validationRules: {
         MinCharactersValidationRule(8,
             customText: t.auth.register.passwordRules.minChars),

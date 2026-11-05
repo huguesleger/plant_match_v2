@@ -10,17 +10,17 @@ class FavoriteBtn extends StatefulWidget {
   const FavoriteBtn({
     super.key,
     this.initialValue = false,
-    this.onChanged,
-    this.catalog,
-    this.targetUser,
-    this.currentUserId,
+    this.onChanged = const None(),
+    this.catalog = const None(),
+    this.targetUser = const None(),
+    this.currentUserId = const None(),
   });
 
   final bool initialValue;
-  final ValueChanged<bool>? onChanged;
-  final Catalog? catalog;
-  final ProfilUser? targetUser;
-  final String? currentUserId;
+  final Option<ValueChanged<bool>> onChanged;
+  final Option<Catalog> catalog;
+  final Option<ProfilUser> targetUser;
+  final Option<String> currentUserId;
 
   @override
   State<FavoriteBtn> createState() => _FavoriteBtnState();
@@ -39,13 +39,19 @@ class _FavoriteBtnState extends State<FavoriteBtn>
     _loadInitialState();
   }
 
-  Future<void> _loadInitialState() async {
-    final uid = widget.currentUserId;
-    if (uid == null || uid.isEmpty) return;
+  Option<String> get _uid =>
+      widget.currentUserId.filter((uid) => uid.isNotEmpty);
 
-    final catalogId =
-        Option.fromNullable(widget.catalog).flatMap((c) => c.catalogId);
-    final targetUid = Option.fromNullable(widget.targetUser).map((u) => u.uid);
+  Future<void> _loadInitialState() async {
+    await _uid.match(
+      () async {},
+      (uid) => _loadFavoriteFor(uid),
+    );
+  }
+
+  Future<void> _loadFavoriteFor(String uid) async {
+    final catalogId = widget.catalog.flatMap((c) => c.catalogId);
+    final targetUid = widget.targetUser.map((u) => u.uid);
 
     final isFavoriteTask = catalogId.match(
       () => targetUid.match(
@@ -63,24 +69,23 @@ class _FavoriteBtnState extends State<FavoriteBtn>
   }
 
   Future<void> _toggleFavorite() async {
-    final uid = widget.currentUserId;
+    await _uid.match(
+      () async {
+        setState(() => _isFavorite = !_isFavorite);
+        widget.onChanged.map((onChanged) => onChanged(_isFavorite));
+      },
+      (uid) => _toggleRemoteFavorite(uid),
+    );
+  }
 
-    if (uid == null || uid.isEmpty) {
-      setState(() => _isFavorite = !_isFavorite);
-      widget.onChanged?.call(_isFavorite);
-      return;
-    }
-
+  Future<void> _toggleRemoteFavorite(String uid) async {
     if (_isLoading) return;
     setState(() => _isLoading = true);
 
     try {
       final newValue = !_isFavorite;
-      final catalogOpt = Option.fromNullable(widget.catalog);
-      final targetUserOpt = Option.fromNullable(widget.targetUser);
-
-      final task = catalogOpt.match(
-        () => targetUserOpt.match(
+      final task = widget.catalog.match(
+        () => widget.targetUser.match(
           () => TaskEither<Failure, Unit>.right(unit),
           (user) => newValue
               ? _repo.addFavoriteUser(uid, user)
@@ -100,7 +105,7 @@ class _FavoriteBtnState extends State<FavoriteBtn>
         (_) {
           if (mounted) {
             setState(() => _isFavorite = newValue);
-            widget.onChanged?.call(newValue);
+            widget.onChanged.map((onChanged) => onChanged(newValue));
           }
         },
       );

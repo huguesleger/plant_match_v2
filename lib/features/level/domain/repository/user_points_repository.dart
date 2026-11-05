@@ -9,7 +9,6 @@ abstract class UserPointsRepository {
     int level,
   );
 
-
   TaskEither<Failure, UserPoints> getPoints(String userId);
 
   Stream<Either<Failure, UserPoints>> watchPoints(String userId);

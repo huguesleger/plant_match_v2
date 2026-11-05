@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/gen/assets.gen.dart';
@@ -12,11 +13,11 @@ class ErrorPage extends StatelessWidget {
     super.key,
     required this.errorMessage,
     required this.onRetry,
-    this.onPressed,
+    this.onPressed = const None(),
   });
 
   final String errorMessage;
-  final VoidCallback? onPressed;
+  final Option<VoidCallback> onPressed;
   final VoidCallback onRetry;
 
   @override
@@ -56,7 +57,9 @@ class ErrorPage extends StatelessWidget {
                     style: OutlinedButton.styleFrom(
                       side: const BorderSide(color: AppColors.greyLight),
                     ),
-                    onPressed: onPressed ?? () => Navigator.of(context).pop(),
+                    onPressed: onPressed.getOrElse(
+                      () => () => Navigator.of(context).pop(),
+                    ),
                     icon: const Icon(
                       LucideIcons.arrow_left,
                       color: AppColors.blueGreen,
@@ -76,7 +79,7 @@ class ErrorPage extends StatelessWidget {
                     text: t.widgets.error.retry,
                     bgColor: AppColors.blueGreen,
                     textColor: AppColors.white,
-                    onPressed: onRetry,
+                    onPressed: Some(onRetry),
                   ),
                 )
               ],

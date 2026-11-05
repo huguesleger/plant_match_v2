@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
@@ -15,15 +16,15 @@ class RegisterScreen extends StatelessWidget {
       appBar: AppBarTemplate(
         backgroundColor: AppColors.white,
         surfaceTintColor: AppColors.white,
-        shadowColor: AppColors.black,
-        title: t.auth.register.title,
+        shadowColor: const Some(AppColors.black),
+        title: Some(t.auth.register.title),
         centerTitle: true,
-        onPressed: () => Navigator.pop(context),
-        styleIconButton: IconButton.styleFrom(
+        onPressed: Some(() => Navigator.pop(context)),
+        styleIconButton: Some(IconButton.styleFrom(
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           side: const BorderSide(color: AppColors.greyLight),
-        ),
+        )),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -35,7 +36,7 @@ class RegisterScreen extends StatelessWidget {
                 padding: AppSpacing.paddingHorizontal,
                 child: TitlePage(
                   title: t.auth.register.welcome,
-                  subtitle: t.auth.register.description,
+                  subtitle: Some(t.auth.register.description),
                 ),
               ),
               const SizedBox(height: 40),

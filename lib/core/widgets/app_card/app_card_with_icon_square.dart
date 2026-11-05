@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
@@ -37,7 +38,6 @@ class AppCardWithIconSquare extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(25),
       ),
-      //margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 5),
       margin: const EdgeInsets.all(0),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
@@ -78,7 +78,7 @@ class AppCardWithIconSquare extends StatelessWidget {
               width: double.infinity,
               child: ButtonRounded(
                 text: textBtn,
-                onPressed: onPressed,
+                onPressed: Some(onPressed),
                 bgColor: AppColors.blueGreen,
                 textColor: AppColors.white,
                 fontSize: AppTypo.textXs,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/gen/assets.gen.dart';
@@ -74,9 +75,9 @@ class OfferPremiumCard extends StatelessWidget {
                             vertical: 10,
                             horizontal: 20,
                           ),
-                          onPressed: () => {
+                          onPressed: Some(() => {
                             //TODO: add onPressed to go to plant premium
-                          },
+                          }),
                         ),
                       ],
                     ),

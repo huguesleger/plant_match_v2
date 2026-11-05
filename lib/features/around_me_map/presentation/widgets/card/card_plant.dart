@@ -1,3 +1,4 @@
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -18,7 +19,8 @@ class CardPlant extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentUserId = context.read<AuthCubit>().userId;
+    final currentUserId =
+        context.read<AuthCubit>().userId.getOrElse(() => '');
     return Material(
       color: AppColors.white,
       clipBehavior: Clip.antiAlias,
@@ -32,7 +34,7 @@ class CardPlant extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CardPlantHeader(catalog: catalog, currentUserId: currentUserId ?? ''),
+              CardPlantHeader(catalog: catalog, currentUserId: currentUserId),
               CardPlantContent(catalog: catalog),
             ],
           ),

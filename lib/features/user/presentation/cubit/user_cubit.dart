@@ -71,7 +71,7 @@ class UserCubit extends Cubit<UserState> {
   void updateFilter(CatalogFilter filter) {
     final currentState = state;
     if (currentState is UserLoaded) {
-      final updated = currentState.data.copyWith(selectedFilter: filter);
+      final updated = currentState.data.copyWith(selectedFilter: Some(filter));
       emit(UserLoaded(data: updated));
     }
   }

@@ -57,8 +57,8 @@ class UserPointsCubit extends Cubit<UserPointsState> {
     final result = await update.run();
     if (session != _session) return result;
     _pendingUpdates--;
-    result.match(
-      (_) => null,
+    result.match<void>(
+      (_) {},
       (points) => _safeEmit(
         _remember(points.userPoints, UserPointsAwarded(points)),
       ),

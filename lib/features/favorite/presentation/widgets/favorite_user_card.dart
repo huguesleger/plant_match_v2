@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
@@ -40,11 +41,10 @@ class FavoriteUserCard extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(
             children: [
-              // Avatar
               Stack(
                 children: [
                   Avatar(
-                    profilUser: user,
+                    profilUser: Some(user),
                     radius: 30,
                     imgSizeAvatar: 46,
                   ),
@@ -66,7 +66,6 @@ class FavoriteUserCard extends StatelessWidget {
                 ],
               ),
               const SizedBox(width: 14),
-              // Infos
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -94,7 +93,6 @@ class FavoriteUserCard extends StatelessWidget {
                   ],
                 ),
               ),
-              // Bouton retirer
               GestureDetector(
                 onTap: onRemove,
                 child: Container(

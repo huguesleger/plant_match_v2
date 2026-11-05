@@ -9,7 +9,7 @@ class UserBio extends StatelessWidget {
     required this.bio,
   });
 
-  final String? bio;
+  final Option<String> bio;
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +17,7 @@ class UserBio extends StatelessWidget {
       child: Padding(
         padding: AppSpacing.paddingHorizontal,
         child: Text(
-          Option.fromNullable(bio)
+          bio
               .filter((b) => b.isNotEmpty)
               .getOrElse(() => t.user.bio.empty),
           style: const TextStyle(color: Colors.grey),

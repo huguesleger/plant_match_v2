@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/features/recommendation/presentation/cubit/recommendation_cubit.dart';
@@ -43,7 +44,8 @@ class RecommendationFooter extends StatelessWidget {
             ],
             Expanded(
               child: ElevatedButton(
-                onPressed: hasAnswered ? cubit.nextStep : null,
+                onPressed: Option.fromPredicate(cubit.nextStep, (_) => hasAnswered)
+                    .toNullable(),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.greenDark,
                   disabledBackgroundColor: AppColors.greyLight,
@@ -65,12 +67,12 @@ class RecommendationFooter extends StatelessWidget {
   }
 
   bool _hasAnsweredCurrentStep(RecommendationQuestionStep state) {
-    return switch (state.stepIndex) {
-      0 => state.answers.environment.isSome(),
-      1 => state.answers.light.isSome(),
-      2 => state.answers.careLevel.isSome(),
-      3 => state.answers.petSafety.isSome(),
-      _ => false,
-    };
+    return Option.fromNullable(<int, bool>{
+      0: state.answers.environment.isSome(),
+      1: state.answers.light.isSome(),
+      2: state.answers.careLevel.isSome(),
+      3: state.answers.petSafety.isSome(),
+    }[state.stepIndex])
+        .getOrElse(() => false);
   }
 }

@@ -10,24 +10,24 @@ import 'package:plant_match_v2/features/favorite/presentation/cubit/favorite_sta
 class FavoriteCubit extends Cubit<FavoriteState> {
   final FavoritesRepository favoritesRepository;
 
-  StreamSubscription<List<Catalog>>? _plantsSub;
-  StreamSubscription<List<ProfilUser>>? _usersSub;
+  Option<StreamSubscription<List<Catalog>>> _plantsSub = const None();
+  Option<StreamSubscription<List<ProfilUser>>> _usersSub = const None();
 
   FavoriteCubit({required this.favoritesRepository})
       : super(const FavoriteInitial());
 
   void loadFavorites(String uid) {
-    _plantsSub?.cancel();
-    _usersSub?.cancel();
+    _plantsSub.map((sub) => sub.cancel());
+    _usersSub.map((sub) => sub.cancel());
     emit(const FavoriteLoading());
 
-    List<Catalog>? latestPlants;
-    List<ProfilUser>? latestUsers;
+    Option<List<Catalog>> latestPlants = const None();
+    Option<List<ProfilUser>> latestUsers = const None();
 
-    _plantsSub = favoritesRepository.getFavoritePlants(uid).listen(
+    _plantsSub = Some(favoritesRepository.getFavoritePlants(uid).listen(
       (plants) {
         if (isClosed) return;
-        latestPlants = plants;
+        latestPlants = Some(plants);
 
         final currentState = state;
         if (currentState is FavoriteLoaded) {
@@ -36,7 +36,7 @@ class FavoriteCubit extends Cubit<FavoriteState> {
             users: currentState.users,
           ));
         } else {
-          Option.fromNullable(latestUsers).match(
+          latestUsers.match(
             () => {},
             (users) => emit(FavoriteLoaded(
               plants: plants,
@@ -50,12 +50,12 @@ class FavoriteCubit extends Cubit<FavoriteState> {
           emit(FavoriteError(e.toString()));
         }
       },
-    );
+    ));
 
-    _usersSub = favoritesRepository.getFavoriteUsers(uid).listen(
+    _usersSub = Some(favoritesRepository.getFavoriteUsers(uid).listen(
       (users) {
         if (isClosed) return;
-        latestUsers = users;
+        latestUsers = Some(users);
 
         final currentState = state;
         if (currentState is FavoriteLoaded) {
@@ -64,7 +64,7 @@ class FavoriteCubit extends Cubit<FavoriteState> {
             users: users,
           ));
         } else {
-          Option.fromNullable(latestPlants).match(
+          latestPlants.match(
             () => {},
             (plants) => emit(FavoriteLoaded(
               plants: plants,
@@ -78,7 +78,7 @@ class FavoriteCubit extends Cubit<FavoriteState> {
           emit(FavoriteError(e.toString()));
         }
       },
-    );
+    ));
   }
 
   void removeFavoritePlant(String uid, String catalogId) {
@@ -111,8 +111,8 @@ class FavoriteCubit extends Cubit<FavoriteState> {
 
   @override
   Future<void> close() {
-    _plantsSub?.cancel();
-    _usersSub?.cancel();
+    _plantsSub.map((sub) => sub.cancel());
+    _usersSub.map((sub) => sub.cancel());
     return super.close();
   }
 }

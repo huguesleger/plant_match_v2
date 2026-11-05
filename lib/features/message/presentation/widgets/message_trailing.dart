@@ -10,7 +10,7 @@ class MessageTrailing extends StatelessWidget {
     required this.totalUnread,
   });
 
-  final DateTime? lastMessageAt;
+  final Option<DateTime> lastMessageAt;
   final int totalUnread;
 
   @override
@@ -20,7 +20,7 @@ class MessageTrailing extends StatelessWidget {
       children: [
         const SizedBox(height: 10),
         Text(
-          Option.fromNullable(lastMessageAt).match(
+          lastMessageAt.match(
             () => '',
             (date) => DateFormatter.format(context, date),
           ),

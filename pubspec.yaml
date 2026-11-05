@@ -84,6 +84,7 @@ dependencies:
   flutter_gen: ^5.14.1
   cloud_functions: ^5.0.0
 
+  vector_graphics: any
 flutter_native_splash:
   color: "#12F4A9"
   image: "res/logo/logo-splash-screen.png"

@@ -1,3 +1,4 @@
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
@@ -14,7 +15,7 @@ class AddPlantButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
-      heroTag: null,
+      heroTag: const None().toNullable(),
       onPressed: () async {
         final result = await Navigator.push(
           context,
@@ -22,10 +23,10 @@ class AddPlantButton extends StatelessWidget {
         );
 
         if (result == true && context.mounted) {
-          final userId = context.read<AuthCubit>().userId;
-          if (userId != null) {
-            context.read<CatalogCubit>().getCatalogsByUserId(userId);
-          }
+          context
+              .read<AuthCubit>()
+              .userId
+              .map(context.read<CatalogCubit>().getCatalogsByUserId);
         }
       },
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),

@@ -1,3 +1,4 @@
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
@@ -16,7 +17,8 @@ class RecentActivityScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final uid = context.read<AuthCubit>().userId ?? '';
+    final uid =
+        context.read<AuthCubit>().userId.getOrElse(() => '');
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8F8F9),

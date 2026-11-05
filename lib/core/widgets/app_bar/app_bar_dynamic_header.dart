@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
 
@@ -8,13 +9,13 @@ class AppBarDynamicHeader extends StatefulWidget {
     required this.body,
     required this.backgroundAppBar,
     this.leading = true,
-    this.leadingButton,
+    this.leadingButton = const None(),
     this.leadingWidth = 76,
-    this.actions,
+    this.actions = const None(),
     this.actionsPadding = AppSpacing.paddingHorizontal,
     this.collapsedHeight = 90,
     required this.titlePadding,
-    this.titlePaddingShrink,
+    this.titlePaddingShrink = const None(),
     required this.height,
     required this.visual,
     required this.shrinkVisual,
@@ -23,12 +24,12 @@ class AppBarDynamicHeader extends StatefulWidget {
   final Widget body;
   final Widget backgroundAppBar;
   final bool leading;
-  final Widget? leadingButton;
+  final Option<Widget> leadingButton;
   final double leadingWidth;
   final EdgeInsets titlePadding;
-  final EdgeInsets? titlePaddingShrink;
+  final Option<EdgeInsets> titlePaddingShrink;
   final double height;
-  final List<Widget>? actions;
+  final Option<List<Widget>> actions;
   final EdgeInsets actionsPadding;
   final Widget visual;
   final Widget shrinkVisual;
@@ -67,8 +68,8 @@ class _AppBarDynamicHeaderState extends State<AppBarDynamicHeader> {
       controller: _scrollController,
       headerSliverBuilder: (context, innerBoxIsScrolled) => [
         SliverAppBar(
-          leading: widget.leading == true
-              ? widget.leadingButton
+          leading: widget.leading
+              ? widget.leadingButton.toNullable()
               : const SizedBox.shrink(),
           leadingWidth: widget.leadingWidth,
           pinned: true,
@@ -77,14 +78,16 @@ class _AppBarDynamicHeaderState extends State<AppBarDynamicHeader> {
           surfaceTintColor: AppColors.white,
           expandedHeight: widget.height,
           collapsedHeight: widget.collapsedHeight,
-          actions: widget.actions,
-          actionsPadding: widget.actions != null ? widget.actionsPadding : null,
+          actions: widget.actions.toNullable(),
+          actionsPadding:
+              widget.actions.map((_) => widget.actionsPadding).toNullable(),
           shadowColor: AppColors.black.withValues(alpha: 0.6),
           flexibleSpace: FlexibleSpaceBar(
             expandedTitleScale: 1.2,
             centerTitle: true,
-            titlePadding:
-                _isShrink ? widget.titlePaddingShrink : widget.titlePadding,
+            titlePadding: _isShrink
+                ? widget.titlePaddingShrink.toNullable()
+                : widget.titlePadding,
             title: _isShrink ? widget.shrinkVisual : widget.visual,
             background: widget.backgroundAppBar,
           ),

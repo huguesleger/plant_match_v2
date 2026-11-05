@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
 import 'package:plant_match_v2/core/extension/first_word_before_space/first_word_after_space.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -34,7 +35,7 @@ class AvatarWithInfos extends StatelessWidget {
               ),
               padding: const EdgeInsets.all(3),
               child: Avatar(
-                profilUser: user,
+                profilUser: Some(user),
                 radius: 45,
                 imgSizeAvatar: 90,
               ),

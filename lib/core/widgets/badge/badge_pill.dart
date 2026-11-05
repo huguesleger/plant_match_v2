@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 
 class BadgePill extends StatelessWidget {
   const BadgePill({
     super.key,
     required this.text,
     required this.badgeColor,
-    this.borderColor,
+    this.borderColor = const None(),
   });
 
   final Widget text;
   final Color badgeColor;
-  final Color? borderColor;
+  final Option<Color> borderColor;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +20,7 @@ class BadgePill extends StatelessWidget {
       decoration: BoxDecoration(
         color: badgeColor,
         borderRadius: BorderRadius.circular(20),
-        border: borderColor != null ? Border.all(color: borderColor!) : null,
+        border: borderColor.map((c) => Border.all(color: c)).toNullable(),
       ),
       child: text,
     );
@@ -33,7 +34,7 @@ class BadgePill extends StatelessWidget {
     return BadgePill(
       text: text,
       badgeColor: badgeColor,
-      borderColor: borderColor,
+      borderColor: Some(borderColor),
     );
   }
 }

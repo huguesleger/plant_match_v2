@@ -63,7 +63,7 @@ class _ChatPlantAcceptOrRefuseBarState
                 children: [
                   Expanded(
                     child: ButtonRounded(
-                      onPressed: () => _run(widget.onAccept),
+                      onPressed: Some(() => _run(widget.onAccept)),
                       bgColor: AppColors.greenLight,
                       textColor: AppColors.blueGreen,
                       padding: const EdgeInsets.symmetric(vertical: 14),

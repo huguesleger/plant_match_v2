@@ -43,8 +43,6 @@ class CatalogCubit extends SafeCubit<CatalogState> {
     await prefs.setString('catalog_sort_option', sortOption.name);
   }
 
-  // ─── getCatalogsByUserId ───────────────────────────────────────────────────
-
   void getCatalogsByUserId(String userId) async {
     emit(const CatalogLoading());
 
@@ -93,8 +91,8 @@ class CatalogCubit extends SafeCubit<CatalogState> {
           (uploaded) => catalogRepository
               .createCatalog(
                 catalog.copyWith(
-                  newCatalogId: Some(id),
-                  newImages: [...catalog.images.filter(_isRemote), ...uploaded],
+                  newCatalogId: Some(Some(id)),
+                  newImages: Some([...catalog.images.filter(_isRemote), ...uploaded]),
                 ),
               )
               .orElse(
@@ -141,8 +139,6 @@ class CatalogCubit extends SafeCubit<CatalogState> {
             .toList(),
       ).match((_) => unit, (_) => unit);
 
-  // ─── updateCatalog ─────────────────────────────────────────────────────────
-
   void updateCatalog(Catalog catalog) {
     emit(const CatalogLoading());
 
@@ -158,8 +154,6 @@ class CatalogCubit extends SafeCubit<CatalogState> {
         .run();
   }
 
-  // ─── editCatalog ───────────────────────────────────────────────────────────
-
   void editCatalog(Catalog catalog) {
     emit(const CatalogLoading());
 
@@ -174,8 +168,6 @@ class CatalogCubit extends SafeCubit<CatalogState> {
         .map(emit)
         .run();
   }
-
-  // ─── saveEditedCatalog ─────────────────────────────────────────────────────
 
   TaskEither<Failure, Catalog> saveEditedCatalog({
     required Catalog original,
@@ -208,7 +200,7 @@ class CatalogCubit extends SafeCubit<CatalogState> {
     )
         .flatMap((uploaded) {
           final saved = edited.copyWith(
-            newImages: [...edited.images.filter(_isRemote), ...uploaded],
+            newImages: Some([...edited.images.filter(_isRemote), ...uploaded]),
           );
           return catalogRepository
               .updateCatalog(saved)
@@ -241,8 +233,6 @@ class CatalogCubit extends SafeCubit<CatalogState> {
   Task<List<Catalog>> _refreshCatalogs(String userId) =>
       catalogRepository.getCatalogsByUserId(userId).getOrElse((_) => const []);
 
-  // ─── deleteImageCatalog ────────────────────────────────────────────────────
-
   TaskEither<Failure, Catalog> deleteImageCatalog({
     required Catalog catalog,
     required String imageUrl,
@@ -252,7 +242,7 @@ class CatalogCubit extends SafeCubit<CatalogState> {
     return storageRepository.deleteImage(imageUrl: imageUrl).flatMap((_) {
       final updatedImages =
           catalog.images.where((img) => img != imageUrl).toList();
-      final updatedCatalog = catalog.copyWith(newImages: updatedImages);
+      final updatedCatalog = catalog.copyWith(newImages: Some(updatedImages));
 
       return catalogRepository
           .updateCatalog(updatedCatalog)
@@ -269,8 +259,6 @@ class CatalogCubit extends SafeCubit<CatalogState> {
       });
     });
   }
-
-  // ─── getCatalogById ────────────────────────────────────────────────────────
 
   TaskEither<Failure, Catalog> getCatalogById(String catalogId) {
     emit(const CatalogLoading());
@@ -290,8 +278,6 @@ class CatalogCubit extends SafeCubit<CatalogState> {
           },
         ));
   }
-
-  // ─── deleteCatalog ─────────────────────────────────────────────────────────
 
   TaskEither<Failure, Unit> deleteCatalog(Catalog catalog) {
     final previous = state;

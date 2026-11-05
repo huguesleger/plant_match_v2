@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
@@ -73,7 +74,7 @@ class WizardBirthdayStep extends StatelessWidget {
         decoration: DecorationInput.inputDecoration(
           hintText: t.personalInformation.wizard.birthday.hint,
           labelText: t.personalInformation.wizard.birthday.label,
-          suffixIcon: const Icon(LucideIcons.calendar),
+          suffixIcon: const Some(Icon(LucideIcons.calendar)),
         ),
         locale: const Locale('fr', 'FR'),
         controller: controller,

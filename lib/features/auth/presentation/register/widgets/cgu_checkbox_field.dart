@@ -23,7 +23,7 @@ class CguCheckboxField extends StatelessWidget {
           Checkbox(
             value: value,
             onChanged: (value) {
-              onChanged(value ?? false);
+              onChanged(value == true);
             },
           ),
           Expanded(

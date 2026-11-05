@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
@@ -44,12 +45,12 @@ class GetStartedScreen extends StatelessWidget {
           padding: AppSpacing.paddingHorizontal + AppSpacing.paddingVertical,
           child: ButtonRounded(
             text: t.getStarted.button,
-            onPressed: () => Navigator.push(
+            onPressed: Some(() => Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => const OnboardingPageRoute(),
               ),
-            ),
+            )),
             bgColor: AppColors.greenLight,
             textColor: AppColors.blueGreen,
           ),

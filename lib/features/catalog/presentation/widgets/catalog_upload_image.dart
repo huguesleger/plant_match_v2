@@ -1,3 +1,4 @@
+import 'package:fpdart/fpdart.dart' hide State;
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -14,14 +15,14 @@ import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 
 class CatalogUploadImage extends StatefulWidget {
   final Catalog catalog;
-  final FormFieldState<List<String>>? field;
-  final ValueChanged<Catalog>? onCatalogUpdated;
+  final FormFieldState<List<String>> field;
+  final ValueChanged<Catalog> onCatalogUpdated;
 
   const CatalogUploadImage({
     super.key,
     required this.catalog,
-    this.field,
-    this.onCatalogUpdated,
+    required this.field,
+    required this.onCatalogUpdated,
   });
 
   @override
@@ -44,7 +45,7 @@ class _CatalogUploadImageState extends State<CatalogUploadImage> {
   }
 
   void _notifyFieldChanged(List<String> urls) {
-    widget.field?.didChange(urls);
+    widget.field.didChange(urls);
   }
 
   Future<void> _pickImages() async {
@@ -65,9 +66,9 @@ class _CatalogUploadImageState extends State<CatalogUploadImage> {
         catalogImages.addAll(localPaths);
       });
 
-      final updatedCatalog = widget.catalog.copyWith(newImages: catalogImages);
+      final updatedCatalog = widget.catalog.copyWith(newImages: Some(catalogImages));
       _notifyFieldChanged(catalogImages);
-      widget.onCatalogUpdated?.call(updatedCatalog);
+      widget.onCatalogUpdated(updatedCatalog);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -82,9 +83,9 @@ class _CatalogUploadImageState extends State<CatalogUploadImage> {
       catalogImages.removeAt(index);
     });
 
-    final updatedCatalog = widget.catalog.copyWith(newImages: catalogImages);
+    final updatedCatalog = widget.catalog.copyWith(newImages: Some(catalogImages));
     _notifyFieldChanged(catalogImages);
-    widget.onCatalogUpdated?.call(updatedCatalog);
+    widget.onCatalogUpdated(updatedCatalog);
   }
 
   Widget _buildImage(String path) {
@@ -125,7 +126,9 @@ class _CatalogUploadImageState extends State<CatalogUploadImage> {
                   ButtonRounded(
                     text: t.catalog.wizard.select_images,
                     onPressed:
-                        catalogImages.length < maxImages ? _pickImages : null,
+                        catalogImages.length < maxImages
+                        ? Some(_pickImages)
+                        : const None(),
                     bgColor: AppColors.blueGreen,
                     textColor: AppColors.white,
                   ),

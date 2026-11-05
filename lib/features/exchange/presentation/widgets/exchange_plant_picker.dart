@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
@@ -27,9 +28,10 @@ class ExchangePlantPicker extends StatelessWidget {
         final plant = plants[i];
         return ListTile(
           leading: CircleAvatar(
-            backgroundImage: plant.images.isNotEmpty
-                ? NetworkImage(plant.images.first)
-                : null,
+            backgroundImage: Option.of(plant.images)
+                .filter((images) => images.isNotEmpty)
+                .map((images) => NetworkImage(images.first))
+                .toNullable(),
           ),
           title: Text(plant.name),
           subtitle: Text(plant.description),

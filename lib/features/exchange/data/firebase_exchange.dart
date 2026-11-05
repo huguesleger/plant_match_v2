@@ -1,3 +1,4 @@
+import 'package:plant_match_v2/core/util/json_reader.dart';
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,7 +13,7 @@ class FirebaseExchange implements ExchangeRepository {
   final _col = FirebaseFirestore.instance.collection('plant_exchanges');
 
   @override
-  Stream<Exchange?> watchExchange(String chatId) {
+  Stream<Option<Exchange>> watchExchange(String chatId) {
     return _col
         .where('chatId', isEqualTo: chatId)
         .where('status', whereIn: [
@@ -25,11 +26,10 @@ class FirebaseExchange implements ExchangeRepository {
         .orderBy('createdAt', descending: true)
         .limit(1)
         .snapshots()
-        .map((snap) {
-          if (snap.docs.isEmpty) return null;
-          final d = snap.docs.first;
-          return Exchange.fromJson(d.id, d.data());
-        });
+        .map(
+          (snap) => Option.fromNullable(snap.docs.firstOrNull)
+              .map((d) => Exchange.fromJson(d.id, d.data())),
+        );
   }
 
   @override
@@ -143,7 +143,7 @@ class FirebaseExchange implements ExchangeRepository {
       .snapshots()
       .map(
         (doc) => Option.fromNullable(doc.data())
-            .flatMap((data) => Option.fromNullable(data['code'] as String?)),
+            .flatMap((data) => data.read<String>('code')),
       )
       .handleError((_) => const None());
 
@@ -159,8 +159,11 @@ class FirebaseExchange implements ExchangeRepository {
 
   @override
   TaskEither<Failure, int> completedExchangeCount(String uid) =>
-      CloudFunction.call('getCompletedExchangeCount', {'uid': uid})
-          .map((data) => (data['count'] as num?)?.toInt() ?? 0);
+      CloudFunction.call('getCompletedExchangeCount', {'uid': uid}).map(
+        (data) => Option<dynamic>.fromNullable(data['count'])
+            .map((value) => (value as num).toInt())
+            .getOrElse(() => 0),
+      );
 
   @override
   TaskEither<Failure, List<Exchange>> getCompletedExchanges(String uid) {

@@ -1,3 +1,4 @@
+import 'package:fpdart/fpdart.dart';
 class UserPoints {
   final int currentPoints;
   final String uid;
@@ -10,14 +11,14 @@ class UserPoints {
   });
 
   UserPoints copyWith({
-    int? currentPoints,
-    String? uid,
-    int? level,
+    Option<int> currentPoints = const None(),
+    Option<String> uid = const None(),
+    Option<int> level = const None(),
   }) {
     return UserPoints(
-      currentPoints: currentPoints ?? this.currentPoints,
-      uid: uid ?? this.uid,
-      level: level ?? this.level,
+      currentPoints: currentPoints.getOrElse(() => this.currentPoints),
+      uid: uid.getOrElse(() => this.uid),
+      level: level.getOrElse(() => this.level),
     );
   }
 

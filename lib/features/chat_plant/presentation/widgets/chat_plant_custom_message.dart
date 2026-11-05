@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/util/date_formatter.dart';
@@ -19,17 +20,28 @@ class ChatPlantCustomMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final metadata = message.metadata;
-    if (metadata?['messageType'] == ChatMessageType.plantExchange.name ||
-        metadata?['messageType'] == ChatMessageType.plantDonation.name) {
-      final pId = metadata?['plantId'] as String? ?? '';
-      final pName = metadata?['plantName'] as String? ?? '';
-      final pImage = metadata?['plantImage'] as String? ?? '';
+    final metadata = Option.fromNullable(message.metadata)
+        .getOrElse(() => <String, dynamic>{});
+    String metadataString(String key) => Option<dynamic>.fromNullable(
+          metadata[key],
+        ).map((value) => value as String).getOrElse(() => '');
+    final messageType = Option<dynamic>.fromNullable(metadata['messageType']);
+    if (messageType
+        .filter(
+          (type) =>
+              type == ChatMessageType.plantExchange.name ||
+              type == ChatMessageType.plantDonation.name,
+        )
+        .isSome()) {
+      final pId = metadataString('plantId');
+      final pName = metadataString('plantName');
+      final pImage = metadataString('plantImage');
       final isSender = message.author.id == currentUserId;
 
       final time = DateFormatter.formatTime(
         context,
-        DateTime.fromMillisecondsSinceEpoch(message.createdAt ?? 0),
+        DateTime.fromMillisecondsSinceEpoch(
+            Option.fromNullable(message.createdAt).getOrElse(() => 0)),
       );
 
       return PlantMessageCard(
@@ -38,22 +50,21 @@ class ChatPlantCustomMessage extends StatelessWidget {
         plantImage: pImage,
         isSender: isSender,
         time: time,
-        status: message.status,
+        status: Option.fromNullable(message.status),
         onTap: () async {
           final catalogRepo = FirebaseCatalogRepository();
           try {
             final result = await catalogRepo.getCatalogById(pId).run();
-            final catalog =
-                result.map((opt) => opt.toNullable()).getOrElse((_) => null);
+            final catalog = result.getOrElse((_) => const None());
 
-            if (catalog != null && context.mounted) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => DetailPlant(catalog: catalog),
-                ),
-              );
-            }
+            catalog.filter((_) => context.mounted).map(
+                  (catalog) => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => DetailPlant(catalog: catalog),
+                    ),
+                  ),
+                );
           } catch (e) {
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(

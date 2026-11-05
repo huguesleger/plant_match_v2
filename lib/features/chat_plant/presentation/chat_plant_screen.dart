@@ -64,7 +64,7 @@ class ChatPlantScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userId = context.read<AuthCubit>().userId ?? '';
+    final userId = context.read<AuthCubit>().userId.getOrElse(() => '');
 
     return MultiBlocListener(
       listeners: [
@@ -132,19 +132,19 @@ class ChatPlantScreen extends StatelessWidget {
               preferredHeight: 85,
               backgroundColor: AppColors.white,
               surfaceTintColor: Colors.white,
-              onPressed: () => Navigator.pop(context),
-              styleIconButton: IconButton.styleFrom(
+              onPressed: Some(() => Navigator.pop(context)),
+              styleIconButton: Some(IconButton.styleFrom(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
                 side: const BorderSide(color: AppColors.greyLight),
-              ),
-              titleWidget: Row(
+              )),
+              titleWidget: Some(Row(
                 children: [
                   Avatar(
                     radius: 28,
-                    imageUrl: plantOwnerAvatar,
-                    name: plantOwnerName,
+                    imageUrl: Some(plantOwnerAvatar),
+                    name: Some(plantOwnerName),
                     imgSizeAvatar: 55,
                   ),
                   const SizedBox(width: 8),
@@ -155,10 +155,10 @@ class ChatPlantScreen extends StatelessWidget {
                     ),
                   ),
                 ],
-              ),
-              actions: [
+              )),
+              actions: Some([
                 ChatPlantMenu(chatId: chatId, otherUserId: otherUserId),
-              ],
+              ]),
             ),
             body: BlocBuilder<ChatPlantCubit, ChatPlantState>(
               builder: (context, state) => switch (state) {

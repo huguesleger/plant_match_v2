@@ -86,7 +86,7 @@ class RecentActivityTile extends StatelessWidget {
 
   Widget _buildUserAvatar() {
     return Avatar(
-      profilUser: owner,
+      profilUser: Some(owner),
       radius: 22,
       imgSizeAvatar: 44,
     );

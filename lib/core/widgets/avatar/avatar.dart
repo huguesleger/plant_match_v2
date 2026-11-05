@@ -7,27 +7,33 @@ import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 class Avatar extends StatelessWidget {
   const Avatar({
     super.key,
-    this.profilUser,
-    this.imageUrl,
-    this.name,
+    this.profilUser = const None(),
+    this.imageUrl = const None(),
+    this.name = const None(),
     this.radius = 30,
     this.imgSizeAvatar = 60,
     this.backgroundColor = AppColors.greenMedium,
   });
 
-  final ProfilUser? profilUser;
-  final String? imageUrl;
-  final String? name;
+  final Option<ProfilUser> profilUser;
+  final Option<String> imageUrl;
+  final Option<String> name;
   final double radius;
   final double imgSizeAvatar;
   final Color backgroundColor;
 
   @override
   Widget build(BuildContext context) {
-    final String effectiveImageUrl = imageUrl ?? profilUser?.profilImg ?? '';
-    final String effectiveName = name ??
-        profilUser?.userName.getOrElse(() => profilUser?.firstName ?? '') ??
-        '';
+    final String effectiveImageUrl = imageUrl
+        .alt(() => profilUser.map((user) => user.profilImg))
+        .getOrElse(() => '');
+    final String effectiveName = name
+        .alt(
+          () => profilUser.map(
+            (user) => user.userName.getOrElse(() => user.firstName),
+          ),
+        )
+        .getOrElse(() => '');
 
     final bool isNetworkImage = effectiveImageUrl.contains('http');
     final bool isSelectedAvatar =

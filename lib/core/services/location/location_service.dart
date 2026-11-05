@@ -4,10 +4,8 @@ import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
 
 abstract class LocationService {
-  /// Récupère la position actuelle de l'utilisateur
   TaskEither<Failure, Position> getCurrentPosition();
 
-  /// Récupère l'adresse à partir d'une position
   TaskEither<Failure, Placemark> getPlacemarkFromPosition(Position position);
 }
 

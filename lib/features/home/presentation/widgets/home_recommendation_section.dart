@@ -102,9 +102,8 @@ class _HorizontalPlantCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final imageOpt = Option.fromNullable(
-      plant.images.isNotEmpty ? plant.images.first : null,
-    ).filter((url) => url.startsWith('http'));
+    final imageOpt = Option.fromNullable(plant.images.firstOrNull)
+        .filter((url) => url.startsWith('http'));
 
     return Padding(
       padding: const EdgeInsets.only(right: 16),

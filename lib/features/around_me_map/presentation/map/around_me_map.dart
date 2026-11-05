@@ -1,3 +1,4 @@
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:flutter/material.dart';
 import 'package:flutter_map_animations/flutter_map_animations.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
@@ -50,7 +51,7 @@ class _AroundMeMapState extends State<AroundMeMap>
   }
 
   Future<void> _openRadiusFilter() async {
-    final newRadius = await Navigator.push<double>(
+    final result = await Navigator.push<double>(
       context,
       MaterialPageRoute(
         builder: (_) => RadiusFilterPage(
@@ -59,13 +60,14 @@ class _AroundMeMapState extends State<AroundMeMap>
         ),
       ),
     );
-    if (newRadius == null) return;
-    setState(() => _selectedRadius = newRadius);
-    MapGeo.fitRadius(
-      _controller,
-      MapGeo.positionOf(widget.currentUser),
-      newRadius,
-    );
+    Option.fromNullable(result).match(() {}, (newRadius) {
+      setState(() => _selectedRadius = newRadius);
+      MapGeo.fitRadius(
+        _controller,
+        MapGeo.positionOf(widget.currentUser),
+        newRadius,
+      );
+    });
   }
 
   @override

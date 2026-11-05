@@ -106,7 +106,7 @@ void main() {
           isA<Authenticated>().having((s) => s.user, 'user', tUser),
         ],
         verify: (_) {
-          expect(authCubit.currentUser, equals(tUser));
+          expect(authCubit.currentUser, equals(Some(tUser)));
         },
       );
 
@@ -206,7 +206,7 @@ void main() {
         ],
         verify: (_) {
           verify(() => mockAuthRepository.logOut()).called(1);
-          expect(authCubit.currentUser, isNull);
+          expect(authCubit.currentUser, equals(const None()));
         },
       );
     });

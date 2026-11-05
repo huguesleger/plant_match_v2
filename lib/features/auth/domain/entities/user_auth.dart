@@ -1,3 +1,4 @@
+import 'package:plant_match_v2/core/util/json_reader.dart';
 import 'package:fpdart/fpdart.dart';
 
 class UserAuth {
@@ -41,23 +42,23 @@ class UserAuth {
   }
 
   factory UserAuth.fromJson(Map<String, dynamic> json) {
-    final firstName = json['firstName'] as String? ?? '';
-    final lastName = json['lastName'] as String? ?? '';
+    final firstName = json.string('firstName');
+    final lastName = json.string('lastName');
     if (firstName.isEmpty && lastName.isEmpty) {
-      final fullName = json['fullName'] as String? ?? '';
+      final fullName = json.string('fullName');
       final parts = fullName.trim().split(' ');
       final fName = parts.first;
       final lName = parts.length > 1 ? parts.sublist(1).join(' ') : '';
       return UserAuth(
-        uid: json['uid'] ?? '',
-        email: Option.fromNullable(json['email'] as String?),
+        uid: json.string('uid'),
+        email: json.read<String>('email'),
         firstName: fName,
         lastName: lName,
       );
     }
     return UserAuth(
-      uid: json['uid'] ?? '',
-      email: Option.fromNullable(json['email'] as String?),
+      uid: json.string('uid'),
+      email: json.read<String>('email'),
       firstName: firstName,
       lastName: lastName,
     );

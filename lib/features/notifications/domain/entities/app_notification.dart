@@ -1,6 +1,5 @@
 import 'package:fpdart/fpdart.dart';
 
-/// Représente une notification reçue par l'application.
 class AppNotification {
   final String id;
   final String title;

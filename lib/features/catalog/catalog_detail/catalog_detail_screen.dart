@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
@@ -35,11 +36,11 @@ class _CatalogDetailScreenState extends State<CatalogDetailScreen> {
         headerHeight: 240,
         content: CatalogDetailHeader(images: _catalog.images),
         onPressed: () => Navigator.pop(context, true),
-        styleIconButton: IconButton.styleFrom(
+        styleIconButton: Some(IconButton.styleFrom(
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           backgroundColor: AppColors.white,
-        ),
+        )),
       ),
       body: Padding(
         padding: AppSpacing.paddingHorizontal,

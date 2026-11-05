@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
@@ -18,7 +19,7 @@ class DetailPlantTitleRow extends StatelessWidget {
             child: TitlePage(
               title: catalog.name.toCapitalize(),
               fontSize: AppTypo.textXl,
-              overflow: TextOverflow.ellipsis,
+              overflow: const Some(TextOverflow.ellipsis),
             ),
           ),
           const SizedBox(width: 10),

@@ -1,3 +1,4 @@
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
@@ -19,7 +20,7 @@ void bottomSheet({
   required BuildContext context,
   required ProfilUser user,
   required List<Catalog> catalogs,
-  double? distance,
+  Option<double> distance = const None(),
 }) {
   AppBottomSheet.showBottomSheet(
     context,

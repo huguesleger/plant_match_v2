@@ -1,3 +1,4 @@
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -31,7 +32,8 @@ class ImageField extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CatalogUploadImage(
-              catalog: catalog.copyWith(newImages: field.value ?? []),
+              catalog: catalog.copyWith(newImages: Some(
+                  Option.fromNullable(field.value).getOrElse(() => []))),
               field: field,
               onCatalogUpdated: (updatedCatalog) {
                 onCatalogUpdated(updatedCatalog);
@@ -43,7 +45,7 @@ class ImageField extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(top: 8.0, left: 12.0),
                 child: Text(
-                  field.errorText ?? '',
+                  Option.fromNullable(field.errorText).getOrElse(() => ''),
                   style: const TextStyle(color: Colors.red, fontSize: 12),
                 ),
               ),

@@ -21,7 +21,6 @@ Future<void> main() async {
   );
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
-  //FlutterNativeSplash.remove();
   Future.delayed(const Duration(seconds: 3), () {
     FlutterNativeSplash.remove();
   });

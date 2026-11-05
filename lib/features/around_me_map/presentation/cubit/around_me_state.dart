@@ -30,15 +30,15 @@ class AroundMeLoaded extends AroundMeState {
   });
 
   AroundMeLoaded copyWith({
-    bool? locating,
-    Option<String>? locationError,
+    Option<bool> locating = const None(),
+    Option<Option<String>> locationError = const None(),
   }) =>
       AroundMeLoaded(
         users: users,
         currentUser: currentUser,
         userCatalogs: userCatalogs,
-        locating: locating ?? this.locating,
-        locationError: locationError ?? this.locationError,
+        locating: locating.getOrElse(() => this.locating),
+        locationError: locationError.getOrElse(() => this.locationError),
       );
 }
 

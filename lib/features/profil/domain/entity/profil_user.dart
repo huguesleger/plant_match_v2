@@ -1,3 +1,4 @@
+import 'package:plant_match_v2/core/util/json_reader.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/util/distance/distance_helper.dart';
@@ -41,42 +42,42 @@ class ProfilUser extends UserAuth {
   });
 
   ProfilUser copyWith({
-    String? newFirstName,
-    String? newLastName,
-    Option<String>? newBio,
-    String? newProfilImg,
-    Option<String>? newUserName,
-    String? newLocalisation,
-    String? newZipCode,
-    String? newCountry,
-    Option<DateTime>? newBirthdayDate,
-    Option<double>? newLatitude,
-    Option<double>? newLongitude,
-    bool? newIsOnline,
-    DateTime? newCreatedAt,
-    int? newLeaves,
-    String? newReferralCode,
-    Option<String>? newReferredBy,
+    Option<String> newFirstName = const None(),
+    Option<String> newLastName = const None(),
+    Option<Option<String>> newBio = const None(),
+    Option<String> newProfilImg = const None(),
+    Option<Option<String>> newUserName = const None(),
+    Option<String> newLocalisation = const None(),
+    Option<String> newZipCode = const None(),
+    Option<String> newCountry = const None(),
+    Option<Option<DateTime>> newBirthdayDate = const None(),
+    Option<Option<double>> newLatitude = const None(),
+    Option<Option<double>> newLongitude = const None(),
+    Option<bool> newIsOnline = const None(),
+    Option<DateTime> newCreatedAt = const None(),
+    Option<int> newLeaves = const None(),
+    Option<String> newReferralCode = const None(),
+    Option<Option<String>> newReferredBy = const None(),
   }) {
     return ProfilUser(
       uid: uid,
       email: email,
-      firstName: newFirstName ?? firstName,
-      lastName: newLastName ?? lastName,
-      bio: newBio ?? bio,
-      profilImg: newProfilImg ?? profilImg,
-      userName: newUserName ?? userName,
-      localisation: newLocalisation ?? localisation,
-      country: newCountry ?? country,
-      zipCode: newZipCode ?? zipCode,
-      birthdayDate: newBirthdayDate ?? birthdayDate,
-      latitude: newLatitude ?? latitude,
-      longitude: newLongitude ?? longitude,
-      isOnline: newIsOnline ?? isOnline,
-      createdAt: newCreatedAt ?? createdAt,
-      leaves: newLeaves ?? leaves,
-      referralCode: newReferralCode ?? referralCode,
-      referredBy: newReferredBy ?? referredBy,
+      firstName: newFirstName.getOrElse(() => firstName),
+      lastName: newLastName.getOrElse(() => lastName),
+      bio: newBio.getOrElse(() => bio),
+      profilImg: newProfilImg.getOrElse(() => profilImg),
+      userName: newUserName.getOrElse(() => userName),
+      localisation: newLocalisation.getOrElse(() => localisation),
+      country: newCountry.getOrElse(() => country),
+      zipCode: newZipCode.getOrElse(() => zipCode),
+      birthdayDate: newBirthdayDate.getOrElse(() => birthdayDate),
+      latitude: newLatitude.getOrElse(() => latitude),
+      longitude: newLongitude.getOrElse(() => longitude),
+      isOnline: newIsOnline.getOrElse(() => isOnline),
+      createdAt: newCreatedAt.getOrElse(() => createdAt),
+      leaves: newLeaves.getOrElse(() => leaves),
+      referralCode: newReferralCode.getOrElse(() => referralCode),
+      referredBy: newReferredBy.getOrElse(() => referredBy),
     );
   }
 
@@ -93,10 +94,7 @@ class ProfilUser extends UserAuth {
       'localisation': localisation,
       'country': country,
       'zipCode': zipCode,
-      'birthdayDate': birthdayDate.match(
-        () => null,
-        (date) => Timestamp.fromDate(date),
-      ),
+      'birthdayDate': birthdayDate.map(Timestamp.fromDate).toNullable(),
       'latitude': latitude.map(DistanceHelper.coarse).toNullable(),
       'longitude': longitude.map(DistanceHelper.coarse).toNullable(),
       'isOnline': isOnline,
@@ -108,17 +106,11 @@ class ProfilUser extends UserAuth {
   }
 
   factory ProfilUser.fromJson(Map<String, dynamic> json) {
-    Option<String> stringToOption(dynamic value) {
-      final s = value as String?;
-      if (s == null || s.trim().isEmpty) return const None();
-      return Some(s);
-    }
-
-    final firstName = json['firstName'] as String? ?? '';
-    final lastName = json['lastName'] as String? ?? '';
+    final firstName = json.string('firstName');
+    final lastName = json.string('lastName');
     final (fName, lName) = (firstName.isEmpty && lastName.isEmpty)
         ? (() {
-            final fullName = json['fullName'] as String? ?? '';
+            final fullName = json.string('fullName');
             final parts = fullName.trim().split(' ');
             final fn = parts.first;
             final ln = parts.length > 1 ? parts.sublist(1).join(' ') : '';
@@ -127,33 +119,24 @@ class ProfilUser extends UserAuth {
         : (firstName, lastName);
 
     return ProfilUser(
-      uid: json['uid'] ?? '',
-      email: Option.fromNullable(json['email'] as String?),
+      uid: json.string('uid'),
+      email: json.read<String>('email'),
       firstName: fName,
       lastName: lName,
-      bio: stringToOption(json['bio']),
-      profilImg: json['profilImg'] ?? '',
-      userName: stringToOption(json['userName']),
-      localisation: json['localisation'] ?? '',
-      country: json['country'] ?? '',
-      zipCode: json['zipCode'] ?? '',
-      birthdayDate: Option.fromNullable(json['birthdayDate']).map((d) {
-        if (d is Timestamp) return d.toDate();
-        if (d is String) return DateTime.tryParse(d) ?? DateTime.now();
-        return DateTime.now();
-      }),
-      latitude: Option.fromNullable(json['latitude']?.toDouble()),
-      longitude: Option.fromNullable(json['longitude']?.toDouble()),
-      isOnline: json['isOnline'] ?? false,
-      createdAt: json['createdAt'] == null
-          ? DateTime.now()
-          : (json['createdAt'] is Timestamp
-              ? (json['createdAt'] as Timestamp).toDate()
-              : DateTime.tryParse(json['createdAt'] as String) ??
-                  DateTime.now()),
-      leaves: json['leaves'] as int? ?? 5,
-      referralCode: json['referralCode'] as String? ?? '',
-      referredBy: Option.fromNullable(json['referredBy'] as String?),
+      bio: json.nonEmptyString('bio'),
+      profilImg: json.string('profilImg'),
+      userName: json.nonEmptyString('userName'),
+      localisation: json.string('localisation'),
+      country: json.string('country'),
+      zipCode: json.string('zipCode'),
+      birthdayDate: json.date('birthdayDate'),
+      latitude: json.decimal('latitude'),
+      longitude: json.decimal('longitude'),
+      isOnline: json.boolean('isOnline'),
+      createdAt: json.date('createdAt').getOrElse(DateTime.now),
+      leaves: json.integer('leaves', 5),
+      referralCode: json.string('referralCode'),
+      referredBy: json.read<String>('referredBy'),
     );
   }
 }

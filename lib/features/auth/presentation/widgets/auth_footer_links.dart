@@ -8,41 +8,39 @@ class AuthFooterLinks extends StatelessWidget {
     required this.mainText,
     required this.actionText,
     required this.onActionTap,
-    this.forgotPasswordText,
-    this.onForgotPasswordTap,
+    this.forgotPasswordText = const None(),
+    this.onForgotPasswordTap = const None(),
   });
 
   final String mainText;
   final String actionText;
   final VoidCallback onActionTap;
-  final String? forgotPasswordText;
-  final VoidCallback? onForgotPasswordTap;
+  final Option<String> forgotPasswordText;
+  final Option<VoidCallback> onForgotPasswordTap;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Option.fromNullable(forgotPasswordText).match(
+        forgotPasswordText.map2(onForgotPasswordTap, (text, onTap) => (text, onTap)).match(
           () => const SizedBox.shrink(),
-          (text) => onForgotPasswordTap != null
-              ? Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: GestureDetector(
-                    onTap: onForgotPasswordTap,
-                    child: Center(
-                      child: Text(
-                        text,
-                        style: const TextStyle(
-                          color: AppColors.blueGreen,
-                          decoration: TextDecoration.underline,
-                          fontSize: 11,
-                        ),
-                      ),
-                    ),
+          (link) => Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: GestureDetector(
+              onTap: link.$2,
+              child: Center(
+                child: Text(
+                  link.$1,
+                  style: const TextStyle(
+                    color: AppColors.blueGreen,
+                    decoration: TextDecoration.underline,
+                    fontSize: 11,
                   ),
-                )
-              : const SizedBox.shrink(),
+                ),
+              ),
+            ),
+          ),
         ),
         const SizedBox(height: 10),
         Center(

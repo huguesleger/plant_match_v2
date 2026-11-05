@@ -20,8 +20,10 @@ class MessageItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentUid = context.read<AuthCubit>().userId ?? '';
-    final unreadMessagesCount = chat.unreadCount[currentUid] ?? 0;
+    final currentUid =
+        context.read<AuthCubit>().userId.getOrElse(() => '');
+    final unreadMessagesCount =
+        Option.fromNullable(chat.unreadCount[currentUid]).getOrElse(() => 0);
     final totalUnread = unreadMessagesCount +
         (chat.hasUnreadExchange ? 1 : 0) +
         (chat.hasUnreadDonation ? 1 : 0);
@@ -41,10 +43,10 @@ class MessageItem extends StatelessWidget {
         ),
       ),
       subtitle: MessageSubtitle(
-        lastMessage: chat.lastMessage.toNullable(),
+        lastMessage: chat.lastMessage,
       ),
       trailing: MessageTrailing(
-        lastMessageAt: chat.lastMessageAt.toNullable(),
+        lastMessageAt: chat.lastMessageAt,
         totalUnread: totalUnread,
       ),
       onTap: () => Navigator.push(

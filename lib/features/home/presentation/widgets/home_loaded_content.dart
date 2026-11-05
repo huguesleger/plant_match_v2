@@ -61,9 +61,9 @@ class _HomeLoadedContentState extends State<HomeLoadedContent> {
                     plants: _getFilteredPlants(),
                     isGeolocated:
                         DistanceHelper.hasValidLocation(widget.currentUser),
-                    onSeeAllPressed: () => context
-                        .findAncestorStateOfType<TemplatePageState>()
-                        ?.onPageChanged(1),
+                    onSeeAllPressed: () => Option.fromNullable(context
+                            .findAncestorStateOfType<TemplatePageState>())
+                        .map((page) => page.onPageChanged(1)),
                   ),
                 ),
                 const SizedBox(height: 24),

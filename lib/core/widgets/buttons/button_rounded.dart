@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 
 class ButtonRounded extends StatelessWidget {
   const ButtonRounded({
     super.key,
     required this.text,
-    this.onPressed,
+    this.onPressed = const None(),
     required this.bgColor,
     required this.textColor,
     this.fontSize = 14,
@@ -14,7 +15,7 @@ class ButtonRounded extends StatelessWidget {
   const ButtonRounded.small({
     super.key,
     required this.text,
-    this.onPressed,
+    this.onPressed = const None(),
     required this.bgColor,
     required this.textColor,
     this.fontSize = 12,
@@ -22,16 +23,16 @@ class ButtonRounded extends StatelessWidget {
   });
 
   final String text;
-  final VoidCallback? onPressed;
+  final Option<VoidCallback> onPressed;
   final Color bgColor;
   final Color textColor;
-  final double? fontSize;
-  final EdgeInsets? padding;
+  final double fontSize;
+  final EdgeInsets padding;
 
   @override
   Widget build(BuildContext context) {
     return FilledButton(
-      onPressed: onPressed,
+      onPressed: onPressed.toNullable(),
       style: FilledButton.styleFrom(
         backgroundColor: bgColor,
         foregroundColor: bgColor,

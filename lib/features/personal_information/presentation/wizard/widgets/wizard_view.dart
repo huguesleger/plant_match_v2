@@ -74,18 +74,16 @@ class _WizardViewState extends State<WizardView> {
     ];
 
     if (_currentPage < formKeys.length) {
-      if (formKeys[_currentPage].currentState?.saveAndValidate() ?? false) {
+      if (Option.fromNullable(formKeys[_currentPage].currentState)
+          .match(() => false, (form) => form.saveAndValidate())) {
         final updatedUser = widget.profilUser.copyWith(
-          newUserName: Option.fromPredicate(
-              _pseudoController.text.trim(), (String v) => v.isNotEmpty),
-          newBirthdayDate: _birthdayDateController.text.isNotEmpty
-              ? Some(
-                  DateFormat('dd/MM/yyyy').parse(_birthdayDateController.text))
-              : const None(),
-          newBio: Option.fromPredicate(
-              _bioController.text.trim(), (String v) => v.isNotEmpty),
-          newReferredBy: Option.fromPredicate(
-              _referralController.text.trim(), (String v) => v.isNotEmpty),
+          newUserName: Some(_nonEmpty(_pseudoController.text)),
+          newBirthdayDate: Some(
+            _nonEmpty(_birthdayDateController.text)
+                .map(DateFormat('dd/MM/yyyy').parse),
+          ),
+          newBio: Some(_nonEmpty(_bioController.text)),
+          newReferredBy: Some(_nonEmpty(_referralController.text)),
         );
 
         context.read<ProfilCubit>().saveProfilUser(updatedUser);
@@ -114,25 +112,25 @@ class _WizardViewState extends State<WizardView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarTemplate(
-        title: t.personalInformation.screen.title,
+        title: Some(t.personalInformation.screen.title),
         backgroundColor: AppColors.white,
         surfaceTintColor: AppColors.white,
-        styleIconButton: IconButton.styleFrom(
+        styleIconButton: Some(IconButton.styleFrom(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
           side: const BorderSide(color: AppColors.greyLight),
-        ),
+        )),
         centerTitle: true,
         leading: _currentPage != 0,
-        onPressed: _onPressedBack,
-        actions: [
+        onPressed: Some(_onPressedBack),
+        actions: Some([
           IconButton(
             onPressed: () => Navigator.pop(context),
             icon: const Icon(LucideIcons.x),
             color: AppColors.greyDark,
           ),
-        ],
+        ]),
       ),
       body: SafeArea(
         child: Stack(
@@ -175,13 +173,16 @@ class _WizardViewState extends State<WizardView> {
       bottomNavigationBar: BottomBar(
         child: ButtonRounded(
           text: _currentPage == _totalPages - 1 ? t.personalInformation.wizard.common.geolocate : t.personalInformation.wizard.common.next,
-          onPressed: () => _currentPage == _totalPages - 1
+          onPressed: Some(() => _currentPage == _totalPages - 1
               ? _onPressedLocation()
-              : _onNextPressed(),
+              : _onNextPressed()),
           bgColor: AppColors.greenLight,
           textColor: AppColors.blueGreen,
         ),
       ),
     );
   }
+
+  Option<String> _nonEmpty(String text) =>
+      Option.of(text.trim()).filter((value) => value.isNotEmpty);
 }

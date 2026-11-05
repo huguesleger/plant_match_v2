@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -24,7 +25,8 @@ class _FormSignInState extends State<FormSignIn> {
   final TextEditingController _passwordController = TextEditingController();
 
   void _onPressedSignIn() {
-    if (_formKey.currentState?.saveAndValidate() ?? false) {
+    if (Option.fromNullable(_formKey.currentState)
+        .match(() => false, (form) => form.saveAndValidate())) {
       context.read<AuthCubit>().signInWithEmailAndPassword(
             email: _emailController.text,
             password: _passwordController.text,
@@ -50,12 +52,12 @@ class _FormSignInState extends State<FormSignIn> {
             ),
           ),
           AuthFooterLinks(
-            forgotPasswordText: t.auth.signIn.forgotPassword,
-            onForgotPasswordTap: () => Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const ForgotPasswordPageRoute(),
-              ),
-            ),
+            forgotPasswordText: Some(t.auth.signIn.forgotPassword),
+            onForgotPasswordTap: Some(() => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const ForgotPasswordPageRoute(),
+                  ),
+                )),
             mainText: t.auth.signIn.noAccount,
             actionText: t.auth.signIn.createAccount,
             onActionTap: widget.toggleSignInOrRegister,

@@ -87,7 +87,7 @@ class HomeAroundMeSection extends StatelessWidget {
                         return HomeCardPlant(
                           catalog: catalog,
                           owner: owner,
-                          distance: distance,
+                          distance: Some(distance),
                           onPressed: () => Navigator.push(
                             context,
                             MaterialPageRoute(

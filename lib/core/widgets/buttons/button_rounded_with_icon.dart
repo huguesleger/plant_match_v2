@@ -29,11 +29,11 @@ class ButtonRoundedWithIcon extends StatelessWidget {
   final VoidCallback onPressed;
   final Color bgColor;
   final Color textColor;
-  final double? fontSize;
+  final double fontSize;
   final Widget icon;
   final IconAlignment iconAlignment;
 
-  final EdgeInsets? padding;
+  final EdgeInsets padding;
 
   @override
   Widget build(BuildContext context) {

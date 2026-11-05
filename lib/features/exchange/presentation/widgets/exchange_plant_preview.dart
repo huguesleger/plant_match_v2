@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 
 class ExchangePlantPreview extends StatelessWidget {
@@ -15,9 +16,10 @@ class ExchangePlantPreview extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: 50,
-          backgroundImage: plant.images.isNotEmpty
-              ? NetworkImage(plant.images.first)
-              : null,
+          backgroundImage: Option.of(plant.images)
+              .filter((images) => images.isNotEmpty)
+              .map((images) => NetworkImage(images.first))
+              .toNullable(),
         ),
         const SizedBox(height: 10),
         Text(

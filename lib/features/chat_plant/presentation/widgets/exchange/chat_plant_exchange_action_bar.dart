@@ -46,8 +46,10 @@ class ChatPlantExchangeActionBar extends StatelessWidget {
       ExchangeWaitingValidation(:final exchange) when isPlantOwner =>
         OwnerValidationCode(
           key: ValueKey(exchange.id),
-          watchCode: () => context.read<ExchangeCubit>().validationCode(exchange.id),
-          generate: () => context.read<ExchangeCubit>().generateCode(exchange.id),
+          watchCode: () =>
+              context.read<ExchangeCubit>().validationCode(exchange.id),
+          generate: () =>
+              context.read<ExchangeCubit>().generateCode(exchange.id),
         ),
       ExchangeWaitingValidation(:final exchange) when !isPlantOwner =>
         ValidationCodeInput(

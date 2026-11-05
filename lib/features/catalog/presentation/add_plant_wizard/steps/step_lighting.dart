@@ -1,3 +1,4 @@
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -18,7 +19,7 @@ class StepLighting extends StatelessWidget {
   });
 
   final GlobalKey<FormBuilderState> formKey;
-  final Lighting? selected;
+  final Option<Lighting> selected;
   final Function(Lighting) onSelect;
 
   @override
@@ -28,7 +29,7 @@ class StepLighting extends StatelessWidget {
         description: t.catalog.wizard.steps.lighting.description,
         child: FormBuilderField<Lighting>(
           name: 'lighting',
-          initialValue: selected,
+          initialValue: selected.toNullable(),
           validator: FormBuilderValidators.required(
             errorText: t.catalog.wizard.required_field,
           ),
@@ -82,7 +83,7 @@ class StepLighting extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0, left: 12.0),
                   child: Text(
-                    field.errorText ?? '',
+                    Option.fromNullable(field.errorText).getOrElse(() => ''),
                     style: const TextStyle(color: Colors.red, fontSize: 12),
                   ),
                 ),

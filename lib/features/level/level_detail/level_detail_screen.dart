@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_header_image.dart';
@@ -21,10 +22,10 @@ class LevelDetailScreen extends StatelessWidget {
           fit: BoxFit.cover,
         ),
         onPressed: () => Navigator.pop(context),
-        styleIconButton: IconButton.styleFrom(
+        styleIconButton: Some(IconButton.styleFrom(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           backgroundColor: AppColors.white,
-        ),
+        )),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),

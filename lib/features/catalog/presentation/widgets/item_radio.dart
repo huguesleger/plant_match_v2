@@ -6,7 +6,7 @@ import 'package:plant_match_v2/core/theme/app_typo.dart';
 class ItemRadio<T> extends StatelessWidget {
   const ItemRadio({
     super.key,
-    this.subtitle,
+    this.subtitle = const None(),
     required this.title,
     required this.value,
     required this.selectedItem,
@@ -14,14 +14,14 @@ class ItemRadio<T> extends StatelessWidget {
   });
 
   final String title;
-  final String? subtitle;
+  final Option<String> subtitle;
   final T value;
-  final T? selectedItem;
+  final Option<T> selectedItem;
   final Function(T) onItemSelected;
 
   @override
   Widget build(BuildContext context) {
-    final bool isSelected = selectedItem == value;
+    final bool isSelected = selectedItem == Some(value);
 
     return Container(
       decoration: BoxDecoration(
@@ -41,15 +41,14 @@ class ItemRadio<T> extends StatelessWidget {
           style: const TextStyle(
               color: AppColors.greyMedium, fontSize: AppTypo.textS),
         ),
-        subtitle: Option.fromNullable(subtitle).match(
-          () => null,
-          (text) => Text(
-            text,
-            style: const TextStyle(fontSize: AppTypo.textXs),
-          ),
-        ),
+        subtitle: subtitle
+            .map<Widget>((text) => Text(
+                  text,
+                  style: const TextStyle(fontSize: AppTypo.textXs),
+                ))
+            .toNullable(),
         trailing: RadioGroup<T>(
-          groupValue: selectedItem,
+          groupValue: selectedItem.toNullable(),
           onChanged: (T? newValue) =>
               Option.fromNullable(newValue).map(onItemSelected),
           child: Radio<T>(

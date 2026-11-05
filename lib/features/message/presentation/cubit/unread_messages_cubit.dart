@@ -1,28 +1,29 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/features/chat_plant/domain/repository/chat_plant_repository.dart';
 import 'package:plant_match_v2/features/message/presentation/cubit/unread_messages_state.dart';
 
 class UnreadMessagesCubit extends Cubit<UnreadMessagesState> {
   final ChatPlantRepository repository;
-  StreamSubscription? _sub;
+  Option<StreamSubscription<int>> _sub = const None();
 
   UnreadMessagesCubit({required this.repository})
       : super(const UnreadMessagesInitial());
 
   void listen(String uid) {
-    _sub?.cancel();
-    _sub = repository.unreadCount(uid).listen((count) {
+    _sub.map((sub) => sub.cancel());
+    _sub = Some(repository.unreadCount(uid).listen((count) {
       if (!isClosed) {
         emit(UnreadMessagesLoaded(count));
       }
-    });
+    }));
   }
 
   @override
   Future<void> close() {
-    _sub?.cancel();
+    _sub.map((sub) => sub.cancel());
     return super.close();
   }
 }

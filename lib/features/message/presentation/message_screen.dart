@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -23,13 +24,13 @@ class MessagesScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: AppBarTemplate(
-        titleWidget: TitlePage(
+        titleWidget: Some(TitlePage(
           title: t.message.screen.title,
           fontSize: AppTypo.textXl,
-        ),
+        )),
         backgroundColor: AppColors.white,
         surfaceTintColor: AppColors.white,
-        shadowColor: AppColors.black,
+        shadowColor: const Some(AppColors.black),
         leading: false,
         leadingWith: 16,
       ),
@@ -41,15 +42,12 @@ class MessagesScreen extends StatelessWidget {
           MessagesError(:final message) => ErrorPage(
               errorMessage: message,
               onRetry: () {
-                if (userId != null) {
-                  context.read<MessagesCubit>().load(userId);
-                }
+                userId.map((id) => context.read<MessagesCubit>().load(id));
               },
             ),
           MessagesLoaded(:final chats) => chats.isEmpty
               ? const MessageEmpty()
               : ListView.separated(
-                  //padding: const EdgeInsets.only(top: 10),
                   itemCount: chats.length,
                   separatorBuilder: (_, __) => const Padding(
                     padding: AppSpacing.paddingHorizontal,

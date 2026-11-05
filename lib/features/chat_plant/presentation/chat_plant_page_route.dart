@@ -28,14 +28,15 @@ class ChatPlantPageRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userId = context.read<AuthCubit>().userId;
+    return context.read<AuthCubit>().userId.match(
+          () => Scaffold(
+            body: Center(child: Text(t.common.notConnected)),
+          ),
+          (userId) => _buildChat(userId),
+        );
+  }
 
-    if (userId == null) {
-      return Scaffold(
-        body: Center(child: Text(t.common.notConnected)),
-      );
-    }
-
+  Widget _buildChat(String userId) {
     final chatRepository = FirebaseChatPlant();
 
     return MultiBlocProvider(

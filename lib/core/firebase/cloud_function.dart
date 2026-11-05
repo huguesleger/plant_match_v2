@@ -20,7 +20,7 @@ class CloudFunction {
           FirebaseFunctionsException(:final message) => ValidationFailure(
               Option.fromNullable(message).getOrElse(() => 'Erreur serveur'),
             ),
-          _ => UnexpectedFailure('Erreur serveur: $error'),
+          Object() => UnexpectedFailure('Erreur serveur: $error'),
         },
       );
 }

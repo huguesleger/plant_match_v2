@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -17,7 +18,7 @@ class DetailEditButton extends StatelessWidget {
         width: double.infinity,
         child: ButtonRounded(
           text: t.personalInformation.detail.edit_button,
-          onPressed: () async {
+          onPressed: Some(() async {
             final profilCubit = context.read<ProfilCubit>();
             profilCubit.getProfilUser(profilUser.uid);
             await Navigator.push(
@@ -29,7 +30,7 @@ class DetailEditButton extends StatelessWidget {
                 ),
               ),
             );
-          },
+          }),
           bgColor: AppColors.greenLight,
           textColor: AppColors.blueGreen,
         ),

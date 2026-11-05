@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:plant_match_v2/core/util/json_reader.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/core/firebase/cloud_function.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
@@ -18,17 +19,12 @@ class FirebaseProfilRepo implements ProfilRepository {
       () async {
         final userDoc =
             await _firebaseFirestore.collection('users').doc(uid).get();
-        if (userDoc.exists) {
-          final userData = userDoc.data();
-
-          if (userData != null) {
-            return Some(ProfilUser.fromJson({
-              ...userData,
-              'uid': uid,
-            }));
-          }
-        }
-        return const None();
+        return Option.fromNullable(userDoc.data())
+            .filter((_) => userDoc.exists)
+            .map((userData) => ProfilUser.fromJson({
+                  ...userData,
+                  'uid': uid,
+                }));
       },
       (error, _) => _mapErrorToFailure(error),
     );
@@ -110,12 +106,12 @@ class FirebaseProfilRepo implements ProfilRepository {
   @override
   TaskEither<Failure, int> applyReferral(String referralCode) =>
       CloudFunction.call('applyReferral', {'code': referralCode})
-          .map((result) => result['bonus'] as int? ?? 0);
+          .map((result) => result.read<int>('bonus').getOrElse(() => 0));
 
   Failure _mapErrorToFailure(Object error) {
     if (error is Failure) return error;
     if (error is FirebaseException) {
-      return FirebaseFailure('Erreur Firebase: ${error.message ?? error.code}');
+      return FirebaseFailure('Erreur Firebase: ${Option.fromNullable(error.message).getOrElse(() => error.code)}');
     }
     return UnexpectedFailure('Erreur inattendue: $error');
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/gen/assets.gen.dart';
@@ -70,7 +71,7 @@ class _AvatarSelectionDialogState extends State<AvatarSelectionDialog> {
                   horizontal: 24,
                 ),
                 onPressed: selectedIndex != -1
-                    ? () async {
+                    ? Some(() async {
                         final selectedAvatar = avatars[selectedIndex];
                         final profilCubit = context.read<ProfilCubit>();
                         final navigator = Navigator.of(context);
@@ -83,8 +84,8 @@ class _AvatarSelectionDialogState extends State<AvatarSelectionDialog> {
                         if (mounted) {
                           navigator.pop(true);
                         }
-                      }
-                    : null,
+                      })
+                    : const None(),
               ),
             ),
           ],

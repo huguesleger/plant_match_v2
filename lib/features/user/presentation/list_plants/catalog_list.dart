@@ -1,3 +1,4 @@
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -48,7 +49,7 @@ class CatalogList extends StatelessWidget {
                   offerType: item.offerType,
                   environment: item.environment,
                   createdDate: item.createdAt,
-                  catalog: item,
+                  catalog: Some(item),
                   onPressed: () {
                     Navigator.push(
                       context,

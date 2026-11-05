@@ -35,7 +35,7 @@ class UserScreen extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  UserBio(bio: data.user.bio.match(() => null, (b) => b)),
+                  UserBio(bio: data.user.bio),
                   const SizedBox(height: 30),
                   ItemsCount(
                     catalog: data.publishedCatalogs(data.user.uid),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/gen/assets.gen.dart';
@@ -34,12 +35,12 @@ class CatalogLoadedView extends StatelessWidget {
       appBar: AppBarHeaderImage(
         image: Assets.res.images.headerCatalog.image(),
         onPressed: () => Navigator.pop(context),
-        styleIconButton: IconButton.styleFrom(
+        styleIconButton: Some(IconButton.styleFrom(
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           backgroundColor: AppColors.white,
-        ),
-        actions: [
+        )),
+        actions: Some([
           IconButton(
             style: IconButton.styleFrom(
               shape: RoundedRectangleBorder(
@@ -58,7 +59,7 @@ class CatalogLoadedView extends StatelessWidget {
                   context.read<CatalogCubit>().changeSortOption(newSort),
             ),
           ),
-        ],
+        ]),
       ),
       floatingActionButton: AddPlantButton(catalog: catalog),
       body: Column(
@@ -69,7 +70,7 @@ class CatalogLoadedView extends StatelessWidget {
                 AppSpacing.paddingHorizontal + const EdgeInsets.only(top: 16),
             child: TitlePage(
               title: t.catalog.screen.title,
-              subtitle: t.catalog.screen.subtitle,
+              subtitle: Some(t.catalog.screen.subtitle),
             ),
           ),
           Expanded(

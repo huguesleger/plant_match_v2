@@ -8,30 +8,28 @@ import 'package:plant_match_v2/features/notifications/presentation/cubit/notific
 
 class NotificationCubit extends SafeCubit<NotificationState> {
   final NotificationRepository _notificationRepository;
-  StreamSubscription<AppNotification>? _notificationSubscription;
+  Option<StreamSubscription<AppNotification>> _notificationSubscription =
+      const None();
   Option<StreamSubscription<String>> _tokenRefreshSubscription = const None();
 
   NotificationCubit({required NotificationRepository notificationRepository})
       : _notificationRepository = notificationRepository,
         super(const NotificationInitial());
 
-  /// Initialise la configuration des notifications locales et commence l'écoute.
   void initialize() {
     _notificationRepository.initializeLocalNotifications().match(
       (failure) => emit(NotificationError(failure.message)),
       (_) {
-        _notificationSubscription?.cancel();
-        _notificationSubscription =
-            _notificationRepository.onNotificationReceived.listen(
-          (notification) {
-            // Optionnel : Gérer des actions spécifiques dans l'app lors de la réception
-          },
+        _cancelNotificationSubscription();
+        _notificationSubscription = Some(
+          _notificationRepository.onNotificationReceived.listen(
+            (notification) {},
+          ),
         );
       },
     ).run();
   }
 
-  /// Demande la permission de notification et sauvegarde le jeton FCM de l'utilisateur.
   void requestPermissionAndSaveToken(String userId) {
     _notificationRepository
         .requestPermission()
@@ -68,12 +66,16 @@ class NotificationCubit extends SafeCubit<NotificationState> {
     );
   }
 
+  void _cancelNotificationSubscription() {
+    _notificationSubscription.map((subscription) => subscription.cancel());
+    _notificationSubscription = const None();
+  }
+
   void _cancelTokenRefresh() {
     _tokenRefreshSubscription.map((subscription) => subscription.cancel());
     _tokenRefreshSubscription = const None();
   }
 
-  /// Supprime le jeton FCM de l'utilisateur (lors de la déconnexion).
   Future<void> removeTokenAndLogout(String userId) {
     _cancelTokenRefresh();
     return _notificationRepository
@@ -92,14 +94,12 @@ class NotificationCubit extends SafeCubit<NotificationState> {
 
   @override
   Future<void> close() {
-    _notificationSubscription?.cancel();
+    _cancelNotificationSubscription();
     _cancelTokenRefresh();
     return super.close();
   }
 }
 
-/// Extension sur [NotificationState] pour faciliter le pattern matching exhaustif
-/// selon les règles du projet (pas de switch par défaut, utilisation de expressions de type match).
 extension NotificationStateMatch on NotificationState {
   T match<T>({
     required T Function(NotificationInitial initial) initial,

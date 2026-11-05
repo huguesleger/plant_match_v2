@@ -7,8 +7,10 @@ import 'package:plant_match_v2/features/catalog/domain/repository/catalog_reposi
 class FirebaseCatalogRepository implements CatalogRepository {
   final FirebaseFirestore firestore;
 
-  FirebaseCatalogRepository({FirebaseFirestore? firestoreInstance})
-      : firestore = firestoreInstance ?? FirebaseFirestore.instance;
+  FirebaseCatalogRepository(
+      {Option<FirebaseFirestore> firestoreInstance = const None()})
+      : firestore =
+            firestoreInstance.getOrElse(() => FirebaseFirestore.instance);
 
   @override
   TaskEither<Failure, Unit> updateCatalog(Catalog catalog) {
@@ -54,13 +56,9 @@ class FirebaseCatalogRepository implements CatalogRepository {
     return TaskEither.tryCatch(
       () async {
         final doc = await firestore.collection('catalogs').doc(catalogId).get();
-        if (doc.exists) {
-          final data = doc.data();
-          if (data != null) {
-            return Some(Catalog.fromJson(data, doc.id));
-          }
-        }
-        return const None();
+        if (!doc.exists) return const None();
+        return Option.fromNullable(doc.data())
+            .map((data) => Catalog.fromJson(data, doc.id));
       },
       (error, _) => _mapErrorToFailure(error),
     );
@@ -115,18 +113,15 @@ class FirebaseCatalogRepository implements CatalogRepository {
   }
 
   @override
-  Stream<Catalog?> watchCatalog(String catalogId) {
+  Stream<Option<Catalog>> watchCatalog(String catalogId) {
     return firestore
         .collection('catalogs')
         .doc(catalogId)
         .snapshots()
-        .map((doc) {
-      if (!doc.exists) return null;
-      final data = doc.data();
-      if (data == null) return null;
-
-      return Catalog.fromJson(data, doc.id);
-    });
+        .map(
+          (doc) => Option.fromNullable(doc.data())
+              .map((data) => Catalog.fromJson(data, doc.id)),
+        );
   }
 
   @override
@@ -157,7 +152,7 @@ class FirebaseCatalogRepository implements CatalogRepository {
   Failure _mapErrorToFailure(Object error) {
     if (error is Failure) return error;
     if (error is FirebaseException) {
-      return FirebaseFailure('Erreur Firebase: ${error.message ?? error.code}');
+      return FirebaseFailure('Erreur Firebase: ${Option.fromNullable(error.message).getOrElse(() => error.code)}');
     }
     return UnexpectedFailure('Erreur inattendue: $error');
   }

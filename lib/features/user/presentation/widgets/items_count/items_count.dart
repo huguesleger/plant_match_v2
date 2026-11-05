@@ -40,7 +40,7 @@ class ItemsCount extends StatelessWidget {
             count: level.toString(),
             text: t.user.stats.level,
             isLevel: true,
-            sup: t.user.stats.level_suffix(n: level),
+            sup: Some(t.user.stats.level_suffix(n: level)),
             icon: LucideIcons.award,
           ),
         ],

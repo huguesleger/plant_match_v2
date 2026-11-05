@@ -28,7 +28,7 @@ class RecommendationCubit extends SafeCubit<RecommendationState> {
       step: (stepState) {
         emit(RecommendationQuestionStep(
           stepIndex: stepState.stepIndex,
-          answers: stepState.answers.copyWith(environment: some(type)),
+          answers: stepState.answers.copyWith(environment: some(Some(type))),
         ));
       },
       loading: (_) {},
@@ -43,7 +43,7 @@ class RecommendationCubit extends SafeCubit<RecommendationState> {
       step: (stepState) {
         emit(RecommendationQuestionStep(
           stepIndex: stepState.stepIndex,
-          answers: stepState.answers.copyWith(light: some(type)),
+          answers: stepState.answers.copyWith(light: some(Some(type))),
         ));
       },
       loading: (_) {},
@@ -58,7 +58,7 @@ class RecommendationCubit extends SafeCubit<RecommendationState> {
       step: (stepState) {
         emit(RecommendationQuestionStep(
           stepIndex: stepState.stepIndex,
-          answers: stepState.answers.copyWith(careLevel: some(type)),
+          answers: stepState.answers.copyWith(careLevel: some(Some(type))),
         ));
       },
       loading: (_) {},
@@ -73,7 +73,7 @@ class RecommendationCubit extends SafeCubit<RecommendationState> {
       step: (stepState) {
         emit(RecommendationQuestionStep(
           stepIndex: stepState.stepIndex,
-          answers: stepState.answers.copyWith(petSafety: some(type)),
+          answers: stepState.answers.copyWith(petSafety: some(Some(type))),
         ));
       },
       loading: (_) {},

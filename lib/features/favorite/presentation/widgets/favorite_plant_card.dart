@@ -48,7 +48,6 @@ class FavoritePlantCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image avec overlay "Non disponible"
             Stack(
               children: [
                 ClipRRect(
@@ -68,14 +67,12 @@ class FavoritePlantCard extends StatelessWidget {
                 ),
               ],
             ),
-            // Contenu
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Badges
                     Wrap(
                       spacing: 6,
                       runSpacing: 4,
@@ -114,7 +111,6 @@ class FavoritePlantCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    // Bouton retirer
                     GestureDetector(
                       onTap: onRemove,
                       child: Row(

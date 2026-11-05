@@ -6,6 +6,7 @@ import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
+import 'package:plant_match_v2/core/util/json_reader.dart';
 import 'package:plant_match_v2/features/auth/domain/entities/user_auth.dart';
 import 'package:plant_match_v2/features/auth/domain/repository/auth_repository.dart';
 
@@ -15,49 +16,56 @@ class FirebaseAuthRepository implements AuthRepository {
   final GoogleSignIn _googleSignIn;
   final FacebookAuth _facebookAuth;
 
-  FirebaseAuthRepository({
-    FirebaseAuth? firebaseAuth,
-    FirebaseFirestore? firebaseFirestore,
-    GoogleSignIn? googleSignIn,
-    FacebookAuth? facebookAuth,
-  })  : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
-        _firebaseFirestore = firebaseFirestore ?? FirebaseFirestore.instance,
-        _googleSignIn = googleSignIn ?? GoogleSignIn(),
-        _facebookAuth = facebookAuth ?? FacebookAuth.instance;
+  FirebaseAuthRepository()
+      : this.using(
+          firebaseAuth: FirebaseAuth.instance,
+          firebaseFirestore: FirebaseFirestore.instance,
+          googleSignIn: GoogleSignIn(),
+          facebookAuth: FacebookAuth.instance,
+        );
 
-  // ─── getCurrentUser ───────────────────────────────────────────────────────
+  FirebaseAuthRepository.using({
+    required FirebaseAuth firebaseAuth,
+    required FirebaseFirestore firebaseFirestore,
+    required GoogleSignIn googleSignIn,
+    required FacebookAuth facebookAuth,
+  })  : _firebaseAuth = firebaseAuth,
+        _firebaseFirestore = firebaseFirestore,
+        _googleSignIn = googleSignIn,
+        _facebookAuth = facebookAuth;
+
+  static T _required<T>(Option<T> value, String message) =>
+      value.getOrElse(() => throw AuthFailure(message));
 
   @override
   TaskEither<Failure, Option<UserAuth>> getCurrentUser() {
     return TaskEither.tryCatch(
       () async {
-        final firebaseUser = _firebaseAuth.currentUser;
-        if (firebaseUser == null) return const None();
-
-        final userDoc = await _firebaseFirestore
-            .collection('users')
-            .doc(firebaseUser.uid)
-            .get();
-        final data = userDoc.data();
-        if (data == null) return const None();
-
-        return Some(UserAuth.fromJson({
-          ...data,
-          'uid': firebaseUser.uid,
-          'email': firebaseUser.email,
-        }));
+        return Option.fromNullable(_firebaseAuth.currentUser).match(
+          () async => const None(),
+          (firebaseUser) async {
+            final userDoc = await _firebaseFirestore
+                .collection('users')
+                .doc(firebaseUser.uid)
+                .get();
+            return Option.fromNullable(userDoc.data()).map(
+              (data) => UserAuth.fromJson({
+                ...data,
+                'uid': firebaseUser.uid,
+                'email': firebaseUser.email,
+              }),
+            );
+          },
+        );
       },
       (error, _) => _mapErrorToFailure(error),
     );
   }
 
-  // ─── signInWithEmailAndPassword ───────────────────────────────────────────
-
   @override
   TaskEither<Failure, UserAuth> signInWithEmailAndPassword({
     required String email,
     required String password,
-    String? fullName,
   }) {
     return TaskEither.tryCatch(
       () async {
@@ -66,11 +74,10 @@ class FirebaseAuthRepository implements AuthRepository {
           password: password,
         );
 
-        final user = userCredential.user;
-        if (user == null) {
-          throw const AuthFailure(
-              'Une erreur inattendue est survenue. Veuillez réessayer.');
-        }
+        final user = _required(
+          Option.fromNullable(userCredential.user),
+          'Une erreur inattendue est survenue. Veuillez réessayer.',
+        );
 
         final userRef = _firebaseFirestore.collection('users').doc(user.uid);
         final data = Option.fromNullable((await userRef.get()).data())
@@ -88,8 +95,6 @@ class FirebaseAuthRepository implements AuthRepository {
     );
   }
 
-  // ─── registerWithEmailAndPassword ─────────────────────────────────────────
-
   @override
   TaskEither<Failure, UserAuth> registerWithEmailAndPassword({
     required String email,
@@ -102,10 +107,10 @@ class FirebaseAuthRepository implements AuthRepository {
         final userCredential = await _firebaseAuth
             .createUserWithEmailAndPassword(email: email, password: password);
 
-        final user = userCredential.user;
-        if (user == null) {
-          throw const AuthFailure("Impossible de créer l'utilisateur.");
-        }
+        final user = _required(
+          Option.fromNullable(userCredential.user),
+          "Impossible de créer l'utilisateur.",
+        );
         await user.updateDisplayName('$firstName $lastName'.trim());
 
         return UserAuth(
@@ -118,8 +123,6 @@ class FirebaseAuthRepository implements AuthRepository {
       (error, _) => _mapErrorToFailure(error),
     );
   }
-
-  // ─── finalizeRegistration ─────────────────────────────────────────────────
 
   @override
   TaskEither<Failure, bool> finalizeRegistration(
@@ -140,7 +143,6 @@ class FirebaseAuthRepository implements AuthRepository {
           'createdAt': FieldValue.serverTimestamp(),
           'emailVerified': true,
           'leaves': 5,
-          'referredBy': null,
         });
         return true;
       },
@@ -148,16 +150,14 @@ class FirebaseAuthRepository implements AuthRepository {
     );
   }
 
-  // ─── signInWithGoogle ─────────────────────────────────────────────────────
-
   @override
   TaskEither<Failure, (UserAuth, bool)> signInWithGoogle() {
     return TaskEither.tryCatch(
       () async {
-        final googleUser = await _googleSignIn.signIn();
-        if (googleUser == null) {
-          throw const AuthFailure('Connexion avec Google annulée.');
-        }
+        final googleUser = _required(
+          Option.fromNullable(await _googleSignIn.signIn()),
+          'Connexion avec Google annulée.',
+        );
 
         final googleAuth = await googleUser.authentication;
         final credential = GoogleAuthProvider.credential(
@@ -167,16 +167,15 @@ class FirebaseAuthRepository implements AuthRepository {
 
         final userCredential =
             await _firebaseAuth.signInWithCredential(credential);
-        final firebaseUser = userCredential.user;
-
-        if (firebaseUser == null) {
-          throw const AuthFailure("Échec de l'authentification avec Google.");
-        }
+        final firebaseUser = _required(
+          Option.fromNullable(userCredential.user),
+          "Échec de l'authentification avec Google.",
+        );
 
         final userAuth = UserAuth.fromFullName(
           email: Option.fromNullable(firebaseUser.email),
           uid: firebaseUser.uid,
-          fullName: firebaseUser.displayName ?? '',
+          fullName: Option.fromNullable(firebaseUser.displayName).getOrElse(() => ''),
         );
 
         final docRef = _firebaseFirestore.collection('users').doc(userAuth.uid);
@@ -184,7 +183,7 @@ class FirebaseAuthRepository implements AuthRepository {
 
         if (docSnapshot.exists) {
           await docRef.update({'isOnline': true});
-          return (_withStoredNames(userAuth, docSnapshot.data()), false);
+          return (_withStoredNames(userAuth, Option.fromNullable(docSnapshot.data())), false);
         } else {
           await docRef.set({
             'firstName': userAuth.firstName,
@@ -193,7 +192,6 @@ class FirebaseAuthRepository implements AuthRepository {
             'createdAt': FieldValue.serverTimestamp(),
             'emailVerified': true,
             'leaves': 5,
-            'referredBy': null,
           });
           return (userAuth, true);
         }
@@ -201,8 +199,6 @@ class FirebaseAuthRepository implements AuthRepository {
       (error, _) => _mapErrorToFailure(error),
     );
   }
-
-  // ─── signInWithFacebook ───────────────────────────────────────────────────
 
   @override
   TaskEither<Failure, (UserAuth, bool)> signInWithFacebook() {
@@ -220,23 +216,25 @@ class FirebaseAuthRepository implements AuthRepository {
         }
 
         final userData = await _facebookAuth.getUserData();
-        final accessToken = result.accessToken!;
+        final accessToken = _required(
+          Option.fromNullable(result.accessToken),
+          'Connexion avec Facebook annulée.',
+        );
         final credential =
             FacebookAuthProvider.credential(accessToken.tokenString);
         await AppTrackingTransparency.requestTrackingAuthorization();
 
         final userCredential =
             await _firebaseAuth.signInWithCredential(credential);
-        final firebaseUser = userCredential.user;
-
-        if (firebaseUser == null) {
-          throw const AuthFailure("Échec de l'authentification avec Facebook.");
-        }
+        final firebaseUser = _required(
+          Option.fromNullable(userCredential.user),
+          "Échec de l'authentification avec Facebook.",
+        );
 
         final userAuth = UserAuth.fromFullName(
-          email: Option.fromNullable(userData['email'] as String?),
+          email: userData.read<String>('email'),
           uid: firebaseUser.uid,
-          fullName: userData['name'] ?? '',
+          fullName: userData.string('name'),
         );
 
         final docRef = _firebaseFirestore.collection('users').doc(userAuth.uid);
@@ -244,7 +242,7 @@ class FirebaseAuthRepository implements AuthRepository {
 
         if (docSnapshot.exists) {
           await docRef.update({'isOnline': true});
-          return (_withStoredNames(userAuth, docSnapshot.data()), false);
+          return (_withStoredNames(userAuth, Option.fromNullable(docSnapshot.data())), false);
         } else {
           await docRef.set({
             'firstName': userAuth.firstName,
@@ -253,7 +251,6 @@ class FirebaseAuthRepository implements AuthRepository {
             'createdAt': FieldValue.serverTimestamp(),
             'emailVerified': true,
             'leaves': 5,
-            'referredBy': null,
           });
           return (userAuth, true);
         }
@@ -261,8 +258,6 @@ class FirebaseAuthRepository implements AuthRepository {
       (error, _) => _mapErrorToFailure(error),
     );
   }
-
-  // ─── logOut ───────────────────────────────────────────────────────────────
 
   @override
   TaskEither<Failure, Unit> logOut() {
@@ -277,13 +272,13 @@ class FirebaseAuthRepository implements AuthRepository {
         } catch (_) {}
 
         try {
-          final user = _firebaseAuth.currentUser;
-          if (user != null) {
-            await _firebaseFirestore
+          await Option.fromNullable(_firebaseAuth.currentUser).match(
+            () async {},
+            (user) => _firebaseFirestore
                 .collection('users')
                 .doc(user.uid)
-                .update({'isOnline': false});
-          }
+                .update({'isOnline': false}),
+          );
         } on FirebaseException catch (e) {
           if (e.code != 'not-found') {
             debugPrint(
@@ -300,8 +295,6 @@ class FirebaseAuthRepository implements AuthRepository {
     );
   }
 
-  // ─── sendPasswordResetEmail ───────────────────────────────────────────────
-
   @override
   TaskEither<Failure, Unit> sendPasswordResetEmail({required String email}) {
     return TaskEither.tryCatch(
@@ -313,24 +306,18 @@ class FirebaseAuthRepository implements AuthRepository {
     );
   }
 
-  // ─── sendEmailVerification ────────────────────────────────────────────────
-
   @override
   TaskEither<Failure, Unit> sendEmailVerification() {
     return TaskEither.tryCatch(
       () async {
-        User? user = _firebaseAuth.currentUser;
-        if (user == null) {
-          throw const AuthFailure(
-              "Aucun utilisateur connecté. Impossible d'envoyer le mail de vérification.");
-        }
-
-        await user.reload();
-        user = _firebaseAuth.currentUser;
-
-        if (user == null) {
-          throw const AuthFailure('Aucun utilisateur après reload. Réessayez.');
-        }
+        await _required(
+          Option.fromNullable(_firebaseAuth.currentUser),
+          "Aucun utilisateur connecté. Impossible d'envoyer le mail de vérification.",
+        ).reload();
+        final user = _required(
+          Option.fromNullable(_firebaseAuth.currentUser),
+          'Aucun utilisateur après reload. Réessayez.',
+        );
         if (user.emailVerified) {
           throw const AuthFailure('Email déjà vérifié.');
         }
@@ -342,28 +329,27 @@ class FirebaseAuthRepository implements AuthRepository {
     );
   }
 
-  // ─── isEmailVerified ──────────────────────────────────────────────────────
-
   @override
   TaskEither<Failure, bool> isEmailVerified() {
     return TaskEither.tryCatch(
       () async {
-        final user = _firebaseAuth.currentUser;
-        if (user == null) {
-          throw const AuthFailure('Aucun utilisateur connecté.');
-        }
-        await user.reload();
-        return _firebaseAuth.currentUser?.emailVerified ?? false;
+        await _required(
+          Option.fromNullable(_firebaseAuth.currentUser),
+          'Aucun utilisateur connecté.',
+        ).reload();
+        return Option.fromNullable(_firebaseAuth.currentUser)
+            .map((user) => user.emailVerified)
+            .getOrElse(() => false);
       },
       (error, _) => _mapErrorToFailure(error),
     );
   }
 
-  UserAuth _withStoredNames(UserAuth user, Map<String, dynamic>? data) =>
-      Option.fromNullable(data)
+  UserAuth _withStoredNames(UserAuth user, Option<Map<String, dynamic>> data) =>
+      data
           .map((d) => (
-                _storedName(d['firstName']),
-                _storedName(d['lastName']),
+                d.nonEmptyString('firstName'),
+                d.nonEmptyString('lastName'),
               ))
           .filter((names) => names.$1.isSome() || names.$2.isSome())
           .match(
@@ -376,29 +362,27 @@ class FirebaseAuthRepository implements AuthRepository {
             ),
           );
 
-  Option<String> _storedName(Object? value) =>
-      value is String && value.trim().isNotEmpty ? Some(value) : const None();
-
-  // ─── Mapping d'erreurs ────────────────────────────────────────────────────
+  static const _authMessages = {
+    'user-not-found': 'Aucun compte trouvé pour cet email.',
+    'wrong-password': 'Mot de passe incorrect.',
+    'invalid-email': 'Email invalide.',
+    'user-disabled': 'Ce compte a été désactivé.',
+    'invalid-credential': 'Les informations de connexion sont incorrectes.',
+  };
 
   Failure _mapErrorToFailure(Object error) {
     if (error is Failure) return error;
 
     if (error is FirebaseAuthException) {
-      final message = switch (error.code) {
-        'user-not-found' => 'Aucun compte trouvé pour cet email.',
-        'wrong-password' => 'Mot de passe incorrect.',
-        'invalid-email' => 'Email invalide.',
-        'user-disabled' => 'Ce compte a été désactivé.',
-        'invalid-credential' =>
-          'Les informations de connexion sont incorrectes.',
-        _ => 'Une erreur inattendue est survenue. Veuillez réessayer.',
-      };
+      final message = Option.fromNullable(_authMessages[error.code]).getOrElse(
+        () => 'Une erreur inattendue est survenue. Veuillez réessayer.',
+      );
       return AuthFailure(message);
     }
 
     if (error is FirebaseException) {
-      return FirebaseFailure('Erreur Firebase: ${error.message ?? error.code}');
+      return FirebaseFailure(
+          'Erreur Firebase: ${Option.fromNullable(error.message).getOrElse(() => error.code)}');
     }
 
     return UnexpectedFailure('Erreur inconnue: $error');

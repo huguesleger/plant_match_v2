@@ -32,7 +32,11 @@ class _DetailWizardScreenState extends State<DetailWizardScreen> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(message)),
             );
-          default:
+          case ProfilInitial() ||
+                ProfilLoading() ||
+                ProfilLoaded() ||
+                ProfilError() ||
+                ProfilImageUploading():
             break;
         }
       },

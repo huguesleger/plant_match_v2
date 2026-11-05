@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:intl/intl.dart';
@@ -22,7 +23,7 @@ class UserPlantCard extends StatelessWidget {
     required this.offerType,
     required this.environment,
     required this.createdDate,
-    this.catalog,
+    this.catalog = const None(),
   });
 
   final String title;
@@ -32,7 +33,7 @@ class UserPlantCard extends StatelessWidget {
   final VoidCallback onPressed;
   final Environment environment;
   final DateTime createdDate;
-  final Catalog? catalog;
+  final Option<Catalog> catalog;
 
   @override
   Widget build(BuildContext context) {

@@ -1,3 +1,4 @@
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -24,7 +25,7 @@ class StepPublish extends StatelessWidget {
           name: 'publish',
           title: Text(t.catalog.wizard.publish_label),
           initialValue: controller.text == 'true',
-          onChanged: (v) => onToggle(v ?? false),
+          onChanged: (v) => onToggle(Option.fromNullable(v).getOrElse(() => false)),
           decoration: const InputDecoration(border: InputBorder.none),
         ),
       );

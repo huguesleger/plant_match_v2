@@ -1,3 +1,4 @@
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -13,8 +14,8 @@ class LightingField extends StatelessWidget {
     required this.onChanged,
   });
 
-  final Lighting? selectedLighting;
-  final ValueChanged<Lighting?> onChanged;
+  final Lighting selectedLighting;
+  final ValueChanged<Lighting> onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +34,7 @@ class LightingField extends StatelessWidget {
                 ItemRadio<Lighting>(
                   title: t.catalog.wizard.steps.lighting.sun,
                   value: Lighting.sun,
-                  selectedItem: selectedLighting,
+                  selectedItem: Some(selectedLighting),
                   onItemSelected: (val) {
                     onChanged(val);
                     field.didChange(val);
@@ -44,7 +45,7 @@ class LightingField extends StatelessWidget {
                 ItemRadio<Lighting>(
                   title: t.catalog.wizard.steps.lighting.indirect,
                   value: Lighting.indirectLight,
-                  selectedItem: selectedLighting,
+                  selectedItem: Some(selectedLighting),
                   onItemSelected: (val) {
                     onChanged(val);
                     field.didChange(val);
@@ -55,7 +56,7 @@ class LightingField extends StatelessWidget {
                 ItemRadio<Lighting>(
                   title: t.catalog.wizard.steps.lighting.shade,
                   value: Lighting.shade,
-                  selectedItem: selectedLighting,
+                  selectedItem: Some(selectedLighting),
                   onItemSelected: (val) {
                     onChanged(val);
                     field.didChange(val);
@@ -68,7 +69,7 @@ class LightingField extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(top: 8.0, left: 12.0),
                 child: Text(
-                  field.errorText ?? '',
+                  Option.fromNullable(field.errorText).getOrElse(() => ''),
                   style: const TextStyle(color: Colors.red, fontSize: 12),
                 ),
               ),

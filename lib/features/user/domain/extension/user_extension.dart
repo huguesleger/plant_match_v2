@@ -1,10 +1,11 @@
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/user/domain/entities/catalog_filter.dart';
 import 'package:plant_match_v2/features/user/domain/entities/user.dart';
 
 extension UserExtension on User {
   List<Catalog> publishedCatalogs(String userId) {
-    final list = userCatalogs[userId] ?? [];
+    final list = Option.fromNullable(userCatalogs[userId]).getOrElse(() => []);
 
     return list.where((c) => c.status == CatalogStatus.published).toList()
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
@@ -29,7 +30,7 @@ extension UserExtension on User {
         fullCatalog.where((c) => c.environment == Environment.outdoor).toList(),
       CatalogFilter.indoor =>
         fullCatalog.where((c) => c.environment == Environment.indoor).toList(),
-      _ => fullCatalog,
+      CatalogFilter.all => fullCatalog,
     };
   }
 

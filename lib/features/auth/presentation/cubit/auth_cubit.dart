@@ -11,14 +11,15 @@ class AuthCubit extends Cubit<AuthState> {
   final AuthRepository authRepository;
   final FirebaseUserPoints userPointsRepository;
 
-  UserAuth? _currentUser;
+  Option<UserAuth> _currentUser = const None();
   bool _isCheckingEmail = false;
 
   AuthCubit({required this.authRepository, required this.userPointsRepository})
       : super(const AuthInitial());
 
-  UserAuth? get currentUser => _currentUser;
-  String? get userId => _currentUser?.uid;
+  Option<UserAuth> get currentUser => _currentUser;
+  Option<String> get userId => _currentUser.map((user) => user.uid);
+
 
   void checkCurrentUser() {
     authRepository
@@ -28,7 +29,7 @@ class AuthCubit extends Cubit<AuthState> {
           (option) => option.match(
             () => const Unauthenticated(),
             (user) {
-              _currentUser = user;
+              _currentUser = Some(user);
               return Authenticated(user);
             },
           ),
@@ -50,7 +51,7 @@ class AuthCubit extends Cubit<AuthState> {
           ? _resumeRegistration()
           : _fail(failure.message, const Unauthenticated()),
       (user) {
-        _currentUser = user;
+        _currentUser = Some(user);
         emit(Authenticated(user));
       },
     ).run();
@@ -64,9 +65,10 @@ class AuthCubit extends Cubit<AuthState> {
           final user = UserAuth.fromFullName(
             uid: firebaseUser.uid,
             email: Option.fromNullable(firebaseUser.email),
-            fullName: firebaseUser.displayName ?? '',
+            fullName: Option.fromNullable(firebaseUser.displayName)
+                .getOrElse(() => ''),
           );
-          _currentUser = user;
+          _currentUser = Some(user);
           emit(AuthEmailVerificationSent(user));
           checkEmailVerified();
         },
@@ -91,7 +93,7 @@ class AuthCubit extends Cubit<AuthState> {
         .match(
       (failure) => _fail(failure.message, const Unauthenticated()),
       (user) {
-        _currentUser = user;
+        _currentUser = Some(user);
         emit(AuthEmailVerificationSent(user));
       },
     ).run();
@@ -100,7 +102,7 @@ class AuthCubit extends Cubit<AuthState> {
   TaskEither<Failure, Unit> resendEmailVerification() =>
       authRepository.sendEmailVerification();
 
-  void checkEmailVerified({String? fullName}) {
+  void checkEmailVerified({Option<String> fullName = const None()}) {
     if (_isCheckingEmail) return;
     _isCheckingEmail = true;
 
@@ -109,40 +111,42 @@ class AuthCubit extends Cubit<AuthState> {
         return TaskEither.left(const AuthEmailNotVerifiedFailure());
       }
 
-      final firebaseUser = FirebaseAuth.instance.currentUser;
-      if (firebaseUser == null) {
-        return TaskEither.left(const AuthFailure("Utilisateur introuvable"));
-      }
+      return Option.fromNullable(FirebaseAuth.instance.currentUser).match(
+        () => TaskEither<Failure, Authenticated>.left(
+            const AuthFailure("Utilisateur introuvable")),
+        (firebaseUser) {
+          final resolvedName = fullName
+              .alt(() => _currentUser.map((user) => user.fullName))
+              .getOrElse(() => '');
+          final userAuth = UserAuth.fromFullName(
+            uid: firebaseUser.uid,
+            email: Option.fromNullable(firebaseUser.email),
+            fullName: resolvedName,
+          );
 
-      final resolvedName = fullName ?? _currentUser?.fullName ?? '';
-      final userAuth = UserAuth.fromFullName(
-        uid: firebaseUser.uid,
-        email: Option.fromNullable(firebaseUser.email),
-        fullName: resolvedName,
+          return TaskEither<Failure, UserAuth>.right(userAuth).flatMap((u) =>
+              authRepository
+                  .finalizeRegistration(firebaseUser, u.firstName, u.lastName)
+                  .flatMap<Authenticated>((isFirst) {
+                return TaskEither<Failure, Authenticated>.right(
+                    Authenticated(u, isFirstTime: isFirst));
+              }));
+        },
       );
-
-      return TaskEither<Failure, UserAuth>.right(userAuth).flatMap((u) =>
-          authRepository
-              .finalizeRegistration(firebaseUser, u.firstName, u.lastName)
-              .flatMap<Authenticated>((isFirst) {
-            // L'email de bienvenue est envoyé par la Cloud Function
-            // sendWelcomeEmail à la création du document users/{uid}.
-            return TaskEither<Failure, Authenticated>.right(
-                Authenticated(u, isFirstTime: isFirst));
-          }));
     }).match(
       (failure) {
         _isCheckingEmail = false;
-        final pending = _currentUser != null
-            ? AuthEmailVerificationSent(_currentUser!)
-            : const Unauthenticated();
+        final pending = _currentUser.match<AuthState>(
+          () => const Unauthenticated(),
+          AuthEmailVerificationSent.new,
+        );
         failure is AuthEmailNotVerifiedFailure
             ? emit(pending)
             : _fail(failure.message, pending);
       },
       (state) {
         _isCheckingEmail = false;
-        _currentUser = state.user;
+        _currentUser = Some(state.user);
         emit(state);
       },
     ).run();
@@ -154,7 +158,7 @@ class AuthCubit extends Cubit<AuthState> {
     authRepository.signInWithGoogle().match(
       (failure) => _fail(failure.message, const Unauthenticated()),
       (result) {
-        _currentUser = result.$1;
+        _currentUser = Some(result.$1);
         emit(Authenticated(result.$1, isFirstTime: result.$2));
       },
     ).run();
@@ -166,7 +170,7 @@ class AuthCubit extends Cubit<AuthState> {
     authRepository.signInWithFacebook().match(
       (failure) => _fail(failure.message, const Unauthenticated()),
       (result) {
-        _currentUser = result.$1;
+        _currentUser = Some(result.$1);
         emit(Authenticated(result.$1, isFirstTime: result.$2));
       },
     ).run();
@@ -177,7 +181,7 @@ class AuthCubit extends Cubit<AuthState> {
     return authRepository.logOut().match(
       (failure) => _fail(failure.message, previous),
       (_) {
-        _currentUser = null;
+        _currentUser = const None();
         emit(const Unauthenticated());
       },
     ).run();
@@ -189,11 +193,12 @@ class AuthCubit extends Cubit<AuthState> {
   void deleteUnverifiedUser() {
     TaskEither<Failure, Unit>.tryCatch(
       () async {
-        final user = FirebaseAuth.instance.currentUser;
-        if (user != null && !user.emailVerified) {
-          await user.delete();
-          return unit;
-        }
+        await Option.fromNullable(FirebaseAuth.instance.currentUser)
+            .filter((user) => !user.emailVerified)
+            .match(
+              () => Future<void>.value(),
+              (user) => user.delete(),
+            );
         return unit;
       },
       (error, _) => (error is FirebaseAuthException &&
@@ -204,7 +209,7 @@ class AuthCubit extends Cubit<AuthState> {
     ).match(
       (failure) => _fail(failure.message, const Unauthenticated()),
       (_) {
-        _currentUser = null;
+        _currentUser = const None();
         emit(const Unauthenticated());
       },
     ).run();

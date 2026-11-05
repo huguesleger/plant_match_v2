@@ -15,20 +15,17 @@ class CatalogPageRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userId = context.read<AuthCubit>().userId;
-
-    if (userId == null) {
-      return Scaffold(
+    return context.read<AuthCubit>().userId.match(
+      () => Scaffold(
         body: Center(child: Text(t.common.notConnected)),
-      );
-    }
-
-    return BlocProvider(
-      create: (context) => CatalogCubit(
-        catalogRepository: catalogRepository,
-        storageRepository: storageRepository,
-      )..getCatalogsByUserId(userId),
-      child: const CatalogScreen(),
+      ),
+      (userId) => BlocProvider(
+        create: (context) => CatalogCubit(
+          catalogRepository: catalogRepository,
+          storageRepository: storageRepository,
+        )..getCatalogsByUserId(userId),
+        child: const CatalogScreen(),
+      ),
     );
   }
 }

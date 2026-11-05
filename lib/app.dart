@@ -94,20 +94,22 @@ class _MyAppBodyState extends State<_MyAppBody> with WidgetsBindingObserver {
         AppLifecycleState.paused ||
         AppLifecycleState.detached =>
           _setUserOnline(false),
-        AppLifecycleState.inactive || AppLifecycleState.hidden => null,
+        AppLifecycleState.inactive ||
+        AppLifecycleState.hidden =>
+          Future<void>.value(),
       };
 
   Future<void> _setUserOnline(bool isOnline) async {
     try {
-      final userId = context.read<AuthCubit>().userId;
-      if (userId != null) {
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(userId)
-            .update({
-          'isOnline': isOnline,
-        });
-      }
+      await context.read<AuthCubit>().userId.match(
+            () => Future<void>.value(),
+            (userId) => FirebaseFirestore.instance
+                .collection('users')
+                .doc(userId)
+                .update({
+              'isOnline': isOnline,
+            }),
+          );
     } catch (e) {
       debugPrint("Erreur lors de la mise à jour du statut en ligne : $e");
     }

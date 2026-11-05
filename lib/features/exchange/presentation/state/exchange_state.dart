@@ -7,7 +7,6 @@ class ExchangeInitial extends ExchangeState {}
 
 class ExchangeLoading extends ExchangeState {}
 
-// État pour la sélection de la plante à offrir
 class ExchangePickingPlant extends ExchangeState {
   final List<Catalog> userPlants;
   final String targetPlantId;
@@ -22,7 +21,6 @@ class ExchangePickingPlant extends ExchangeState {
   });
 }
 
-// État pour la confirmation de l'échange
 class ExchangeConfirming extends ExchangeState {
   final Catalog targetPlant;
   final Catalog offeredPlant;
@@ -42,7 +40,6 @@ class ExchangeError extends ExchangeState {
   ExchangeError(this.message);
 }
 
-// États hérités de l'ancienne version (pour la gestion des échanges existants)
 class ExchangePending extends ExchangeState {
   final Exchange exchange;
   ExchangePending(this.exchange);

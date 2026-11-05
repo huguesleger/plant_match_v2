@@ -17,17 +17,18 @@ class HomeCardPlant extends StatelessWidget {
     required this.catalog,
     required this.owner,
     required this.onPressed,
-    this.distance,
+    this.distance = const None(),
   });
 
   final Catalog catalog;
   final ProfilUser owner;
   final VoidCallback onPressed;
-  final double? distance;
+  final Option<double> distance;
 
   @override
   Widget build(BuildContext context) {
-    final currentUserId = context.read<AuthCubit>().userId ?? '';
+    final currentUserId =
+        context.read<AuthCubit>().userId.getOrElse(() => '');
     final isExchange = catalog.offerType == OfferType.exchange;
     final isImg = catalog.images.isNotEmpty;
 
@@ -92,8 +93,8 @@ class HomeCardPlant extends StatelessWidget {
                       ),
                       padding: const EdgeInsets.all(6),
                       child: FavoriteBtn(
-                        catalog: catalog,
-                        currentUserId: currentUserId,
+                        catalog: Some(catalog),
+                        currentUserId: Some(currentUserId),
                       ),
                     ),
                   ),
@@ -149,7 +150,7 @@ class _HomeCardPlantAvatar extends StatelessWidget {
         ],
       ),
       child: Avatar(
-        profilUser: owner,
+        profilUser: Some(owner),
         radius: 14,
         imgSizeAvatar: 28,
       ),
@@ -158,15 +159,17 @@ class _HomeCardPlantAvatar extends StatelessWidget {
 }
 
 class _HomeCardPlantInfo extends StatelessWidget {
-  const _HomeCardPlantInfo({required this.owner, this.distance});
+  const _HomeCardPlantInfo({required this.owner, required this.distance});
 
   final ProfilUser owner;
-  final double? distance;
+  final Option<double> distance;
 
   @override
   Widget build(BuildContext context) {
-    final distText =
-        distance != null ? '${distance!.toStringAsFixed(2)} km' : '2 km';
+    final distText = distance.match(
+      () => '2 km',
+      (d) => '${d.toStringAsFixed(2)} km',
+    );
     final displayName = owner.userName.getOrElse(() => owner.firstName);
     return Row(
       children: [

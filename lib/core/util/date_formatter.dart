@@ -21,16 +21,15 @@ class DateFormatter {
     }
 
     if (now.difference(date).inDays < 7) {
-      return switch (date.weekday) {
-        DateTime.monday => t.widgets.date.days.monday,
-        DateTime.tuesday => t.widgets.date.days.tuesday,
-        DateTime.wednesday => t.widgets.date.days.wednesday,
-        DateTime.thursday => t.widgets.date.days.thursday,
-        DateTime.friday => t.widgets.date.days.friday,
-        DateTime.saturday => t.widgets.date.days.saturday,
-        DateTime.sunday => t.widgets.date.days.sunday,
-        _ => '',
-      };
+      return [
+        t.widgets.date.days.monday,
+        t.widgets.date.days.tuesday,
+        t.widgets.date.days.wednesday,
+        t.widgets.date.days.thursday,
+        t.widgets.date.days.friday,
+        t.widgets.date.days.saturday,
+        t.widgets.date.days.sunday,
+      ][date.weekday - DateTime.monday];
     }
 
     return DateFormat('dd/MM/yyyy').format(date);

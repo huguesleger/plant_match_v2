@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -23,17 +24,17 @@ class LevelScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarTemplate(
-        title: t.level.screen.title,
+        title: Some(t.level.screen.title),
         centerTitle: true,
         backgroundColor: AppColors.greenLight,
         surfaceTintColor: AppColors.white,
-        styleIconButton: IconButton.styleFrom(
+        styleIconButton: Some(IconButton.styleFrom(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
           side: const BorderSide(color: AppColors.greyDark),
-        ),
-        onPressed: () => Navigator.pop(context),
+        )),
+        onPressed: Some(() => Navigator.pop(context)),
       ),
       body: BlocBuilder<UserPointsCubit, UserPointsState>(
         builder: (context, state) => switch (state) {

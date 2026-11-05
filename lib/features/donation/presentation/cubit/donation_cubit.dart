@@ -11,7 +11,7 @@ import 'package:plant_match_v2/features/donation/presentation/state/donation_sta
 class DonationCubit extends SafeCubit<DonationState> {
   final DonationRepository repository;
   final ChatPlantRepository chatRepository;
-  StreamSubscription<Donation?>? _sub;
+  Option<StreamSubscription<Option<Donation>>> _sub = const None();
 
   DonationCubit({
     required this.repository,
@@ -19,33 +19,25 @@ class DonationCubit extends SafeCubit<DonationState> {
   }) : super(DonationInitial());
 
   void listen(String chatId) {
-    _sub?.cancel();
+    _sub.map((sub) => sub.cancel());
 
-    _sub = repository.watchDonation(chatId).listen(
-      (donation) {
-        if (donation == null) {
-          emit(DonationInitial());
-          return;
-        }
-
-        if (!isClosed) {
-          emit(
-            switch (donation.status) {
-              DonationStatus.pending => DonationPending(donation),
-              DonationStatus.accepted => DonationAccepted(donation),
-              DonationStatus.rejected => DonationRejected(donation),
-              DonationStatus.waitingValidation =>
-                DonationWaitingValidation(donation),
-              DonationStatus.completed => DonationCompleted(donation),
-            },
-          );
-        }
-      },
-      onError: (_) => emit(DonationError('Erreur donation')),
-    );
+    _sub = Some(repository.watchDonation(chatId).listen(
+          (found) => emit(
+            found.match(
+              () => DonationInitial(),
+              (donation) => switch (donation.status) {
+                DonationStatus.pending => DonationPending(donation),
+                DonationStatus.accepted => DonationAccepted(donation),
+                DonationStatus.rejected => DonationRejected(donation),
+                DonationStatus.waitingValidation =>
+                  DonationWaitingValidation(donation),
+                DonationStatus.completed => DonationCompleted(donation),
+              },
+            ),
+          ),
+          onError: (_) => emit(DonationError('Erreur donation')),
+        ));
   }
-
-  // ─── request ───────────────────────────────────────────────────────────────
 
   Future<void> request(Donation donation) {
     emit(DonationLoading());
@@ -73,8 +65,6 @@ class DonationCubit extends SafeCubit<DonationState> {
         .run();
   }
 
-  // ─── accept ────────────────────────────────────────────────────────────────
-
   Future<Option<String>> accept(String donationId) => repository
       .setStatus(donationId, DonationStatus.accepted)
       .match<Option<String>>(
@@ -82,8 +72,6 @@ class DonationCubit extends SafeCubit<DonationState> {
         (_) => const None(),
       )
       .run();
-
-  // ─── reject ────────────────────────────────────────────────────────────────
 
   Future<Option<String>> reject(String donationId) => repository
       .setStatus(donationId, DonationStatus.rejected)
@@ -126,7 +114,7 @@ class DonationCubit extends SafeCubit<DonationState> {
 
   @override
   Future<void> close() {
-    _sub?.cancel();
+    _sub.map((sub) => sub.cancel());
     return super.close();
   }
 }

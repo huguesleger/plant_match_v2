@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/theme/inter_text_style.dart';
@@ -9,7 +10,7 @@ class MessageSubtitle extends StatelessWidget {
     required this.lastMessage,
   });
 
-  final String? lastMessage;
+  final Option<String> lastMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +19,7 @@ class MessageSubtitle extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          lastMessage ?? '',
+          lastMessage.getOrElse(() => ''),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: InterTextStyle.inter(

@@ -1,3 +1,4 @@
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -13,8 +14,8 @@ class WateringField extends StatelessWidget {
     required this.onChanged,
   });
 
-  final Watering? selectedWatering;
-  final ValueChanged<Watering?> onChanged;
+  final Watering selectedWatering;
+  final ValueChanged<Watering> onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +34,7 @@ class WateringField extends StatelessWidget {
                 ItemRadio<Watering>(
                   title: t.catalog.wizard.steps.watering.little,
                   value: Watering.little,
-                  selectedItem: selectedWatering,
+                  selectedItem: Some(selectedWatering),
                   onItemSelected: (val) {
                     onChanged(val);
                     field.didChange(val);
@@ -44,7 +45,7 @@ class WateringField extends StatelessWidget {
                 ItemRadio<Watering>(
                   title: t.catalog.wizard.steps.watering.regularly,
                   value: Watering.regularly,
-                  selectedItem: selectedWatering,
+                  selectedItem: Some(selectedWatering),
                   onItemSelected: (val) {
                     onChanged(val);
                     field.didChange(val);
@@ -57,7 +58,7 @@ class WateringField extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(top: 8.0, left: 12.0),
                 child: Text(
-                  field.errorText ?? '',
+                  Option.fromNullable(field.errorText).getOrElse(() => ''),
                   style: const TextStyle(color: Colors.red, fontSize: 12),
                 ),
               ),

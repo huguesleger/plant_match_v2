@@ -1,3 +1,4 @@
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -60,7 +61,7 @@ class MapMarker extends StatelessWidget {
         bottomSheet(
           context: context,
           user: user,
-          distance: distance,
+          distance: Some(distance),
           catalogs: catalogs,
         );
       },

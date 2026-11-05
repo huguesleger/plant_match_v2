@@ -67,29 +67,33 @@ class _DeleteButton extends StatelessWidget {
               Text(t.catalog.detail.delete_dialog.content(name: catalog.name)),
           actions: [
             TextButton(
-              onPressed: deleting ? null : () => Navigator.pop(ctx),
+              onPressed: Option<VoidCallback>.fromPredicate(
+                () => Navigator.pop(ctx),
+                (_) => !deleting,
+              ).toNullable(),
               child: Text(t.catalog.detail.delete_dialog.cancel),
             ),
             ElevatedButton(
-              onPressed: deleting
-                  ? null
-                  : () async {
-                      setDialogState(() => deleting = true);
-                      final navigator = Navigator.of(context);
-                      final messenger = ScaffoldMessenger.of(context);
-                      final result = await context
-                          .read<CatalogCubit>()
-                          .deleteCatalog(catalog)
-                          .run();
-                      navigator.pop();
-                      result.match<void>(
-                        (_) => messenger.showSnackBar(
-                          SnackBar(
-                              content: Text(t.catalog.detail.delete_error)),
-                        ),
-                        (_) => navigator.pop(true),
-                      );
-                    },
+              onPressed: Option<VoidCallback>.fromPredicate(
+                () async {
+                  setDialogState(() => deleting = true);
+                  final navigator = Navigator.of(context);
+                  final messenger = ScaffoldMessenger.of(context);
+                  final result = await context
+                      .read<CatalogCubit>()
+                      .deleteCatalog(catalog)
+                      .run();
+                  navigator.pop();
+                  result.match<void>(
+                    (_) => messenger.showSnackBar(
+                      SnackBar(
+                          content: Text(t.catalog.detail.delete_error)),
+                    ),
+                    (_) => navigator.pop(true),
+                  );
+                },
+                (_) => !deleting,
+              ).toNullable(),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
@@ -133,8 +137,8 @@ class _EditButton extends StatelessWidget {
               .read<CatalogCubit>()
               .getCatalogById(catalog.catalogId.getOrElse(() => ''))
               .run();
-          getResult.match(
-            (_) => null,
+          getResult.match<void>(
+            (_) {},
             (updatedCatalog) => onUpdate(updatedCatalog),
           );
         }

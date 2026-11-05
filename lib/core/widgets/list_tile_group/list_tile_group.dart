@@ -6,12 +6,12 @@ class AppListTileGroup extends StatelessWidget {
     super.key,
     required this.children,
     this.borderRadius = 15,
-    this.margin,
+    this.margin = EdgeInsets.zero,
   });
 
   final List<Widget> children;
   final double borderRadius;
-  final EdgeInsetsGeometry? margin;
+  final EdgeInsetsGeometry margin;
 
   @override
   Widget build(BuildContext context) {

@@ -25,8 +25,8 @@ class ButtonOutlinedRounded extends StatelessWidget {
   final VoidCallback onPressed;
   final Color borderColor;
   final Color textColor;
-  final double? fontSize;
-  final EdgeInsets? padding;
+  final double fontSize;
+  final EdgeInsets padding;
 
   @override
   Widget build(BuildContext context) {

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
@@ -33,27 +35,29 @@ class ProfilScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ProfilCubit, ProfilState>(
       builder: (context, state) {
-        final profilUser = state is ProfilLoaded ? state.profilUser : null;
+        final Option<ProfilUser> profilUser = state is ProfilLoaded
+            ? Some(state.profilUser)
+            : const None();
 
         return Scaffold(
           backgroundColor: AppColors.greyUltraLight,
-          appBar: profilUser != null
-              ? AppBarTemplate(
-                  titleWidget: TitlePage(
+          appBar: profilUser
+              .map<PreferredSizeWidget>((profilUser) => AppBarTemplate(
+                  titleWidget: Some(TitlePage(
                     fontSize: AppTypo.textXl,
                     title: profilUser.userName.match(
                       () => profilUser.fullName.toCapitalizeWords(),
                       (userName) => userName.toCapitalizeWords(),
                     ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                    overflow: const Some(TextOverflow.ellipsis),
+                  )),
                   backgroundColor: AppColors.white,
                   surfaceTintColor: AppColors.white,
-                  shadowColor: AppColors.black,
+                  shadowColor: const Some(AppColors.black),
                   leading: false,
                   leadingWith: 16,
                   preferredHeight: 70,
-                  actions: [
+                  actions: Some([
                     Container(
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
@@ -67,14 +71,14 @@ class ProfilScreen extends StatelessWidget {
                         ],
                       ),
                       child: Avatar(
-                        profilUser: profilUser,
+                        profilUser: Some(profilUser),
                         radius: 22,
                         imgSizeAvatar: 44,
                       ),
                     ),
-                  ],
-                )
-              : null,
+                  ]),
+                  ))
+              .toNullable(),
           body: switch (state) {
             ProfilInitial() || ProfilLoading() => const Center(
                 child: CircularProgressIndicator(),

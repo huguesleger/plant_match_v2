@@ -4,7 +4,7 @@ import 'package:plant_match_v2/features/level/domain/entities/points_update.dart
 import 'package:plant_match_v2/features/donation/domain/entities/donation.dart';
 
 abstract class DonationRepository {
-  Stream<Donation?> watchDonation(String chatId);
+  Stream<Option<Donation>> watchDonation(String chatId);
 
   TaskEither<Failure, Unit> createDonation(Donation donation);
 
@@ -16,7 +16,8 @@ abstract class DonationRepository {
 
   TaskEither<Failure, Unit> generateValidationCode(String donationId);
 
-  TaskEither<Failure, PointsUpdate> validateCode(String donationId, String code);
+  TaskEither<Failure, PointsUpdate> validateCode(
+      String donationId, String code);
 
   Stream<Option<String>> watchValidationCode(String donationId);
 

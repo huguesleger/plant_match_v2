@@ -121,13 +121,10 @@ class RecommendationRepositoryImpl implements RecommendationRepository {
             .doc(userId)
             .get();
 
-        final data = doc.data();
-        if (data == null || !data.containsKey('answers')) {
-          return none();
-        }
-
-        final answersMap = data['answers'] as Map<String, dynamic>;
-        return some(RecommendationAnswers.fromJson(answersMap));
+        return Option.fromNullable(doc.data())
+            .filter((data) => data.containsKey('answers'))
+            .map((data) => RecommendationAnswers.fromJson(
+                data['answers'] as Map<String, dynamic>));
       },
       (error, stackTrace) => FirebaseFailure(
         'Erreur lors de la récupération des recommandations sauvegardées : $error',

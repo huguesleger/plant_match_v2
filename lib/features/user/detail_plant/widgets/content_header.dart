@@ -1,3 +1,4 @@
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/gen/assets.gen.dart';
@@ -47,16 +48,17 @@ class _ContentHeaderState extends State<ContentHeader> {
                     images[index],
                     fit: BoxFit.cover,
                     width: MediaQuery.of(context).size.width,
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return const Center(
+                    loadingBuilder: (context, child, loadingProgress) =>
+                        Option.fromNullable(loadingProgress).match(
+                      () => child,
+                      (_) => const Center(
                         child: SizedBox(
                           width: 30,
                           height: 30,
                           child: CircularProgressIndicator(),
                         ),
-                      );
-                    },
+                      ),
+                    ),
                   );
                 },
               )

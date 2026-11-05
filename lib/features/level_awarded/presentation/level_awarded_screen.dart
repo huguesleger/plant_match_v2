@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_template.dart';
@@ -24,12 +25,12 @@ class LevelAwardedScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         surfaceTintColor: AppColors.white,
         leading: false,
-        actions: [
+        actions: Some([
           IconButton(
             onPressed: () => Navigator.pop(context),
             icon: const Icon(LucideIcons.x, color: AppColors.greyDark),
           ),
-        ],
+        ]),
       ),
       body: LevelAwardedSuccessView(
         leavesGained: leavesGained,

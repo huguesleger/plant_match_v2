@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
@@ -72,7 +73,7 @@ class AppCard extends StatelessWidget {
                 width: double.infinity,
                 child: ButtonRounded(
                   text: t.widgets.common.viewMore,
-                  onPressed: onPressed,
+                  onPressed: Some(onPressed),
                   bgColor: AppColors.blueGreen,
                   textColor: AppColors.white,
                   fontSize: AppTypo.textXs,

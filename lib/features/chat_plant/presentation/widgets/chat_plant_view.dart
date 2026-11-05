@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
@@ -56,8 +57,7 @@ class ChatPlantView extends StatelessWidget {
         .send(chatId: chatId, senderId: userId, text: text)
         .then((error) {
       profilCubit.refreshLeaves(userId);
-      error.match(
-        () => null,
+      error.map(
         (message) => messenger.showSnackBar(
           SnackBar(content: Text(t.chatPlant.view.send_error(error: message))),
         ),
@@ -67,7 +67,7 @@ class ChatPlantView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userId = context.read<AuthCubit>().userId ?? '';
+    final userId = context.read<AuthCubit>().userId.getOrElse(() => '');
     final exchangeState = context.watch<ExchangeCubit>().state;
     final donationState = context.watch<DonationCubit>().state;
 
@@ -151,14 +151,15 @@ class ChatPlantView extends StatelessWidget {
                 ),
               ),
             ),
-            dateHeaderThreshold: 86400000, // 24 hours
+            dateHeaderThreshold: 86400000,
             bubbleBuilder: (child,
                 {required message, required nextMessageInGroup}) {
               final isCurrentUser = message.author.id == userId;
 
               final time = DateFormatter.formatTime(
                 context,
-                DateTime.fromMillisecondsSinceEpoch(message.createdAt ?? 0),
+                DateTime.fromMillisecondsSinceEpoch(
+                    Option.fromNullable(message.createdAt).getOrElse(() => 0)),
               );
 
               final bool isCustom = message is types.CustomMessage;
@@ -206,7 +207,9 @@ class ChatPlantView extends StatelessWidget {
                                 ),
                                 if (isCurrentUser) ...[
                                   const SizedBox(width: 4),
-                                  _StatusIcon(status: message.status),
+                                  _StatusIcon(
+                                    status: Option.fromNullable(message.status),
+                                  ),
                                 ],
                               ],
                             ),
@@ -225,24 +228,26 @@ class ChatPlantView extends StatelessWidget {
 }
 
 class _StatusIcon extends StatelessWidget {
-  const _StatusIcon({this.status});
-  final types.Status? status;
+  const _StatusIcon({required this.status});
+  final Option<types.Status> status;
 
   @override
   Widget build(BuildContext context) {
-    return switch (status) {
-      types.Status.delivered =>
-        const Icon(LucideIcons.check_check, size: 12, color: Colors.grey),
-      types.Status.seen => const Icon(LucideIcons.check_check,
-          size: 12, color: AppColors.blueGreen),
-      types.Status.sent =>
-        const Icon(LucideIcons.check, size: 12, color: Colors.grey),
-      types.Status.sending =>
-        const Icon(LucideIcons.clock, size: 10, color: Colors.grey),
-      types.Status.error =>
-        const Icon(LucideIcons.circle_alert, size: 12, color: Colors.red),
-      _ => const SizedBox.shrink(),
-    };
+    return status.match(
+      () => const SizedBox.shrink(),
+      (status) => switch (status) {
+        types.Status.delivered =>
+          const Icon(LucideIcons.check_check, size: 12, color: Colors.grey),
+        types.Status.seen => const Icon(LucideIcons.check_check,
+            size: 12, color: AppColors.blueGreen),
+        types.Status.sent =>
+          const Icon(LucideIcons.check, size: 12, color: Colors.grey),
+        types.Status.sending =>
+          const Icon(LucideIcons.clock, size: 10, color: Colors.grey),
+        types.Status.error =>
+          const Icon(LucideIcons.circle_alert, size: 12, color: Colors.red),
+      },
+    );
   }
 }
 
@@ -256,7 +261,7 @@ class _BlockedBanner extends StatelessWidget {
   final bool blockedByMe;
 
   String _currentUserId(BuildContext context) =>
-      context.read<AuthCubit>().userId ?? '';
+      context.read<AuthCubit>().userId.getOrElse(() => '');
 
   Future<void> _onUnblock(BuildContext context) async {
     final confirm = await showDialog<bool>(
@@ -278,7 +283,8 @@ class _BlockedBanner extends StatelessWidget {
         ],
       ),
     );
-    if (confirm == true && context.mounted) {
+    if (Option.fromNullable(confirm).getOrElse(() => false) &&
+        context.mounted) {
       context.read<ChatPlantCubit>().unblockUser(
             blockerUserId: _currentUserId(context),
             blockedUserId: blockedUserId,

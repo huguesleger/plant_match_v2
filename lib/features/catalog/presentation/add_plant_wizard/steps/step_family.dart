@@ -1,3 +1,4 @@
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -45,7 +46,7 @@ class StepFamily extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0, left: 12.0),
                   child: Text(
-                    field.errorText ?? '',
+                    Option.fromNullable(field.errorText).getOrElse(() => ''),
                     style: const TextStyle(color: Colors.red, fontSize: 12),
                   ),
                 ),

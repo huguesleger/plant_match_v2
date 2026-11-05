@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -31,7 +32,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   }
 
   Future<void> onPressed() async {
-    if (!(_formKey.currentState?.saveAndValidate() ?? false)) return;
+    if (!Option.fromNullable(_formKey.currentState)
+        .match(() => false, (form) => form.saveAndValidate())) {
+      return;
+    }
     final email = _emailController.text.trim();
     final messenger = ScaffoldMessenger.of(context);
     final navigator = Navigator.of(context);
@@ -82,7 +86,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       TitlePage(
                         title: t.auth.forgotPassword.title,
                         fontSize: AppTypo.textXl,
-                        textAlign: TextAlign.center,
+                        textAlign: const Some(TextAlign.center),
                       ),
                       const SizedBox(height: 5),
                       Center(
@@ -129,7 +133,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               text: t.auth.forgotPassword.send,
                               bgColor: AppColors.greenLight,
                               textColor: AppColors.blueGreen,
-                              onPressed: onPressed,
+                              onPressed: Some(onPressed),
                             ),
                           ),
                           const SizedBox(height: 20),

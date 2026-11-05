@@ -89,8 +89,9 @@ class _ValidationCodeInputState extends State<ValidationCodeInput> {
                   borderSide: BorderSide(color: AppColors.blueGreen, width: 2),
                 ),
               ),
-              onChanged: (value) =>
-                  value.length == 6 ? _handleValidate() : null,
+              onChanged: (value) {
+                if (value.length == 6) _handleValidate();
+              },
             ),
           ),
           ..._error.match(
@@ -106,7 +107,9 @@ class _ValidationCodeInputState extends State<ValidationCodeInput> {
           ),
           const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: _isValidating ? null : _handleValidate,
+            onPressed: Option<VoidCallback>.of(_handleValidate)
+                .filter((_) => !_isValidating)
+                .toNullable(),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.blueGreen,
               foregroundColor: Colors.white,

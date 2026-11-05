@@ -1,12 +1,12 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:plant_match_v2/core/util/json_reader.dart';
 import 'package:fpdart/fpdart.dart';
 
 enum ExchangeStatus {
   pending,
   accepted,
   rejected,
-  waitingValidation, // En attente de saisie du code PIN
-  completed, // Échange physique terminé
+  waitingValidation,
+  completed,
 }
 
 class Exchange {
@@ -54,29 +54,25 @@ class Exchange {
   factory Exchange.fromJson(String id, Map<String, dynamic> json) {
     return Exchange(
       id: id,
-      chatId: json['chatId'] ?? '',
-      requestedBy: json['requestedBy'] ?? '',
-      ownerId: json['ownerId'] ?? '',
-      targetPlantId: json['targetPlantId'] ?? '',
-      offeredPlantId: json['offeredPlantId'] ?? '',
-      targetPlantName: json['targetPlantName'] ?? '',
-      targetPlantImage: json['targetPlantImage'] ?? '',
-      offeredPlantName: json['offeredPlantName'] ?? '',
-      offeredPlantImage: json['offeredPlantImage'] ?? '',
+      chatId: json.string('chatId'),
+      requestedBy: json.string('requestedBy'),
+      ownerId: json.string('ownerId'),
+      targetPlantId: json.string('targetPlantId'),
+      offeredPlantId: json.string('offeredPlantId'),
+      targetPlantName: json.string('targetPlantName'),
+      targetPlantImage: json.string('targetPlantImage'),
+      offeredPlantName: json.string('offeredPlantName'),
+      offeredPlantImage: json.string('offeredPlantImage'),
       status: ExchangeStatus.values.firstWhere(
         (e) => e.name == json['status'],
         orElse: () => ExchangeStatus.pending,
       ),
-      createdAt: Option.fromNullable(json['createdAt'] as Timestamp?)
-          .map((t) => t.toDate())
-          .getOrElse(DateTime.now),
-      seenByOwner: json['seenByOwner'] ?? false,
-      seenByRequester: json['seenByRequester'] ?? false,
-      completedAt: Option.fromNullable(json['completedAt']).map(
-        (t) => (t as Timestamp).toDate(),
-      ),
-      completedBy: Option.fromNullable(json['completedBy'] as String?),
-      validationCode: Option.fromNullable(json['validationCode'] as String?),
+      createdAt: json.date('createdAt').getOrElse(DateTime.now),
+      seenByOwner: json.boolean('seenByOwner'),
+      seenByRequester: json.boolean('seenByRequester'),
+      completedAt: json.date('completedAt'),
+      completedBy: json.read<String>('completedBy'),
+      validationCode: json.read<String>('validationCode'),
     );
   }
 

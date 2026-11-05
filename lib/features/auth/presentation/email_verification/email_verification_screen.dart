@@ -26,8 +26,8 @@ class EmailVerificationScreen extends StatefulWidget {
 class _EmailVerificationScreenState extends State<EmailVerificationScreen>
     with WidgetsBindingObserver {
   bool _cooldown = true;
-  Timer? _autoTimer;
-  Timer? _timer;
+  Option<Timer> _autoTimer = const None();
+  Option<Timer> _timer = const None();
   int _remainingSeconds = 0;
 
   @override
@@ -36,15 +36,13 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
     WidgetsBinding.instance.addObserver(this);
     _startCooldown();
 
-    // ✅ Vérification automatique toutes les 5 secondes (au lieu de 10)
-    _autoTimer = Timer.periodic(const Duration(seconds: 5), (_) {
+    _autoTimer = Some(Timer.periodic(const Duration(seconds: 5), (_) {
       _checkVerification();
-    });
+    }));
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    // ✅ Déclencher une vérification immédiate dès que l'utilisateur revient dans l'app
     if (state == AppLifecycleState.resumed) {
       _checkVerification();
     }
@@ -54,7 +52,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
     if (!mounted) return;
     context
         .read<AuthCubit>()
-        .checkEmailVerified(fullName: widget.user.fullName);
+        .checkEmailVerified(fullName: Some(widget.user.fullName));
   }
 
   void _startCooldown() {
@@ -63,8 +61,8 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
       _remainingSeconds = 60;
     });
 
-    _timer?.cancel();
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    _cancel(_timer);
+    _timer = Some(Timer.periodic(const Duration(seconds: 1), (timer) {
       if (!mounted) {
         timer.cancel();
       } else if (_remainingSeconds == 0) {
@@ -73,14 +71,16 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
       } else {
         setState(() => _remainingSeconds--);
       }
-    });
+    }));
   }
+
+  void _cancel(Option<Timer> timer) => timer.match(() {}, (t) => t.cancel());
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    _autoTimer?.cancel();
-    _timer?.cancel();
+    _cancel(_autoTimer);
+    _cancel(_timer);
     super.dispose();
   }
 
@@ -123,7 +123,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
               TitlePage(
                 title: t.auth.emailVerification.title,
                 fontSize: AppTypo.textXl,
-                textAlign: TextAlign.center,
+                textAlign: const Some(TextAlign.center),
               ),
               const SizedBox(height: 5),
               Center(
@@ -155,7 +155,10 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
               Column(
                 children: [
                   TextButton(
-                    onPressed: _cooldown ? null : _resendVerification,
+                    onPressed: Option.fromPredicate(
+                      _resendVerification,
+                      (_) => !_cooldown,
+                    ).toNullable(),
                     child: Text(
                       _cooldown
                           ? t.auth.emailVerification

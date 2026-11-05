@@ -12,13 +12,12 @@ import 'package:plant_match_v2/features/exchange/presentation/state/exchange_sta
 class ExchangeCubit extends SafeCubit<ExchangeState> {
   final ExchangeRepository repository;
   final ChatPlantRepository chatRepository;
-  StreamSubscription<Exchange?>? _sub;
+  Option<StreamSubscription<Option<Exchange>>> _sub = const None();
 
   final _catalogRepo = FirebaseCatalogRepository();
   List<Catalog> _userPlants = [];
-  String? _targetPlantId;
-  String? _targetOwnerId;
-  String? _chatId;
+  Option<({String targetPlantId, String targetOwnerId, String chatId})>
+      _pickingTarget = const None();
 
   ExchangeCubit({
     required this.repository,
@@ -26,31 +25,25 @@ class ExchangeCubit extends SafeCubit<ExchangeState> {
   }) : super(ExchangeInitial());
 
   void listen(String chatId) {
-    _sub?.cancel();
+    _sub.map((sub) => sub.cancel());
 
-    _sub = repository.watchExchange(chatId).listen(
-      (request) {
-        if (request == null) {
-          emit(ExchangeInitial());
-          return;
-        }
-
-        emit(
-          switch (request.status) {
-            ExchangeStatus.pending => ExchangePending(request),
-            ExchangeStatus.accepted => ExchangeAccepted(request),
-            ExchangeStatus.rejected => ExchangeRejected(request),
-            ExchangeStatus.waitingValidation =>
-              ExchangeWaitingValidation(request),
-            ExchangeStatus.completed => ExchangeCompleted(request),
-          },
-        );
-      },
-      onError: (_) => emit(ExchangeError('Erreur échange')),
-    );
+    _sub = Some(repository.watchExchange(chatId).listen(
+          (found) => emit(
+            found.match(
+              () => ExchangeInitial(),
+              (request) => switch (request.status) {
+                ExchangeStatus.pending => ExchangePending(request),
+                ExchangeStatus.accepted => ExchangeAccepted(request),
+                ExchangeStatus.rejected => ExchangeRejected(request),
+                ExchangeStatus.waitingValidation =>
+                  ExchangeWaitingValidation(request),
+                ExchangeStatus.completed => ExchangeCompleted(request),
+              },
+            ),
+          ),
+          onError: (_) => emit(ExchangeError('Erreur échange')),
+        ));
   }
-
-  // ─── initExchange ──────────────────────────────────────────────────────────
 
   void initExchange({
     required String userId,
@@ -58,9 +51,11 @@ class ExchangeCubit extends SafeCubit<ExchangeState> {
     required String targetOwnerId,
     required String chatId,
   }) {
-    _targetPlantId = targetPlantId;
-    _targetOwnerId = targetOwnerId;
-    _chatId = chatId;
+    _pickingTarget = Some((
+      targetPlantId: targetPlantId,
+      targetOwnerId: targetOwnerId,
+      chatId: chatId,
+    ));
 
     emit(ExchangeLoading());
 
@@ -90,8 +85,6 @@ class ExchangeCubit extends SafeCubit<ExchangeState> {
         .run();
   }
 
-  // ─── selectPlant ───────────────────────────────────────────────────────────
-
   void selectPlant({
     required Catalog offeredPlant,
     required String targetPlantId,
@@ -118,17 +111,15 @@ class ExchangeCubit extends SafeCubit<ExchangeState> {
   }
 
   void cancelSelection() {
-    if (_targetPlantId != null && _targetOwnerId != null && _chatId != null) {
-      emit(ExchangePickingPlant(
+    _pickingTarget.map(
+      (target) => emit(ExchangePickingPlant(
         userPlants: _userPlants,
-        targetPlantId: _targetPlantId!,
-        targetOwnerId: _targetOwnerId!,
-        chatId: _chatId!,
-      ));
-    }
+        targetPlantId: target.targetPlantId,
+        targetOwnerId: target.targetOwnerId,
+        chatId: target.chatId,
+      )),
+    );
   }
-
-  // ─── propose ───────────────────────────────────────────────────────────────
 
   Future<void> propose(Exchange exchange) {
     emit(ExchangeLoading());
@@ -205,7 +196,7 @@ class ExchangeCubit extends SafeCubit<ExchangeState> {
 
   @override
   Future<void> close() {
-    _sub?.cancel();
+    _sub.map((sub) => sub.cancel());
     return super.close();
   }
 }

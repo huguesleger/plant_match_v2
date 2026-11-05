@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
@@ -22,9 +23,9 @@ class RegisterMethodChoiceScreen extends StatelessWidget {
       appBar: AppBarTemplate(
         backgroundColor: AppColors.white,
         surfaceTintColor: AppColors.white,
-        shadowColor: AppColors.black,
+        shadowColor: const Some(AppColors.black),
         leading: false,
-        title: t.auth.register.title,
+        title: Some(t.auth.register.title),
         centerTitle: true,
       ),
       body: SingleChildScrollView(

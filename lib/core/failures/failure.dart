@@ -1,4 +1,3 @@
-/// Classe de base pour toutes les erreurs du domaine
 sealed class Failure {
   final String message;
 
@@ -8,27 +7,22 @@ sealed class Failure {
   String toString() => message;
 }
 
-/// Erreur liée à Firebase (réseau, permissions, etc.)
 class FirebaseFailure extends Failure {
   const FirebaseFailure(super.message);
 }
 
-/// Erreur quand une ressource n'est pas trouvée
 class NotFoundFailure extends Failure {
   const NotFoundFailure(super.message);
 }
 
-/// Erreur inattendue ou inconnue
 class UnexpectedFailure extends Failure {
   const UnexpectedFailure(super.message);
 }
 
-/// Erreur spécifique à l'authentification (credentials invalides, email non vérifié, etc.)
 class AuthFailure extends Failure {
   const AuthFailure(super.message);
 }
 
-/// Erreur spécifique quand l'email n'est pas vérifié
 class AuthEmailNotVerifiedFailure extends AuthFailure {
   const AuthEmailNotVerifiedFailure() : super("Email non vérifié");
 }
@@ -41,7 +35,6 @@ class AuthProfileMissingFailure extends AuthFailure {
   const AuthProfileMissingFailure() : super("Profil non finalisé");
 }
 
-/// Erreur spécifique à la localisation
 class LocationFailure extends Failure {
   const LocationFailure(super.message);
 }

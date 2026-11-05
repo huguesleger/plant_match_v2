@@ -55,7 +55,7 @@ class FirebaseAroundMeRepository implements AroundMeRepository {
   Failure _mapErrorToFailure(Object error) {
     if (error is Failure) return error;
     if (error is FirebaseException) {
-      return FirebaseFailure('Erreur Firebase: ${error.message ?? error.code}');
+      return FirebaseFailure('Erreur Firebase: ${Option.fromNullable(error.message).getOrElse(() => error.code)}');
     }
     return UnexpectedFailure('Erreur inattendue: $error');
   }

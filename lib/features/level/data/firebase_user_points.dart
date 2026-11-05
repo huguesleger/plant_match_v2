@@ -41,10 +41,9 @@ class FirebaseUserPoints implements UserPointsRepository {
           throw NotFoundFailure('Utilisateur $userId non trouvé');
         }
 
-        final data = doc.data();
-        if (data == null) {
-          throw NotFoundFailure('Données utilisateur $userId vides');
-        }
+        final data = Option.fromNullable(doc.data()).getOrElse(
+          () => throw NotFoundFailure('Données utilisateur $userId vides'),
+        );
 
         return UserPoints.fromJson({
           ...data,
@@ -62,7 +61,7 @@ class FirebaseUserPoints implements UserPointsRepository {
       .snapshots()
       .map<Either<Failure, UserPoints>>(
         (snapshot) => Either.tryCatch(
-          () => _fromData(userId, snapshot.data()),
+          () => _fromData(userId, Option.fromNullable(snapshot.data())),
           (error, _) => _mapErrorToFailure(error),
         ),
       )
@@ -73,11 +72,11 @@ class FirebaseUserPoints implements UserPointsRepository {
         ),
       );
 
-  UserPoints _fromData(String userId, Map<String, dynamic>? data) =>
+  UserPoints _fromData(String userId, Option<Map<String, dynamic>> data) =>
       UserPoints.fromJson({
         'currentPoints': 0,
         'level': 1,
-        ...Option.fromNullable(data).getOrElse(() => {}),
+        ...data.getOrElse(() => {}),
         'uid': userId,
       });
 
@@ -88,7 +87,7 @@ class FirebaseUserPoints implements UserPointsRepository {
 
     if (error is FirebaseException) {
       return FirebaseFailure(
-        'Erreur Firebase: ${error.message ?? error.code}',
+        'Erreur Firebase: ${Option.fromNullable(error.message).getOrElse(() => error.code)}',
       );
     }
 

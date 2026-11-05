@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/gen/fonts.gen.dart';
@@ -13,15 +14,15 @@ class DialogWithImage extends StatelessWidget {
     required this.title,
     required this.text,
     required this.image,
-    this.confirmLabel,
-    this.cancelLabel,
+    this.confirmLabel = const None(),
+    this.cancelLabel = const None(),
   });
 
   final String title;
   final String text;
   final AssetGenImage image;
-  final String? confirmLabel;
-  final String? cancelLabel;
+  final Option<String> confirmLabel;
+  final Option<String> cancelLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +67,7 @@ class DialogWithImage extends StatelessWidget {
                     onPressed: () {
                       Navigator.of(context).pop(false);
                     },
-                    text: cancelLabel ?? t.widgets.common.cancel,
+                    text: cancelLabel.getOrElse(() => t.widgets.common.cancel),
                     borderColor: AppColors.greyLight,
                     textColor: AppColors.greyMedium,
                     padding: const EdgeInsets.symmetric(
@@ -78,10 +79,11 @@ class DialogWithImage extends StatelessWidget {
                 const SizedBox(width: 15),
                 Expanded(
                   child: ButtonRounded(
-                    onPressed: () {
+                    onPressed: Some(() {
                       Navigator.of(context).pop(true);
-                    },
-                    text: confirmLabel ?? t.widgets.common.confirm,
+                    }),
+                    text:
+                        confirmLabel.getOrElse(() => t.widgets.common.confirm),
                     bgColor: AppColors.greenLight,
                     textColor: AppColors.blueGreen,
                     padding: const EdgeInsets.symmetric(

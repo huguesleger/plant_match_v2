@@ -1,3 +1,4 @@
+import 'package:plant_match_v2/core/util/json_reader.dart';
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -13,7 +14,7 @@ class FirebaseDonation implements DonationRepository {
   late final _col = _firestore.collection('plant_donations');
 
   @override
-  Stream<Donation?> watchDonation(String chatId) {
+  Stream<Option<Donation>> watchDonation(String chatId) {
     return _col
         .where('chatId', isEqualTo: chatId)
         .where('status', whereIn: [
@@ -26,11 +27,10 @@ class FirebaseDonation implements DonationRepository {
         .orderBy('createdAt', descending: true)
         .limit(1)
         .snapshots()
-        .map((snap) {
-          if (snap.docs.isEmpty) return null;
-          final d = snap.docs.first;
-          return Donation.fromJson(d.id, d.data());
-        });
+        .map(
+          (snap) => Option.fromNullable(snap.docs.firstOrNull)
+              .map((d) => Donation.fromJson(d.id, d.data())),
+        );
   }
 
   @override
@@ -98,7 +98,7 @@ class FirebaseDonation implements DonationRepository {
       .snapshots()
       .map(
         (doc) => Option.fromNullable(doc.data())
-            .flatMap((data) => Option.fromNullable(data['code'] as String?)),
+            .flatMap((data) => data.read<String>('code')),
       )
       .handleError((_) => const None());
 

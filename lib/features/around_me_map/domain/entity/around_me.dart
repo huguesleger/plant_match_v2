@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:plant_match_v2/core/util/json_reader.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 
@@ -31,11 +31,11 @@ class AroundMe extends ProfilUser {
   }
 
   factory AroundMe.fromJson(Map<String, dynamic> json) {
-    final firstName = json['firstName'] as String? ?? '';
-    final lastName = json['lastName'] as String? ?? '';
+    final firstName = json.string('firstName');
+    final lastName = json.string('lastName');
     final (fName, lName) = (firstName.isEmpty && lastName.isEmpty)
         ? (() {
-            final fullName = json['fullName'] as String? ?? '';
+            final fullName = json.string('fullName');
             final parts = fullName.trim().split(' ');
             final fn = parts.first;
             final ln = parts.length > 1 ? parts.sublist(1).join(' ') : '';
@@ -44,33 +44,24 @@ class AroundMe extends ProfilUser {
           : (firstName, lastName);
 
     return AroundMe(
-      uid: json['uid'] ?? '',
-      email: json['email'] ?? '',
-      userName: Option.fromNullable(json['userName'] as String?),
-      latitude: Option.fromNullable(json['latitude']?.toDouble()),
-      longitude: Option.fromNullable(json['longitude']?.toDouble()),
+      uid: json.string('uid'),
+      email: json.nonEmptyString('email'),
+      userName: json.read<String>('userName'),
+      latitude: json.decimal('latitude'),
+      longitude: json.decimal('longitude'),
       firstName: fName,
       lastName: lName,
-      profilImg: json['profilImg'] ?? '',
-      localisation: json['localisation'] ?? '',
-      country: json['country'] ?? '',
-      zipCode: json['zipCode'] ?? '',
-      isOnline: json['isOnline'] ?? false,
-      createdAt: json['createdAt'] == null
-          ? DateTime.now()
-          : (json['createdAt'] is Timestamp
-              ? (json['createdAt'] as Timestamp).toDate()
-              : DateTime.tryParse(json['createdAt'] as String) ??
-                  DateTime.now()),
-      bio: Option.fromNullable(json['bio'] as String?),
-      birthdayDate: Option.fromNullable(json['birthdayDate']).map((d) {
-        if (d is Timestamp) return d.toDate();
-        if (d is String) return DateTime.tryParse(d) ?? DateTime.now();
-        return DateTime.now();
-      }),
-      leaves: json['leaves'] as int? ?? 5,
-      referralCode: json['referralCode'] as String? ?? '',
-      referredBy: Option.fromNullable(json['referredBy'] as String?),
+      profilImg: json.string('profilImg'),
+      localisation: json.string('localisation'),
+      country: json.string('country'),
+      zipCode: json.string('zipCode'),
+      isOnline: json.boolean('isOnline'),
+      createdAt: json.date('createdAt').getOrElse(DateTime.now),
+      bio: json.read<String>('bio'),
+      birthdayDate: json.date('birthdayDate'),
+      leaves: json.integer('leaves', 5),
+      referralCode: json.string('referralCode'),
+      referredBy: json.read<String>('referredBy'),
     );
   }
 }

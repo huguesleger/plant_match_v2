@@ -106,11 +106,11 @@ class HomeHeader extends StatelessWidget {
         ],
       ),
       child: Avatar(
-        imageUrl: profilImg,
-        name: userName.match(
+        imageUrl: Some(profilImg),
+        name: Some(userName.match(
           () => firstName,
           (uName) => uName,
-        ),
+        )),
         radius: 22,
         imgSizeAvatar: 44,
       ),

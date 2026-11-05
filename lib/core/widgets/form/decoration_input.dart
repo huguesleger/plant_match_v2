@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 
 class DecorationInput {
   static InputDecoration inputDecoration({
     required String hintText,
     required String labelText,
-    String? helperText,
-    Widget? suffixIcon,
-    alignLabelWithHint = false,
+    Option<String> helperText = const None(),
+    Option<Widget> suffixIcon = const None(),
+    bool alignLabelWithHint = false,
   }) {
     return InputDecoration(
       hintText: hintText,
       labelText: labelText,
-      helperText: helperText,
-      suffixIcon: suffixIcon,
+      helperText: helperText.toNullable(),
+      suffixIcon: suffixIcon.toNullable(),
       alignLabelWithHint: alignLabelWithHint,
       errorStyle: const TextStyle(
         color: AppColors.error,

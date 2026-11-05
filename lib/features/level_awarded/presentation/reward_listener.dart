@@ -48,7 +48,7 @@ class RewardListener extends StatelessWidget {
         ProfilLoading() ||
         ProfilError() ||
         ProfilImageUploading() =>
-          null,
+          Future<Unit>.value(unit),
       };
 
   Future<Unit> _celebrateLevelUp(BuildContext context, PointsUpdate update) {
@@ -88,7 +88,7 @@ class RewardListener extends StatelessWidget {
         UserPointsLoading() ||
         UserPointsLoaded() ||
         UserPointsError() =>
-          null,
+          Future<Unit>.value(unit),
       };
 
   @override

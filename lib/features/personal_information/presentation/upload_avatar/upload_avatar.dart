@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:image_picker/image_picker.dart';
@@ -22,19 +23,20 @@ class _UploadAvatarState extends State<UploadAvatar> {
   final ImagePicker _picker = ImagePicker();
 
   Future<void> _pickImage(ImageSource source) async {
-    final XFile? image = await _picker.pickImage(
+    final image = Option.fromNullable(await _picker.pickImage(
       source: source,
       maxWidth: 300,
-    );
+    ));
 
-    if (mounted && image != null) {
-      final profilCubit = context.read<ProfilCubit>();
-      profilCubit.updateProfilImage(
-        uid: widget.profilUser.uid,
-        imagePath: image.path,
-        isAsset: false,
-      );
-    }
+    if (!mounted) return;
+    image.match(
+      () {},
+      (image) => context.read<ProfilCubit>().updateProfilImage(
+            uid: widget.profilUser.uid,
+            imagePath: image.path,
+            isAsset: false,
+          ),
+    );
   }
 
   @override
@@ -74,10 +76,10 @@ class _UploadAvatarState extends State<UploadAvatar> {
                       ),
                     ),
                     child: Avatar(
-                      profilUser: state is ProfilLoaded
+                      profilUser: Some(state is ProfilLoaded
                           ? state.profilUser
-                          : widget.profilUser,
-                      imageUrl: avatarUrl,
+                          : widget.profilUser),
+                      imageUrl: Some(avatarUrl),
                       radius: 60,
                       imgSizeAvatar: 120,
                     ),

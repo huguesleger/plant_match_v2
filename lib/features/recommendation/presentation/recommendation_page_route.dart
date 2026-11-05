@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/features/recommendation/data/repositories/recommendation_repository_impl.dart';
 import 'package:plant_match_v2/features/recommendation/presentation/cubit/recommendation_cubit.dart';
@@ -11,7 +12,7 @@ class RecommendationPageRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userId = context.read<AuthCubit>().userId ?? '';
+    final userId = context.read<AuthCubit>().userId.getOrElse(() => '');
 
     return BlocProvider(
       create: (context) => RecommendationCubit(

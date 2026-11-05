@@ -12,14 +12,14 @@ class ItemCount extends StatelessWidget {
     required this.text,
     required this.icon,
     this.isLevel = false,
-    this.sup,
+    this.sup = const None(),
   });
 
   final String count;
   final String text;
   final IconData icon;
   final bool isLevel;
-  final String? sup;
+  final Option<String> sup;
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +63,7 @@ class ItemCount extends StatelessWidget {
                     child: Transform.translate(
                       offset: const Offset(0.0, -10.0),
                       child: Text(
-                        Option.fromNullable(sup).getOrElse(() => ''),
+                        sup.getOrElse(() => ''),
                         style: const TextStyle(fontSize: AppTypo.textXxs),
                       ),
                     ),

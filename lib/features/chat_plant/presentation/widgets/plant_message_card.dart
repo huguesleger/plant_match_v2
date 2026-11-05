@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_lucide/flutter_lucide.dart';
@@ -15,7 +16,7 @@ class PlantMessageCard extends StatelessWidget {
     required this.onTap,
     required this.isSender,
     required this.time,
-    this.status,
+    this.status = const None(),
   });
 
   final String plantId;
@@ -24,7 +25,7 @@ class PlantMessageCard extends StatelessWidget {
   final VoidCallback onTap;
   final bool isSender;
   final String time;
-  final types.Status? status;
+  final Option<types.Status> status;
 
   @override
   Widget build(BuildContext context) {
@@ -163,23 +164,25 @@ class PlantMessageCard extends StatelessWidget {
 }
 
 class _StatusIcon extends StatelessWidget {
-  const _StatusIcon({this.status});
-  final types.Status? status;
+  const _StatusIcon({required this.status});
+  final Option<types.Status> status;
 
   @override
   Widget build(BuildContext context) {
-    return switch (status) {
-      types.Status.delivered =>
-        const Icon(LucideIcons.check_check, size: 12, color: Colors.grey),
-      types.Status.seen => const Icon(LucideIcons.check_check,
-          size: 12, color: AppColors.blueGreen),
-      types.Status.sent =>
-        const Icon(LucideIcons.check, size: 12, color: Colors.grey),
-      types.Status.sending =>
-        const Icon(LucideIcons.clock, size: 10, color: Colors.grey),
-      types.Status.error =>
-        const Icon(LucideIcons.circle_alert, size: 12, color: Colors.red),
-      _ => const SizedBox.shrink(),
-    };
+    return status.match(
+      () => const SizedBox.shrink(),
+      (status) => switch (status) {
+        types.Status.delivered =>
+          const Icon(LucideIcons.check_check, size: 12, color: Colors.grey),
+        types.Status.seen => const Icon(LucideIcons.check_check,
+            size: 12, color: AppColors.blueGreen),
+        types.Status.sent =>
+          const Icon(LucideIcons.check, size: 12, color: Colors.grey),
+        types.Status.sending =>
+          const Icon(LucideIcons.clock, size: 10, color: Colors.grey),
+        types.Status.error =>
+          const Icon(LucideIcons.circle_alert, size: 12, color: Colors.red),
+      },
+    );
   }
 }

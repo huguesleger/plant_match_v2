@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -26,9 +27,9 @@ class UserHeaderWithContent extends StatelessWidget {
     return AppBarDynamicHeader(
       height: 160 + topPadding,
       titlePadding: const EdgeInsets.only(bottom: 0),
-      titlePaddingShrink: const EdgeInsets.only(bottom: 0),
+      titlePaddingShrink: const Some(EdgeInsets.only(bottom: 0)),
       collapsedHeight: kToolbarHeight + topPadding,
-      leadingButton: IconButton(
+      leadingButton: Some(IconButton(
         style: IconButton.styleFrom(
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -42,7 +43,7 @@ class UserHeaderWithContent extends StatelessWidget {
         onPressed: () {
           Navigator.pop(context);
         },
-      ),
+      )),
       visual: Stack(
         clipBehavior: Clip.none,
         children: [
@@ -74,7 +75,7 @@ class UserHeaderWithContent extends StatelessWidget {
         ],
       ),
       backgroundAppBar: const BgHeader(),
-      actions: [
+      actions: Some([
         Container(
           decoration: const BoxDecoration(
             color: AppColors.white,
@@ -85,11 +86,11 @@ class UserHeaderWithContent extends StatelessWidget {
           ),
           padding: const EdgeInsets.all(6),
           child: FavoriteBtn(
-            targetUser: user,
+            targetUser: Some(user),
             currentUserId: currentUserId,
           ),
         ),
-      ],
+      ]),
       body: child,
     );
   }

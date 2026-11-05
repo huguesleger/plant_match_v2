@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -38,7 +39,8 @@ class _FormRegisterState extends State<FormRegister> {
     setState(() {
       _showPasswordErrors = true;
     });
-    if (_formKey.currentState?.saveAndValidate() ?? false) {
+    if (Option.fromNullable(_formKey.currentState)
+        .match(() => false, (form) => form.saveAndValidate())) {
       context.read<AuthCubit>().registerWithEmailAndPassword(
             email: _emailController.text,
             password: _passwordController.text,
@@ -82,20 +84,21 @@ class _FormRegisterState extends State<FormRegister> {
             const SizedBox(height: 20),
             AuthPasswordField(
               controller: _confirmPasswordController,
-              labelText: t.auth.register.confirmPassword.label,
-              hintText: t.auth.register.confirmPassword.hint,
-              validator: FormBuilderValidators.compose([
+              labelText: Some(t.auth.register.confirmPassword.label),
+              hintText: Some(t.auth.register.confirmPassword.hint),
+              validator: Some(FormBuilderValidators.compose([
                 FormBuilderValidators.required(
                     errorText: t.auth.common.password.required),
-                (val) => val != _passwordController.text
-                    ? t.auth.register.confirmPassword.mismatch
-                    : null,
-              ]),
+                (val) => Option.fromPredicate(
+                      t.auth.register.confirmPassword.mismatch,
+                      (_) => val != _passwordController.text,
+                    ).toNullable(),
+              ])),
             ),
             const SizedBox(height: 20),
             AuthCguCheckbox(
               isChecked: _isChecked,
-              onChanged: (val) => setState(() => _isChecked = val ?? false),
+              onChanged: (val) => setState(() => _isChecked = val),
             ),
             const SizedBox(height: 30),
             SizedBox(

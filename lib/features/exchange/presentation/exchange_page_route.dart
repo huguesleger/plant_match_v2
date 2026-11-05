@@ -22,14 +22,15 @@ class ExchangePageRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userId = context.read<AuthCubit>().userId;
+    return context.read<AuthCubit>().userId.match(
+          () => Scaffold(
+            body: Center(child: Text(t.common.notConnected)),
+          ),
+          (userId) => _buildExchange(userId),
+        );
+  }
 
-    if (userId == null) {
-      return Scaffold(
-        body: Center(child: Text(t.common.notConnected)),
-      );
-    }
-
+  Widget _buildExchange(String userId) {
     return BlocProvider(
       create: (context) => ExchangeCubit(
         repository: FirebaseExchange(),

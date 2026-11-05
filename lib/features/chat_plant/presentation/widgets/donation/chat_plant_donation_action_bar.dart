@@ -56,8 +56,10 @@ class ChatPlantDonationActionBar extends StatelessWidget {
       DonationWaitingValidation(:final donation) when isPlantOwner =>
         OwnerValidationCode(
           key: ValueKey(donation.id),
-          watchCode: () => context.read<DonationCubit>().validationCode(donation.id),
-          generate: () => context.read<DonationCubit>().generateCode(donation.id),
+          watchCode: () =>
+              context.read<DonationCubit>().validationCode(donation.id),
+          generate: () =>
+              context.read<DonationCubit>().generateCode(donation.id),
         ),
       DonationWaitingValidation(:final donation) when !isPlantOwner =>
         ValidationCodeInput(

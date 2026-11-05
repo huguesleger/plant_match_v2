@@ -1,3 +1,4 @@
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -20,13 +21,11 @@ void showCatalogSortBottomSheet({
         return SafeArea(
           child: RadioGroup<CatalogSortOption>(
             groupValue: localSortOption,
-            onChanged: (val) {
-              if (val != null) {
-                setModalState(() {
-                  localSortOption = val;
-                });
-              }
-            },
+            onChanged: (val) => Option.fromNullable(val).map(
+              (v) => setModalState(() {
+                localSortOption = v;
+              }),
+            ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,

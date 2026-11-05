@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_dynamic_header.dart';
@@ -22,7 +23,7 @@ class SignInScreen extends StatelessWidget {
         height: MediaQuery.of(context).size.height > 700 ? 345 : 250,
         leading: false,
         titlePadding: const EdgeInsets.only(bottom: 0),
-        titlePaddingShrink: const EdgeInsets.only(bottom: 0),
+        titlePaddingShrink: const Some(EdgeInsets.only(bottom: 0)),
         visual: const SignInHeaderLogo(),
         shrinkVisual: const SignInHeaderLogo(),
         body: Padding(
@@ -57,9 +58,7 @@ class BottomRoundedClipper extends CustomClipper<Path> {
   Path getClip(Size size) {
     Path path = Path();
     
-    // Les extrémités descendent vers size.height
     final yExtremities = size.height - curveHeight;
-    // Le point de contrôle remonte vers size.height - 60
     final yControl = size.height - (60.0 - curveHeight);
 
     path.lineTo(0, yExtremities);

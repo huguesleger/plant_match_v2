@@ -10,13 +10,13 @@ class DetailWizardItem extends StatelessWidget {
     required this.title,
     required this.description,
     required this.child,
-    this.formKey,
+    required this.formKey,
   });
 
   final String title;
   final String description;
   final Widget child;
-  final GlobalKey? formKey;
+  final GlobalKey<FormBuilderState> formKey;
 
   @override
   Widget build(BuildContext context) {

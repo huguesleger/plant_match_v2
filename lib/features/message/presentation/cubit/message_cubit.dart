@@ -17,9 +17,9 @@ class MessagesCubit extends Cubit<MessagesState> {
   final ExchangeRepository exchangeRepository;
   final DonationRepository donationRepository;
 
-  StreamSubscription<List<ChatPlant>>? _chatsSub;
-  StreamSubscription<List<Exchange>>? _exchangesSub;
-  StreamSubscription<List<Donation>>? _donationsSub;
+  Option<StreamSubscription<List<ChatPlant>>> _chatsSub = const None();
+  Option<StreamSubscription<List<Exchange>>> _exchangesSub = const None();
+  Option<StreamSubscription<List<Donation>>> _donationsSub = const None();
 
   List<ChatPlant> _lastChats = [];
   List<Exchange> _lastExchanges = [];
@@ -38,31 +38,31 @@ class MessagesCubit extends Cubit<MessagesState> {
     _generation++;
     emit(const MessagesLoading());
 
-    _chatsSub = chatPlantRepository.chatsForUser(currentUserId).listen(
+    _chatsSub = Some(chatPlantRepository.chatsForUser(currentUserId).listen(
       (chats) {
         _lastChats = chats;
         _emitCombined(currentUserId);
       },
       onError: _emitError,
-    );
+    ));
 
     _exchangesSub =
-        exchangeRepository.watchUnreadExchanges(currentUserId).listen(
+        Some(exchangeRepository.watchUnreadExchanges(currentUserId).listen(
       (exchanges) {
         _lastExchanges = exchanges;
         _emitCombined(currentUserId);
       },
       onError: _emitError,
-    );
+    ));
 
     _donationsSub =
-        donationRepository.watchUnreadDonations(currentUserId).listen(
+        Some(donationRepository.watchUnreadDonations(currentUserId).listen(
       (donations) {
         _lastDonations = donations;
         _emitCombined(currentUserId);
       },
       onError: _emitError,
-    );
+    ));
   }
 
   void _emitError(Object error) {
@@ -73,9 +73,9 @@ class MessagesCubit extends Cubit<MessagesState> {
   }
 
   void _cancelSubscriptions() {
-    _chatsSub?.cancel();
-    _exchangesSub?.cancel();
-    _donationsSub?.cancel();
+    _chatsSub.map((sub) => sub.cancel());
+    _exchangesSub.map((sub) => sub.cancel());
+    _donationsSub.map((sub) => sub.cancel());
   }
 
   void _emitCombined(String currentUserId) {
@@ -103,7 +103,7 @@ class MessagesCubit extends Cubit<MessagesState> {
         );
 
         final displayAvatar =
-            user.profilImg.trim().isNotEmpty == true ? user.profilImg : '';
+            Option.of(user.profilImg).filter((img) => img.trim().isNotEmpty);
 
         final bool hasUnreadExchange =
             _lastExchanges.any((e) => e.chatId == chat.chatId);
@@ -130,8 +130,8 @@ class MessagesCubit extends Cubit<MessagesState> {
           ),
         );
 
-        final acceptedExchangeId =
-            acceptedExchange.chatId.isNotEmpty ? acceptedExchange.id : null;
+        final acceptedExchangeId = Option.of(acceptedExchange.id)
+            .filter((_) => acceptedExchange.chatId.isNotEmpty);
 
         final bool hasUnreadDonation =
             _lastDonations.any((d) => d.chatId == chat.chatId);
@@ -155,8 +155,8 @@ class MessagesCubit extends Cubit<MessagesState> {
           ),
         );
 
-        final acceptedDonationId =
-            acceptedDonation.chatId.isNotEmpty ? acceptedDonation.id : null;
+        final acceptedDonationId = Option.of(acceptedDonation.id)
+            .filter((_) => acceptedDonation.chatId.isNotEmpty);
 
         return ChatPlant(
           chatId: chat.chatId,
@@ -168,17 +168,16 @@ class MessagesCubit extends Cubit<MessagesState> {
           plantOwnerId: chat.plantOwnerId,
           otherUserId: otherUserId,
           plantOwnerName: displayName,
-          plantOwnerAvatar:
-              Option.fromNullable(displayAvatar.isEmpty ? null : displayAvatar),
+          plantOwnerAvatar: displayAvatar,
           participants: chat.participants,
           lastMessage: chat.lastMessage,
           lastMessageAt: chat.lastMessageAt,
           unreadCount: chat.unreadCount,
           hasUnreadExchange: hasUnreadExchange,
-          acceptedExchangeId: Option.fromNullable(acceptedExchangeId),
+          acceptedExchangeId: acceptedExchangeId,
           isExchangeCompleted: chat.isExchangeCompleted,
           hasUnreadDonation: hasUnreadDonation,
-          acceptedDonationId: Option.fromNullable(acceptedDonationId),
+          acceptedDonationId: acceptedDonationId,
           isDonationCompleted: chat.isDonationCompleted,
           isOtherUserOnline: user.isOnline,
         );

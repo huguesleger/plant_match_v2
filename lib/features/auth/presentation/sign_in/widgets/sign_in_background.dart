@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import '../sign_in_screen.dart';
 
@@ -10,11 +11,12 @@ class SignInBackground extends StatelessWidget {
     final settings =
         context.dependOnInheritedWidgetOfExactType<FlexibleSpaceBarSettings>();
 
-    final t = settings == null
-        ? 1.0
-        : ((settings.currentExtent - settings.minExtent) /
-                (settings.maxExtent - settings.minExtent))
-            .clamp(0.0, 1.0);
+    final t = Option.fromNullable(settings).match(
+      () => 1.0,
+      (settings) => ((settings.currentExtent - settings.minExtent) /
+              (settings.maxExtent - settings.minExtent))
+          .clamp(0.0, 1.0),
+    );
 
     final tCurve = (t * 2.0 - 1.2).clamp(0.0, 1.0);
 

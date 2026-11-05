@@ -1,5 +1,6 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:fpdart/fpdart.dart';
 
 class FcmRemoteDataSource {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
@@ -13,7 +14,6 @@ class FcmRemoteDataSource {
     importance: Importance.max,
   );
 
-  /// Demande l'autorisation de recevoir des notifications.
   Future<NotificationSettings> requestPermission() async {
     return await _firebaseMessaging.requestPermission(
       alert: true,
@@ -23,21 +23,17 @@ class FcmRemoteDataSource {
     );
   }
 
-  /// Récupère le jeton FCM de l'appareil.
-  Future<String?> getToken() async {
-    return await _firebaseMessaging.getToken();
+  Future<Option<String>> getToken() async {
+    return Option.fromNullable(await _firebaseMessaging.getToken());
   }
 
   Stream<String> get onTokenRefresh => _firebaseMessaging.onTokenRefresh;
 
-  /// Flux de notifications reçues lorsque l'app est au premier plan (FCM direct).
   Stream<RemoteMessage> get onMessage => FirebaseMessaging.onMessage;
 
-  /// Flux de clics de notifications lorsque l'app est ouverte en tâche de fond.
   Stream<RemoteMessage> get onMessageOpenedApp =>
       FirebaseMessaging.onMessageOpenedApp;
 
-  /// Initialise les notifications locales.
   Future<void> initializeLocalNotifications() async {
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/launcher_icon');
@@ -69,15 +65,14 @@ class FcmRemoteDataSource {
       initializationSettings,
     );
 
-    final androidPlatform = _localNotifications
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>();
-
-    if (androidPlatform != null) {
-      await androidPlatform.createNotificationChannel(_channel);
-    }
+    await Option.fromNullable(_localNotifications
+            .resolvePlatformSpecificImplementation<
+                AndroidFlutterLocalNotificationsPlugin>())
+        .match(
+      () => Future<void>.value(),
+      (androidPlatform) => androidPlatform.createNotificationChannel(_channel),
+    );
   }
-
 
 }
 

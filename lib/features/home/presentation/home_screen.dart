@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_template.dart';
@@ -18,7 +19,8 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final uid = context.read<AuthCubit>().userId ?? '';
+    final uid =
+        context.read<AuthCubit>().userId.getOrElse(() => '');
 
     return BlocProvider(
       create: (context) => SavedRecommendationCubit(
@@ -52,11 +54,11 @@ class HomeScreen extends StatelessWidget {
               appBar: AppBarTemplate(
                 backgroundColor: AppColors.white,
                 surfaceTintColor: AppColors.white,
-                shadowColor: AppColors.black,
+                shadowColor: const Some(AppColors.black),
                 leading: false,
                 leadingWith: 0,
                 preferredHeight: 100,
-                titleWidget: Padding(
+                titleWidget: Some(Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: BlocBuilder<ProfilCubit, ProfilState>(
                     buildWhen: (_, current) => current is ProfilLoaded,
@@ -74,7 +76,7 @@ class HomeScreen extends StatelessWidget {
                       },
                     ),
                   ),
-                ),
+                )),
               ),
               body: HomeLoadedContent(
                 currentUser: currentUser,

@@ -5,19 +5,19 @@ import 'package:plant_match_v2/core/gen/assets.gen.dart';
 class HistoryCardImage extends StatelessWidget {
   const HistoryCardImage({
     super.key,
-    this.imageUrl,
+    required this.imageUrl,
     required this.height,
     required this.width,
   });
 
-  final String? imageUrl;
+  final String imageUrl;
   final double height;
   final double width;
 
   @override
   Widget build(BuildContext context) {
     final imageOpt =
-        Option.fromNullable(imageUrl).filter((url) => url.startsWith('http'));
+        Option.of(imageUrl).filter((url) => url.startsWith('http'));
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(8),

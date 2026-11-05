@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
@@ -9,12 +10,12 @@ class DetailItem extends StatelessWidget {
     super.key,
     required this.title,
     required this.subtitle,
-    this.onTap,
+    this.onTap = const None(),
   });
 
   final String title;
   final String subtitle;
-  final VoidCallback? onTap;
+  final Option<VoidCallback> onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +41,9 @@ class DetailItem extends StatelessWidget {
               maxLines: 1,
             ),
           ),
-          if (onTap != null)
+          ...onTap.match(
+            () => <Widget>[],
+            (_) => [
             Container(
               clipBehavior: Clip.antiAlias,
               decoration: const BoxDecoration(
@@ -58,6 +61,8 @@ class DetailItem extends StatelessWidget {
                 ),
               ),
             ),
+            ],
+          ),
         ],
       ),
       contentPadding: const EdgeInsets.symmetric(vertical: 10),
@@ -85,6 +90,6 @@ class DetailItem extends StatelessWidget {
         ],
       ),
     );
-    if (confirmed == true) onTap?.call();
+    if (confirmed == true) onTap.match(() {}, (callback) => callback());
   }
 }

@@ -1,3 +1,4 @@
+import 'package:plant_match_v2/core/util/json_reader.dart';
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -20,6 +21,27 @@ class FirebaseChatPlant implements ChatPlantRepository {
   CollectionReference<Map<String, dynamic>> _messages(String chatId) =>
       _chats.doc(chatId).collection('messages');
 
+  Future<(String, String)> _ownerInfo(String plantOwnerId) async {
+    final ownerDoc =
+        await _firestore.collection('users').doc(plantOwnerId).get();
+    return Option.fromNullable(ownerDoc.data()).match(
+      () => ('Propriétaire', ''),
+      (ownerData) {
+        final profilUser = ProfilUser.fromJson({
+          ...ownerData,
+          'uid': ownerDoc.id,
+        });
+        return (
+          profilUser.userName
+              .alt(() => Some(profilUser.firstName))
+              .filter((s) => s.trim().isNotEmpty)
+              .getOrElse(() => 'Propriétaire'),
+          profilUser.profilImg,
+        );
+      },
+    );
+  }
+
   @override
   TaskEither<Failure, String> getOrCreatePlantChat({
     required String currentUserId,
@@ -36,29 +58,8 @@ class FirebaseChatPlant implements ChatPlantRepository {
           throw Exception('Paramètres invalides pour la création du chat');
         }
 
-        final ownerDoc =
-            await _firestore.collection('users').doc(plantOwnerId).get();
-        final ownerData = ownerDoc.data();
-
-        final String plantOwnerName;
-        final String plantOwnerAvatar;
-
-        if (ownerData == null) {
-          plantOwnerName = 'Propriétaire';
-          plantOwnerAvatar = '';
-        } else {
-          final profilUser = ProfilUser.fromJson({
-            ...ownerData,
-            'uid': ownerDoc.id,
-          });
-
-          plantOwnerName = profilUser.userName
-              .alt(() => Some(profilUser.firstName))
-              .filter((s) => s.trim().isNotEmpty)
-              .getOrElse(() => 'Propriétaire');
-
-          plantOwnerAvatar = profilUser.profilImg;
-        }
+        final (plantOwnerName, plantOwnerAvatar) =
+            await _ownerInfo(plantOwnerId);
 
         final ids = [currentUserId, plantOwnerId]..sort();
         final chatId = '${plantId}_${ids[0]}_${ids[1]}';
@@ -109,18 +110,31 @@ class FirebaseChatPlant implements ChatPlantRepository {
         .orderBy('timestamp', descending: true)
         .snapshots()
         .map(
-          (snapshot) =>
-              snapshot.docs.where((doc) => doc.data()['timestamp'] != null).map(
+          (snapshot) => snapshot.docs
+              .where(
+            (doc) => Option<dynamic>.fromNullable(
+              doc.data()['timestamp'],
+            ).isSome(),
+          )
+              .map(
             (doc) {
               final data = doc.data();
-              final messageType = data['messageType'] as String?;
+              final messageType = Option<dynamic>.fromNullable(
+                data['messageType'],
+              ).map((type) => type as String);
 
-              final status = data['readAt'] != null
-                  ? types.Status.seen
-                  : types.Status.sent;
+              final status =
+                  Option<dynamic>.fromNullable(data['readAt']).isSome()
+                      ? types.Status.seen
+                      : types.Status.sent;
 
-              if (messageType == ChatMessageType.plantExchange.name ||
-                  messageType == ChatMessageType.plantDonation.name) {
+              if (messageType
+                  .filter(
+                    (type) =>
+                        type == ChatMessageType.plantExchange.name ||
+                        type == ChatMessageType.plantDonation.name,
+                  )
+                  .isSome()) {
                 return types.CustomMessage(
                   id: doc.id,
                   author: types.User(id: doc['senderId']),
@@ -130,7 +144,7 @@ class FirebaseChatPlant implements ChatPlantRepository {
                       .millisecondsSinceEpoch,
                   metadata: {
                     'readAt': data['readAt'],
-                    'messageType': messageType,
+                    'messageType': messageType.toNullable(),
                     'plantId': data['plantId'],
                     'plantName': data['plantName'],
                     'plantImage': data['plantImage'],
@@ -168,46 +182,31 @@ class FirebaseChatPlant implements ChatPlantRepository {
     final plantId = parts[0];
 
     final plantDoc = await _firestore.collection('catalogs').doc(plantId).get();
-    final plantData = plantDoc.data();
-    if (plantData == null) throw Exception('Plante introuvable');
+    final plantData = Option.fromNullable(plantDoc.data())
+        .getOrElse(() => throw Exception('Plante introuvable'));
 
-    final plantOwnerId = plantData['userId'] as String? ?? receiverId;
+    final plantOwnerId = Option<dynamic>.fromNullable(plantData['userId'])
+        .map((id) => id as String)
+        .getOrElse(() => receiverId);
 
-    final ownerDoc =
-        await _firestore.collection('users').doc(plantOwnerId).get();
-    final ownerData = ownerDoc.data();
+    final (plantOwnerName, plantOwnerAvatar) = await _ownerInfo(plantOwnerId);
 
-    final String plantOwnerName;
-    final String plantOwnerAvatar;
-
-    if (ownerData == null) {
-      plantOwnerName = 'Propriétaire';
-      plantOwnerAvatar = '';
-    } else {
-      final profilUser = ProfilUser.fromJson({
-        ...ownerData,
-        'uid': ownerDoc.id,
-      });
-
-      plantOwnerName = profilUser.userName
-          .alt(() => Some(profilUser.firstName))
-          .filter((s) => s.trim().isNotEmpty)
-          .getOrElse(() => 'Propriétaire');
-
-      plantOwnerAvatar = profilUser.profilImg;
-    }
-
-    final images = plantData['images'] as List?;
-    final plantImage =
-        (images != null && images.isNotEmpty) ? images.first as String : '';
+    final plantImage = Option<dynamic>.fromNullable(plantData['images'])
+        .map((images) => images as List)
+        .filter((images) => images.isNotEmpty)
+        .map((images) => images.first as String)
+        .getOrElse(() => '');
 
     await _chats.doc(chatId).set({
       'participants': [senderId, receiverId]..sort(),
       'plantId': plantId,
-      'plantName': plantData['name'] ?? '',
-      'plantDescription': plantData['description'] ?? '',
+      'plantName':
+          Option<dynamic>.fromNullable(plantData['name']).getOrElse(() => ''),
+      'plantDescription': Option<dynamic>.fromNullable(plantData['description'])
+          .getOrElse(() => ''),
       'plantImage': plantImage,
-      'plantExchangeType': plantData['offerType'] ?? 'exchange',
+      'plantExchangeType': Option<dynamic>.fromNullable(plantData['offerType'])
+          .getOrElse(() => 'exchange'),
       'plantOwnerId': plantOwnerId,
       'plantOwnerName': plantOwnerName,
       'plantOwnerAvatar': plantOwnerAvatar,
@@ -242,7 +241,7 @@ class FirebaseChatPlant implements ChatPlantRepository {
           'receiverId': receiverId,
           'text': text,
           'timestamp': FieldValue.serverTimestamp(),
-          'readAt': null,
+          'readAt': const Option<Timestamp>.none().toNullable(),
         });
 
         await chatRef.update({
@@ -266,8 +265,9 @@ class FirebaseChatPlant implements ChatPlantRepository {
         .map((snapshot) {
       return snapshot.docs.where((doc) {
         final data = doc.data();
-        final deletedFor = List<String>.from(data['deletedFor'] ?? []);
-        return !deletedFor.contains(uid) && data['lastMessage'] != null;
+        final deletedFor = data.listOf<String>('deletedFor');
+        return !deletedFor.contains(uid) &&
+            Option<dynamic>.fromNullable(data['lastMessage']).isSome();
       }).map((doc) {
         final data = doc.data();
 
@@ -277,29 +277,30 @@ class FirebaseChatPlant implements ChatPlantRepository {
           plantName: data['plantName'],
           plantDescription: data['plantDescription'],
           plantImage: data['plantImage'],
-          plantExchangeType: data['plantExchangeType'] != null
-              ? OfferType.values.byName(data['plantExchangeType'] as String)
-              : OfferType.exchange,
+          plantExchangeType:
+              Option<dynamic>.fromNullable(data['plantExchangeType']).match(
+            () => OfferType.exchange,
+            (type) => OfferType.values.byName(type as String),
+          ),
           plantOwnerId: data['plantOwnerId'],
           plantOwnerName: data['plantOwnerName'],
-          plantOwnerAvatar:
-              Option.fromNullable(data['plantOwnerAvatar'] as String?),
+          plantOwnerAvatar: data.read<String>('plantOwnerAvatar'),
           participants: List<String>.from(data['participants']),
-          lastMessage: Option.fromNullable(data['lastMessage'] as String?),
-          lastMessageAt: Option.fromNullable(
-            (data['lastMessageAt'] as Timestamp?)?.toDate(),
+          lastMessage: data.read<String>('lastMessage'),
+          lastMessageAt: Option<dynamic>.fromNullable(data['lastMessageAt'])
+              .map((at) => (at as Timestamp).toDate()),
+          unreadCount: Map<String, int>.from(
+            Option<dynamic>.fromNullable(data['unreadCount'])
+                .getOrElse(() => <String, int>{}),
           ),
-          unreadCount: Map<String, int>.from(data['unreadCount'] ?? {}),
           otherUserId: (List<String>.from(data['participants']))
               .firstWhere((id) => id != uid, orElse: () => ''),
           hasUnreadExchange: false,
-          isExchangeCompleted: data['isExchangeCompleted'] ?? false,
-          acceptedExchangeId:
-              Option.fromNullable(data['acceptedExchangeId'] as String?),
+          isExchangeCompleted: data.boolean('isExchangeCompleted'),
+          acceptedExchangeId: data.read<String>('acceptedExchangeId'),
           hasUnreadDonation: false,
-          isDonationCompleted: data['isDonationCompleted'] ?? false,
-          acceptedDonationId:
-              Option.fromNullable(data['acceptedDonationId'] as String?),
+          isDonationCompleted: data.boolean('isDonationCompleted'),
+          acceptedDonationId: data.read<String>('acceptedDonationId'),
           isOtherUserOnline: false,
         );
       }).toList();
@@ -331,10 +332,12 @@ class FirebaseChatPlant implements ChatPlantRepository {
 
       for (final doc in snapshot.docs) {
         final data = doc.data();
-        final deletedFor = List<String>.from(data['deletedFor'] ?? []);
+        final deletedFor = data.listOf<String>('deletedFor');
 
         if (!deletedFor.contains(uid)) {
-          total += (data['unreadCount']?[uid] ?? 0) as int;
+          total += Option<dynamic>.fromNullable(data['unreadCount'])
+              .flatMap((counts) => Option<dynamic>.fromNullable(counts[uid]))
+              .getOrElse(() => 0) as int;
         }
       }
       return total;
@@ -395,7 +398,11 @@ class FirebaseChatPlant implements ChatPlantRepository {
           .flatMap(
             (_) => CloudFunction.call('payFirstContact', {'chatId': chatId}),
           )
-          .map((result) => result['cost'] as int? ?? 0);
+          .map(
+            (result) => Option<dynamic>.fromNullable(result['cost'])
+                .map((cost) => cost as int)
+                .getOrElse(() => 0),
+          );
 
   @override
   TaskEither<Failure, List<String>> getParticipants(String chatId) {
@@ -406,11 +413,8 @@ class FirebaseChatPlant implements ChatPlantRepository {
         }
 
         final doc = await _chats.doc(chatId).get();
-        final data = doc.data();
-
-        if (data == null) {
-          throw Exception('Chat introuvable');
-        }
+        final data = Option.fromNullable(doc.data())
+            .getOrElse(() => throw Exception('Chat introuvable'));
 
         return List<String>.from(data['participants']);
       },
@@ -465,7 +469,7 @@ class FirebaseChatPlant implements ChatPlantRepository {
           'plantImage': plantImage,
           'text': 'Proposition d\'échange',
           'timestamp': FieldValue.serverTimestamp(),
-          'readAt': null,
+          'readAt': const Option<Timestamp>.none().toNullable(),
         });
 
         await chatRef.update({
@@ -509,7 +513,7 @@ class FirebaseChatPlant implements ChatPlantRepository {
           'plantImage': plantImage,
           'text': 'Demande de donation',
           'timestamp': FieldValue.serverTimestamp(),
-          'readAt': null,
+          'readAt': const Option<Timestamp>.none().toNullable(),
         });
 
         await chatRef.update({
@@ -605,15 +609,16 @@ class FirebaseChatPlant implements ChatPlantRepository {
       latest[index] = Some(value);
       final blockedByMe = latest[0].getOrElse(() => false);
       final blockedByOther = latest[1].getOrElse(() => false);
-      latest.every((o) => o.isSome())
-          ? controller.add(
-              switch ((blockedByMe, blockedByOther)) {
-                (true, _) => BlockStatus.blockedByMe,
-                (false, true) => BlockStatus.blockedByOther,
-                (false, false) => BlockStatus.none,
-              },
-            )
-          : null;
+      if (latest.every((o) => o.isSome())) {
+        controller.add(
+          switch ((blockedByMe, blockedByOther)) {
+            (true, true) => BlockStatus.blockedByMe,
+            (true, false) => BlockStatus.blockedByMe,
+            (false, true) => BlockStatus.blockedByOther,
+            (false, false) => BlockStatus.none,
+          },
+        );
+      }
     }
 
     controller = StreamController<BlockStatus>(

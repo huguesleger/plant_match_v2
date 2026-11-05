@@ -45,7 +45,7 @@ void main() {
     mockGoogleSignIn = MockGoogleSignIn();
     mockFacebookAuth = MockFacebookAuth();
 
-    repository = FirebaseAuthRepository(
+    repository = FirebaseAuthRepository.using(
       firebaseAuth: mockAuth,
       firebaseFirestore: fakeFirestore,
       googleSignIn: mockGoogleSignIn,
@@ -162,9 +162,11 @@ void main() {
       );
       await fakeFirestore.collection('users').doc(tUid).set({'fullName': tFullName});
       
-      repository = FirebaseAuthRepository(
+      repository = FirebaseAuthRepository.using(
         firebaseAuth: mockAuth,
         firebaseFirestore: fakeFirestore,
+        googleSignIn: mockGoogleSignIn,
+        facebookAuth: mockFacebookAuth,
       );
 
       final result = await repository.getCurrentUser().run();
@@ -200,9 +202,11 @@ void main() {
       when(() => manualUser.reload()).thenAnswer((_) async {});
       when(() => manualUser.emailVerified).thenReturn(true);
 
-      final manualRepo = FirebaseAuthRepository(
+      final manualRepo = FirebaseAuthRepository.using(
         firebaseAuth: manualAuth,
         firebaseFirestore: fakeFirestore,
+        googleSignIn: mockGoogleSignIn,
+        facebookAuth: mockFacebookAuth,
       );
 
       final result = await manualRepo.isEmailVerified().run();

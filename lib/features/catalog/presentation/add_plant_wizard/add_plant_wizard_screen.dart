@@ -1,3 +1,4 @@
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -54,11 +55,11 @@ class _AddPlantWizardScreenState extends State<AddPlantWizardScreen> {
   final _formKeyIsPublish = GlobalKey<FormBuilderState>();
 
   final List<Family> _selectedFamilies = [];
-  LevelMaintenance? _selectedMaintenance;
-  Watering? _selectedWatering;
-  Lighting? _selectedLighting;
-  OfferType? _selectedOfferType;
-  Environment? _selectedEnvironment;
+  Option<LevelMaintenance> _selectedMaintenance = const None();
+  Option<Watering> _selectedWatering = const None();
+  Option<Lighting> _selectedLighting = const None();
+  Option<OfferType> _selectedOfferType = const None();
+  Option<Environment> _selectedEnvironment = const None();
   late Catalog _wizardCatalog;
 
   @override
@@ -80,23 +81,23 @@ class _AddPlantWizardScreenState extends State<AddPlantWizardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarTemplate(
-        title: t.catalog.wizard.title,
+        title: Some(t.catalog.wizard.title),
         backgroundColor: AppColors.white,
         surfaceTintColor: AppColors.white,
-        onPressed: _onBack,
+        onPressed: Some(_onBack),
         leading: _currentPage != 0,
         centerTitle: true,
-        actions: [
+        actions: Some([
           IconButton(
             onPressed: _onExit,
             icon: const Icon(LucideIcons.x, color: AppColors.greyDark),
           ),
-        ],
-        styleIconButton: IconButton.styleFrom(
+        ]),
+        styleIconButton: Some(IconButton.styleFrom(
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           side: const BorderSide(color: AppColors.greyLight),
-        ),
+        )),
       ),
       body: SafeArea(
         child: Stack(
@@ -118,7 +119,7 @@ class _AddPlantWizardScreenState extends State<AddPlantWizardScreen> {
           text: _currentPage == _totalPages - 1
               ? t.catalog.wizard.finish
               : t.catalog.wizard.next,
-          onPressed: _onNextPressed,
+          onPressed: Some(_onNextPressed),
           bgColor: AppColors.greenLight,
           textColor: AppColors.blueGreen,
         ),
@@ -143,7 +144,7 @@ class _AddPlantWizardScreenState extends State<AddPlantWizardScreen> {
         StepEnvironment(
           formKey: _formKeyEnvironment,
           selected: _selectedEnvironment,
-          onSelect: (v) => setState(() => _selectedEnvironment = v),
+          onSelect: (v) => setState(() => _selectedEnvironment = Some(v)),
         ),
         StepFamily(
             formKey: _formKeyFamily,
@@ -158,15 +159,15 @@ class _AddPlantWizardScreenState extends State<AddPlantWizardScreen> {
         StepMaintenance(
             formKey: _formKeyMaintenance,
             selected: _selectedMaintenance,
-            onSelect: (v) => setState(() => _selectedMaintenance = v)),
+            onSelect: (v) => setState(() => _selectedMaintenance = Some(v))),
         StepWatering(
             formKey: _formKeyWatering,
             selected: _selectedWatering,
-            onSelect: (v) => setState(() => _selectedWatering = v)),
+            onSelect: (v) => setState(() => _selectedWatering = Some(v))),
         StepLighting(
             formKey: _formKeyLighting,
             selected: _selectedLighting,
-            onSelect: (v) => setState(() => _selectedLighting = v)),
+            onSelect: (v) => setState(() => _selectedLighting = Some(v))),
         StepDescription(
             formKey: _formKeyDescription, controller: _descriptionController),
         StepImage(
@@ -176,7 +177,7 @@ class _AddPlantWizardScreenState extends State<AddPlantWizardScreen> {
         StepOfferType(
           formKey: _formKeyOfferType,
           selected: _selectedOfferType,
-          onSelect: (v) => setState(() => _selectedOfferType = v),
+          onSelect: (v) => setState(() => _selectedOfferType = Some(v)),
         ),
         StepPublish(
             formKey: _formKeyIsPublish,
@@ -198,7 +199,8 @@ class _AddPlantWizardScreenState extends State<AddPlantWizardScreen> {
       _formKeyOfferType,
       _formKeyIsPublish
     ];
-    if (keys[_currentPage].currentState?.saveAndValidate() ?? false) {
+    if (Option.fromNullable(keys[_currentPage].currentState)
+        .match(() => false, (s) => s.saveAndValidate())) {
       if (_currentPage < _totalPages - 1) {
         _onNext();
       } else {
@@ -230,8 +232,8 @@ class _AddPlantWizardScreenState extends State<AddPlantWizardScreen> {
         image: Assets.res.images.emptyCatalogFilter,
         title: t.catalog.wizard.quit_dialog.title,
         text: t.catalog.wizard.quit_dialog.content,
-        confirmLabel: t.catalog.wizard.quit_dialog.quit,
-        cancelLabel: t.catalog.wizard.quit_dialog.cancel,
+        confirmLabel: Some(t.catalog.wizard.quit_dialog.quit),
+        cancelLabel: Some(t.catalog.wizard.quit_dialog.cancel),
       ),
     );
     if (shouldExit == true && mounted) Navigator.pop(context);
@@ -246,17 +248,18 @@ class _AddPlantWizardScreenState extends State<AddPlantWizardScreen> {
     );
     final cubit = context.read<CatalogCubit>();
     final finalCatalog = _wizardCatalog.copyWith(
-      newName: _nameController.text,
-      newDescription: _descriptionController.text,
-      newEnvironment: _selectedEnvironment ?? Environment.indoor,
-      newFamily: _selectedFamilies,
-      newLevelMaintenance: _selectedMaintenance ?? LevelMaintenance.low,
-      newWatering: _selectedWatering ?? Watering.little,
-      newLighting: _selectedLighting ?? Lighting.sun,
-      newOfferType: _selectedOfferType ?? OfferType.exchange,
-      newStatus: _isPublishController.text == 'true'
+      newName: Some(_nameController.text),
+      newDescription: Some(_descriptionController.text),
+      newEnvironment: Some(_selectedEnvironment.getOrElse(() => Environment.indoor)),
+      newFamily: Some(_selectedFamilies),
+      newLevelMaintenance: Some(
+          _selectedMaintenance.getOrElse(() => LevelMaintenance.low)),
+      newWatering: Some(_selectedWatering.getOrElse(() => Watering.little)),
+      newLighting: Some(_selectedLighting.getOrElse(() => Lighting.sun)),
+      newOfferType: Some(_selectedOfferType.getOrElse(() => OfferType.exchange)),
+      newStatus: Some(_isPublishController.text == 'true'
           ? CatalogStatus.published
-          : CatalogStatus.draft,
+          : CatalogStatus.draft),
     );
 
     final result = await cubit.publishNewCatalog(finalCatalog).run();

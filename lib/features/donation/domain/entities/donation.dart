@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:plant_match_v2/core/util/json_reader.dart';
 import 'package:fpdart/fpdart.dart';
 
 enum DonationStatus {
@@ -47,26 +47,22 @@ class Donation {
   factory Donation.fromJson(String id, Map<String, dynamic> json) {
     return Donation(
       id: id,
-      chatId: json['chatId'] ?? '',
-      requestedBy: json['requestedBy'] ?? '',
-      ownerId: json['ownerId'] ?? '',
-      plantId: json['plantId'] ?? '',
-      plantName: json['plantName'] ?? '',
-      plantImage: json['plantImage'] ?? '',
+      chatId: json.string('chatId'),
+      requestedBy: json.string('requestedBy'),
+      ownerId: json.string('ownerId'),
+      plantId: json.string('plantId'),
+      plantName: json.string('plantName'),
+      plantImage: json.string('plantImage'),
       status: DonationStatus.values.firstWhere(
         (e) => e.name == json['status'],
         orElse: () => DonationStatus.pending,
       ),
-      createdAt: Option.fromNullable(json['createdAt'] as Timestamp?)
-          .map((t) => t.toDate())
-          .getOrElse(DateTime.now),
-      seenByOwner: json['seenByOwner'] ?? false,
-      seenByRequester: json['seenByRequester'] ?? false,
-      completedAt: Option.fromNullable(json['completedAt']).map(
-        (t) => (t as Timestamp).toDate(),
-      ),
-      completedBy: Option.fromNullable(json['completedBy'] as String?),
-      validationCode: Option.fromNullable(json['validationCode'] as String?),
+      createdAt: json.date('createdAt').getOrElse(DateTime.now),
+      seenByOwner: json.boolean('seenByOwner'),
+      seenByRequester: json.boolean('seenByRequester'),
+      completedAt: json.date('completedAt'),
+      completedBy: json.read<String>('completedBy'),
+      validationCode: json.read<String>('validationCode'),
     );
   }
 

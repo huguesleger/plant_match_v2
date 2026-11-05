@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:plant_match_v2/core/services/location/location_service.dart';
 import 'package:plant_match_v2/features/around_me_map/data/firebase_around_me_repository.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/cubit/around_me_cubit.dart';
@@ -45,8 +46,9 @@ class TemplatePageState extends State<TemplatePage> {
 
     _currentIndex = widget.initialIndex;
 
-    final user = context.read<AuthCubit>().currentUser;
-    uid = user?.uid ?? '';
+    uid = context.read<AuthCubit>().currentUser
+        .map((user) => user.uid)
+        .getOrElse(() => '');
 
     _pages = [
       const HomePageRoute(),
@@ -78,7 +80,9 @@ class TemplatePageState extends State<TemplatePage> {
         ),
       ),
     );
-    if (created == true) aroundMeCubit.getAllUserProfiles(uid);
+    if (Option.fromNullable(created).getOrElse(() => false)) {
+      aroundMeCubit.getAllUserProfiles(uid);
+    }
   }
 
   @override

@@ -1,3 +1,4 @@
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -16,8 +17,8 @@ class StepEnvironment extends StatelessWidget {
   });
 
   final GlobalKey<FormBuilderState> formKey;
-  final Environment? selected;
-  final ValueChanged<Environment?> onSelect;
+  final Option<Environment> selected;
+  final ValueChanged<Environment> onSelect;
 
   @override
   Widget build(BuildContext context) => AddPlantWizardItem(
@@ -26,7 +27,7 @@ class StepEnvironment extends StatelessWidget {
         description: t.catalog.wizard.steps.category.description,
         child: FormBuilderField<Environment>(
           name: 'category',
-          initialValue: selected,
+          initialValue: selected.toNullable(),
           validator: FormBuilderValidators.required(
             errorText: t.catalog.wizard.required_field,
           ),
@@ -40,7 +41,7 @@ class StepEnvironment extends StatelessWidget {
                       icon: LucideIcons.house,
                       label: t.catalog.wizard.steps.category.indoor,
                       value: Environment.indoor,
-                      isSelected: selected == Environment.indoor,
+                      isSelected: selected == const Some(Environment.indoor),
                       onTap: (v) {
                         onSelect(v);
                         field.didChange(v);
@@ -54,7 +55,7 @@ class StepEnvironment extends StatelessWidget {
                       icon: LucideIcons.trees,
                       label: t.catalog.wizard.steps.category.outdoor,
                       value: Environment.outdoor,
-                      isSelected: selected == Environment.outdoor,
+                      isSelected: selected == const Some(Environment.outdoor),
                       onTap: (v) {
                         onSelect(v);
                         field.didChange(v);
@@ -68,7 +69,7 @@ class StepEnvironment extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0, left: 12.0),
                   child: Text(
-                    field.errorText ?? '',
+                    Option.fromNullable(field.errorText).getOrElse(() => ''),
                     style: const TextStyle(color: Colors.red, fontSize: 12),
                   ),
                 ),

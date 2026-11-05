@@ -36,9 +36,7 @@ class CatalogCardItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _CardImage(
-                      imageUrl: catalog.images.isNotEmpty
-                          ? catalog.images.first
-                          : null),
+                      imageUrl: Option.fromNullable(catalog.images.firstOrNull)),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
@@ -68,22 +66,22 @@ class CatalogCardItem extends StatelessWidget {
     );
 
     if (result == true && context.mounted) {
-      final userId = context.read<AuthCubit>().userId;
-      if (userId != null) {
-        context.read<CatalogCubit>().getCatalogsByUserId(userId);
-      }
+      context
+          .read<AuthCubit>()
+          .userId
+          .map(context.read<CatalogCubit>().getCatalogsByUserId);
     }
   }
 }
 
 class _CardImage extends StatelessWidget {
-  const _CardImage({this.imageUrl});
-  final String? imageUrl;
+  const _CardImage({required this.imageUrl});
+  final Option<String> imageUrl;
 
   @override
   Widget build(BuildContext context) {
     final imageOpt =
-        Option.fromNullable(imageUrl).filter((url) => url.startsWith('http'));
+        imageUrl.filter((url) => url.startsWith('http'));
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),

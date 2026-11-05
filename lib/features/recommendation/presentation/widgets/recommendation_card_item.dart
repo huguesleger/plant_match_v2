@@ -32,9 +32,7 @@ class RecommendationCardItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _CardImage(
-                    imageUrl: catalog.images.isNotEmpty
-                        ? catalog.images.first
-                        : null,
+                    imageUrl: catalog.images.firstOption,
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -68,13 +66,12 @@ class RecommendationCardItem extends StatelessWidget {
 }
 
 class _CardImage extends StatelessWidget {
-  const _CardImage({this.imageUrl});
-  final String? imageUrl;
+  const _CardImage({required this.imageUrl});
+  final Option<String> imageUrl;
 
   @override
   Widget build(BuildContext context) {
-    final imageOpt = Option.fromNullable(imageUrl)
-        .filter((url) => url.startsWith('http'));
+    final imageOpt = imageUrl.filter((url) => url.startsWith('http'));
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),

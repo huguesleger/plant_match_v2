@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
@@ -13,7 +14,7 @@ class AuthCguCheckbox extends StatelessWidget {
   });
 
   final bool isChecked;
-  final ValueChanged<bool?> onChanged;
+  final ValueChanged<bool> onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -22,14 +23,12 @@ class AuthCguCheckbox extends StatelessWidget {
       initialValue: isChecked,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       validator: FormBuilderValidators.compose([
-        (value) {
-          if (value == null || value == false) {
-            return t.auth.common.email.required;
-          }
-          return null;
-        },
+        (value) => Option.fromPredicate(
+              t.auth.common.email.required,
+              (_) => value != true,
+            ).toNullable(),
       ]),
-      builder: (FormFieldState<bool?> field) {
+      builder: (field) {
         return Padding(
           padding: const EdgeInsets.only(left: 16),
           child: InputDecorator(

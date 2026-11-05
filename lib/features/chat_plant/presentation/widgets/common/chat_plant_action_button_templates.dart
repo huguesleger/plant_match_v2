@@ -63,6 +63,7 @@ class ChatPlantCompleteActionBar extends StatelessWidget {
     );
   }
 }
+
 class ChatPlantStatusBanner extends StatelessWidget {
   const ChatPlantStatusBanner({
     super.key,

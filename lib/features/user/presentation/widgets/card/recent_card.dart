@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
@@ -18,7 +19,7 @@ class RecentCard extends StatelessWidget {
     required this.recentDate,
     required this.onPressed,
     required this.offerType,
-    this.catalog,
+    this.catalog = const None(),
   });
 
   final String imageUrl;
@@ -26,7 +27,7 @@ class RecentCard extends StatelessWidget {
   final DateTime recentDate;
   final VoidCallback onPressed;
   final OfferType offerType;
-  final Catalog? catalog;
+  final Option<Catalog> catalog;
 
   @override
   Widget build(BuildContext context) {

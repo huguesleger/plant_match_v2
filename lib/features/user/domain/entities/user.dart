@@ -19,18 +19,18 @@ class User {
   });
 
   User copyWith({
-    ProfilUser? user,
-    Map<String, List<Catalog>>? userCatalogs,
-    int? level,
-    Option<int>? exchangeCount,
-    CatalogFilter? selectedFilter,
+    Option<ProfilUser> user = const None(),
+    Option<Map<String, List<Catalog>>> userCatalogs = const None(),
+    Option<int> level = const None(),
+    Option<Option<int>> exchangeCount = const None(),
+    Option<CatalogFilter> selectedFilter = const None(),
   }) {
     return User(
-      user: user ?? this.user,
-      userCatalogs: userCatalogs ?? this.userCatalogs,
-      level: level ?? this.level,
-      exchangeCount: exchangeCount ?? this.exchangeCount,
-      selectedFilter: selectedFilter ?? this.selectedFilter,
+      user: user.getOrElse(() => this.user),
+      userCatalogs: userCatalogs.getOrElse(() => this.userCatalogs),
+      level: level.getOrElse(() => this.level),
+      exchangeCount: exchangeCount.getOrElse(() => this.exchangeCount),
+      selectedFilter: selectedFilter.getOrElse(() => this.selectedFilter),
     );
   }
 }

@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:plant_match_v2/core/util/json_reader.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 
@@ -58,16 +58,16 @@ class ChatPlant {
   });
 
   ChatPlant copyWith({
-    Option<String>? lastMessage,
-    Option<DateTime>? lastMessageAt,
-    Map<String, int>? unreadCount,
-    bool? hasUnreadExchange,
-    Option<String>? acceptedExchangeId,
-    bool? isExchangeCompleted,
-    bool? hasUnreadDonation,
-    Option<String>? acceptedDonationId,
-    bool? isDonationCompleted,
-    bool? isOtherUserOnline,
+    Option<Option<String>> lastMessage = const None(),
+    Option<Option<DateTime>> lastMessageAt = const None(),
+    Option<Map<String, int>> unreadCount = const None(),
+    Option<bool> hasUnreadExchange = const None(),
+    Option<Option<String>> acceptedExchangeId = const None(),
+    Option<bool> isExchangeCompleted = const None(),
+    Option<bool> hasUnreadDonation = const None(),
+    Option<Option<String>> acceptedDonationId = const None(),
+    Option<bool> isDonationCompleted = const None(),
+    Option<bool> isOtherUserOnline = const None(),
   }) {
     return ChatPlant(
       chatId: chatId,
@@ -80,17 +80,24 @@ class ChatPlant {
       plantOwnerName: plantOwnerName,
       plantOwnerAvatar: plantOwnerAvatar,
       participants: participants,
-      lastMessage: lastMessage ?? this.lastMessage,
-      lastMessageAt: lastMessageAt ?? this.lastMessageAt,
-      unreadCount: unreadCount ?? this.unreadCount,
+      lastMessage: lastMessage.getOrElse(() => this.lastMessage),
+      lastMessageAt: lastMessageAt.getOrElse(() => this.lastMessageAt),
+      unreadCount: unreadCount.getOrElse(() => this.unreadCount),
       otherUserId: otherUserId,
-      hasUnreadExchange: hasUnreadExchange ?? this.hasUnreadExchange,
-      acceptedExchangeId: acceptedExchangeId ?? this.acceptedExchangeId,
-      isExchangeCompleted: isExchangeCompleted ?? this.isExchangeCompleted,
-      hasUnreadDonation: hasUnreadDonation ?? this.hasUnreadDonation,
-      acceptedDonationId: acceptedDonationId ?? this.acceptedDonationId,
-      isDonationCompleted: isDonationCompleted ?? this.isDonationCompleted,
-      isOtherUserOnline: isOtherUserOnline ?? this.isOtherUserOnline,
+      hasUnreadExchange:
+          hasUnreadExchange.getOrElse(() => this.hasUnreadExchange),
+      acceptedExchangeId:
+          acceptedExchangeId.getOrElse(() => this.acceptedExchangeId),
+      isExchangeCompleted:
+          isExchangeCompleted.getOrElse(() => this.isExchangeCompleted),
+      hasUnreadDonation:
+          hasUnreadDonation.getOrElse(() => this.hasUnreadDonation),
+      acceptedDonationId:
+          acceptedDonationId.getOrElse(() => this.acceptedDonationId),
+      isDonationCompleted:
+          isDonationCompleted.getOrElse(() => this.isDonationCompleted),
+      isOtherUserOnline:
+          isOtherUserOnline.getOrElse(() => this.isOtherUserOnline),
     );
   }
 
@@ -115,30 +122,32 @@ class ChatPlant {
   factory ChatPlant.fromJson(String id, Map<String, dynamic> json) {
     return ChatPlant(
       chatId: id,
-      plantId: json['plantId'] ?? '',
-      plantName: json['plantName'] ?? '',
-      plantDescription: json['plantDescription'] ?? '',
-      plantImage: json['plantImage'] ?? '',
-      plantExchangeType: json['plantExchangeType'] != null
-          ? OfferType.values.byName(json['plantExchangeType'])
-          : OfferType.exchange,
-      plantOwnerId: json['plantOwnerId'] ?? '',
-      plantOwnerName: json['plantOwnerName'] ?? 'Propriétaire',
-      plantOwnerAvatar: Option.fromNullable(json['plantOwnerAvatar'] as String?),
-      participants: List<String>.from(json['participants'] ?? []),
-      lastMessage: Option.fromNullable(json['lastMessage'] as String?),
-      lastMessageAt: Option.fromNullable(json['lastMessageAt']).map(
-        (t) => (t as Timestamp).toDate(),
+      plantId: json.string('plantId'),
+      plantName: json.string('plantName'),
+      plantDescription: json.string('plantDescription'),
+      plantImage: json.string('plantImage'),
+      plantExchangeType:
+          Option<dynamic>.fromNullable(json['plantExchangeType']).match(
+        () => OfferType.exchange,
+        (type) => OfferType.values.byName(type),
       ),
-      unreadCount: Map<String, int>.from(json['unreadCount'] ?? {}),
-      otherUserId: json['otherUserId'] ?? '',
+      plantOwnerId: json.string('plantOwnerId'),
+      plantOwnerName: json.string('plantOwnerName', 'Propriétaire'),
+      plantOwnerAvatar: json.read<String>('plantOwnerAvatar'),
+      participants: json.listOf<String>('participants'),
+      lastMessage: json.read<String>('lastMessage'),
+      lastMessageAt: json.date('lastMessageAt'),
+      unreadCount: json
+          .object('unreadCount')
+          .map((key, value) => MapEntry(key, value is num ? value.toInt() : 0)),
+      otherUserId: json.string('otherUserId'),
       hasUnreadExchange: false,
-      acceptedExchangeId: Option.fromNullable(json['acceptedExchangeId'] as String?),
-      isExchangeCompleted: json['isExchangeCompleted'] ?? false,
+      acceptedExchangeId: json.read<String>('acceptedExchangeId'),
+      isExchangeCompleted: json.boolean('isExchangeCompleted'),
       hasUnreadDonation: false,
-      acceptedDonationId: Option.fromNullable(json['acceptedDonationId'] as String?),
-      isDonationCompleted: json['isDonationCompleted'] ?? false,
-      isOtherUserOnline: json['isOtherUserOnline'] ?? false,
+      acceptedDonationId: json.read<String>('acceptedDonationId'),
+      isDonationCompleted: json.boolean('isDonationCompleted'),
+      isOtherUserOnline: json.boolean('isOtherUserOnline'),
     );
   }
 }

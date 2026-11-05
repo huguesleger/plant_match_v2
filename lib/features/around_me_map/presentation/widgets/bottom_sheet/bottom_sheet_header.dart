@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
@@ -13,25 +14,28 @@ class BottomSheetHeader extends StatelessWidget {
   const BottomSheetHeader({
     super.key,
     required this.user,
-    this.distance,
+    this.distance = const None(),
   });
 
   final ProfilUser user;
-  final double? distance;
+  final Option<double> distance;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         Avatar(
-          profilUser: user,
+          profilUser: Some(user),
           radius: 35,
           imgSizeAvatar: 70,
         ),
         const SizedBox(width: 10),
         _buildUserInfo(),
         const Spacer(),
-        if (distance != null) _buildDistanceInfo(),
+        ...distance.match(
+          () => <Widget>[],
+          (value) => [_buildDistanceInfo(value)],
+        ),
       ],
     );
   }
@@ -57,14 +61,14 @@ class BottomSheetHeader extends StatelessWidget {
     );
   }
 
-  Widget _buildDistanceInfo() {
+  Widget _buildDistanceInfo(double value) {
     return Column(
       children: [
         const Icon(LucideIcons.map_pin, color: AppColors.greenLight, size: 25),
         Padding(
           padding: const EdgeInsets.only(top: 4),
           child: Text(
-            t.aroundMeMap.distance(value: distance.toString()),
+            t.aroundMeMap.distance(value: value.toString()),
             style: InterTextStyle.inter(
               AppTypo.textS,
               color: AppColors.greyDark,

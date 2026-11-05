@@ -1,3 +1,4 @@
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
@@ -20,7 +21,8 @@ class HomeRecentActivity extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentUserId = context.read<AuthCubit>().userId ?? '';
+    final currentUserId =
+        context.read<AuthCubit>().userId.getOrElse(() => '');
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

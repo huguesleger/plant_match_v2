@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -38,8 +39,10 @@ class ChatPlantDeleteButton extends StatelessWidget {
             ],
           ),
         );
-        if (confirm == true && context.mounted) {
-          final uid = context.read<AuthCubit>().userId ?? '';
+        if (Option.fromNullable(confirm).getOrElse(() => false) &&
+            context.mounted) {
+          final uid =
+              context.read<AuthCubit>().userId.getOrElse(() => '');
           context.read<ChatPlantCubit>().softDeleteChat(
                 chatId,
                 uid,

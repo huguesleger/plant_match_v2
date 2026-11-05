@@ -1,3 +1,4 @@
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -16,7 +17,7 @@ class StepOfferType extends StatelessWidget {
   });
 
   final GlobalKey<FormBuilderState> formKey;
-  final OfferType? selected;
+  final Option<OfferType> selected;
   final Function(OfferType) onSelect;
 
   @override
@@ -26,7 +27,7 @@ class StepOfferType extends StatelessWidget {
         description: t.catalog.wizard.steps.offer_type.description,
         child: FormBuilderField<OfferType>(
           name: 'offerType',
-          initialValue: selected,
+          initialValue: selected.toNullable(),
           validator: FormBuilderValidators.required(
             errorText: t.catalog.wizard.required_field,
           ),
@@ -40,7 +41,7 @@ class StepOfferType extends StatelessWidget {
                       icon: LucideIcons.gift,
                       label: t.catalog.wizard.steps.offer_type.donation,
                       value: OfferType.donation,
-                      isSelected: selected == OfferType.donation,
+                      isSelected: selected == const Some(OfferType.donation),
                       onTap: (v) {
                         onSelect(v);
                         field.didChange(v);
@@ -54,7 +55,7 @@ class StepOfferType extends StatelessWidget {
                       icon: LucideIcons.heart_handshake,
                       label: t.catalog.wizard.steps.offer_type.exchange,
                       value: OfferType.exchange,
-                      isSelected: selected == OfferType.exchange,
+                      isSelected: selected == const Some(OfferType.exchange),
                       onTap: (v) {
                         onSelect(v);
                         field.didChange(v);
@@ -68,7 +69,7 @@ class StepOfferType extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0, left: 12.0),
                   child: Text(
-                    field.errorText ?? '',
+                    Option.fromNullable(field.errorText).getOrElse(() => ''),
                     style: const TextStyle(color: Colors.red, fontSize: 12),
                   ),
                 ),

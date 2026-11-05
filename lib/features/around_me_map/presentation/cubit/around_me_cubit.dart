@@ -45,14 +45,15 @@ class AroundMeCubit extends Cubit<AroundMeState> {
         .run();
   }
 
-  // ─── updateUserLocation ───────────────────────────────────────────────────
-
   Future<void> updateUserLocation(ProfilUser user) {
     final previous = state;
     emit(
       switch (previous) {
         AroundMeLoaded() =>
-          previous.copyWith(locating: true, locationError: const None()),
+          previous.copyWith(
+            locating: const Some(true),
+            locationError: const Some(None()),
+          ),
         AroundMeInitial() ||
         AroundMeLoading() ||
         AroundMeError() =>
@@ -75,17 +76,17 @@ class AroundMeCubit extends Cubit<AroundMeState> {
         .flatMap((data) {
           final (position, placemark) = data;
           final updatedUser = user.copyWith(
-            newLocalisation: placemark
+            newLocalisation: Some(placemark
                 .flatMap((p) => Option.fromNullable(p.locality))
-                .getOrElse(() => user.localisation),
-            newCountry: placemark
+                .getOrElse(() => user.localisation)),
+            newCountry: Some(placemark
                 .flatMap((p) => Option.fromNullable(p.country))
-                .getOrElse(() => user.country),
-            newZipCode: placemark
+                .getOrElse(() => user.country)),
+            newZipCode: Some(placemark
                 .flatMap((p) => Option.fromNullable(p.postalCode))
-                .getOrElse(() => user.zipCode),
-            newLatitude: Some(position.latitude),
-            newLongitude: Some(position.longitude),
+                .getOrElse(() => user.zipCode)),
+            newLatitude: Some(Some(position.latitude)),
+            newLongitude: Some(Some(position.longitude)),
           );
           return aroundMeRepository
               .updateUserLocation(updatedUser)
@@ -95,8 +96,8 @@ class AroundMeCubit extends Cubit<AroundMeState> {
         .match(
           (failure) => switch (previous) {
             AroundMeLoaded() => previous.copyWith(
-                locating: false,
-                locationError: Some(failure.message),
+                locating: const Some(false),
+                locationError: Some(Some(failure.message)),
               ),
             AroundMeInitial() ||
             AroundMeLoading() ||

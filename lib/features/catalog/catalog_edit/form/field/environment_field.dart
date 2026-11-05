@@ -1,3 +1,4 @@
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -14,8 +15,8 @@ class EnvironmentField extends StatelessWidget {
     required this.onChanged,
   });
 
-  final Environment? selectedEnvironment;
-  final ValueChanged<Environment?> onChanged;
+  final Environment selectedEnvironment;
+  final ValueChanged<Environment> onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +65,7 @@ class EnvironmentField extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(top: 8.0, left: 12.0),
                 child: Text(
-                  field.errorText ?? '',
+                  Option.fromNullable(field.errorText).getOrElse(() => ''),
                   style: const TextStyle(color: Colors.red, fontSize: 12),
                 ),
               ),

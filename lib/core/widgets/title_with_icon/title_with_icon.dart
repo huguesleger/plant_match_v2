@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 
@@ -10,7 +11,7 @@ class TitleWithIcon extends StatelessWidget {
     required this.bgColor,
     required this.iconColor,
     this.fontSize = AppTypo.textS,
-    this.fontFamily,
+    this.fontFamily = const None(),
     this.fontColor = AppColors.greyDark,
     this.fontWeight = FontWeight.w400,
   });
@@ -20,7 +21,7 @@ class TitleWithIcon extends StatelessWidget {
   final Color bgColor;
   final Color iconColor;
   final double fontSize;
-  final String? fontFamily;
+  final Option<String> fontFamily;
   final Color fontColor;
   final FontWeight fontWeight;
 
@@ -42,7 +43,7 @@ class TitleWithIcon extends StatelessWidget {
           style: TextStyle(
             color: fontColor,
             fontSize: fontSize,
-            fontFamily: fontFamily,
+            fontFamily: fontFamily.toNullable(),
             fontWeight: fontWeight,
           ),
         ),

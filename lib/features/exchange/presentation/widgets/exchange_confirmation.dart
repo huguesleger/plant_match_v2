@@ -51,35 +51,37 @@ class ExchangeConfirmation extends StatelessWidget {
             onPressed: () {
               final authCubit = context.read<AuthCubit>();
               final exchangeCubit = context.read<ExchangeCubit>();
-              final userId = authCubit.userId;
               final state = exchangeCubit.state;
 
-              if (userId != null && state is ExchangeConfirming) {
-                final exchange = Exchange(
-                  chatId: state.chatId,
-                  requestedBy: userId,
-                  ownerId: targetPlant.userId,
-                  targetPlantId: targetPlant.catalogId.getOrElse(() => ''),
-                  targetPlantName: targetPlant.name,
-                  targetPlantImage:
-                      targetPlant.images.isNotEmpty ? targetPlant.images.first : '',
-                  offeredPlantId: offeredPlant.catalogId.getOrElse(() => ''),
-                  offeredPlantName: offeredPlant.name,
-                  offeredPlantImage:
-                      offeredPlant.images.isNotEmpty ? offeredPlant.images.first : '',
-                  status: ExchangeStatus.pending,
-                  createdAt: DateTime.now(),
-                  seenByOwner: false,
-                  seenByRequester: true,
-                  completedAt: const None(),
-                  completedBy: const None(),
-                  validationCode: const None(),
-                );
+              if (state is ExchangeConfirming) {
+                authCubit.userId.map((userId) {
+                  final exchange = Exchange(
+                    chatId: state.chatId,
+                    requestedBy: userId,
+                    ownerId: targetPlant.userId,
+                    targetPlantId: targetPlant.catalogId.getOrElse(() => ''),
+                    targetPlantName: targetPlant.name,
+                    targetPlantImage: targetPlant.images.isNotEmpty
+                        ? targetPlant.images.first
+                        : '',
+                    offeredPlantId: offeredPlant.catalogId.getOrElse(() => ''),
+                    offeredPlantName: offeredPlant.name,
+                    offeredPlantImage: offeredPlant.images.isNotEmpty
+                        ? offeredPlant.images.first
+                        : '',
+                    status: ExchangeStatus.pending,
+                    createdAt: DateTime.now(),
+                    seenByOwner: false,
+                    seenByRequester: true,
+                    completedAt: const None(),
+                    completedBy: const None(),
+                    validationCode: const None(),
+                  );
 
-                final profilCubit = context.read<ProfilCubit>();
-                exchangeCubit
-                    .propose(exchange)
-                    .then((_) => profilCubit.refreshLeaves(exchange.requestedBy));
+                  final profilCubit = context.read<ProfilCubit>();
+                  exchangeCubit.propose(exchange).then(
+                      (_) => profilCubit.refreshLeaves(exchange.requestedBy));
+                });
               }
             },
             child: Text(t.exchange.confirmation.confirm_btn),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/gen/fonts.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -11,50 +12,52 @@ class AppBarHeaderSlider extends StatelessWidget
     super.key,
     this.leading = true,
     required this.onPressed,
-    this.styleIconButton,
+    this.styleIconButton = const None(),
     this.leadingWith = 76,
     this.headerHeight = 215,
     required this.content,
-    this.title,
+    this.title = const None(),
     this.titleColor = AppColors.greyDark,
-    this.actions,
+    this.actions = const None(),
     this.actionsPadding = AppSpacing.paddingHorizontal,
   });
 
-  final bool? leading;
+  final bool leading;
   final VoidCallback onPressed;
-  final ButtonStyle? styleIconButton;
-  final double? leadingWith;
-  final double? headerHeight;
+  final Option<ButtonStyle> styleIconButton;
+  final double leadingWith;
+  final double headerHeight;
   final Widget content;
-  final String? title;
-  final Color? titleColor;
-  final List<Widget>? actions;
+  final Option<String> title;
+  final Color titleColor;
+  final Option<List<Widget>> actions;
   final EdgeInsets actionsPadding;
 
   @override
-  Size get preferredSize => Size.fromHeight(headerHeight! - 59);
+  Size get preferredSize => Size.fromHeight(headerHeight - 59);
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
       flexibleSpace: content,
       leadingWidth: leadingWith,
-      title: title != null
-          ? Text(
-              title!,
+      title: title
+          .map<Widget>(
+            (value) => Text(
+              value,
               style: TextStyle(
                 color: titleColor,
                 fontSize: AppTypo.textM,
                 fontWeight: FontWeight.w600,
                 fontFamily: FontFamily.chillax,
               ),
-            )
-          : null,
-      leading: leading == true
+            ),
+          )
+          .toNullable(),
+      leading: leading
           ? IconButton(
               onPressed: onPressed,
-              style: styleIconButton,
+              style: styleIconButton.toNullable(),
               icon: const Icon(
                 LucideIcons.chevron_left,
                 color: AppColors.greyDark,
@@ -63,8 +66,8 @@ class AppBarHeaderSlider extends StatelessWidget
           : const SizedBox.shrink(),
       elevation: 0,
       backgroundColor: AppColors.white,
-      actions: actions,
-      actionsPadding: actions != null ? actionsPadding : null,
+      actions: actions.toNullable(),
+      actionsPadding: actions.map((_) => actionsPadding).toNullable(),
       scrolledUnderElevation: 2,
       shadowColor: AppColors.black,
       surfaceTintColor: AppColors.white,

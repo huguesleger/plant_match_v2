@@ -32,7 +32,8 @@ class DetailPlant extends StatefulWidget {
 class _DetailPlantState extends State<DetailPlant> {
   late Future<Option<DetailPlantData>> _data;
 
-  String get _currentUserId => context.read<AuthCubit>().userId ?? '';
+  String get _currentUserId =>
+      context.read<AuthCubit>().userId.getOrElse(() => '');
 
   @override
   void initState() {
@@ -70,20 +71,20 @@ class _DetailPlantState extends State<DetailPlant> {
           headerHeight: 240,
           content: ContentHeader(images: catalog.images),
           onPressed: () => Navigator.pop(context, true),
-          styleIconButton: IconButton.styleFrom(
+          styleIconButton: Some(IconButton.styleFrom(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
             backgroundColor: AppColors.white,
-          ),
-          actions: [
+          )),
+          actions: Some([
             SharePlantButton(catalog: catalog),
             const SizedBox(width: 8),
             FavoriteCircleButton(
               catalog: catalog,
               currentUserId: context.read<AuthCubit>().userId,
             ),
-          ],
+          ]),
         ),
         body: DetailPlantBody(data: data),
         bottomNavigationBar: ContactOwnerButton(

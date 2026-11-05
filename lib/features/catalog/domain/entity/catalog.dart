@@ -1,3 +1,4 @@
+import 'package:plant_match_v2/core/util/json_reader.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:flutter/material.dart';
@@ -64,36 +65,36 @@ class Catalog {
   });
 
   Catalog copyWith({
-    String? newUserId,
-    Option<String>? newCatalogId,
-    String? newName,
-    String? newDescription,
-    List<String>? newImages,
-    Environment? newEnvironment,
-    List<Family>? newFamily,
-    LevelMaintenance? newLevelMaintenance,
-    Watering? newWatering,
-    Lighting? newLighting,
-    CatalogStatus? newStatus,
-    DateTime? newCreatedAt,
-    OfferType? newOfferType,
-    int? newViews,
+    Option<String> newUserId = const None(),
+    Option<Option<String>> newCatalogId = const None(),
+    Option<String> newName = const None(),
+    Option<String> newDescription = const None(),
+    Option<List<String>> newImages = const None(),
+    Option<Environment> newEnvironment = const None(),
+    Option<List<Family>> newFamily = const None(),
+    Option<LevelMaintenance> newLevelMaintenance = const None(),
+    Option<Watering> newWatering = const None(),
+    Option<Lighting> newLighting = const None(),
+    Option<CatalogStatus> newStatus = const None(),
+    Option<DateTime> newCreatedAt = const None(),
+    Option<OfferType> newOfferType = const None(),
+    Option<int> newViews = const None(),
   }) {
     return Catalog(
-      userId: newUserId ?? userId,
-      catalogId: newCatalogId ?? catalogId,
-      name: newName ?? name,
-      description: newDescription ?? description,
-      images: newImages ?? images,
-      environment: newEnvironment ?? environment,
-      family: newFamily ?? family,
-      levelMaintenance: newLevelMaintenance ?? levelMaintenance,
-      watering: newWatering ?? watering,
-      lighting: newLighting ?? lighting,
-      status: newStatus ?? status,
-      createdAt: newCreatedAt ?? createdAt,
-      offerType: newOfferType ?? offerType,
-      views: newViews ?? views,
+      userId: newUserId.getOrElse(() => userId),
+      catalogId: newCatalogId.getOrElse(() => catalogId),
+      name: newName.getOrElse(() => name),
+      description: newDescription.getOrElse(() => description),
+      images: newImages.getOrElse(() => images),
+      environment: newEnvironment.getOrElse(() => environment),
+      family: newFamily.getOrElse(() => family),
+      levelMaintenance: newLevelMaintenance.getOrElse(() => levelMaintenance),
+      watering: newWatering.getOrElse(() => watering),
+      lighting: newLighting.getOrElse(() => lighting),
+      status: newStatus.getOrElse(() => status),
+      createdAt: newCreatedAt.getOrElse(() => createdAt),
+      offerType: newOfferType.getOrElse(() => offerType),
+      views: newViews.getOrElse(() => views),
     );
   }
 
@@ -126,15 +127,15 @@ class Catalog {
     final createdAt = json['createdAt'];
 
     return Catalog(
-      userId: json['userId'] as String? ?? '',
+      userId: json.string('userId'),
       catalogId: Option.fromNullable(id),
-      name: json['name'] as String? ?? '',
-      description: json['description'] as String? ?? '',
+      name: json.string('name'),
+      description: json.string('description'),
       images:
-          (json['images'] as List? ?? const []).whereType<String>().toList(),
+          json.listOf<String>('images'),
       environment:
           _enumOr(Environment.values, json['environment'], Environment.outdoor),
-      family: (json['family'] as List? ?? const [])
+      family: json.listOf<Object>('family')
           .map((e) => Option.fromNullable(Family.values.asNameMap()[e]))
           .whereType<Some<Family>>()
           .map((found) => found.value)
@@ -151,7 +152,7 @@ class Catalog {
       createdAt: createdAt is Timestamp ? createdAt.toDate() : DateTime.now(),
       offerType:
           _enumOr(OfferType.values, json['offerType'], OfferType.exchange),
-      views: json['views'] as int? ?? 0,
+      views: json.integer('views'),
     );
   }
 

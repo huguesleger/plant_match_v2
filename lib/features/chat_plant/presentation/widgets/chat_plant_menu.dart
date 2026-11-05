@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
@@ -23,7 +24,7 @@ class ChatPlantMenu extends StatelessWidget {
   final String otherUserId;
 
   String _currentUserId(BuildContext context) =>
-      context.read<AuthCubit>().userId ?? '';
+      context.read<AuthCubit>().userId.getOrElse(() => '');
 
   Future<void> _onDeleteChat(BuildContext context) async {
     final confirm = await showDialog<bool>(
@@ -46,7 +47,8 @@ class ChatPlantMenu extends StatelessWidget {
         ],
       ),
     );
-    if (confirm == true && context.mounted) {
+    if (Option.fromNullable(confirm).getOrElse(() => false) &&
+        context.mounted) {
       context
           .read<ChatPlantCubit>()
           .softDeleteChat(chatId, _currentUserId(context));
@@ -74,7 +76,8 @@ class ChatPlantMenu extends StatelessWidget {
         ],
       ),
     );
-    if (confirm == true && context.mounted) {
+    if (Option.fromNullable(confirm).getOrElse(() => false) &&
+        context.mounted) {
       context.read<ChatPlantCubit>().reportChat(
             chatId: chatId,
             reporterUserId: _currentUserId(context),
@@ -110,15 +113,18 @@ class ChatPlantMenu extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.orange.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
+                  border:
+                      Border.all(color: Colors.orange.withValues(alpha: 0.3)),
                 ),
-                child:  Row(
+                child: Row(
                   children: [
-                    const Icon(LucideIcons.triangle_alert, color: Colors.orange, size: 20),
+                    const Icon(LucideIcons.triangle_alert,
+                        color: Colors.orange, size: 20),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        t.chatPlant.menu.block_dialog.warning_active_transaction,
+                        t.chatPlant.menu.block_dialog
+                            .warning_active_transaction,
                         style: const TextStyle(
                           color: Colors.orange,
                           fontSize: 12,
@@ -147,7 +153,8 @@ class ChatPlantMenu extends StatelessWidget {
         ],
       ),
     );
-    if (confirm == true && context.mounted) {
+    if (Option.fromNullable(confirm).getOrElse(() => false) &&
+        context.mounted) {
       context.read<ChatPlantCubit>().blockUser(
             blockerUserId: _currentUserId(context),
             blockedUserId: otherUserId,
@@ -175,7 +182,8 @@ class ChatPlantMenu extends StatelessWidget {
         ],
       ),
     );
-    if (confirm == true && context.mounted) {
+    if (Option.fromNullable(confirm).getOrElse(() => false) &&
+        context.mounted) {
       context.read<ChatPlantCubit>().unblockUser(
             blockerUserId: _currentUserId(context),
             blockedUserId: otherUserId,
