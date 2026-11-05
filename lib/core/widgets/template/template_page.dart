@@ -39,6 +39,7 @@ class TemplatePageState extends State<TemplatePage> {
   late final Set<int> _visited = {_currentIndex};
   final chatRepository = FirebaseChatPlant();
   final exchangeRepository = FirebaseExchange();
+  late final AroundMeCubit _aroundMeCubit;
 
   @override
   void initState() {
@@ -50,6 +51,13 @@ class TemplatePageState extends State<TemplatePage> {
         .map((user) => user.uid)
         .getOrElse(() => '');
 
+    _aroundMeCubit = AroundMeCubit(
+      aroundMeRepository: FirebaseAroundMeRepository(),
+      profilRepository: FirebaseProfilRepo(),
+      catalogRepository: FirebaseCatalogRepository(),
+      locationService: LocationServiceImpl(),
+    )..getAllUserProfiles(uid);
+
     _pages = [
       const HomePageRoute(),
       AroundMePageRoute(uid: uid),
@@ -57,6 +65,12 @@ class TemplatePageState extends State<TemplatePage> {
       MessagesPageRoute(),
       ProfilPageRoute(uid: uid),
     ];
+  }
+
+  @override
+  void dispose() {
+    _aroundMeCubit.close();
+    super.dispose();
   }
 
   void onPageChanged(int index) {
@@ -71,7 +85,6 @@ class TemplatePageState extends State<TemplatePage> {
   }
 
   Future<void> _openAddPlantWizard() async {
-    final aroundMeCubit = context.read<AroundMeCubit>();
     final created = await Navigator.push<bool>(
       context,
       MaterialPageRoute(
@@ -81,7 +94,7 @@ class TemplatePageState extends State<TemplatePage> {
       ),
     );
     if (Option.fromNullable(created).getOrElse(() => false)) {
-      aroundMeCubit.getAllUserProfiles(uid);
+      _aroundMeCubit.getAllUserProfiles(uid);
     }
   }
 
@@ -89,14 +102,7 @@ class TemplatePageState extends State<TemplatePage> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (_) => AroundMeCubit(
-            aroundMeRepository: FirebaseAroundMeRepository(),
-            profilRepository: FirebaseProfilRepo(),
-            catalogRepository: FirebaseCatalogRepository(),
-            locationService: LocationServiceImpl(),
-          )..getAllUserProfiles(uid),
-        ),
+        BlocProvider.value(value: _aroundMeCubit),
         BlocProvider(
           create: (_) => UnreadMessagesCubit(
             repository: chatRepository,

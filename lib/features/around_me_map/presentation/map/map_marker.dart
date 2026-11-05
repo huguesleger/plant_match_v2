@@ -2,6 +2,7 @@ import 'package:fpdart/fpdart.dart' hide State;
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/features/around_me_map/presentation/map/current_user_marker.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/widgets/bottom_sheet/bottom_sheet.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
@@ -23,36 +24,8 @@ class MapMarker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return isCurrentUser
-        ? _buildCurrentUserMarker()
+        ? const CurrentUserMarker()
         : _buildOtherUserMarker(context);
-  }
-
-  Widget _buildCurrentUserMarker() {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Container(
-          width: 30,
-          height: 30,
-          decoration: BoxDecoration(
-            color: AppColors.greenMedium.withValues(alpha: 0.5),
-            shape: BoxShape.circle,
-          ),
-        ),
-        Container(
-          width: 15,
-          height: 15,
-          decoration: BoxDecoration(
-            color: AppColors.greenMedium,
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: AppColors.white,
-              width: 2,
-            ),
-          ),
-        ),
-      ],
-    );
   }
 
   Widget _buildOtherUserMarker(BuildContext context) {

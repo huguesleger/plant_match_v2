@@ -3,6 +3,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/core/widgets/dialog/confirm_dialog.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/cubit/chat_plant_cubit.dart';
 
@@ -19,28 +20,14 @@ class ChatPlantDeleteButton extends StatelessWidget {
     return IconButton(
       icon: const Icon(Icons.delete_outline, color: AppColors.greyDark),
       onPressed: () async {
-        final confirm = await showDialog<bool>(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text(t.chatPlant.menu.delete_dialog.title),
-            content: Text(t.chatPlant.menu.delete_dialog.content),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: Text(t.chatPlant.menu.cancel),
-              ),
-              TextButton(
-                onPressed: () => Navigator.pop(context, true),
-                child: Text(
-                  t.chatPlant.menu.delete,
-                  style: const TextStyle(color: Colors.red),
-                ),
-              ),
-            ],
-          ),
+        final confirmed = await showConfirmDialog(
+          context,
+          title: t.chatPlant.menu.delete_dialog.title,
+          content: Text(t.chatPlant.menu.delete_dialog.content),
+          confirmLabel: t.chatPlant.menu.delete,
+          destructive: true,
         );
-        if (Option.fromNullable(confirm).getOrElse(() => false) &&
-            context.mounted) {
+        if (confirmed && context.mounted) {
           final uid =
               context.read<AuthCubit>().userId.getOrElse(() => '');
           context.read<ChatPlantCubit>().softDeleteChat(

@@ -5,6 +5,13 @@ import 'package:plant_match_v2/core/theme/app_colors.dart';
 class LoadingOverlay extends StatelessWidget {
   const LoadingOverlay({super.key});
 
+  static void show(BuildContext context) => showDialog(
+        context: context,
+        barrierDismissible: false,
+        barrierColor: Colors.black54,
+        builder: (_) => const LoadingOverlay(),
+      );
+
   @override
   Widget build(BuildContext context) {
     return PopScope(

@@ -13,7 +13,7 @@ import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart'
 import 'package:plant_match_v2/features/chat_plant/presentation/cubit/chat_plant_cubit.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/state/chat_plant_state.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/chat_plant_catalog_loader.dart';
-import 'package:plant_match_v2/features/chat_plant/presentation/widgets/chat_plant_menu.dart';
+import 'package:plant_match_v2/features/chat_plant/presentation/widgets/menu/chat_plant_menu.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/chat_plant_view.dart';
 import 'package:plant_match_v2/features/donation/presentation/cubit/donation_cubit.dart';
 import 'package:plant_match_v2/features/donation/presentation/state/donation_state.dart';
@@ -176,26 +176,16 @@ class ChatPlantScreen extends StatelessWidget {
                 ChatPlantBlocked() => ChatPlantView(
                     chatId: chatId,
                     plantId: plantId,
-                    plantName: plant.name,
-                    plantImage:
-                        plant.images.isNotEmpty ? plant.images.first : '',
-                    plantOwnerId: plant.userId,
+                    plant: plant,
                     otherUserId: otherUserId,
-                    plantOwnerName: plantOwnerName,
-                    plantOfferType: plant.offerType,
                     messages: const [],
                     blockStatus: BlockStatus.blockedByMe,
                   ),
                 ChatPlantLoaded s => ChatPlantView(
                     chatId: chatId,
                     plantId: plantId,
-                    plantName: plant.name,
-                    plantImage:
-                        plant.images.isNotEmpty ? plant.images.first : '',
-                    plantOwnerId: plant.userId,
+                    plant: plant,
                     otherUserId: otherUserId,
-                    plantOwnerName: plantOwnerName,
-                    plantOfferType: plant.offerType,
                     messages: s.messages,
                     blockStatus: s.blockStatus,
                   ),

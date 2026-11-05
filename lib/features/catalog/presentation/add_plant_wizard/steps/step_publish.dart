@@ -8,12 +8,12 @@ class StepPublish extends StatelessWidget {
   const StepPublish({
     super.key,
     required this.formKey,
-    required this.controller,
+    required this.value,
     required this.onToggle,
   });
 
   final GlobalKey<FormBuilderState> formKey;
-  final TextEditingController controller;
+  final bool value;
   final Function(bool) onToggle;
 
   @override
@@ -24,7 +24,7 @@ class StepPublish extends StatelessWidget {
         child: FormBuilderSwitch(
           name: 'publish',
           title: Text(t.catalog.wizard.publish_label),
-          initialValue: controller.text == 'true',
+          initialValue: value,
           onChanged: (v) => onToggle(Option.fromNullable(v).getOrElse(() => false)),
           decoration: const InputDecoration(border: InputBorder.none),
         ),

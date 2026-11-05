@@ -1,29 +1,17 @@
-import 'package:fpdart/fpdart.dart' hide State;
 import 'package:flutter/material.dart';
-import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:flutter_lucide/flutter_lucide.dart';
-import 'package:plant_match_v2/core/gen/assets.gen.dart';
+import 'package:fpdart/fpdart.dart' hide State;
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
-import 'package:plant_match_v2/core/widgets/app_bar/app_bar_template.dart';
 import 'package:plant_match_v2/core/widgets/bottom_bar/bottom_bar.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
-import 'package:plant_match_v2/core/widgets/dialog/dialog_with_image.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
-import 'package:plant_match_v2/features/catalog/presentation/cubit/catalog_cubit.dart';
-
-import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/steps/step_environment.dart';
-import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/steps/step_description.dart';
-import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/steps/step_family.dart';
-import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/steps/step_image.dart';
-import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/steps/step_lighting.dart';
-import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/steps/step_maintenance.dart';
-import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/steps/step_name.dart';
-import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/steps/step_offer_type.dart';
-import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/steps/step_publish.dart';
-import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/steps/step_watering.dart';
+import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/add_plant_draft.dart';
+import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/add_plant_wizard_pages.dart';
+import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/widgets/add_plant_wizard_app_bar.dart';
 import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/widgets/loading_overlay.dart';
+import 'package:plant_match_v2/features/catalog/presentation/cubit/catalog_cubit.dart';
 
 class AddPlantWizardScreen extends StatefulWidget {
   const AddPlantWizardScreen({super.key, required this.catalog});
@@ -34,243 +22,85 @@ class AddPlantWizardScreen extends StatefulWidget {
 }
 
 class _AddPlantWizardScreenState extends State<AddPlantWizardScreen> {
-  int _currentPage = 0;
-  final int _totalPages = 10;
-  final PageController _pageController = PageController();
-
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _isPublishController =
-      TextEditingController(text: 'true');
-
-  final _formKeyName = GlobalKey<FormBuilderState>();
-  final _formKeyEnvironment = GlobalKey<FormBuilderState>();
-  final _formKeyFamily = GlobalKey<FormBuilderState>();
-  final _formKeyMaintenance = GlobalKey<FormBuilderState>();
-  final _formKeyWatering = GlobalKey<FormBuilderState>();
-  final _formKeyLighting = GlobalKey<FormBuilderState>();
-  final _formKeyDescription = GlobalKey<FormBuilderState>();
-  final _formKeyImage = GlobalKey<FormBuilderState>();
-  final _formKeyOfferType = GlobalKey<FormBuilderState>();
-  final _formKeyIsPublish = GlobalKey<FormBuilderState>();
-
-  final List<Family> _selectedFamilies = [];
-  Option<LevelMaintenance> _selectedMaintenance = const None();
-  Option<Watering> _selectedWatering = const None();
-  Option<Lighting> _selectedLighting = const None();
-  Option<OfferType> _selectedOfferType = const None();
-  Option<Environment> _selectedEnvironment = const None();
-  late Catalog _wizardCatalog;
-
-  @override
-  void initState() {
-    super.initState();
-    _wizardCatalog = widget.catalog;
-  }
+  static const _lastPage = AddPlantWizardPages.count - 1;
+  final _pageController = PageController();
+  final _nameController = TextEditingController();
+  final _descriptionController = TextEditingController();
+  final _formKeys = List.generate(
+    AddPlantWizardPages.count,
+    (_) => GlobalKey<FormBuilderState>(),
+  );
+  late AddPlantDraft _draft = AddPlantDraft(catalog: widget.catalog);
+  int _page = 0;
 
   @override
   void dispose() {
+    _pageController.dispose();
     _nameController.dispose();
     _descriptionController.dispose();
-    _isPublishController.dispose();
-    _pageController.dispose();
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBarTemplate(
-        title: Some(t.catalog.wizard.title),
-        backgroundColor: AppColors.white,
-        surfaceTintColor: AppColors.white,
-        onPressed: Some(_onBack),
-        leading: _currentPage != 0,
-        centerTitle: true,
-        actions: Some([
-          IconButton(
-            onPressed: _onExit,
-            icon: const Icon(LucideIcons.x, color: AppColors.greyDark),
+  Widget build(BuildContext context) => Scaffold(
+        appBar: AddPlantWizardAppBar(
+          canGoBack: _page != 0,
+          onBack: () => _goTo(_page - 1),
+        ),
+        body: SafeArea(
+          child: AddPlantWizardPages(
+            pageController: _pageController,
+            page: _page,
+            formKeys: _formKeys,
+            nameController: _nameController,
+            descriptionController: _descriptionController,
+            draft: _draft,
+            onDraftChanged: (draft) => setState(() => _draft = draft),
           ),
-        ]),
-        styleIconButton: Some(IconButton.styleFrom(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          side: const BorderSide(color: AppColors.greyLight),
-        )),
-      ),
-      body: SafeArea(
-        child: Stack(
-          children: [
-            _buildProgress(),
-            Padding(
-              padding: const EdgeInsets.only(top: 20),
-              child: PageView(
-                controller: _pageController,
-                physics: const NeverScrollableScrollPhysics(),
-                children: _buildSteps(),
-              ),
-            ),
-          ],
         ),
-      ),
-      bottomNavigationBar: BottomBar(
-        child: ButtonRounded(
-          text: _currentPage == _totalPages - 1
-              ? t.catalog.wizard.finish
-              : t.catalog.wizard.next,
-          onPressed: Some(_onNextPressed),
-          bgColor: AppColors.greenLight,
-          textColor: AppColors.blueGreen,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildProgress() => Positioned(
-        top: 0,
-        left: 0,
-        right: 0,
-        child: LinearProgressIndicator(
-          value: (_currentPage + 1) / _totalPages,
-          backgroundColor: AppColors.greyLight,
-          color: AppColors.greenLight,
-          minHeight: 2,
+        bottomNavigationBar: BottomBar(
+          child: ButtonRounded(
+            text: _page == _lastPage
+                ? t.catalog.wizard.finish
+                : t.catalog.wizard.next,
+            onPressed: Some(_onNextPressed),
+            bgColor: AppColors.greenLight,
+            textColor: AppColors.blueGreen,
+          ),
         ),
       );
 
-  List<Widget> _buildSteps() => [
-        StepName(formKey: _formKeyName, controller: _nameController),
-        StepEnvironment(
-          formKey: _formKeyEnvironment,
-          selected: _selectedEnvironment,
-          onSelect: (v) => setState(() => _selectedEnvironment = Some(v)),
-        ),
-        StepFamily(
-            formKey: _formKeyFamily,
-            selectedValues: _selectedFamilies,
-            onSelect: (v) => setState(() {
-                  if (_selectedFamilies.contains(v)) {
-                    _selectedFamilies.remove(v);
-                  } else {
-                    _selectedFamilies.add(v);
-                  }
-                })),
-        StepMaintenance(
-            formKey: _formKeyMaintenance,
-            selected: _selectedMaintenance,
-            onSelect: (v) => setState(() => _selectedMaintenance = Some(v))),
-        StepWatering(
-            formKey: _formKeyWatering,
-            selected: _selectedWatering,
-            onSelect: (v) => setState(() => _selectedWatering = Some(v))),
-        StepLighting(
-            formKey: _formKeyLighting,
-            selected: _selectedLighting,
-            onSelect: (v) => setState(() => _selectedLighting = Some(v))),
-        StepDescription(
-            formKey: _formKeyDescription, controller: _descriptionController),
-        StepImage(
-            formKey: _formKeyImage,
-            catalog: _wizardCatalog,
-            onUpdate: (c) => setState(() => _wizardCatalog = c)),
-        StepOfferType(
-          formKey: _formKeyOfferType,
-          selected: _selectedOfferType,
-          onSelect: (v) => setState(() => _selectedOfferType = Some(v)),
-        ),
-        StepPublish(
-            formKey: _formKeyIsPublish,
-            controller: _isPublishController,
-            onToggle: (v) =>
-                setState(() => _isPublishController.text = v.toString())),
-      ];
+  void _goTo(int page) {
+    _pageController.animateToPage(
+      page,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeIn,
+    );
+    setState(() => _page = page);
+  }
 
   void _onNextPressed() {
-    final keys = [
-      _formKeyName,
-      _formKeyEnvironment,
-      _formKeyFamily,
-      _formKeyMaintenance,
-      _formKeyWatering,
-      _formKeyLighting,
-      _formKeyDescription,
-      _formKeyImage,
-      _formKeyOfferType,
-      _formKeyIsPublish
-    ];
-    if (Option.fromNullable(keys[_currentPage].currentState)
-        .match(() => false, (s) => s.saveAndValidate())) {
-      if (_currentPage < _totalPages - 1) {
-        _onNext();
-      } else {
-        _onSave();
-      }
-    }
+    final valid = Option.fromNullable(_formKeys[_page].currentState)
+        .match(() => false, (form) => form.saveAndValidate());
+    if (!valid) return;
+    _page < _lastPage ? _goTo(_page + 1) : _onSave();
   }
 
-  void _onNext() {
-    _pageController.nextPage(
-        duration: const Duration(milliseconds: 300), curve: Curves.easeIn);
-    setState(() {
-      _currentPage++;
-    });
-  }
-
-  void _onBack() {
-    _pageController.previousPage(
-        duration: const Duration(milliseconds: 300), curve: Curves.easeIn);
-    setState(() {
-      _currentPage--;
-    });
-  }
-
-  void _onExit() async {
-    final shouldExit = await showDialog<bool>(
-      context: context,
-      builder: (_) => DialogWithImage(
-        image: Assets.res.images.emptyCatalogFilter,
-        title: t.catalog.wizard.quit_dialog.title,
-        text: t.catalog.wizard.quit_dialog.content,
-        confirmLabel: Some(t.catalog.wizard.quit_dialog.quit),
-        cancelLabel: Some(t.catalog.wizard.quit_dialog.cancel),
-      ),
-    );
-    if (shouldExit == true && mounted) Navigator.pop(context);
-  }
-
-  void _onSave() async {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      barrierColor: Colors.black54,
-      builder: (_) => const LoadingOverlay(),
-    );
+  Future<void> _onSave() async {
     final cubit = context.read<CatalogCubit>();
-    final finalCatalog = _wizardCatalog.copyWith(
-      newName: Some(_nameController.text),
-      newDescription: Some(_descriptionController.text),
-      newEnvironment: Some(_selectedEnvironment.getOrElse(() => Environment.indoor)),
-      newFamily: Some(_selectedFamilies),
-      newLevelMaintenance: Some(
-          _selectedMaintenance.getOrElse(() => LevelMaintenance.low)),
-      newWatering: Some(_selectedWatering.getOrElse(() => Watering.little)),
-      newLighting: Some(_selectedLighting.getOrElse(() => Lighting.sun)),
-      newOfferType: Some(_selectedOfferType.getOrElse(() => OfferType.exchange)),
-      newStatus: Some(_isPublishController.text == 'true'
-          ? CatalogStatus.published
-          : CatalogStatus.draft),
-    );
-
-    final result = await cubit.publishNewCatalog(finalCatalog).run();
+    LoadingOverlay.show(context);
+    final result = await cubit
+        .publishNewCatalog(_draft.toCatalog(
+          name: _nameController.text,
+          description: _descriptionController.text,
+        ))
+        .run();
     if (!mounted) return;
     Navigator.pop(context);
     result.match(
-      (failure) => ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(t.catalog.wizard.error_generic(error: failure.message)),
-        ),
-      ),
+      (failure) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(t.catalog.wizard.error_generic(error: failure.message)),
+      )),
       (_) => Navigator.pop(context, true),
     );
   }

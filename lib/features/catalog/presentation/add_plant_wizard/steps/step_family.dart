@@ -38,7 +38,11 @@ class StepFamily extends StatelessWidget {
                 selectedValues: selectedValues,
                 onSelect: (v) {
                   onSelect(v);
-                  field.didChange(selectedValues);
+                  field.didChange(
+                    selectedValues.contains(v)
+                        ? selectedValues.where((f) => f != v).toList()
+                        : [...selectedValues, v],
+                  );
                   field.validate();
                 },
               ),

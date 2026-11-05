@@ -3,6 +3,7 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/core/widgets/dialog/confirm_dialog.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 
 class DetailItem extends StatelessWidget {
@@ -70,26 +71,13 @@ class DetailItem extends StatelessWidget {
   }
 
   Future<void> _confirmClear(BuildContext context) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(t.personalInformation.detail.clear.title(field: title)),
-        content: Text(t.personalInformation.detail.clear.content),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext, false),
-            child: Text(t.personalInformation.detail.clear.cancel),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext, true),
-            child: Text(
-              t.personalInformation.detail.clear.confirm,
-              style: const TextStyle(color: AppColors.red),
-            ),
-          ),
-        ],
-      ),
+    final confirmed = await showConfirmDialog(
+      context,
+      title: t.personalInformation.detail.clear.title(field: title),
+      content: Text(t.personalInformation.detail.clear.content),
+      confirmLabel: t.personalInformation.detail.clear.confirm,
+      destructive: true,
     );
-    if (confirmed == true) onTap.match(() {}, (callback) => callback());
+    if (confirmed) onTap.match(() {}, (callback) => callback());
   }
 }

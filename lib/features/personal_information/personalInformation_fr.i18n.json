@@ -13,7 +13,6 @@
     "clear": {
       "title": "Effacer « $field » ?",
       "content": "Cette information sera supprimée de votre profil.",
-      "cancel": "Annuler",
       "confirm": "Effacer"
     }
   },

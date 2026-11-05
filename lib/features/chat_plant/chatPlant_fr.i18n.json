@@ -12,7 +12,6 @@
     "unblock_dialog": {
       "title": "Débloquer cet utilisateur ?",
       "content": "Cette personne pourra à nouveau vous envoyer des messages.",
-      "cancel": "Annuler",
       "confirm": "Débloquer"
     },
     "status": {
@@ -28,7 +27,6 @@
     "block": "Bloquer",
     "clear_chat": "Effacer la conversation",
     "delete": "Supprimer",
-    "cancel": "Annuler",
     "delete_dialog": {
       "title": "Effacer la conversation",
       "content": "Elle sera supprimée uniquement pour vous."

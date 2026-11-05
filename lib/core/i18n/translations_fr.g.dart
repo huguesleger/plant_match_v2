@@ -77,6 +77,7 @@ class TranslationsAroundMeMapFr {
 	String distance({required Object value}) => '${value} km';
 
 	late final TranslationsAroundMeMapMapFr map = TranslationsAroundMeMapMapFr.internal(_root);
+	late final TranslationsAroundMeMapRadiusFr radius = TranslationsAroundMeMapRadiusFr.internal(_root);
 }
 
 // Path: auth
@@ -421,6 +422,27 @@ class TranslationsAroundMeMapMapFr {
 
 	/// fr: 'Soyez le premier à publier une plante dans l'application !'
 	String get empty_first => 'Soyez le premier à publier une plante dans l\'application !';
+}
+
+// Path: aroundMeMap.radius
+class TranslationsAroundMeMapRadiusFr {
+	TranslationsAroundMeMapRadiusFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Rayon de recherche'
+	String get title => 'Rayon de recherche';
+
+	/// fr: 'Définissez la distance maximale pour découvrir des plantes autour de vous.'
+	String get description => 'Définissez la distance maximale pour découvrir des plantes autour de vous.';
+
+	/// fr: 'Dans un rayon de'
+	String get within => 'Dans un rayon de';
+
+	/// fr: 'Appliquer'
+	String get apply => 'Appliquer';
 }
 
 // Path: auth.common
@@ -934,9 +956,6 @@ class TranslationsChatPlantMenuFr {
 
 	/// fr: 'Supprimer'
 	String get delete => 'Supprimer';
-
-	/// fr: 'Annuler'
-	String get cancel => 'Annuler';
 
 	late final TranslationsChatPlantMenuDeleteDialogFr delete_dialog = TranslationsChatPlantMenuDeleteDialogFr.internal(_root);
 	late final TranslationsChatPlantMenuReportDialogFr report_dialog = TranslationsChatPlantMenuReportDialogFr.internal(_root);
@@ -2311,9 +2330,6 @@ class TranslationsChatPlantViewUnblockDialogFr {
 	/// fr: 'Cette personne pourra à nouveau vous envoyer des messages.'
 	String get content => 'Cette personne pourra à nouveau vous envoyer des messages.';
 
-	/// fr: 'Annuler'
-	String get cancel => 'Annuler';
-
 	/// fr: 'Débloquer'
 	String get confirm => 'Débloquer';
 }
@@ -2735,9 +2751,6 @@ class TranslationsPersonalInformationDetailClearFr {
 
 	/// fr: 'Cette information sera supprimée de votre profil.'
 	String get content => 'Cette information sera supprimée de votre profil.';
-
-	/// fr: 'Annuler'
-	String get cancel => 'Annuler';
 
 	/// fr: 'Effacer'
 	String get confirm => 'Effacer';
@@ -3309,6 +3322,10 @@ extension on Translations {
 			'aroundMeMap.map.empty_title' => 'Aucune plante trouvée dans ce rayon',
 			'aroundMeMap.map.empty_widen' => 'Élargissez le rayon de recherche pour découvrir plus de plantes autour de vous.',
 			'aroundMeMap.map.empty_first' => 'Soyez le premier à publier une plante dans l\'application !',
+			'aroundMeMap.radius.title' => 'Rayon de recherche',
+			'aroundMeMap.radius.description' => 'Définissez la distance maximale pour découvrir des plantes autour de vous.',
+			'aroundMeMap.radius.within' => 'Dans un rayon de',
+			'aroundMeMap.radius.apply' => 'Appliquer',
 			'auth.common.email.label' => 'E-mail',
 			'auth.common.email.hint' => 'Entrez votre e-mail',
 			'auth.common.email.required' => 'Ce champ est requis',
@@ -3509,7 +3526,6 @@ extension on Translations {
 			'chatPlant.view.unblock_btn' => 'Débloquer',
 			'chatPlant.view.unblock_dialog.title' => 'Débloquer cet utilisateur ?',
 			'chatPlant.view.unblock_dialog.content' => 'Cette personne pourra à nouveau vous envoyer des messages.',
-			'chatPlant.view.unblock_dialog.cancel' => 'Annuler',
 			'chatPlant.view.unblock_dialog.confirm' => 'Débloquer',
 			'chatPlant.view.status.exchange_accepted_waiting' => 'L\'échange est accepté ! En attente de la rencontre.',
 			'chatPlant.view.status.donation_accepted_waiting' => 'La donation est acceptée ! En attente de la rencontre.',
@@ -3520,7 +3536,6 @@ extension on Translations {
 			'chatPlant.menu.block' => 'Bloquer',
 			'chatPlant.menu.clear_chat' => 'Effacer la conversation',
 			'chatPlant.menu.delete' => 'Supprimer',
-			'chatPlant.menu.cancel' => 'Annuler',
 			'chatPlant.menu.delete_dialog.title' => 'Effacer la conversation',
 			'chatPlant.menu.delete_dialog.content' => 'Elle sera supprimée uniquement pour vous.',
 			'chatPlant.menu.report_dialog.title' => 'Signaler',
@@ -3689,7 +3704,6 @@ extension on Translations {
 			'personalInformation.detail.edit_button' => 'Modifier mon profil',
 			'personalInformation.detail.clear.title' => ({required Object field}) => 'Effacer « ${field} » ?',
 			'personalInformation.detail.clear.content' => 'Cette information sera supprimée de votre profil.',
-			'personalInformation.detail.clear.cancel' => 'Annuler',
 			'personalInformation.detail.clear.confirm' => 'Effacer',
 			'personalInformation.wizard.pseudo.title' => 'Pseudo d\'affichage',
 			'personalInformation.wizard.pseudo.description' => 'Choisissez votre pseudo qui sera visible par les autres utilisateurs.',

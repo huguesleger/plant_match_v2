@@ -30,5 +30,11 @@
     "empty_title": "Aucune plante trouvée dans ce rayon",
     "empty_widen": "Élargissez le rayon de recherche pour découvrir plus de plantes autour de vous.",
     "empty_first": "Soyez le premier à publier une plante dans l'application !"
+  },
+  "radius": {
+    "title": "Rayon de recherche",
+    "description": "Définissez la distance maximale pour découvrir des plantes autour de vous.",
+    "within": "Dans un rayon de",
+    "apply": "Appliquer"
   }
 }
