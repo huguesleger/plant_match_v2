@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:plant_match_v2/core/i18n/translations.g.dart';
-import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/core/gen/assets.gen.dart';
-import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
-import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
+import 'package:plant_match_v2/core/widgets/error/error_content.dart';
+import 'package:plant_match_v2/core/widgets/error/error_page_actions.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
+import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 
 class ErrorPage extends StatelessWidget {
-  const ErrorPage({
+  ErrorPage({
     super.key,
-    required this.errorMessage,
+    required Failure failure,
     required this.onRetry,
     this.onPressed = const None(),
-  });
+  }) : content = failure.errorContent;
 
-  final String errorMessage;
+  final ErrorContent content;
   final Option<VoidCallback> onPressed;
   final VoidCallback onRetry;
 
@@ -32,13 +34,11 @@ class ErrorPage extends StatelessWidget {
               children: [
                 const SizedBox(height: 20),
                 TitlePage(
-                  title: t.widgets.error.title,
+                  title: content.title,
                   fontSize: AppTypo.textXl,
                 ),
                 const SizedBox(height: 5),
-                Text(
-                  errorMessage,
-                ),
+                Text(content.message),
                 const SizedBox(height: 30),
                 Center(
                   child: ConstrainedBox(
@@ -51,37 +51,15 @@ class ErrorPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 30),
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton.icon(
-                    style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: AppColors.greyLight),
-                    ),
-                    onPressed: onPressed.getOrElse(
-                      () => () => Navigator.of(context).pop(),
-                    ),
-                    icon: const Icon(
-                      LucideIcons.arrow_left,
-                      color: AppColors.blueGreen,
-                    ),
-                    label: Text(
-                      t.widgets.error.back,
-                      style: const TextStyle(
-                        color: AppColors.blueGreen,
-                      ),
+                ErrorPageActions(
+                  onBack: onPressed.alt(
+                    () => Option.fromPredicate(
+                      () => Navigator.of(context).maybePop(),
+                      (_) => Navigator.of(context).canPop(),
                     ),
                   ),
+                  primary: _primaryAction(context),
                 ),
-                const SizedBox(height: 20),
-                SizedBox(
-                  width: double.infinity,
-                  child: ButtonRounded(
-                    text: t.widgets.error.retry,
-                    bgColor: AppColors.blueGreen,
-                    textColor: AppColors.white,
-                    onPressed: Some(onRetry),
-                  ),
-                )
               ],
             ),
           ),
@@ -89,4 +67,14 @@ class ErrorPage extends StatelessWidget {
       ),
     );
   }
+
+  Option<(String, VoidCallback)> _primaryAction(BuildContext context) =>
+      switch (content.action) {
+        RetryAction() => Some((t.widgets.error.retry, onRetry)),
+        ReconnectAction() => Some((
+            t.widgets.error.reconnect,
+            () => context.read<AuthCubit>().logOut(),
+          )),
+        NoAction() => const None(),
+      };
 }

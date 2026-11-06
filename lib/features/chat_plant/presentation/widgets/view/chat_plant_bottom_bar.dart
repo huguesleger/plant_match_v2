@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:plant_match_v2/core/i18n/translations.g.dart';
+import 'package:plant_match_v2/core/widgets/error/error_content.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/cubit/chat_plant_cubit.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
@@ -43,8 +43,8 @@ class ChatPlantBottomBar extends StatelessWidget {
         .then((error) {
       profilCubit.refreshLeaves(currentUserId);
       error.map(
-        (message) => messenger.showSnackBar(
-          SnackBar(content: Text(t.chatPlant.view.send_error(error: message))),
+        (failure) => messenger.showSnackBar(
+          SnackBar(content: Text(failure.errorContent.message)),
         ),
       );
     });

@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:plant_match_v2/core/util/safe_cubit.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:plant_match_v2/core/failures/failure.dart';
+import 'package:plant_match_v2/core/failures/failure_mapper.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:plant_match_v2/features/chat_plant/domain/repository/chat_plant_repository.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/state/chat_plant_state.dart';
@@ -59,15 +61,15 @@ class ChatPlantCubit extends SafeCubit<ChatPlantState> {
           ));
         }
       },
-      onError: (e) {
+      onError: (Object error) {
         if (!isClosed) {
-          emit(ChatPlantError(e.toString()));
+          emit(ChatPlantError(mapError(error)));
         }
       },
     ));
   }
 
-  Future<Option<String>> send({
+  Future<Option<Failure>> send({
     required String chatId,
     required String senderId,
     required String text,
@@ -88,8 +90,8 @@ class ChatPlantCubit extends SafeCubit<ChatPlantState> {
                 text: text,
               ),
             )
-            .match<Option<String>>(
-              (failure) => Some(failure.message),
+            .match<Option<Failure>>(
+              (failure) => Some(failure),
               (_) => const None(),
             )
             .run(),
@@ -115,11 +117,10 @@ class ChatPlantCubit extends SafeCubit<ChatPlantState> {
     repository
         .softDeleteChat(chatId: chatId, userId: userId)
         .match(
-          (failure) =>
-              ChatPlantError('Impossible de supprimer la conversation'),
+          (failure) => ChatPlantError(failure),
           (_) => state,
         )
-        .map((s) => emit(s))
+        .map(emit)
         .run();
   }
 
@@ -141,10 +142,10 @@ class ChatPlantCubit extends SafeCubit<ChatPlantState> {
             plantImage: plantImage,
           )
           .match(
-            (failure) => ChatPlantError(failure.message),
+            (failure) => ChatPlantError(failure),
             (_) => state,
           )
-          .map((s) => emit(s))
+          .map(emit)
           .run(),
     );
   }

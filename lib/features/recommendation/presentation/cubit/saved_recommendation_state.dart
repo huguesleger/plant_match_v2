@@ -1,4 +1,5 @@
 import 'package:fpdart/fpdart.dart';
+import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/recommendation/domain/entities/recommendation_answers.dart';
 
@@ -39,7 +40,7 @@ class SavedRecommendationLoaded extends SavedRecommendationState {
 }
 
 class SavedRecommendationError extends SavedRecommendationState {
-  final String message;
+  final Failure failure;
 
-  const SavedRecommendationError({required this.message});
+  const SavedRecommendationError({required this.failure});
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart' hide State;
-import 'package:plant_match_v2/core/i18n/translations.g.dart';
+import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_header_slider.dart';
 import 'package:plant_match_v2/core/widgets/error/error_page.dart';
@@ -30,7 +30,7 @@ class DetailPlant extends StatefulWidget {
 }
 
 class _DetailPlantState extends State<DetailPlant> {
-  late Future<Option<DetailPlantData>> _data;
+  late Future<Either<Failure, DetailPlantData>> _data;
 
   String get _currentUserId =>
       context.read<AuthCubit>().userId.getOrElse(() => '');
@@ -42,7 +42,7 @@ class _DetailPlantState extends State<DetailPlant> {
     _data = _load();
   }
 
-  Future<Option<DetailPlantData>> _load() => DetailPlantLoader.load(
+  Future<Either<Failure, DetailPlantData>> _load() => DetailPlantLoader.load(
         catalog: widget.catalog,
         owner: widget.owner,
         currentUserId: _currentUserId,
@@ -52,13 +52,19 @@ class _DetailPlantState extends State<DetailPlant> {
 
   @override
   Widget build(BuildContext context) =>
-      FutureBuilder<Option<DetailPlantData>>(
+      FutureBuilder<Either<Failure, DetailPlantData>>(
         future: _data,
         builder: (context, snapshot) =>
             snapshot.connectionState == ConnectionState.done
-                ? Option.fromNullable(snapshot.data).flatMap((d) => d).match(
-                      () => ErrorPage(
-                        errorMessage: t.user.detail_plant.load_error,
+                ? Option.fromNullable(snapshot.data)
+                    .getOrElse(
+                      () => const Left(
+                        UnexpectedFailure('Detail plant loaded without data'),
+                      ),
+                    )
+                    .match(
+                      (failure) => ErrorPage(
+                        failure: failure,
                         onRetry: _retry,
                       ),
                       (loaded) => _page(loaded.catalog, Some(loaded)),

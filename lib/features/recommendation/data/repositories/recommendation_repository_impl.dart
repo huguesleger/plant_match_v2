@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
+import 'package:plant_match_v2/core/failures/failure_mapper.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/recommendation/domain/entities/recommendation_answers.dart';
 import 'package:plant_match_v2/features/recommendation/domain/repositories/recommendation_repository.dart';
@@ -85,9 +86,7 @@ class RecommendationRepositoryImpl implements RecommendationRepository {
               .where((plant) => _isPetSafe(plant, answers))
               .toList();
         },
-        (error, stackTrace) => FirebaseFailure(
-          'Erreur lors du calcul des recommandations : $error',
-        ),
+        (error, _) => mapError(error),
       );
 
   @override
@@ -104,9 +103,7 @@ class RecommendationRepositoryImpl implements RecommendationRepository {
         });
         return unit;
       },
-      (error, stackTrace) => FirebaseFailure(
-        'Erreur lors de la sauvegarde des recommandations : $error',
-      ),
+      (error, _) => mapError(error),
     );
   }
 
@@ -126,9 +123,7 @@ class RecommendationRepositoryImpl implements RecommendationRepository {
             .map((data) => RecommendationAnswers.fromJson(
                 data['answers'] as Map<String, dynamic>));
       },
-      (error, stackTrace) => FirebaseFailure(
-        'Erreur lors de la récupération des recommandations sauvegardées : $error',
-      ),
+      (error, _) => mapError(error),
     );
   }
 }

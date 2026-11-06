@@ -76,7 +76,7 @@ void main() {
         'doit émettre [Unauthenticated] lors dune erreur de récupération',
         build: () {
           when(() => mockAuthRepository.getCurrentUser())
-              .thenReturn(TaskEither.left(const AuthFailure('Erreur serveur')));
+              .thenReturn(TaskEither.left(const UnexpectedFailure('Erreur serveur')));
           return authCubit;
         },
         act: (cubit) => cubit.checkCurrentUser(),
@@ -116,14 +116,18 @@ void main() {
           when(() => mockAuthRepository.signInWithEmailAndPassword(
                 email: tEmail,
                 password: tPassword,
-              )).thenReturn(TaskEither.left(const AuthFailure('Identifiants invalides')));
+              )).thenReturn(TaskEither.left(const AuthInvalidCredentialsFailure('invalid-credential')));
           return authCubit;
         },
         act: (cubit) => cubit.signInWithEmailAndPassword(
             email: tEmail, password: tPassword),
         expect: () => [
           isA<AuthLoading>(),
-          isA<AuthError>().having((s) => s.message, 'message', 'Identifiants invalides'),
+          isA<AuthError>().having(
+            (s) => s.failure,
+            'failure',
+            isA<AuthInvalidCredentialsFailure>(),
+          ),
           isA<Unauthenticated>(),
         ],
       );
@@ -148,13 +152,33 @@ void main() {
         'doit émettre [AuthLoading, AuthError] en cas déchec',
         build: () {
           when(() => mockAuthRepository.signInWithGoogle())
-              .thenReturn(TaskEither.left(const AuthFailure('Erreur Google')));
+              .thenReturn(TaskEither.left(const AuthProviderFailure('Erreur Google')));
           return authCubit;
         },
         act: (cubit) => cubit.signInWithGoogle(),
         expect: () => [
           isA<AuthLoading>(),
-          isA<AuthError>().having((s) => s.message, 'message', 'Erreur Google'),
+          isA<AuthError>().having(
+            (s) => s.failure,
+            'failure',
+            isA<AuthProviderFailure>(),
+          ),
+          isA<Unauthenticated>(),
+        ],
+      );
+    });
+
+    group('signInWithGoogle annulé', () {
+      blocTest<AuthCubit, AuthState>(
+        'doit émettre [AuthLoading, Unauthenticated] sans AuthError',
+        build: () {
+          when(() => mockAuthRepository.signInWithGoogle()).thenReturn(
+              TaskEither.left(const AuthCancelledFailure('cancelled')));
+          return authCubit;
+        },
+        act: (cubit) => cubit.signInWithGoogle(),
+        expect: () => [
+          isA<AuthLoading>(),
           isA<Unauthenticated>(),
         ],
       );
@@ -179,13 +203,17 @@ void main() {
         'doit émettre [AuthLoading, AuthError] en cas déchec',
         build: () {
           when(() => mockAuthRepository.signInWithFacebook())
-              .thenReturn(TaskEither.left(const AuthFailure('Erreur Facebook')));
+              .thenReturn(TaskEither.left(const AuthProviderFailure('Erreur Facebook')));
           return authCubit;
         },
         act: (cubit) => cubit.signInWithFacebook(),
         expect: () => [
           isA<AuthLoading>(),
-          isA<AuthError>().having((s) => s.message, 'message', 'Erreur Facebook'),
+          isA<AuthError>().having(
+            (s) => s.failure,
+            'failure',
+            isA<AuthProviderFailure>(),
+          ),
           isA<Unauthenticated>(),
         ],
       );

@@ -1,3 +1,4 @@
+import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/exchange/domain/entities/exchange.dart';
 
@@ -36,8 +37,8 @@ class ExchangeConfirming extends ExchangeState {
 class ExchangeSuccess extends ExchangeState {}
 
 class ExchangeError extends ExchangeState {
-  final String message;
-  ExchangeError(this.message);
+  final Failure failure;
+  ExchangeError(this.failure);
 }
 
 class ExchangePending extends ExchangeState {

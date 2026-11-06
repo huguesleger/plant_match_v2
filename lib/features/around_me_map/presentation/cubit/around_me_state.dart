@@ -1,4 +1,5 @@
 import 'package:fpdart/fpdart.dart';
+import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 
@@ -19,7 +20,7 @@ class AroundMeLoaded extends AroundMeState {
   final ProfilUser currentUser;
   final Map<String, List<Catalog>> userCatalogs;
   final bool locating;
-  final Option<String> locationError;
+  final Option<Failure> locationError;
 
   const AroundMeLoaded({
     required this.users,
@@ -31,7 +32,7 @@ class AroundMeLoaded extends AroundMeState {
 
   AroundMeLoaded copyWith({
     Option<bool> locating = const None(),
-    Option<Option<String>> locationError = const None(),
+    Option<Option<Failure>> locationError = const None(),
   }) =>
       AroundMeLoaded(
         users: users,
@@ -43,7 +44,7 @@ class AroundMeLoaded extends AroundMeState {
 }
 
 class AroundMeError extends AroundMeState {
-  final String message;
+  final Failure failure;
 
-  const AroundMeError(this.message);
+  const AroundMeError(this.failure);
 }

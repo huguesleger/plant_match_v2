@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:plant_match_v2/core/failures/failure_mapper.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/features/favorite/domain/repository/favorites_repository.dart';
@@ -45,9 +46,9 @@ class FavoriteCubit extends Cubit<FavoriteState> {
           );
         }
       },
-      onError: (e) {
+      onError: (Object e) {
         if (!isClosed) {
-          emit(FavoriteError(e.toString()));
+          emit(FavoriteError(mapError(e)));
         }
       },
     ));
@@ -73,9 +74,9 @@ class FavoriteCubit extends Cubit<FavoriteState> {
           );
         }
       },
-      onError: (e) {
+      onError: (Object e) {
         if (!isClosed) {
-          emit(FavoriteError(e.toString()));
+          emit(FavoriteError(mapError(e)));
         }
       },
     ));
@@ -85,7 +86,7 @@ class FavoriteCubit extends Cubit<FavoriteState> {
     favoritesRepository
         .removeFavoritePlant(uid, catalogId)
         .match(
-          (failure) => FavoriteError(failure.message),
+          (failure) => FavoriteError(failure),
           (_) => state,
         )
         .map((s) {
@@ -99,7 +100,7 @@ class FavoriteCubit extends Cubit<FavoriteState> {
     favoritesRepository
         .removeFavoriteUser(uid, targetUid)
         .match(
-          (failure) => FavoriteError(failure.message),
+          (failure) => FavoriteError(failure),
           (_) => state,
         )
         .map((s) {

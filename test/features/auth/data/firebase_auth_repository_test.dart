@@ -99,7 +99,7 @@ void main() {
 
       // Assert
       result.fold(
-        (l) => fail('Devrait réussir: ${l.message}'),
+        (l) => fail('Devrait réussir: ${l.debugMessage}'),
         (r) {
           expect(r.$1.email, const Some(tEmail));
           expect(r.$2, true); // isFirstTime should be true
@@ -144,7 +144,7 @@ void main() {
       ).run();
 
       result.fold(
-        (l) => fail('Devrait réussir: ${l.message}'),
+        (l) => fail('Devrait réussir: ${l.debugMessage}'),
         (r) {
           expect(r.email, const Some(tEmail));
           expect(r.uid, realUid);

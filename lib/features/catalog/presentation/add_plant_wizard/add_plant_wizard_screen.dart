@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/widgets/error/error_content.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:fpdart/fpdart.dart' hide State;
@@ -99,7 +100,7 @@ class _AddPlantWizardScreenState extends State<AddPlantWizardScreen> {
     Navigator.pop(context);
     result.match(
       (failure) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(t.catalog.wizard.error_generic(error: failure.message)),
+        content: Text(failure.errorContent.message),
       )),
       (_) => Navigator.pop(context, true),
     );

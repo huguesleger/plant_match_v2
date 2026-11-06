@@ -7,6 +7,7 @@ import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
+import 'package:plant_match_v2/core/widgets/error/error_content.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/cubit/around_me_cubit.dart';
@@ -46,9 +47,9 @@ class AroundMeEmpty extends StatelessWidget {
           SizedBox(height: MediaQuery.of(context).size.height > 700 ? 45 : 25),
           ...state.locationError.match(
             () => const <Widget>[],
-            (message) => [
+            (failure) => [
               Text(
-                message,
+                failure.errorContent.message,
                 textAlign: TextAlign.center,
                 style: const TextStyle(color: AppColors.error),
               ),

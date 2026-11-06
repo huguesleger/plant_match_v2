@@ -1,3 +1,4 @@
+import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 
@@ -24,7 +25,7 @@ class FavoriteLoaded extends FavoriteState {
 }
 
 class FavoriteError extends FavoriteState {
-  final String message;
+  final Failure failure;
 
-  const FavoriteError(this.message);
+  const FavoriteError(this.failure);
 }

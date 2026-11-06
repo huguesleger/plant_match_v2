@@ -1,3 +1,4 @@
+import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/features/level/domain/entities/points_update.dart';
 import 'package:plant_match_v2/features/level/domain/entities/user_points.dart';
 
@@ -16,9 +17,9 @@ class UserPointsLoaded extends UserPointsState {
 }
 
 class UserPointsError extends UserPointsState {
-  final String message;
+  final Failure failure;
 
-  UserPointsError(this.message);
+  UserPointsError(this.failure);
 }
 
 class UserPointsAwarded extends UserPointsState {

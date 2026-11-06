@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/util/json_reader.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
+import 'package:plant_match_v2/core/failures/failure_mapper.dart';
 import 'package:plant_match_v2/core/firebase/cloud_function.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/features/profil/domain/repository/profil_repository.dart';
@@ -12,7 +13,7 @@ class FirebaseProfilRepo implements ProfilRepository {
   @override
   TaskEither<Failure, Option<ProfilUser>> getProfilUser(String uid) {
     if (uid.isEmpty) {
-      return TaskEither.left(const AuthFailure('UID invalide'));
+      return TaskEither.left(const SessionExpiredFailure('Empty uid'));
     }
 
     return TaskEither.tryCatch(
@@ -26,15 +27,14 @@ class FirebaseProfilRepo implements ProfilRepository {
                   'uid': uid,
                 }));
       },
-      (error, _) => _mapErrorToFailure(error),
+      (error, _) => mapError(error),
     );
   }
 
   @override
   TaskEither<Failure, Unit> updateProfilUser(ProfilUser updateProfilUser) {
     if (updateProfilUser.uid.isEmpty) {
-      return TaskEither.left(
-          const AuthFailure('UID invalide pour la mise à jour du profil'));
+      return TaskEither.left(const SessionExpiredFailure('Empty uid'));
     }
 
     return TaskEither.tryCatch(
@@ -53,15 +53,14 @@ class FirebaseProfilRepo implements ProfilRepository {
             .update(data);
         return unit;
       },
-      (error, _) => _mapErrorToFailure(error),
+      (error, _) => mapError(error),
     );
   }
 
   @override
   TaskEither<Failure, Unit> createProfilUser(ProfilUser profilUser) {
     if (profilUser.uid.isEmpty) {
-      return TaskEither.left(
-          const AuthFailure('UID invalide pour la création du profil'));
+      return TaskEither.left(const SessionExpiredFailure('Empty uid'));
     }
 
     return TaskEither.tryCatch(
@@ -77,7 +76,7 @@ class FirebaseProfilRepo implements ProfilRepository {
             .set(data);
         return unit;
       },
-      (error, _) => _mapErrorToFailure(error),
+      (error, _) => mapError(error),
     );
   }
 
@@ -88,8 +87,7 @@ class FirebaseProfilRepo implements ProfilRepository {
     required dynamic value,
   }) {
     if (uid.isEmpty) {
-      return TaskEither.left(
-          const AuthFailure('UID invalide pour la mise à jour du champ'));
+      return TaskEither.left(const SessionExpiredFailure('Empty uid'));
     }
 
     return TaskEither.tryCatch(
@@ -99,7 +97,7 @@ class FirebaseProfilRepo implements ProfilRepository {
         });
         return unit;
       },
-      (error, _) => _mapErrorToFailure(error),
+      (error, _) => mapError(error),
     );
   }
 
@@ -107,12 +105,4 @@ class FirebaseProfilRepo implements ProfilRepository {
   TaskEither<Failure, int> applyReferral(String referralCode) =>
       CloudFunction.call('applyReferral', {'code': referralCode})
           .map((result) => result.read<int>('bonus').getOrElse(() => 0));
-
-  Failure _mapErrorToFailure(Object error) {
-    if (error is Failure) return error;
-    if (error is FirebaseException) {
-      return FirebaseFailure('Erreur Firebase: ${Option.fromNullable(error.message).getOrElse(() => error.code)}');
-    }
-    return UnexpectedFailure('Erreur inattendue: $error');
-  }
 }

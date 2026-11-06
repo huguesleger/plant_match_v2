@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart' hide State;
+import 'package:plant_match_v2/core/failures/failure.dart';
+import 'package:plant_match_v2/core/widgets/error/error_content.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/validation_code_display.dart';
 
 class OwnerValidationCode extends StatefulWidget {
@@ -10,7 +12,7 @@ class OwnerValidationCode extends StatefulWidget {
   });
 
   final Stream<Option<String>> Function() watchCode;
-  final Future<Option<String>> Function() generate;
+  final Future<Option<Failure>> Function() generate;
 
   @override
   State<OwnerValidationCode> createState() => _OwnerValidationCodeState();
@@ -28,7 +30,9 @@ class _OwnerValidationCodeState extends State<OwnerValidationCode> {
     if (!mounted) return;
     setState(() => _generating = false);
     error.map(
-      (message) => messenger.showSnackBar(SnackBar(content: Text(message))),
+      (failure) => messenger.showSnackBar(
+        SnackBar(content: Text(failure.errorContent.message)),
+      ),
     );
   }
 

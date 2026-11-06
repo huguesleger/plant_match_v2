@@ -1,3 +1,4 @@
+import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/features/donation/domain/entities/donation.dart';
 
 sealed class DonationState {}
@@ -32,6 +33,6 @@ class DonationCompleted extends DonationState {
 }
 
 class DonationError extends DonationState {
-  final String message;
-  DonationError(this.message);
+  final Failure failure;
+  DonationError(this.failure);
 }

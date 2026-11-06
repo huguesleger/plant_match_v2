@@ -42,7 +42,7 @@ class HistoryCubit extends SafeCubit<HistoryState> {
             .map((donations) => (exchanges, donations)),
       )
       .match(
-        (failure) => HistoryError(failure.message),
+        (failure) => HistoryError(failure),
         (data) => _loaded(data.$1, data.$2),
       );
 

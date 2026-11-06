@@ -1,6 +1,6 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
+import 'package:plant_match_v2/core/failures/failure_mapper.dart';
 import 'package:plant_match_v2/core/util/safe_cubit.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catalog/domain/repository/catalog_repository.dart';
@@ -56,7 +56,7 @@ class CatalogCubit extends SafeCubit<CatalogState> {
     catalogRepository
         .getCatalogsByUserId(userId)
         .match<CatalogState>(
-          (failure) => CatalogError(failure.message),
+          (failure) => CatalogError(failure),
           (catalogs) => CatalogLoaded(catalogs, Catalog.empty(userId),
               sortOption: sortOption),
         )
@@ -72,7 +72,7 @@ class CatalogCubit extends SafeCubit<CatalogState> {
           CatalogInitial() ||
           CatalogLoading() ||
           CatalogError() =>
-            CatalogError(failure.message),
+            CatalogError(failure),
         },
         (catalogs) => CatalogLoaded(
           catalogs,
@@ -142,7 +142,7 @@ class CatalogCubit extends SafeCubit<CatalogState> {
         () => task.run().timeout(
               _saveTimeout,
               onTimeout: () =>
-                  Left(UnexpectedFailure(t.catalog.wizard.timeout)),
+                  const Left(NetworkFailure('Catalog save timeout')),
             ),
       );
 
@@ -166,7 +166,7 @@ class CatalogCubit extends SafeCubit<CatalogState> {
         .updateCatalog(catalog)
         .flatMap((_) => catalogRepository.getCatalogsByUserId(catalog.userId))
         .match(
-          (failure) => CatalogError(failure.message),
+          (failure) => CatalogError(failure),
           (catalogs) => CatalogLoaded(catalogs, catalog,
               sortOption: _currentSortFromState()),
         )
@@ -181,7 +181,7 @@ class CatalogCubit extends SafeCubit<CatalogState> {
         .updateCatalog(catalog)
         .flatMap((_) => catalogRepository.getCatalogsByUserId(catalog.userId))
         .match(
-          (failure) => CatalogError(failure.message),
+          (failure) => CatalogError(failure),
           (catalogs) => CatalogLoaded(catalogs, catalog,
               sortOption: _currentSortFromState()),
         )
@@ -274,7 +274,7 @@ class CatalogCubit extends SafeCubit<CatalogState> {
                 sortOption: _currentSortFromState()));
             return updatedCatalog;
           },
-          (error, _) => UnexpectedFailure(error.toString()),
+          (error, _) => mapError(error),
         );
       });
     });
@@ -285,7 +285,7 @@ class CatalogCubit extends SafeCubit<CatalogState> {
 
     return catalogRepository.getCatalogById(catalogId).flatMap((option) =>
         option.match(
-          () => TaskEither.left(const FirebaseFailure("Catalogue non trouvé")),
+          () => TaskEither.left(const NotFoundFailure('Catalog not found')),
           (catalog) {
             return TaskEither<Failure, Catalog>.tryCatch(
               () async {
@@ -293,7 +293,7 @@ class CatalogCubit extends SafeCubit<CatalogState> {
                     sortOption: _currentSortFromState()));
                 return catalog;
               },
-              (error, _) => UnexpectedFailure(error.toString()),
+              (error, _) => mapError(error),
             );
           },
         ));
@@ -307,7 +307,7 @@ class CatalogCubit extends SafeCubit<CatalogState> {
     return catalog.catalogId
         .match(
           () => TaskEither<Failure, Unit>.left(
-            const NotFoundFailure('Catalogue non trouvé'),
+            const UnexpectedFailure('catalogId is required to delete a catalog'),
           ),
           catalogRepository.deleteCatalog,
         )

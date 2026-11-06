@@ -6,6 +6,7 @@ import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
+import 'package:plant_match_v2/core/failures/failure_mapper.dart';
 import 'package:plant_match_v2/core/util/json_reader.dart';
 import 'package:plant_match_v2/features/auth/domain/entities/user_auth.dart';
 import 'package:plant_match_v2/features/auth/domain/repository/auth_repository.dart';
@@ -34,8 +35,8 @@ class FirebaseAuthRepository implements AuthRepository {
         _googleSignIn = googleSignIn,
         _facebookAuth = facebookAuth;
 
-  static T _required<T>(Option<T> value, String message) =>
-      value.getOrElse(() => throw AuthFailure(message));
+  static T _required<T>(Option<T> value, Failure failure) =>
+      value.getOrElse(() => throw failure);
 
   @override
   TaskEither<Failure, Option<UserAuth>> getCurrentUser() {
@@ -58,7 +59,7 @@ class FirebaseAuthRepository implements AuthRepository {
           },
         );
       },
-      (error, _) => _mapErrorToFailure(error),
+      (error, _) => _mapAuthError(error),
     );
   }
 
@@ -76,7 +77,7 @@ class FirebaseAuthRepository implements AuthRepository {
 
         final user = _required(
           Option.fromNullable(userCredential.user),
-          'Une erreur inattendue est survenue. Veuillez réessayer.',
+          const UnexpectedFailure('No user after sign in'),
         );
 
         final userRef = _firebaseFirestore.collection('users').doc(user.uid);
@@ -91,7 +92,7 @@ class FirebaseAuthRepository implements AuthRepository {
           'email': user.email,
         });
       },
-      (error, _) => _mapErrorToFailure(error),
+      (error, _) => _mapAuthError(error),
     );
   }
 
@@ -109,7 +110,7 @@ class FirebaseAuthRepository implements AuthRepository {
 
         final user = _required(
           Option.fromNullable(userCredential.user),
-          "Impossible de créer l'utilisateur.",
+          const UnexpectedFailure('No user after registration'),
         );
         await user.updateDisplayName('$firstName $lastName'.trim());
 
@@ -120,7 +121,7 @@ class FirebaseAuthRepository implements AuthRepository {
           lastName: lastName,
         );
       },
-      (error, _) => _mapErrorToFailure(error),
+      (error, _) => _mapAuthError(error),
     );
   }
 
@@ -146,7 +147,7 @@ class FirebaseAuthRepository implements AuthRepository {
         });
         return true;
       },
-      (error, _) => _mapErrorToFailure(error),
+      (error, _) => _mapAuthError(error),
     );
   }
 
@@ -156,7 +157,7 @@ class FirebaseAuthRepository implements AuthRepository {
       () async {
         final googleUser = _required(
           Option.fromNullable(await _googleSignIn.signIn()),
-          'Connexion avec Google annulée.',
+          const AuthCancelledFailure('Google sign in cancelled'),
         );
 
         final googleAuth = await googleUser.authentication;
@@ -169,7 +170,7 @@ class FirebaseAuthRepository implements AuthRepository {
             await _firebaseAuth.signInWithCredential(credential);
         final firebaseUser = _required(
           Option.fromNullable(userCredential.user),
-          "Échec de l'authentification avec Google.",
+          const AuthProviderFailure('No user after Google sign in'),
         );
 
         final userAuth = UserAuth.fromFullName(
@@ -196,7 +197,7 @@ class FirebaseAuthRepository implements AuthRepository {
           return (userAuth, true);
         }
       },
-      (error, _) => _mapErrorToFailure(error),
+      (error, _) => _mapAuthError(error),
     );
   }
 
@@ -212,13 +213,13 @@ class FirebaseAuthRepository implements AuthRepository {
         );
 
         if (result.status != LoginStatus.success) {
-          throw const AuthFailure('Connexion avec Facebook annulée.');
+          throw const AuthCancelledFailure('Facebook login cancelled');
         }
 
         final userData = await _facebookAuth.getUserData();
         final accessToken = _required(
           Option.fromNullable(result.accessToken),
-          'Connexion avec Facebook annulée.',
+          const AuthCancelledFailure('Facebook access token missing'),
         );
         final credential =
             FacebookAuthProvider.credential(accessToken.tokenString);
@@ -228,7 +229,7 @@ class FirebaseAuthRepository implements AuthRepository {
             await _firebaseAuth.signInWithCredential(credential);
         final firebaseUser = _required(
           Option.fromNullable(userCredential.user),
-          "Échec de l'authentification avec Facebook.",
+          const AuthProviderFailure('No user after Facebook sign in'),
         );
 
         final userAuth = UserAuth.fromFullName(
@@ -255,7 +256,7 @@ class FirebaseAuthRepository implements AuthRepository {
           return (userAuth, true);
         }
       },
-      (error, _) => _mapErrorToFailure(error),
+      (error, _) => _mapAuthError(error),
     );
   }
 
@@ -291,7 +292,7 @@ class FirebaseAuthRepository implements AuthRepository {
         await _firebaseAuth.signOut();
         return unit;
       },
-      (error, _) => _mapErrorToFailure(error),
+      (error, _) => _mapAuthError(error),
     );
   }
 
@@ -302,7 +303,7 @@ class FirebaseAuthRepository implements AuthRepository {
         await _firebaseAuth.sendPasswordResetEmail(email: email);
         return unit;
       },
-      (error, _) => _mapErrorToFailure(error),
+      (error, _) => _mapAuthError(error),
     );
   }
 
@@ -312,20 +313,20 @@ class FirebaseAuthRepository implements AuthRepository {
       () async {
         await _required(
           Option.fromNullable(_firebaseAuth.currentUser),
-          "Aucun utilisateur connecté. Impossible d'envoyer le mail de vérification.",
+          const SessionExpiredFailure('No current user'),
         ).reload();
         final user = _required(
           Option.fromNullable(_firebaseAuth.currentUser),
-          'Aucun utilisateur après reload. Réessayez.',
+          const SessionExpiredFailure('No current user after reload'),
         );
         if (user.emailVerified) {
-          throw const AuthFailure('Email déjà vérifié.');
+          throw const AuthEmailAlreadyVerifiedFailure();
         }
 
         await user.sendEmailVerification();
         return unit;
       },
-      (error, _) => _mapErrorToFailure(error),
+      (error, _) => _mapAuthError(error),
     );
   }
 
@@ -335,13 +336,13 @@ class FirebaseAuthRepository implements AuthRepository {
       () async {
         await _required(
           Option.fromNullable(_firebaseAuth.currentUser),
-          'Aucun utilisateur connecté.',
+          const SessionExpiredFailure('No current user'),
         ).reload();
         return Option.fromNullable(_firebaseAuth.currentUser)
             .map((user) => user.emailVerified)
             .getOrElse(() => false);
       },
-      (error, _) => _mapErrorToFailure(error),
+      (error, _) => _mapAuthError(error),
     );
   }
 
@@ -362,29 +363,22 @@ class FirebaseAuthRepository implements AuthRepository {
             ),
           );
 
-  static const _authMessages = {
-    'user-not-found': 'Aucun compte trouvé pour cet email.',
-    'wrong-password': 'Mot de passe incorrect.',
-    'invalid-email': 'Email invalide.',
-    'user-disabled': 'Ce compte a été désactivé.',
-    'invalid-credential': 'Les informations de connexion sont incorrectes.',
-  };
-
-  Failure _mapErrorToFailure(Object error) {
-    if (error is Failure) return error;
-
-    if (error is FirebaseAuthException) {
-      final message = Option.fromNullable(_authMessages[error.code]).getOrElse(
-        () => 'Une erreur inattendue est survenue. Veuillez réessayer.',
-      );
-      return AuthFailure(message);
-    }
-
-    if (error is FirebaseException) {
-      return FirebaseFailure(
-          'Erreur Firebase: ${Option.fromNullable(error.message).getOrElse(() => error.code)}');
-    }
-
-    return UnexpectedFailure('Erreur inconnue: $error');
-  }
+  Failure _mapAuthError(Object error) => switch (error) {
+        FirebaseAuthException(:final code) => switch (code) {
+            'user-not-found' ||
+            'wrong-password' ||
+            'invalid-credential' ||
+            'invalid-login-credentials' =>
+              AuthInvalidCredentialsFailure(code),
+            'invalid-email' => AuthInvalidEmailFailure(code),
+            'user-disabled' => AuthUserDisabledFailure(code),
+            'email-already-in-use' => AuthEmailAlreadyInUseFailure(code),
+            'account-exists-with-different-credential' =>
+              AuthAccountExistsWithDifferentCredentialFailure(code),
+            'weak-password' => AuthWeakPasswordFailure(code),
+            'too-many-requests' => AuthTooManyRequestsFailure(code),
+            _ => mapError(error),
+          },
+        Object() => mapError(error),
+      };
 }

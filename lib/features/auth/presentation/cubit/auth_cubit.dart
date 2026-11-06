@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
+import 'package:plant_match_v2/core/failures/failure_mapper.dart';
 import 'package:plant_match_v2/features/auth/domain/entities/user_auth.dart';
 import 'package:plant_match_v2/features/auth/domain/repository/auth_repository.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_state.dart';
@@ -49,7 +50,7 @@ class AuthCubit extends Cubit<AuthState> {
         .match(
       (failure) => failure is AuthProfileMissingFailure
           ? _resumeRegistration()
-          : _fail(failure.message, const Unauthenticated()),
+          : _fail(failure, const Unauthenticated()),
       (user) {
         _currentUser = Some(user);
         emit(Authenticated(user));
@@ -91,7 +92,7 @@ class AuthCubit extends Cubit<AuthState> {
         .flatMap(
             (user) => authRepository.sendEmailVerification().map((_) => user))
         .match(
-      (failure) => _fail(failure.message, const Unauthenticated()),
+      (failure) => _fail(failure, const Unauthenticated()),
       (user) {
         _currentUser = Some(user);
         emit(AuthEmailVerificationSent(user));
@@ -113,7 +114,7 @@ class AuthCubit extends Cubit<AuthState> {
 
       return Option.fromNullable(FirebaseAuth.instance.currentUser).match(
         () => TaskEither<Failure, Authenticated>.left(
-            const AuthFailure("Utilisateur introuvable")),
+            const SessionExpiredFailure('No current user')),
         (firebaseUser) {
           final resolvedName = fullName
               .alt(() => _currentUser.map((user) => user.fullName))
@@ -142,7 +143,7 @@ class AuthCubit extends Cubit<AuthState> {
         );
         failure is AuthEmailNotVerifiedFailure
             ? emit(pending)
-            : _fail(failure.message, pending);
+            : _fail(failure, pending);
       },
       (state) {
         _isCheckingEmail = false;
@@ -156,7 +157,7 @@ class AuthCubit extends Cubit<AuthState> {
     emit(const AuthLoading());
 
     authRepository.signInWithGoogle().match(
-      (failure) => _fail(failure.message, const Unauthenticated()),
+      (failure) => _fail(failure, const Unauthenticated()),
       (result) {
         _currentUser = Some(result.$1);
         emit(Authenticated(result.$1, isFirstTime: result.$2));
@@ -168,7 +169,7 @@ class AuthCubit extends Cubit<AuthState> {
     emit(const AuthLoading());
 
     authRepository.signInWithFacebook().match(
-      (failure) => _fail(failure.message, const Unauthenticated()),
+      (failure) => _fail(failure, const Unauthenticated()),
       (result) {
         _currentUser = Some(result.$1);
         emit(Authenticated(result.$1, isFirstTime: result.$2));
@@ -179,7 +180,7 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> logOut() {
     final previous = state;
     return authRepository.logOut().match(
-      (failure) => _fail(failure.message, previous),
+      (failure) => _fail(failure, previous),
       (_) {
         _currentUser = const None();
         emit(const Unauthenticated());
@@ -201,13 +202,9 @@ class AuthCubit extends Cubit<AuthState> {
             );
         return unit;
       },
-      (error, _) => (error is FirebaseAuthException &&
-              error.code == 'requires-recent-login')
-          ? const AuthFailure('Reconnexion requise pour supprimer le compte')
-          : UnexpectedFailure(
-              'Erreur lors de la suppression du compte : $error'),
+      (error, _) => mapError(error),
     ).match(
-      (failure) => _fail(failure.message, const Unauthenticated()),
+      (failure) => _fail(failure, const Unauthenticated()),
       (_) {
         _currentUser = const None();
         emit(const Unauthenticated());
@@ -217,8 +214,8 @@ class AuthCubit extends Cubit<AuthState> {
 
   void reset() => emit(const Unauthenticated());
 
-  void _fail(String message, AuthState recovery) {
-    emit(AuthError(message));
-    emit(recovery);
-  }
+  void _fail(Failure failure, AuthState recovery) => [
+        if (failure is! AuthCancelledFailure) AuthError(failure),
+        recovery,
+      ].forEach(emit);
 }

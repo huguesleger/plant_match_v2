@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/core/widgets/error/error_content.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_state.dart';
@@ -27,10 +28,10 @@ class _DetailWizardScreenState extends State<DetailWizardScreen> {
             if (Navigator.canPop(context)) {
               Navigator.of(context).pop();
             }
-          case ProfilError(:final message) when _isLocating:
+          case ProfilError(:final failure) when _isLocating:
             setState(() => _isLocating = false);
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(message)),
+              SnackBar(content: Text(failure.errorContent.message)),
             );
           case ProfilInitial() ||
                 ProfilLoading() ||

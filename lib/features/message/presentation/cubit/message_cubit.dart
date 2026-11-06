@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:plant_match_v2/core/failures/failure_mapper.dart';
 import 'package:plant_match_v2/features/chat_plant/domain/entities/chat_plant.dart';
 import 'package:plant_match_v2/features/chat_plant/domain/repository/chat_plant_repository.dart';
 import 'package:plant_match_v2/features/exchange/domain/entities/exchange.dart';
@@ -68,7 +69,7 @@ class MessagesCubit extends Cubit<MessagesState> {
   void _emitError(Object error) {
     _generation++;
     if (!isClosed) {
-      emit(MessagesError(error.toString()));
+      emit(MessagesError(mapError(error)));
     }
   }
 

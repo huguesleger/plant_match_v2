@@ -3,6 +3,7 @@ import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
+import 'package:plant_match_v2/core/widgets/error/error_content.dart';
 import 'package:plant_match_v2/core/widgets/refresh/refresh_fill_view.dart';
 import 'package:plant_match_v2/core/widgets/refresh/refresh_screen.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
@@ -31,9 +32,9 @@ class CatalogListTab extends StatelessWidget {
           CatalogInitial() || CatalogLoading() => const Center(
               child: CircularProgressIndicator(),
             ),
-          CatalogError(:final message) => Center(
+          CatalogError(:final failure) => Center(
               child: Text(
-                message,
+                failure.errorContent.message,
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
             ),

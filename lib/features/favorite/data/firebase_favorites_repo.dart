@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
+import 'package:plant_match_v2/core/failures/failure_mapper.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/features/favorite/domain/repository/favorites_repository.dart';
@@ -19,15 +20,14 @@ class FirebaseFavoritesRepo implements FavoritesRepository {
     return TaskEither.tryCatch(
       () async {
         final id = catalog.catalogId
-            .getOrElse(() => throw Exception('ID catalogue manquant'));
+            .getOrElse(() => throw const UnexpectedFailure('Missing catalog id'));
         await _plantsRef(uid).doc(id).set({
           'catalogId': id,
           'addedAt': FieldValue.serverTimestamp(),
         });
         return unit;
       },
-      (error, _) =>
-          UnexpectedFailure('Erreur lors de l’ajout du favori: $error'),
+      (error, _) => mapError(error),
     );
   }
 
@@ -38,8 +38,7 @@ class FirebaseFavoritesRepo implements FavoritesRepository {
         await _plantsRef(uid).doc(catalogId).delete();
         return unit;
       },
-      (error, _) =>
-          UnexpectedFailure('Erreur lors de la suppression du favori: $error'),
+      (error, _) => mapError(error),
     );
   }
 
@@ -100,8 +99,7 @@ class FirebaseFavoritesRepo implements FavoritesRepository {
         final doc = await _plantsRef(uid).doc(catalogId).get();
         return doc.exists;
       },
-      (error, _) =>
-          UnexpectedFailure('Erreur lors de la vérification du favori: $error'),
+      (error, _) => mapError(error),
     );
   }
 
@@ -115,8 +113,7 @@ class FirebaseFavoritesRepo implements FavoritesRepository {
         });
         return unit;
       },
-      (error, _) => UnexpectedFailure(
-          'Erreur lors de l’ajout de l’utilisateur favori: $error'),
+      (error, _) => mapError(error),
     );
   }
 
@@ -127,8 +124,7 @@ class FirebaseFavoritesRepo implements FavoritesRepository {
         await _usersRef(uid).doc(targetUid).delete();
         return unit;
       },
-      (error, _) => UnexpectedFailure(
-          'Erreur lors de la suppression de l’utilisateur favori: $error'),
+      (error, _) => mapError(error),
     );
   }
 
@@ -147,8 +143,7 @@ class FirebaseFavoritesRepo implements FavoritesRepository {
         final doc = await _usersRef(uid).doc(targetUid).get();
         return doc.exists;
       },
-      (error, _) => UnexpectedFailure(
-          'Erreur lors de la vérification de l’utilisateur favori: $error'),
+      (error, _) => mapError(error),
     );
   }
 }

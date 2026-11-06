@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart' hide State;
+import 'package:plant_match_v2/core/failures/failure.dart';
+import 'package:plant_match_v2/core/widgets/error/error_content.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 
@@ -9,7 +11,7 @@ class ValidationCodeInput extends StatefulWidget {
     required this.onValidate,
   });
 
-  final Future<Option<String>> Function(String code) onValidate;
+  final Future<Option<Failure>> Function(String code) onValidate;
 
   @override
   State<ValidationCodeInput> createState() => _ValidationCodeInputState();
@@ -18,7 +20,7 @@ class ValidationCodeInput extends StatefulWidget {
 class _ValidationCodeInputState extends State<ValidationCodeInput> {
   final TextEditingController _controller = TextEditingController();
   bool _isValidating = false;
-  Option<String> _error = const None();
+  Option<Failure> _error = const None();
 
   Future<void> _handleValidate() async {
     if (_isValidating || _controller.text.length != 6) return;
@@ -96,10 +98,10 @@ class _ValidationCodeInputState extends State<ValidationCodeInput> {
           ),
           ..._error.match(
             () => const <Widget>[],
-            (message) => [
+            (failure) => [
               const SizedBox(height: 8),
               Text(
-                message,
+                failure.errorContent.message,
                 textAlign: TextAlign.center,
                 style: const TextStyle(fontSize: 12, color: AppColors.error),
               ),

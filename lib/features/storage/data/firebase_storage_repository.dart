@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
+import 'package:plant_match_v2/core/failures/failure_mapper.dart';
 import 'package:plant_match_v2/features/storage/domain/storage_repository.dart';
 
 class FirebaseStorageRepository implements StorageRepository {
@@ -25,23 +26,21 @@ class FirebaseStorageRepository implements StorageRepository {
     required String fileName,
     required String folder,
   }) {
-    return TaskEither.tryCatch(
+    return TaskEither<Failure, String>.tryCatch(
       () async {
         final byteData = await rootBundle.load(assetPath);
         final tempDir = await getTemporaryDirectory();
         final file = File('${tempDir.path}/${assetPath.split('/').last}');
         await file.writeAsBytes(byteData.buffer.asUint8List());
-
-        return _uploadImage(
-          path: file.path,
-          fileName: fileName,
-          folder: folder,
-        ).run().then((result) => result.match(
-              (failure) => throw Exception(failure.message),
-              (url) => url,
-            ));
+        return file.path;
       },
-      (error, _) => UnexpectedFailure('Erreur upload asset image: $error'),
+      (error, _) => mapError(error),
+    ).flatMap(
+      (filePath) => _uploadImage(
+        path: filePath,
+        fileName: fileName,
+        folder: folder,
+      ),
     );
   }
 
@@ -57,7 +56,7 @@ class FirebaseStorageRepository implements StorageRepository {
         final imageUrl = await uploadTask.ref.getDownloadURL();
         return imageUrl;
       },
-      (error, _) => UnexpectedFailure('Erreur upload image: $error'),
+      (error, _) => mapError(error),
     );
   }
 
@@ -69,7 +68,7 @@ class FirebaseStorageRepository implements StorageRepository {
         await ref.delete();
         return imageUrl;
       },
-      (error, _) => UnexpectedFailure('Erreur suppression image: $error'),
+      (error, _) => mapError(error),
     );
   }
 }

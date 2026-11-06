@@ -17,17 +17,25 @@ class NotificationCubit extends SafeCubit<NotificationState> {
         super(const NotificationInitial());
 
   void initialize() {
-    _notificationRepository.initializeLocalNotifications().match(
-      (failure) => emit(NotificationError(failure.message)),
-      (_) {
-        _cancelNotificationSubscription();
-        _notificationSubscription = Some(
-          _notificationRepository.onNotificationReceived.listen(
-            (notification) {},
-          ),
-        );
-      },
-    ).run();
+    _notificationRepository
+        .initializeLocalNotifications()
+        .map((_) => _listenNotifications())
+        .match(
+          (failure) => Option.of(NotificationError(failure)),
+          (_) => const None(),
+        )
+        .map((error) => error.map(emit))
+        .run();
+  }
+
+  Unit _listenNotifications() {
+    _cancelNotificationSubscription();
+    _notificationSubscription = Some(
+      _notificationRepository.onNotificationReceived.listen(
+        (notification) {},
+      ),
+    );
+    return unit;
   }
 
   void requestPermissionAndSaveToken(String userId) {
@@ -50,7 +58,7 @@ class NotificationCubit extends SafeCubit<NotificationState> {
           });
         })
         .match(
-          (failure) => NotificationError(failure.message),
+          (failure) => NotificationError(failure),
           (state) => state,
         )
         .map(emit)
@@ -86,9 +94,10 @@ class NotificationCubit extends SafeCubit<NotificationState> {
                   _notificationRepository.deleteTokenFromUser(userId, token),
             ))
         .match(
-          (failure) => emit(NotificationError(failure.message)),
-          (_) => emit(const NotificationInitial()),
+          (failure) => NotificationError(failure),
+          (_) => const NotificationInitial(),
         )
+        .map(emit)
         .run();
   }
 

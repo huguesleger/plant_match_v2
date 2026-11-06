@@ -1,3 +1,4 @@
+import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/features/auth/domain/entities/user_auth.dart';
 
 sealed class AuthState {
@@ -36,7 +37,7 @@ class AuthFinalizing extends AuthState {
 }
 
 class AuthError extends AuthState {
-  final String message;
+  final Failure failure;
 
-  const AuthError(this.message);
+  const AuthError(this.failure);
 }

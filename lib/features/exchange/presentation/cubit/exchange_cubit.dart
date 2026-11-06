@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:plant_match_v2/core/util/safe_cubit.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:plant_match_v2/core/failures/failure.dart';
+import 'package:plant_match_v2/core/failures/failure_mapper.dart';
 import 'package:plant_match_v2/features/level/presentation/cubit/user_points_cubit.dart';
 import 'package:plant_match_v2/features/catalog/data/firebase_catalog_repository.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
@@ -41,7 +43,7 @@ class ExchangeCubit extends SafeCubit<ExchangeState> {
               },
             ),
           ),
-          onError: (_) => emit(ExchangeError('Erreur échange')),
+          onError: (Object error) => emit(ExchangeError(mapError(error))),
         ));
   }
 
@@ -62,8 +64,7 @@ class ExchangeCubit extends SafeCubit<ExchangeState> {
     _catalogRepo
         .getCatalogsByUserId(userId)
         .match(
-          (failure) =>
-              ExchangeError('Erreur lors de l\'initialisation de l\'échange'),
+          (failure) => ExchangeError(failure),
           (userPlants) {
             _userPlants = userPlants
                 .where(
@@ -95,10 +96,9 @@ class ExchangeCubit extends SafeCubit<ExchangeState> {
     _catalogRepo
         .getCatalogById(targetPlantId)
         .match(
-          (failure) =>
-              ExchangeError('Erreur lors du chargement de la plante cible'),
+          (failure) => ExchangeError(failure),
           (option) => option.match(
-            () => ExchangeError('Plante cible non trouvée'),
+            () => ExchangeError(const NotFoundFailure('Target plant not found')),
             (targetPlant) => ExchangeConfirming(
               targetPlant: targetPlant,
               offeredPlant: offeredPlant,
@@ -140,25 +140,25 @@ class ExchangeCubit extends SafeCubit<ExchangeState> {
               plantImage: exchange.offeredPlantImage,
             ))
         .match(
-          (failure) => ExchangeError(failure.message),
+          (failure) => ExchangeError(failure),
           (_) => ExchangeSuccess(),
         )
         .map(emit)
         .run();
   }
 
-  Future<Option<String>> accept(String requestId) => repository
+  Future<Option<Failure>> accept(String requestId) => repository
       .setStatus(requestId, ExchangeStatus.accepted)
-      .match<Option<String>>(
-        (failure) => Some(failure.message),
+      .match<Option<Failure>>(
+        (failure) => Some(failure),
         (_) => const None(),
       )
       .run();
 
-  Future<Option<String>> reject(String requestId) => repository
+  Future<Option<Failure>> reject(String requestId) => repository
       .setStatus(requestId, ExchangeStatus.rejected)
-      .match<Option<String>>(
-        (failure) => Some(failure.message),
+      .match<Option<Failure>>(
+        (failure) => Some(failure),
         (_) => const None(),
       )
       .run();
@@ -171,15 +171,15 @@ class ExchangeCubit extends SafeCubit<ExchangeState> {
     repository.markSeenByRequester(exchangeId).run();
   }
 
-  Future<Option<String>> generateCode(String exchangeId) => repository
+  Future<Option<Failure>> generateCode(String exchangeId) => repository
       .generateValidationCode(exchangeId)
-      .match<Option<String>>(
-        (failure) => Some(failure.message),
+      .match<Option<Failure>>(
+        (failure) => Some(failure),
         (_) => const None(),
       )
       .run();
 
-  Future<Option<String>> validateCode(
+  Future<Option<Failure>> validateCode(
     String exchangeId,
     String code,
     UserPointsCubit pointsCubit,
@@ -187,7 +187,7 @@ class ExchangeCubit extends SafeCubit<ExchangeState> {
       pointsCubit
           .track(repository.validateCode(exchangeId, code))
           .then((result) => result.match(
-                (failure) => Some(failure.message),
+                (failure) => Some(failure),
                 (_) => const None(),
               ));
 

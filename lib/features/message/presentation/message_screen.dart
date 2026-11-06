@@ -39,8 +39,8 @@ class MessagesScreen extends StatelessWidget {
           MessagesInitial() || MessagesLoading() => const Center(
               child: CircularProgressIndicator(),
             ),
-          MessagesError(:final message) => ErrorPage(
-              errorMessage: message,
+          MessagesError(:final failure) => ErrorPage(
+              failure: failure,
               onRetry: () {
                 userId.map((id) => context.read<MessagesCubit>().load(id));
               },

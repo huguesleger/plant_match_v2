@@ -41,7 +41,7 @@ class FavoriteScreen extends StatelessWidget {
           FavoriteLoading() =>
             const Center(child: CircularProgressIndicator()),
           FavoriteError s => ErrorPage(
-              errorMessage: s.message,
+              failure: s.failure,
               onRetry: () =>
                   context.read<FavoriteCubit>().loadFavorites(uid),
             ),

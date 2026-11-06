@@ -42,7 +42,7 @@ class LevelScreen extends StatelessWidget {
           UserPointsLoading() =>
             const Center(child: CircularProgressIndicator()),
           UserPointsError s => ErrorPage(
-              errorMessage: s.message,
+              failure: s.failure,
               onRetry: () =>
                   context.read<UserPointsCubit>().fetchUserPoints(userId),
             ),

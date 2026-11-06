@@ -113,7 +113,7 @@ class UserPointsCubit extends Cubit<UserPointsState> {
   }
 
   UserPointsState _fallback(Failure failure) =>
-      _known.match(() => UserPointsError(failure.message), _loaded);
+      _known.match(() => UserPointsError(failure), _loaded);
 
   UserPointsState _remember(UserPoints userPoints, UserPointsState state) {
     _known = Some(userPoints);

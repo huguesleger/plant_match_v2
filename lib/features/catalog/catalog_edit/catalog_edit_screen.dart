@@ -19,6 +19,7 @@ import 'package:plant_match_v2/features/catalog/catalog_edit/form/field/image_fi
 import 'package:plant_match_v2/features/catalog/catalog_edit/form/field/offer_type_field.dart';
 import 'package:plant_match_v2/features/catalog/catalog_edit/form/field/publish_field.dart';
 import 'package:plant_match_v2/features/catalog/catalog_edit/form/bottom_bar_action.dart';
+import 'package:plant_match_v2/core/widgets/error/error_content.dart';
 import 'package:plant_match_v2/core/widgets/error/error_page.dart';
 import 'package:plant_match_v2/features/catalog/presentation/cubit/catalog_state.dart';
 
@@ -76,9 +77,9 @@ class _CatalogEditScreenState extends State<CatalogEditScreen> {
               child: CircularProgressIndicator(),
             ),
           ),
-        CatalogError(:final message) => Scaffold(
+        CatalogError(:final failure) => Scaffold(
             body: ErrorPage(
-              errorMessage: message,
+              failure: failure,
               onRetry: () =>
                   context.read<CatalogCubit>().emitLoaded([], widget.catalog),
             ),
@@ -180,7 +181,7 @@ class _CatalogEditScreenState extends State<CatalogEditScreen> {
     if (!mounted) return;
     result.match<void>(
       (failure) => messenger.showSnackBar(SnackBar(
-          content: Text(t.catalog.edit.save_error(error: failure.message)))),
+          content: Text(failure.errorContent.message))),
       (_) => navigator.pop(true),
     );
   }

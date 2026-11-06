@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/widgets/error/error_content.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:fpdart/fpdart.dart' hide State;
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -96,7 +97,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
       SnackBar(
         content: Text(
           result.match(
-            (failure) => t.auth.emailVerification.error(error: failure.message),
+            (failure) => failure.errorContent.message,
             (_) => t.auth.emailVerification.resendEmailSent,
           ),
         ),

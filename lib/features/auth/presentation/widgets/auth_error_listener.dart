@@ -5,6 +5,7 @@ import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
 import 'package:plant_match_v2/core/widgets/dialog/app_dialog.dart';
+import 'package:plant_match_v2/core/widgets/error/error_content.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_state.dart';
 
@@ -23,9 +24,11 @@ class AuthErrorListener extends StatelessWidget {
       listenWhen: (_, current) =>
           current is AuthError && _isCurrentRoute(context),
       listener: (context, state) => switch (state) {
-        AuthError(message: final message) => showDialog<void>(
+        AuthError(:final failure) => showDialog<void>(
             context: context,
-            builder: (dialogContext) => _AuthErrorDialog(message: message),
+            builder: (dialogContext) => _AuthErrorDialog(
+              message: failure.errorContent.message,
+            ),
           ),
         AuthInitial() ||
         AuthLoading() ||

@@ -7,9 +7,57 @@
     "profile": "Mon profil"
   },
   "error": {
-    "title": "Oups ! une erreur est survenue",
     "back": "Retour",
-    "retry": "Essayer à nouveau"
+    "retry": "Essayer à nouveau",
+    "reconnect": "Se reconnecter",
+    "network": {
+      "title": "Pas de connexion",
+      "message": "Vérifiez votre connexion internet puis réessayez."
+    },
+    "server": {
+      "title": "Service momentanément indisponible",
+      "message": "Nos serveurs rencontrent un souci. Réessayez dans quelques instants."
+    },
+    "permission": {
+      "title": "Accès refusé",
+      "message": "Vous n'avez pas les droits pour accéder à ce contenu."
+    },
+    "session": {
+      "title": "Session expirée",
+      "message": "Reconnectez-vous pour continuer."
+    },
+    "notFound": {
+      "title": "Contenu introuvable",
+      "message": "Ce contenu n'existe plus ou a été supprimé."
+    },
+    "location": {
+      "title": "Localisation impossible",
+      "disabled": "La localisation est désactivée. Activez-la dans les réglages de votre téléphone.",
+      "denied": "PlantMatch n'a pas accès à votre position. Autorisez la localisation dans les réglages.",
+      "unavailable": "Impossible d'obtenir votre position pour le moment. Réessayez dans un instant."
+    },
+    "validation": {
+      "title": "Action impossible"
+    },
+    "unexpected": {
+      "title": "Oups ! une erreur est survenue",
+      "message": "Quelque chose s'est mal passé. Réessayez dans un instant."
+    },
+    "auth": {
+      "title": "Connexion impossible",
+      "invalidCredentials": "L'email ou le mot de passe est incorrect.",
+      "invalidEmail": "L'adresse email n'est pas valide.",
+      "userDisabled": "Ce compte a été désactivé.",
+      "emailAlreadyInUse": "Un compte existe déjà avec cette adresse email.",
+      "accountExistsWithDifferentCredential": "Un compte existe déjà avec cette adresse email via un autre mode de connexion.",
+      "weakPassword": "Le mot de passe est trop faible.",
+      "tooManyRequests": "Trop de tentatives. Patientez quelques minutes avant de réessayer.",
+      "cancelled": "La connexion a été annulée.",
+      "provider": "La connexion avec ce service a échoué. Réessayez.",
+      "emailAlreadyVerified": "Votre adresse email est déjà vérifiée.",
+      "emailNotVerified": "Votre adresse email n'est pas encore vérifiée.",
+      "profileMissing": "Votre profil n'est pas encore finalisé."
+    }
   },
   "common": {
     "viewMore": "En voir +",

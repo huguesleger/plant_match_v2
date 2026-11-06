@@ -1,3 +1,4 @@
+import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/features/user/domain/entities/user.dart';
 
 sealed class UserState {
@@ -19,7 +20,7 @@ class UserLoaded extends UserState {
 }
 
 class UserError extends UserState {
-  final String message;
+  final Failure failure;
 
-  const UserError(this.message);
+  const UserError(this.failure);
 }

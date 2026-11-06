@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart' hide State;
+import 'package:plant_match_v2/core/failures/failure.dart';
+import 'package:plant_match_v2/core/widgets/error/error_content.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_outlined_rounded.dart';
@@ -12,8 +14,8 @@ class ChatPlantAcceptOrRefuseBar extends StatefulWidget {
     required this.onRefuse,
   });
 
-  final Future<Option<String>> Function() onAccept;
-  final Future<Option<String>> Function() onRefuse;
+  final Future<Option<Failure>> Function() onAccept;
+  final Future<Option<Failure>> Function() onRefuse;
 
   @override
   State<ChatPlantAcceptOrRefuseBar> createState() =>
@@ -24,7 +26,7 @@ class _ChatPlantAcceptOrRefuseBarState
     extends State<ChatPlantAcceptOrRefuseBar> {
   bool _sending = false;
 
-  Future<void> _run(Future<Option<String>> Function() action) async {
+  Future<void> _run(Future<Option<Failure>> Function() action) async {
     if (_sending) return;
     final messenger = ScaffoldMessenger.of(context);
     setState(() => _sending = true);
@@ -33,8 +35,10 @@ class _ChatPlantAcceptOrRefuseBarState
     setState(() => _sending = false);
     error.match(
       () => unit,
-      (message) {
-        messenger.showSnackBar(SnackBar(content: Text(message)));
+      (failure) {
+        messenger.showSnackBar(
+          SnackBar(content: Text(failure.errorContent.message)),
+        );
         return unit;
       },
     );

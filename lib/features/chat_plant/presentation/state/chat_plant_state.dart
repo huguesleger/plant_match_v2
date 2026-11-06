@@ -1,3 +1,4 @@
+import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 
 enum BlockStatus { none, blockedByMe, blockedByOther }
@@ -23,7 +24,7 @@ class ChatPlantLoaded extends ChatPlantState {
 class ChatPlantBlocked extends ChatPlantState {}
 
 class ChatPlantError extends ChatPlantState {
-  final String message;
+  final Failure failure;
 
-  ChatPlantError(this.message);
+  ChatPlantError(this.failure);
 }

@@ -18,8 +18,8 @@ class DetailScreen extends StatelessWidget {
         ProfilInitial() || ProfilLoading() || ProfilImageUploading() =>
           DetailView(profilUser: profilUser),
         ProfilLoaded s => DetailView(profilUser: s.profilUser),
-        ProfilError s => ErrorPage(
-            errorMessage: s.message,
+        ProfilError(:final failure) => ErrorPage(
+            failure: failure,
             onRetry: () =>
                 context.read<ProfilCubit>().getProfilUser(profilUser.uid),
           ),

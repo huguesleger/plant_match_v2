@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
+import 'package:plant_match_v2/core/failures/failure_mapper.dart';
 import 'package:plant_match_v2/core/firebase/cloud_function.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/chat_plant/domain/entities/chat_plant.dart';
@@ -55,7 +56,7 @@ class FirebaseChatPlant implements ChatPlantRepository {
     return TaskEither.tryCatch(
       () async {
         if (currentUserId.isEmpty || plantOwnerId.isEmpty || plantId.isEmpty) {
-          throw Exception('Paramètres invalides pour la création du chat');
+          throw const UnexpectedFailure('Invalid chat parameters');
         }
 
         final (plantOwnerName, plantOwnerAvatar) =
@@ -97,14 +98,14 @@ class FirebaseChatPlant implements ChatPlantRepository {
         }
         return chatId;
       },
-      (error, _) => UnexpectedFailure('Erreur création chat plante: $error'),
+      (error, _) => mapError(error),
     );
   }
 
   @override
   Stream<List<types.Message>> messagesStream(String chatId) {
     if (chatId.isEmpty) {
-      throw Exception('chatId invalide');
+      throw const UnexpectedFailure('Invalid chatId');
     }
     return _messages(chatId)
         .orderBy('timestamp', descending: true)
@@ -178,12 +179,12 @@ class FirebaseChatPlant implements ChatPlantRepository {
     if (chatDoc.exists) return;
 
     final parts = chatId.split('_');
-    if (parts.length < 3) throw Exception('chatId invalide');
+    if (parts.length < 3) throw const UnexpectedFailure('Invalid chatId');
     final plantId = parts[0];
 
     final plantDoc = await _firestore.collection('catalogs').doc(plantId).get();
     final plantData = Option.fromNullable(plantDoc.data())
-        .getOrElse(() => throw Exception('Plante introuvable'));
+        .getOrElse(() => throw const NotFoundFailure('Plant not found'));
 
     final plantOwnerId = Option<dynamic>.fromNullable(plantData['userId'])
         .map((id) => id as String)
@@ -229,7 +230,7 @@ class FirebaseChatPlant implements ChatPlantRepository {
     return TaskEither.tryCatch(
       () async {
         if (chatId.isEmpty || senderId.isEmpty || receiverId.isEmpty) {
-          throw Exception('Paramètres invalides pour l’envoi du message');
+          throw const UnexpectedFailure('Invalid message parameters');
         }
 
         await _ensureChatExists(chatId, senderId, receiverId);
@@ -252,7 +253,7 @@ class FirebaseChatPlant implements ChatPlantRepository {
         });
         return unit;
       },
-      (error, _) => UnexpectedFailure('Erreur envoi message: $error'),
+      (error, _) => mapError(error),
     );
   }
 
@@ -315,14 +316,14 @@ class FirebaseChatPlant implements ChatPlantRepository {
         await _chats.doc(chatId).update({'unreadCount.$uid': 0});
         return unit;
       },
-      (error, _) => UnexpectedFailure('Erreur reset unread: $error'),
+      (error, _) => mapError(error),
     );
   }
 
   @override
   Stream<int> unreadCount(String uid) {
     if (uid.isEmpty) {
-      throw Exception('UID invalide');
+      throw const SessionExpiredFailure('Empty uid');
     }
     return _chats
         .where('participants', arrayContains: uid)
@@ -375,14 +376,14 @@ class FirebaseChatPlant implements ChatPlantRepository {
         await batch.commit();
         return unit;
       },
-      (error, _) => UnexpectedFailure('Erreur marquage lu: $error'),
+      (error, _) => mapError(error),
     );
   }
 
   @override
   TaskEither<Failure, bool> chatExists(String chatId) => TaskEither.tryCatch(
         () async => (await _chats.doc(chatId).get()).exists,
-        (error, _) => UnexpectedFailure('Erreur vérification chat: $error'),
+        (error, _) => mapError(error),
       );
 
   @override
@@ -393,7 +394,7 @@ class FirebaseChatPlant implements ChatPlantRepository {
   }) =>
       TaskEither<Failure, Unit>.tryCatch(
         () => _ensureChatExists(chatId, senderId, receiverId).then((_) => unit),
-        (error, _) => UnexpectedFailure('Erreur création conversation: $error'),
+        (error, _) => mapError(error),
       )
           .flatMap(
             (_) => CloudFunction.call('payFirstContact', {'chatId': chatId}),
@@ -409,17 +410,16 @@ class FirebaseChatPlant implements ChatPlantRepository {
     return TaskEither.tryCatch(
       () async {
         if (chatId.isEmpty) {
-          throw Exception('chatId invalide');
+          throw const UnexpectedFailure('Invalid chatId');
         }
 
         final doc = await _chats.doc(chatId).get();
         final data = Option.fromNullable(doc.data())
-            .getOrElse(() => throw Exception('Chat introuvable'));
+            .getOrElse(() => throw const NotFoundFailure('Chat not found'));
 
         return List<String>.from(data['participants']);
       },
-      (error, _) =>
-          UnexpectedFailure('Erreur récupération participants: $error'),
+      (error, _) => mapError(error),
     );
   }
 
@@ -437,7 +437,7 @@ class FirebaseChatPlant implements ChatPlantRepository {
         }, SetOptions(merge: true));
         return unit;
       },
-      (error, _) => UnexpectedFailure('Erreur soft delete chat: $error'),
+      (error, _) => mapError(error),
     );
   }
 
@@ -453,7 +453,7 @@ class FirebaseChatPlant implements ChatPlantRepository {
     return TaskEither.tryCatch(
       () async {
         if (chatId.isEmpty || senderId.isEmpty || receiverId.isEmpty) {
-          throw Exception('Paramètres invalides pour l\'envoi du message');
+          throw const UnexpectedFailure('Invalid message parameters');
         }
 
         await _ensureChatExists(chatId, senderId, receiverId);
@@ -480,7 +480,7 @@ class FirebaseChatPlant implements ChatPlantRepository {
         });
         return unit;
       },
-      (error, _) => UnexpectedFailure('Erreur envoi message échange: $error'),
+      (error, _) => mapError(error),
     );
   }
 
@@ -496,8 +496,7 @@ class FirebaseChatPlant implements ChatPlantRepository {
     return TaskEither.tryCatch(
       () async {
         if (chatId.isEmpty || senderId.isEmpty || receiverId.isEmpty) {
-          throw Exception(
-              'Paramètres invalides pour l\'envoi du message de donation');
+          throw const UnexpectedFailure('Invalid message parameters');
         }
 
         await _ensureChatExists(chatId, senderId, receiverId);
@@ -524,7 +523,7 @@ class FirebaseChatPlant implements ChatPlantRepository {
         });
         return unit;
       },
-      (error, _) => UnexpectedFailure('Erreur envoi message donation: $error'),
+      (error, _) => mapError(error),
     );
   }
 
@@ -544,7 +543,7 @@ class FirebaseChatPlant implements ChatPlantRepository {
         });
         return unit;
       },
-      (error, _) => UnexpectedFailure('Erreur signalement: $error'),
+      (error, _) => mapError(error),
     );
   }
 
@@ -565,7 +564,7 @@ class FirebaseChatPlant implements ChatPlantRepository {
         });
         return unit;
       },
-      (error, _) => UnexpectedFailure('Erreur blocage utilisateur: $error'),
+      (error, _) => mapError(error),
     );
   }
 
@@ -584,7 +583,7 @@ class FirebaseChatPlant implements ChatPlantRepository {
             .delete();
         return unit;
       },
-      (error, _) => UnexpectedFailure('Erreur déblocage utilisateur: $error'),
+      (error, _) => mapError(error),
     );
   }
 
@@ -625,11 +624,11 @@ class FirebaseChatPlant implements ChatPlantRepository {
       onListen: () => subscriptions.addAll([
         blockedBy(currentUserId, otherUserId).listen(
           (value) => onValue(0, value),
-          onError: controller.addError,
+          onError: (Object error) => controller.addError(mapError(error)),
         ),
         blockedBy(otherUserId, currentUserId).listen(
           (value) => onValue(1, value),
-          onError: controller.addError,
+          onError: (Object error) => controller.addError(mapError(error)),
         ),
       ]),
       onCancel: () => Future.wait(subscriptions.map((s) => s.cancel())),

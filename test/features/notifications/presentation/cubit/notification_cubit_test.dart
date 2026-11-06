@@ -33,7 +33,7 @@ void main() {
       },
       act: (cubit) => cubit.initialize(),
       expect: () => [
-        const NotificationError('Init error'),
+        const NotificationError(UnexpectedFailure('Init error')),
       ],
     );
 
@@ -92,12 +92,12 @@ void main() {
         when(() => mockRepository.getFCMToken())
             .thenReturn(TaskEither.right(const Some('fcm_token_123')));
         when(() => mockRepository.saveTokenToUser('user_id', 'fcm_token_123'))
-            .thenReturn(TaskEither.left(const FirebaseFailure('Save failed')));
+            .thenReturn(TaskEither.left(const ServerFailure('Save failed')));
         return cubit;
       },
       act: (cubit) => cubit.requestPermissionAndSaveToken('user_id'),
       expect: () => [
-        const NotificationError('Save failed'),
+        const NotificationError(ServerFailure('Save failed')),
       ],
     );
   });

@@ -1,3 +1,4 @@
+import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/features/history/presentation/widgets/history_item.dart';
 
 sealed class HistoryState {
@@ -23,7 +24,7 @@ class HistoryLoaded extends HistoryState {
 }
 
 class HistoryError extends HistoryState {
-  final String message;
+  final Failure failure;
 
-  const HistoryError(this.message);
+  const HistoryError(this.failure);
 }

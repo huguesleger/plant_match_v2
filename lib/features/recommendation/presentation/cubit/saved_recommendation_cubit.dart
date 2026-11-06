@@ -32,7 +32,7 @@ class SavedRecommendationCubit extends SafeCubit<SavedRecommendationState> {
                 .map((plants) => (some(answers), plants)),
           ))
       .match(
-        (failure) => SavedRecommendationError(message: failure.message),
+        (failure) => SavedRecommendationError(failure: failure),
         (tuple) => SavedRecommendationLoaded(
           answers: tuple.$1,
           suggestedPlants: tuple.$2,
@@ -49,7 +49,7 @@ class SavedRecommendationCubit extends SafeCubit<SavedRecommendationState> {
         .saveAnswers(userId, answers)
         .flatMap((_) => _repository.getRecommendedPlants(userId, answers))
         .match(
-          (failure) => SavedRecommendationError(message: failure.message),
+          (failure) => SavedRecommendationError(failure: failure),
           (plants) => SavedRecommendationLoaded(
             answers: some(answers),
             suggestedPlants: plants,

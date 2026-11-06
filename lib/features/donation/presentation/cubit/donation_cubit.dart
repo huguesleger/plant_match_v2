@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:plant_match_v2/core/util/safe_cubit.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:plant_match_v2/core/failures/failure.dart';
+import 'package:plant_match_v2/core/failures/failure_mapper.dart';
 import 'package:plant_match_v2/features/level/presentation/cubit/user_points_cubit.dart';
 import 'package:plant_match_v2/features/chat_plant/domain/repository/chat_plant_repository.dart';
 import 'package:plant_match_v2/features/donation/domain/entities/donation.dart';
@@ -35,7 +37,7 @@ class DonationCubit extends SafeCubit<DonationState> {
               },
             ),
           ),
-          onError: (_) => emit(DonationError('Erreur donation')),
+          onError: (Object error) => emit(DonationError(mapError(error))),
         ));
   }
 
@@ -58,25 +60,25 @@ class DonationCubit extends SafeCubit<DonationState> {
               plantImage: donation.plantImage,
             ))
         .match(
-          (failure) => DonationError(failure.message),
+          (failure) => DonationError(failure),
           (_) => state,
         )
-        .map((s) => emit(s))
+        .map(emit)
         .run();
   }
 
-  Future<Option<String>> accept(String donationId) => repository
+  Future<Option<Failure>> accept(String donationId) => repository
       .setStatus(donationId, DonationStatus.accepted)
-      .match<Option<String>>(
-        (failure) => Some(failure.message),
+      .match<Option<Failure>>(
+        (failure) => Some(failure),
         (_) => const None(),
       )
       .run();
 
-  Future<Option<String>> reject(String donationId) => repository
+  Future<Option<Failure>> reject(String donationId) => repository
       .setStatus(donationId, DonationStatus.rejected)
-      .match<Option<String>>(
-        (failure) => Some(failure.message),
+      .match<Option<Failure>>(
+        (failure) => Some(failure),
         (_) => const None(),
       )
       .run();
@@ -89,15 +91,15 @@ class DonationCubit extends SafeCubit<DonationState> {
     repository.markSeenByRequester(donationId).run();
   }
 
-  Future<Option<String>> generateCode(String donationId) => repository
+  Future<Option<Failure>> generateCode(String donationId) => repository
       .generateValidationCode(donationId)
-      .match<Option<String>>(
-        (failure) => Some(failure.message),
+      .match<Option<Failure>>(
+        (failure) => Some(failure),
         (_) => const None(),
       )
       .run();
 
-  Future<Option<String>> validateCode(
+  Future<Option<Failure>> validateCode(
     String donationId,
     String code,
     UserPointsCubit pointsCubit,
@@ -105,7 +107,7 @@ class DonationCubit extends SafeCubit<DonationState> {
       pointsCubit
           .track(repository.validateCode(donationId, code))
           .then((result) => result.match(
-                (failure) => Some(failure.message),
+                (failure) => Some(failure),
                 (_) => const None(),
               ));
 

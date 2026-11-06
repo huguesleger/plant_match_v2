@@ -17,20 +17,20 @@ class LocationServiceImpl implements LocationService {
         () async {
           bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
           if (!serviceEnabled) {
-            throw Exception('Service de localisation désactivé');
+            throw const LocationServiceDisabledFailure('Location service disabled');
           }
 
           LocationPermission permission = await Geolocator.checkPermission();
           if (permission == LocationPermission.denied) {
             permission = await Geolocator.requestPermission();
             if (permission == LocationPermission.denied) {
-              throw Exception('Permission de localisation refusée');
+              throw const LocationPermissionDeniedFailure('Location permission denied');
             }
           }
 
           if (permission == LocationPermission.deniedForever) {
-            throw Exception(
-                'Permission de localisation refusée définitivement');
+            throw const LocationPermissionDeniedFailure(
+                'Location permission denied forever');
           }
 
           return Geolocator.getCurrentPosition(
@@ -38,10 +38,13 @@ class LocationServiceImpl implements LocationService {
           ).catchError(
             (_) async => Option.fromNullable(
               await Geolocator.getLastKnownPosition(),
-            ).getOrElse(() => throw Exception('Délai de localisation dépassé')),
+            ).getOrElse(() => throw const LocationUnavailableFailure('Location timeout')),
           );
         },
-        (error, stackTrace) => LocationFailure(error.toString()),
+        (error, _) => switch (error) {
+          LocationFailure() => error,
+          Object() => LocationUnavailableFailure('$error'),
+        },
       );
 
   @override
@@ -53,10 +56,13 @@ class LocationServiceImpl implements LocationService {
             position.longitude,
           );
           if (placemarks.isEmpty) {
-            throw Exception('Aucune adresse trouvée');
+            throw const LocationUnavailableFailure('No placemark found');
           }
           return placemarks.first;
         },
-        (error, stackTrace) => LocationFailure(error.toString()),
+        (error, _) => switch (error) {
+          LocationFailure() => error,
+          Object() => LocationUnavailableFailure('$error'),
+        },
       );
 }

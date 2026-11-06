@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/core/widgets/error/error_content.dart';
 import 'package:fpdart/fpdart.dart' hide State;
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/favorite/data/firebase_favorites_repo.dart';
@@ -82,9 +83,24 @@ class _FavoriteBtnState extends State<FavoriteBtn>
     if (_isLoading) return;
     setState(() => _isLoading = true);
 
-    try {
-      final newValue = !_isFavorite;
-      final task = widget.catalog.match(
+    final newValue = !_isFavorite;
+    final result = await _toggleTask(uid, newValue).run();
+    if (!mounted) return;
+
+    setState(() {
+      _isLoading = false;
+      _isFavorite = result.match((_) => _isFavorite, (_) => newValue);
+    });
+    result.match(
+      (failure) => ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(failure.errorContent.message)),
+      ),
+      (_) => widget.onChanged.map((onChanged) => onChanged(newValue)),
+    );
+  }
+
+  TaskEither<Failure, Unit> _toggleTask(String uid, bool newValue) =>
+      widget.catalog.match(
         () => widget.targetUser.match(
           () => TaskEither<Failure, Unit>.right(unit),
           (user) => newValue
@@ -98,22 +114,6 @@ class _FavoriteBtnState extends State<FavoriteBtn>
               : _repo.removeFavoritePlant(uid, id),
         ),
       );
-
-      final result = await task.run();
-      result.match(
-        (failure) => throw Exception(failure.message),
-        (_) {
-          if (mounted) {
-            setState(() => _isFavorite = newValue);
-            widget.onChanged.map((onChanged) => onChanged(newValue));
-          }
-        },
-      );
-    } catch (_) {
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {

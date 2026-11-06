@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
+import 'package:plant_match_v2/core/failures/failure_mapper.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catalog/domain/repository/catalog_repository.dart';
 
@@ -28,7 +29,7 @@ class FirebaseCatalogRepository implements CatalogRepository {
           await firestore.collection('catalogs').doc(id).update(data);
           return unit;
         },
-        (error, _) => _mapErrorToFailure(error),
+        (error, _) => mapError(error),
       ),
     );
   }
@@ -47,7 +48,7 @@ class FirebaseCatalogRepository implements CatalogRepository {
             .map((doc) => Catalog.fromJson(doc.data(), doc.id))
             .toList();
       },
-      (error, _) => _mapErrorToFailure(error),
+      (error, _) => mapError(error),
     );
   }
 
@@ -60,7 +61,7 @@ class FirebaseCatalogRepository implements CatalogRepository {
         return Option.fromNullable(doc.data())
             .map((data) => Catalog.fromJson(data, doc.id));
       },
-      (error, _) => _mapErrorToFailure(error),
+      (error, _) => mapError(error),
     );
   }
 
@@ -77,7 +78,7 @@ class FirebaseCatalogRepository implements CatalogRepository {
         await docRef.set(data);
         return docRef.id;
       },
-      (error, _) => _mapErrorToFailure(error),
+      (error, _) => mapError(error),
     );
   }
 
@@ -95,7 +96,7 @@ class FirebaseCatalogRepository implements CatalogRepository {
             .docs
             .map((doc) => Catalog.fromJson(doc.data(), doc.id))
             .toList(),
-        (error, _) => _mapErrorToFailure(error),
+        (error, _) => mapError(error),
       );
 
   @override
@@ -108,7 +109,7 @@ class FirebaseCatalogRepository implements CatalogRepository {
         await firestore.collection('catalogs').doc(catalogId).delete();
         return unit;
       },
-      (error, _) => _mapErrorToFailure(error),
+      (error, _) => mapError(error),
     );
   }
 
@@ -145,15 +146,7 @@ class FirebaseCatalogRepository implements CatalogRepository {
         });
         return unit;
       },
-      (error, _) => _mapErrorToFailure(error),
+      (error, _) => mapError(error),
     );
-  }
-
-  Failure _mapErrorToFailure(Object error) {
-    if (error is Failure) return error;
-    if (error is FirebaseException) {
-      return FirebaseFailure('Erreur Firebase: ${Option.fromNullable(error.message).getOrElse(() => error.code)}');
-    }
-    return UnexpectedFailure('Erreur inattendue: $error');
   }
 }

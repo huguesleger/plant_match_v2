@@ -1,3 +1,4 @@
+import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/features/chat_plant/domain/entities/chat_plant.dart';
 
 sealed class MessagesState {
@@ -19,7 +20,7 @@ class MessagesLoaded extends MessagesState {
 }
 
 class MessagesError extends MessagesState {
-  final String message;
+  final Failure failure;
 
-  const MessagesError(this.message);
+  const MessagesError(this.failure);
 }

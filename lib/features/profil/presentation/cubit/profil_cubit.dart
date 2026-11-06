@@ -27,9 +27,9 @@ class ProfilCubit extends Cubit<ProfilState> {
     profilRepository
         .getProfilUser(uid)
         .match(
-          (failure) => ProfilError(failure.message),
+          (failure) => ProfilError(failure),
           (option) => option.match(
-            () => ProfilError('Profil introuvable'),
+            () => ProfilError(const NotFoundFailure('Profil not found')),
             (user) => ProfilLoaded(user),
           ),
         )
@@ -66,11 +66,11 @@ class ProfilCubit extends Cubit<ProfilState> {
             .flatMap((_) => profilRepository.getProfilUser(uid))
             .flatMap((option) => option.match(
                   () =>
-                      TaskEither.left(const AuthFailure('Profil introuvable')),
+                      TaskEither.left(const NotFoundFailure('Profil not found')),
                   (user) => TaskEither.right(user),
                 )))
         .match(
-          (failure) => ProfilError(failure.message),
+          (failure) => ProfilError(failure),
           (user) => ProfilLoaded(user),
         )
         .map(emit)
@@ -80,7 +80,9 @@ class ProfilCubit extends Cubit<ProfilState> {
   void deleteImageProfile(String imageUrl) {
     final currentState = state;
     if (currentState is! ProfilLoaded) {
-      emit(ProfilError('Impossible de supprimer l\'image, profil non chargé.'));
+      emit(ProfilError(
+        const UnexpectedFailure('Delete image while profil not loaded'),
+      ));
       return;
     }
 
@@ -100,7 +102,7 @@ class ProfilCubit extends Cubit<ProfilState> {
               .map((_) => updatedProfilUser);
         })
         .match(
-          (failure) => ProfilError(failure.message),
+          (failure) => ProfilError(failure),
           (updatedUser) => ProfilLoaded(updatedUser),
         )
         .map(emit)
@@ -124,7 +126,7 @@ class ProfilCubit extends Cubit<ProfilState> {
         .flatMap(
             (gained) => _loadUser(profilUser.uid).map((user) => (user, gained)))
         .match(
-          (failure) => ProfilError(failure.message),
+          (failure) => ProfilError(failure),
           (result) => ProfilLoaded(
             result.$1,
             leavesGained: result.$2,
@@ -154,7 +156,7 @@ class ProfilCubit extends Cubit<ProfilState> {
 
   TaskEither<Failure, ProfilUser> _loadUser(String uid) =>
       profilRepository.getProfilUser(uid).flatMap((option) => option.match(
-            () => TaskEither.left(const AuthFailure('Profil introuvable')),
+            () => TaskEither.left(const NotFoundFailure('Profil not found')),
             TaskEither.right,
           ));
 
@@ -167,7 +169,7 @@ class ProfilCubit extends Cubit<ProfilState> {
     profilRepository
         .getProfilUser(uid)
         .flatMap((option) => option.match(
-              () => TaskEither.left(const AuthFailure('Profil introuvable')),
+              () => TaskEither.left(const NotFoundFailure('Profil not found')),
               (currentUser) {
                 Option<T> cleared<T>(String field, T empty) =>
                     fieldName == field ? Some(empty) : const None();
@@ -188,7 +190,7 @@ class ProfilCubit extends Cubit<ProfilState> {
               },
             ))
         .match(
-          (failure) => ProfilError(failure.message),
+          (failure) => ProfilError(failure),
           (updatedUser) => ProfilLoaded(updatedUser),
         )
         .map(emit)
@@ -201,7 +203,7 @@ class ProfilCubit extends Cubit<ProfilState> {
     profilRepository
         .getProfilUser(uid)
         .flatMap((option) => option.match(
-              () => TaskEither.left(const AuthFailure('Profil introuvable')),
+              () => TaskEither.left(const NotFoundFailure('Profil not found')),
               (currentUser) {
                 final updatedProfilUser = currentUser.copyWith(
                   newLocalisation: const Some(''),
@@ -217,7 +219,7 @@ class ProfilCubit extends Cubit<ProfilState> {
               },
             ))
         .match(
-          (failure) => ProfilError(failure.message),
+          (failure) => ProfilError(failure),
           (updatedUser) => ProfilLoaded(updatedUser),
         )
         .map(emit)
@@ -239,7 +241,7 @@ class ProfilCubit extends Cubit<ProfilState> {
           final placemark = data.$2;
           return profilRepository.getProfilUser(uid).flatMap((option) =>
               option.match(
-                () => TaskEither.left(const AuthFailure('Profil introuvable')),
+                () => TaskEither.left(const NotFoundFailure('Profil not found')),
                 (user) {
                   final updatedUser = user.copyWith(
                     newLocalisation: Some(placemark
@@ -261,7 +263,7 @@ class ProfilCubit extends Cubit<ProfilState> {
               ));
         })
         .match(
-          (failure) => ProfilError(failure.message),
+          (failure) => ProfilError(failure),
           (user) => ProfilLoaded(user),
         )
         .map(emit)
@@ -273,7 +275,7 @@ class ProfilCubit extends Cubit<ProfilState> {
   void refreshLeaves(String uid) {
     _loadUser(uid)
         .match(
-          (failure) => ProfilError(failure.message),
+          (failure) => ProfilError(failure),
           (user) => ProfilLoaded(user),
         )
         .map(emit)

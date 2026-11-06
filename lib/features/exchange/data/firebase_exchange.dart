@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
+import 'package:plant_match_v2/core/failures/failure_mapper.dart';
 import 'package:plant_match_v2/core/firebase/cloud_function.dart';
 import 'package:plant_match_v2/features/level/domain/entities/points_update.dart';
 import 'package:plant_match_v2/features/exchange/domain/entities/exchange.dart';
@@ -42,7 +43,7 @@ class FirebaseExchange implements ExchangeRepository {
         });
         return unit;
       },
-      (error, _) => UnexpectedFailure('Erreur création échange: $error'),
+      (error, _) => mapError(error),
     );
   }
 
@@ -56,7 +57,7 @@ class FirebaseExchange implements ExchangeRepository {
         });
         return unit;
       },
-      (error, _) => UnexpectedFailure('Erreur statut échange: $error'),
+      (error, _) => mapError(error),
     );
   }
 
@@ -110,7 +111,7 @@ class FirebaseExchange implements ExchangeRepository {
             .update({'seenByOwner': true});
         return unit;
       },
-      (error, _) => UnexpectedFailure('Erreur marquage vu (owner): $error'),
+      (error, _) => mapError(error),
     );
   }
 
@@ -124,7 +125,7 @@ class FirebaseExchange implements ExchangeRepository {
             .update({'seenByRequester': true});
         return unit;
       },
-      (error, _) => UnexpectedFailure('Erreur marquage vu (requester): $error'),
+      (error, _) => mapError(error),
     );
   }
 
@@ -197,8 +198,7 @@ class FirebaseExchange implements ExchangeRepository {
 
         return uniqueExchanges;
       },
-      (error, _) => UnexpectedFailure(
-          'Erreur lors de la récupération des échanges : $error'),
+      (error, _) => mapError(error),
     );
   }
 }

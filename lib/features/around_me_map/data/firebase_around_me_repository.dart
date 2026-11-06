@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/util/distance/distance_helper.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
+import 'package:plant_match_v2/core/failures/failure_mapper.dart';
 import 'package:plant_match_v2/features/around_me_map/domain/repository/around_me_repository.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 
@@ -32,7 +33,7 @@ class FirebaseAroundMeRepository implements AroundMeRepository {
               .map((doc) => ProfilUser.fromJson({...doc.data(), 'uid': doc.id}))
               .toList();
         },
-        (error, _) => _mapErrorToFailure(error),
+        (error, _) => mapError(error),
       );
 
   @override
@@ -48,15 +49,8 @@ class FirebaseAroundMeRepository implements AroundMeRepository {
         });
         return unit;
       },
-      (error, _) => _mapErrorToFailure(error),
+      (error, _) => mapError(error),
     );
   }
 
-  Failure _mapErrorToFailure(Object error) {
-    if (error is Failure) return error;
-    if (error is FirebaseException) {
-      return FirebaseFailure('Erreur Firebase: ${Option.fromNullable(error.message).getOrElse(() => error.code)}');
-    }
-    return UnexpectedFailure('Erreur inattendue: $error');
-  }
 }

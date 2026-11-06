@@ -4,6 +4,7 @@ import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_template.dart';
+import 'package:plant_match_v2/core/widgets/error/error_content.dart';
 import 'package:plant_match_v2/core/widgets/filter/filter_bar.dart';
 import 'package:plant_match_v2/core/widgets/refresh/refresh_fill_view.dart';
 import 'package:plant_match_v2/core/widgets/refresh/refresh_screen.dart';
@@ -62,7 +63,7 @@ class HistoryScreen extends StatelessWidget {
                   const Center(child: CircularProgressIndicator()),
                 HistoryError s => Center(
                     child: Text(
-                      t.history.screen.error(message: s.message),
+                      s.failure.errorContent.message,
                       style: const TextStyle(color: Colors.red),
                     ),
                   ),

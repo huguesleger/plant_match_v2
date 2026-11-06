@@ -36,11 +36,11 @@ class HomeScreen extends StatelessWidget {
                   child: Center(child: CircularProgressIndicator()),
                 ),
               ),
-            AroundMeError(:final message) => Scaffold(
+            AroundMeError(:final failure) => Scaffold(
                 backgroundColor: AppColors.white,
                 body: SafeArea(
                   child: ErrorPage(
-                    errorMessage: message,
+                    failure: failure,
                     onRetry: () =>
                         context.read<AroundMeCubit>().getAllUserProfiles(uid),
                   ),

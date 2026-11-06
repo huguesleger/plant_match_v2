@@ -1,12 +1,10 @@
 {
   "screen": {
-    "error_loading": "Erreur lors du chargement du chat",
     "plant_unavailable": "Cette plante n'est plus disponible."
   },
   "view": {
     "empty_messages": "Aucun message pour le moment.\nDémarrez la conversation.",
     "blocked_user_banner": "Vous avez bloqué cet utilisateur",
-    "send_error": "Message non envoyé : $error",
     "blocked_by_other_banner": "Vous ne pouvez plus écrire à cet utilisateur",
     "unblock_btn": "Débloquer",
     "unblock_dialog": {

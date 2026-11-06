@@ -18,9 +18,9 @@ class CatalogScreen extends StatelessWidget {
               child: CircularProgressIndicator(),
             ),
           ),
-        CatalogError(:final message) => Scaffold(
+        CatalogError(:final failure) => Scaffold(
             body: ErrorPage(
-              errorMessage: message,
+              failure: failure,
               onRetry: () {
                 context.read<AuthCubit>().userId.map(
                     context.read<CatalogCubit>().getCatalogsByUserId);

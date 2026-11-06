@@ -1,6 +1,7 @@
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
+import 'package:plant_match_v2/core/failures/failure_mapper.dart';
 
 class CloudFunction {
   static const String region = 'europe-west1';
@@ -17,10 +18,14 @@ class CloudFunction {
               .data as Map,
         ),
         (error, _) => switch (error) {
-          FirebaseFunctionsException(:final message) => ValidationFailure(
+          FirebaseFunctionsException(
+            code: 'failed-precondition',
+            :final message,
+          ) =>
+            ValidationFailure(
               Option.fromNullable(message).getOrElse(() => 'Erreur serveur'),
             ),
-          Object() => UnexpectedFailure('Erreur serveur: $error'),
+          Object() => mapError(error),
         },
       );
 }

@@ -12,7 +12,7 @@ import 'package:plant_match_v2/features/level/presentation/cubit/user_points_sta
 class _FakeRepository implements UserPointsRepository {
   final controller = StreamController<Either<Failure, UserPoints>>.broadcast();
   Either<Failure, PointsUpdate> nextUpdate =
-      const Left(FirebaseFailure('offline'));
+      const Left(NetworkFailure('offline'));
   final updateGate = Completer<Unit>();
 
   @override

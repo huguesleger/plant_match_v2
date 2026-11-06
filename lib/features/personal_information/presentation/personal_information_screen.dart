@@ -28,7 +28,7 @@ class PersonalInformationScreen extends StatelessWidget {
       builder: (context, state) {
         if (state is ProfilError) {
           return ErrorPage(
-            errorMessage: state.message,
+            failure: state.failure,
             onRetry: () => context.read<ProfilCubit>().getProfilUser(userId),
           );
         }

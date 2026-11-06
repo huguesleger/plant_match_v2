@@ -45,10 +45,10 @@ class ExchangeScreen extends StatelessWidget {
               t.exchange.screen.success_title,
               Center(child: Text(t.exchange.screen.success_message)),
             ),
-          ExchangeError(:final message) => (
+          ExchangeError(:final failure) => (
               t.exchange.screen.error_title,
               ErrorPage(
-                errorMessage: message,
+                failure: failure,
                 onRetry: () => context.read<ExchangeCubit>().initExchange(
                       userId: userId,
                       targetPlantId: targetPlantId,

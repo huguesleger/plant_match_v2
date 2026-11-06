@@ -72,7 +72,7 @@ class UserCubit extends SafeCubit<UserState> {
           selectedFilter: CatalogFilter.all,
         );
       }).match(
-        (failure) => UserError(failure.message),
+        (failure) => UserError(failure),
         (userData) => UserLoaded(data: userData),
       );
 

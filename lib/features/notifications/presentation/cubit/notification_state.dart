@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:plant_match_v2/core/failures/failure.dart';
 
 sealed class NotificationState extends Equatable {
   const NotificationState();
@@ -25,10 +26,10 @@ class NotificationPermissionDenied extends NotificationState {
 }
 
 class NotificationError extends NotificationState {
-  final String message;
+  final Failure failure;
 
-  const NotificationError(this.message);
+  const NotificationError(this.failure);
 
   @override
-  List<Object> get props => [message];
+  List<Object> get props => [failure];
 }

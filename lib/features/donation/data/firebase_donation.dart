@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
+import 'package:plant_match_v2/core/failures/failure_mapper.dart';
 import 'package:plant_match_v2/core/firebase/cloud_function.dart';
 import 'package:plant_match_v2/features/level/domain/entities/points_update.dart';
 import 'package:plant_match_v2/features/donation/domain/entities/donation.dart';
@@ -42,7 +43,7 @@ class FirebaseDonation implements DonationRepository {
         await _col.add(data);
         return unit;
       },
-      (error, _) => UnexpectedFailure('Erreur création donation: $error'),
+      (error, _) => mapError(error),
     );
   }
 
@@ -57,7 +58,7 @@ class FirebaseDonation implements DonationRepository {
         });
         return unit;
       },
-      (error, _) => UnexpectedFailure('Erreur statut donation: $error'),
+      (error, _) => mapError(error),
     );
   }
 
@@ -68,7 +69,7 @@ class FirebaseDonation implements DonationRepository {
         await _col.doc(donationId).update({'seenByOwner': true});
         return unit;
       },
-      (error, _) => UnexpectedFailure('Erreur marquage vu (owner): $error'),
+      (error, _) => mapError(error),
     );
   }
 
@@ -79,7 +80,7 @@ class FirebaseDonation implements DonationRepository {
         await _col.doc(donationId).update({'seenByRequester': true});
         return unit;
       },
-      (error, _) => UnexpectedFailure('Erreur marquage vu (requester): $error'),
+      (error, _) => mapError(error),
     );
   }
 
@@ -144,8 +145,7 @@ class FirebaseDonation implements DonationRepository {
 
         return uniqueDonations;
       },
-      (error, _) => UnexpectedFailure(
-          'Erreur lors de la récupération des donations : $error'),
+      (error, _) => mapError(error),
     );
   }
 

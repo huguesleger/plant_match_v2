@@ -80,7 +80,6 @@
     "description": "Un e-mail a été envoyé à votre adresse :\n",
     "instruction": "\nCliquez sur le lien pour vérifier votre e-mail avant de continuer.",
     "resendEmailSent": "Un nouvel e-mail de vérification a été envoyé.",
-    "error": "Erreur : ${error}",
     "finalizing": "Finalisation de votre inscription...",
     "resendBtn": "Renvoyer l'e-mail",
     "retryLabel": "Réessayez dans ${count} s"

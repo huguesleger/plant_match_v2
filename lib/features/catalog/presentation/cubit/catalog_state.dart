@@ -1,3 +1,4 @@
+import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catalog/presentation/widgets/catalog_sort_option.dart';
 
@@ -26,7 +27,7 @@ class CatalogLoaded extends CatalogState {
 }
 
 class CatalogError extends CatalogState {
-  final String message;
+  final Failure failure;
 
-  const CatalogError(this.message);
+  const CatalogError(this.failure);
 }

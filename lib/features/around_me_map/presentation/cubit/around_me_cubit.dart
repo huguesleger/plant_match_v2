@@ -1,6 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/features/around_me_map/domain/repository/around_me_repository.dart';
@@ -30,7 +29,7 @@ class AroundMeCubit extends Cubit<AroundMeState> {
   void getAllUserProfiles(String uid) {
     emit(const AroundMeLoading());
     _loadAll(uid)
-        .match((failure) => AroundMeError(failure.message), (state) => state)
+        .match((failure) => AroundMeError(failure), (state) => state)
         .map(emit)
         .run();
   }
@@ -42,7 +41,7 @@ class AroundMeCubit extends Cubit<AroundMeState> {
           AroundMeInitial() ||
           AroundMeLoading() ||
           AroundMeError() =>
-            AroundMeError(failure.message),
+            AroundMeError(failure),
         },
         (loaded) => loaded,
       )
@@ -54,7 +53,7 @@ class AroundMeCubit extends Cubit<AroundMeState> {
       .flatMap(
         (option) => option.match(
           () => TaskEither<Failure, ProfilUser>.left(
-            const AuthFailure('Utilisateur introuvable'),
+            const SessionExpiredFailure('No current user'),
           ),
           TaskEither.right,
         ),
@@ -86,9 +85,6 @@ class AroundMeCubit extends Cubit<AroundMeState> {
               .alt(() => TaskEither.right(const None()))
               .map((placemark) => (position, placemark)),
         )
-        .mapLeft<Failure>(
-          (_) => LocationFailure(t.aroundMeMap.empty.location_error),
-        )
         .flatMap((data) {
           final (position, placemark) = data;
           final updatedUser = user.copyWith(
@@ -113,12 +109,12 @@ class AroundMeCubit extends Cubit<AroundMeState> {
           (failure) => switch (previous) {
             AroundMeLoaded() => previous.copyWith(
                 locating: const Some(false),
-                locationError: Some(Some(failure.message)),
+                locationError: Some(Some(failure)),
               ),
             AroundMeInitial() ||
             AroundMeLoading() ||
             AroundMeError() =>
-              AroundMeError(failure.message),
+              AroundMeError(failure),
           },
           (state) => state,
         )

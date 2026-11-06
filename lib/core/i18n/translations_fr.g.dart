@@ -341,9 +341,6 @@ class TranslationsAroundMeMapEmptyFr {
 
 	/// fr: 'Me géolocaliser'
 	String get button => 'Me géolocaliser';
-
-	/// fr: 'Impossible d'obtenir ta position. Vérifie que la localisation est activée puis réessaie.'
-	String get location_error => 'Impossible d\'obtenir ta position. Vérifie que la localisation est activée puis réessaie.';
 }
 
 // Path: aroundMeMap.bottomSheet
@@ -573,9 +570,6 @@ class TranslationsAuthEmailVerificationFr {
 	/// fr: 'Un nouvel e-mail de vérification a été envoyé.'
 	String get resendEmailSent => 'Un nouvel e-mail de vérification a été envoyé.';
 
-	/// fr: 'Erreur : ${error}'
-	String error({required Object error}) => 'Erreur : ${error}';
-
 	/// fr: 'Finalisation de votre inscription...'
 	String get finalizing => 'Finalisation de votre inscription...';
 
@@ -755,9 +749,6 @@ class TranslationsCatalogEditFr {
 	/// fr: 'Erreur upload: ${error}'
 	String upload_error({required Object error}) => 'Erreur upload: ${error}';
 
-	/// fr: 'Erreur lors de l'enregistrement : ${error}'
-	String save_error({required Object error}) => 'Erreur lors de l\'enregistrement : ${error}';
-
 	late final TranslationsCatalogEditNameFr name = TranslationsCatalogEditNameFr.internal(_root);
 	late final TranslationsCatalogEditDescriptionFr description = TranslationsCatalogEditDescriptionFr.internal(_root);
 	late final TranslationsCatalogEditFamilyFr family = TranslationsCatalogEditFamilyFr.internal(_root);
@@ -787,9 +778,6 @@ class TranslationsCatalogWizardFr {
 	/// fr: 'Création...'
 	String get loading => 'Création...';
 
-	/// fr: 'La connexion est trop lente ou coupée. Vérifie ton réseau et réessaie.'
-	String get timeout => 'La connexion est trop lente ou coupée. Vérifie ton réseau et réessaie.';
-
 	/// fr: 'Erreur lors de la sélection d’image.'
 	String get error_image => 'Erreur lors de la sélection d’image.';
 
@@ -810,9 +798,6 @@ class TranslationsCatalogWizardFr {
 
 	/// fr: 'Suivant'
 	String get next => 'Suivant';
-
-	/// fr: 'Erreur: ${error}'
-	String error_generic({required Object error}) => 'Erreur: ${error}';
 
 	late final TranslationsCatalogWizardQuitDialogFr quit_dialog = TranslationsCatalogWizardQuitDialogFr.internal(_root);
 	late final TranslationsCatalogWizardStepsFr steps = TranslationsCatalogWizardStepsFr.internal(_root);
@@ -900,9 +885,6 @@ class TranslationsChatPlantScreenFr {
 
 	// Translations
 
-	/// fr: 'Erreur lors du chargement du chat'
-	String get error_loading => 'Erreur lors du chargement du chat';
-
 	/// fr: 'Cette plante n'est plus disponible.'
 	String get plant_unavailable => 'Cette plante n\'est plus disponible.';
 }
@@ -920,9 +902,6 @@ class TranslationsChatPlantViewFr {
 
 	/// fr: 'Vous avez bloqué cet utilisateur'
 	String get blocked_user_banner => 'Vous avez bloqué cet utilisateur';
-
-	/// fr: 'Message non envoyé : $error'
-	String send_error({required Object error}) => 'Message non envoyé : ${error}';
 
 	/// fr: 'Vous ne pouvez plus écrire à cet utilisateur'
 	String get blocked_by_other_banner => 'Vous ne pouvez plus écrire à cet utilisateur';
@@ -1194,9 +1173,6 @@ class TranslationsHistoryScreenFr {
 
 	/// fr: 'Historique'
 	String get title => 'Historique';
-
-	/// fr: 'Erreur : $message'
-	String error({required Object message}) => 'Erreur : ${message}';
 }
 
 // Path: history.empty
@@ -1774,9 +1750,6 @@ class TranslationsUserDetailPlantFr {
 
 	late final TranslationsUserDetailPlantNoLeavesFr no_leaves = TranslationsUserDetailPlantNoLeavesFr.internal(_root);
 	late final TranslationsUserDetailPlantShareFr share = TranslationsUserDetailPlantShareFr.internal(_root);
-
-	/// fr: 'Impossible d'afficher cette plante. Elle a peut-être été retirée, ou la connexion est indisponible.'
-	String get load_error => 'Impossible d\'afficher cette plante. Elle a peut-être été retirée, ou la connexion est indisponible.';
 }
 
 // Path: user.filters
@@ -1835,14 +1808,24 @@ class TranslationsWidgetsErrorFr {
 
 	// Translations
 
-	/// fr: 'Oups ! une erreur est survenue'
-	String get title => 'Oups ! une erreur est survenue';
-
 	/// fr: 'Retour'
 	String get back => 'Retour';
 
 	/// fr: 'Essayer à nouveau'
 	String get retry => 'Essayer à nouveau';
+
+	/// fr: 'Se reconnecter'
+	String get reconnect => 'Se reconnecter';
+
+	late final TranslationsWidgetsErrorNetworkFr network = TranslationsWidgetsErrorNetworkFr.internal(_root);
+	late final TranslationsWidgetsErrorServerFr server = TranslationsWidgetsErrorServerFr.internal(_root);
+	late final TranslationsWidgetsErrorPermissionFr permission = TranslationsWidgetsErrorPermissionFr.internal(_root);
+	late final TranslationsWidgetsErrorSessionFr session = TranslationsWidgetsErrorSessionFr.internal(_root);
+	late final TranslationsWidgetsErrorNotFoundFr notFound = TranslationsWidgetsErrorNotFoundFr.internal(_root);
+	late final TranslationsWidgetsErrorLocationFr location = TranslationsWidgetsErrorLocationFr.internal(_root);
+	late final TranslationsWidgetsErrorValidationFr validation = TranslationsWidgetsErrorValidationFr.internal(_root);
+	late final TranslationsWidgetsErrorUnexpectedFr unexpected = TranslationsWidgetsErrorUnexpectedFr.internal(_root);
+	late final TranslationsWidgetsErrorAuthFr auth = TranslationsWidgetsErrorAuthFr.internal(_root);
 }
 
 // Path: widgets.common
@@ -2981,6 +2964,177 @@ class TranslationsUserDetailPlantShareFr {
 	String text({required Object type, required Object name, required Object description}) => 'Regarde cette plante sur PlantMatch !\n\nJe ${type} une magnifique *${name}*.\n"${description}"\n\nTélécharge l\'application PlantMatch pour l\'adopter ou l\'échanger autour de toi ! 🌿';
 }
 
+// Path: widgets.error.network
+class TranslationsWidgetsErrorNetworkFr {
+	TranslationsWidgetsErrorNetworkFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Pas de connexion'
+	String get title => 'Pas de connexion';
+
+	/// fr: 'Vérifiez votre connexion internet puis réessayez.'
+	String get message => 'Vérifiez votre connexion internet puis réessayez.';
+}
+
+// Path: widgets.error.server
+class TranslationsWidgetsErrorServerFr {
+	TranslationsWidgetsErrorServerFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Service momentanément indisponible'
+	String get title => 'Service momentanément indisponible';
+
+	/// fr: 'Nos serveurs rencontrent un souci. Réessayez dans quelques instants.'
+	String get message => 'Nos serveurs rencontrent un souci. Réessayez dans quelques instants.';
+}
+
+// Path: widgets.error.permission
+class TranslationsWidgetsErrorPermissionFr {
+	TranslationsWidgetsErrorPermissionFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Accès refusé'
+	String get title => 'Accès refusé';
+
+	/// fr: 'Vous n'avez pas les droits pour accéder à ce contenu.'
+	String get message => 'Vous n\'avez pas les droits pour accéder à ce contenu.';
+}
+
+// Path: widgets.error.session
+class TranslationsWidgetsErrorSessionFr {
+	TranslationsWidgetsErrorSessionFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Session expirée'
+	String get title => 'Session expirée';
+
+	/// fr: 'Reconnectez-vous pour continuer.'
+	String get message => 'Reconnectez-vous pour continuer.';
+}
+
+// Path: widgets.error.notFound
+class TranslationsWidgetsErrorNotFoundFr {
+	TranslationsWidgetsErrorNotFoundFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Contenu introuvable'
+	String get title => 'Contenu introuvable';
+
+	/// fr: 'Ce contenu n'existe plus ou a été supprimé.'
+	String get message => 'Ce contenu n\'existe plus ou a été supprimé.';
+}
+
+// Path: widgets.error.location
+class TranslationsWidgetsErrorLocationFr {
+	TranslationsWidgetsErrorLocationFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Localisation impossible'
+	String get title => 'Localisation impossible';
+
+	/// fr: 'La localisation est désactivée. Activez-la dans les réglages de votre téléphone.'
+	String get disabled => 'La localisation est désactivée. Activez-la dans les réglages de votre téléphone.';
+
+	/// fr: 'PlantMatch n'a pas accès à votre position. Autorisez la localisation dans les réglages.'
+	String get denied => 'PlantMatch n\'a pas accès à votre position. Autorisez la localisation dans les réglages.';
+
+	/// fr: 'Impossible d'obtenir votre position pour le moment. Réessayez dans un instant.'
+	String get unavailable => 'Impossible d\'obtenir votre position pour le moment. Réessayez dans un instant.';
+}
+
+// Path: widgets.error.validation
+class TranslationsWidgetsErrorValidationFr {
+	TranslationsWidgetsErrorValidationFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Action impossible'
+	String get title => 'Action impossible';
+}
+
+// Path: widgets.error.unexpected
+class TranslationsWidgetsErrorUnexpectedFr {
+	TranslationsWidgetsErrorUnexpectedFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Oups ! une erreur est survenue'
+	String get title => 'Oups ! une erreur est survenue';
+
+	/// fr: 'Quelque chose s'est mal passé. Réessayez dans un instant.'
+	String get message => 'Quelque chose s\'est mal passé. Réessayez dans un instant.';
+}
+
+// Path: widgets.error.auth
+class TranslationsWidgetsErrorAuthFr {
+	TranslationsWidgetsErrorAuthFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Connexion impossible'
+	String get title => 'Connexion impossible';
+
+	/// fr: 'L'email ou le mot de passe est incorrect.'
+	String get invalidCredentials => 'L\'email ou le mot de passe est incorrect.';
+
+	/// fr: 'L'adresse email n'est pas valide.'
+	String get invalidEmail => 'L\'adresse email n\'est pas valide.';
+
+	/// fr: 'Ce compte a été désactivé.'
+	String get userDisabled => 'Ce compte a été désactivé.';
+
+	/// fr: 'Un compte existe déjà avec cette adresse email.'
+	String get emailAlreadyInUse => 'Un compte existe déjà avec cette adresse email.';
+
+	/// fr: 'Un compte existe déjà avec cette adresse email via un autre mode de connexion.'
+	String get accountExistsWithDifferentCredential => 'Un compte existe déjà avec cette adresse email via un autre mode de connexion.';
+
+	/// fr: 'Le mot de passe est trop faible.'
+	String get weakPassword => 'Le mot de passe est trop faible.';
+
+	/// fr: 'Trop de tentatives. Patientez quelques minutes avant de réessayer.'
+	String get tooManyRequests => 'Trop de tentatives. Patientez quelques minutes avant de réessayer.';
+
+	/// fr: 'La connexion a été annulée.'
+	String get cancelled => 'La connexion a été annulée.';
+
+	/// fr: 'La connexion avec ce service a échoué. Réessayez.'
+	String get provider => 'La connexion avec ce service a échoué. Réessayez.';
+
+	/// fr: 'Votre adresse email est déjà vérifiée.'
+	String get emailAlreadyVerified => 'Votre adresse email est déjà vérifiée.';
+
+	/// fr: 'Votre adresse email n'est pas encore vérifiée.'
+	String get emailNotVerified => 'Votre adresse email n\'est pas encore vérifiée.';
+
+	/// fr: 'Votre profil n'est pas encore finalisé.'
+	String get profileMissing => 'Votre profil n\'est pas encore finalisé.';
+}
+
 // Path: widgets.date.days
 class TranslationsWidgetsDateDaysFr {
 	TranslationsWidgetsDateDaysFr.internal(this._root);
@@ -3318,7 +3472,6 @@ extension on Translations {
 			'aroundMeMap.empty.title' => 'Oups ! vous n\'êtes pas localisé',
 			'aroundMeMap.empty.description' => 'Veuillez activer votre localisation pour voir les utilisateurs autour de vous',
 			'aroundMeMap.empty.button' => 'Me géolocaliser',
-			'aroundMeMap.empty.location_error' => 'Impossible d\'obtenir ta position. Vérifie que la localisation est activée puis réessaie.',
 			'aroundMeMap.bottomSheet.title' => 'Plantes & Boutures',
 			'aroundMeMap.bottomSheet.description' => 'Mon catalogue de ce que j’ai à partager',
 			'aroundMeMap.bottomSheet.viewProfile' => 'Voir le profil',
@@ -3391,7 +3544,6 @@ extension on Translations {
 			'auth.emailVerification.description' => 'Un e-mail a été envoyé à votre adresse :\n',
 			'auth.emailVerification.instruction' => '\nCliquez sur le lien pour vérifier votre e-mail avant de continuer.',
 			'auth.emailVerification.resendEmailSent' => 'Un nouvel e-mail de vérification a été envoyé.',
-			'auth.emailVerification.error' => ({required Object error}) => 'Erreur : ${error}',
 			'auth.emailVerification.finalizing' => 'Finalisation de votre inscription...',
 			'auth.emailVerification.resendBtn' => 'Renvoyer l\'e-mail',
 			'auth.emailVerification.retryLabel' => ({required Object count}) => 'Réessayez dans ${count} s',
@@ -3430,7 +3582,6 @@ extension on Translations {
 			'catalog.edit.modifier_with_name' => ({required Object name}) => 'Modifier ${name}',
 			'catalog.edit.save' => 'Enregistrer les modifications',
 			'catalog.edit.upload_error' => ({required Object error}) => 'Erreur upload: ${error}',
-			'catalog.edit.save_error' => ({required Object error}) => 'Erreur lors de l\'enregistrement : ${error}',
 			'catalog.edit.name.hint' => 'Nom de la plante',
 			'catalog.edit.name.label' => 'Nom',
 			'catalog.edit.description.title' => 'Ajouter une brève description',
@@ -3450,7 +3601,6 @@ extension on Translations {
 			'catalog.edit.image.title' => 'Sélectionner une à trois photos de votre plante',
 			'catalog.wizard.title' => 'Ajouter une plante',
 			'catalog.wizard.loading' => 'Création...',
-			'catalog.wizard.timeout' => 'La connexion est trop lente ou coupée. Vérifie ton réseau et réessaie.',
 			'catalog.wizard.error_image' => 'Erreur lors de la sélection d’image.',
 			'catalog.wizard.select_images' => 'Sélectionner des images',
 			'catalog.wizard.image_count' => ({required Object index}) => 'Image ${index}',
@@ -3458,7 +3608,6 @@ extension on Translations {
 			'catalog.wizard.publish_label' => 'Publier la plante',
 			'catalog.wizard.finish' => 'Terminer',
 			'catalog.wizard.next' => 'Suivant',
-			'catalog.wizard.error_generic' => ({required Object error}) => 'Erreur: ${error}',
 			'catalog.wizard.quit_dialog.title' => 'Quitter sans enregistrer ?',
 			'catalog.wizard.quit_dialog.content' => 'Les informations saisies seront perdues.',
 			'catalog.wizard.quit_dialog.cancel' => 'Annuler',
@@ -3528,11 +3677,9 @@ extension on Translations {
 			'catalog.sort.nameAsc' => 'Nom de la plante : A à Z',
 			'catalog.sort.nameDesc' => 'Nom de la plante : Z à A',
 			'catalog.sort.btn' => 'Appliquer',
-			'chatPlant.screen.error_loading' => 'Erreur lors du chargement du chat',
 			'chatPlant.screen.plant_unavailable' => 'Cette plante n\'est plus disponible.',
 			'chatPlant.view.empty_messages' => 'Aucun message pour le moment.\nDémarrez la conversation.',
 			'chatPlant.view.blocked_user_banner' => 'Vous avez bloqué cet utilisateur',
-			'chatPlant.view.send_error' => ({required Object error}) => 'Message non envoyé : ${error}',
 			'chatPlant.view.blocked_by_other_banner' => 'Vous ne pouvez plus écrire à cet utilisateur',
 			'chatPlant.view.unblock_btn' => 'Débloquer',
 			'chatPlant.view.unblock_dialog.title' => 'Débloquer cet utilisateur ?',
@@ -3610,7 +3757,6 @@ extension on Translations {
 			'getStarted.subtitle' => 'Rejoignez la communauté des amoureux des plantes près de chez vous.',
 			'getStarted.button' => 'C\'est parti !',
 			'history.screen.title' => 'Historique',
-			'history.screen.error' => ({required Object message}) => 'Erreur : ${message}',
 			'history.empty.message' => 'Aucun échange ni donation dans l\'historique',
 			'history.card.request_sent' => 'Demande envoyée',
 			'history.card.request_received' => 'Demande reçue',
@@ -3788,7 +3934,6 @@ extension on Translations {
 			'user.detail_plant.share.donation' => 'donne',
 			'user.detail_plant.share.exchange' => 'échange',
 			'user.detail_plant.share.text' => ({required Object type, required Object name, required Object description}) => 'Regarde cette plante sur PlantMatch !\n\nJe ${type} une magnifique *${name}*.\n"${description}"\n\nTélécharge l\'application PlantMatch pour l\'adopter ou l\'échanger autour de toi ! 🌿',
-			'user.detail_plant.load_error' => 'Impossible d\'afficher cette plante. Elle a peut-être été retirée, ou la connexion est indisponible.',
 			'user.filters.all' => 'Tous',
 			'user.filters.donation' => 'Donations',
 			'user.filters.exchange' => 'Échanges',
@@ -3799,11 +3944,43 @@ extension on Translations {
 			'widgets.navigation.add' => 'Ajouter',
 			'widgets.navigation.messages' => 'Messages',
 			'widgets.navigation.profile' => 'Mon profil',
-			'widgets.error.title' => 'Oups ! une erreur est survenue',
 			'widgets.error.back' => 'Retour',
 			'widgets.error.retry' => 'Essayer à nouveau',
+			'widgets.error.reconnect' => 'Se reconnecter',
+			'widgets.error.network.title' => 'Pas de connexion',
+			'widgets.error.network.message' => 'Vérifiez votre connexion internet puis réessayez.',
+			'widgets.error.server.title' => 'Service momentanément indisponible',
+			'widgets.error.server.message' => 'Nos serveurs rencontrent un souci. Réessayez dans quelques instants.',
+			'widgets.error.permission.title' => 'Accès refusé',
+			'widgets.error.permission.message' => 'Vous n\'avez pas les droits pour accéder à ce contenu.',
+			'widgets.error.session.title' => 'Session expirée',
+			'widgets.error.session.message' => 'Reconnectez-vous pour continuer.',
+			'widgets.error.notFound.title' => 'Contenu introuvable',
+			'widgets.error.notFound.message' => 'Ce contenu n\'existe plus ou a été supprimé.',
+			'widgets.error.location.title' => 'Localisation impossible',
+			'widgets.error.location.disabled' => 'La localisation est désactivée. Activez-la dans les réglages de votre téléphone.',
+			'widgets.error.location.denied' => 'PlantMatch n\'a pas accès à votre position. Autorisez la localisation dans les réglages.',
+			'widgets.error.location.unavailable' => 'Impossible d\'obtenir votre position pour le moment. Réessayez dans un instant.',
+			'widgets.error.validation.title' => 'Action impossible',
+			'widgets.error.unexpected.title' => 'Oups ! une erreur est survenue',
+			'widgets.error.unexpected.message' => 'Quelque chose s\'est mal passé. Réessayez dans un instant.',
+			'widgets.error.auth.title' => 'Connexion impossible',
+			'widgets.error.auth.invalidCredentials' => 'L\'email ou le mot de passe est incorrect.',
+			'widgets.error.auth.invalidEmail' => 'L\'adresse email n\'est pas valide.',
+			'widgets.error.auth.userDisabled' => 'Ce compte a été désactivé.',
+			'widgets.error.auth.emailAlreadyInUse' => 'Un compte existe déjà avec cette adresse email.',
+			'widgets.error.auth.accountExistsWithDifferentCredential' => 'Un compte existe déjà avec cette adresse email via un autre mode de connexion.',
+			'widgets.error.auth.weakPassword' => 'Le mot de passe est trop faible.',
+			'widgets.error.auth.tooManyRequests' => 'Trop de tentatives. Patientez quelques minutes avant de réessayer.',
+			'widgets.error.auth.cancelled' => 'La connexion a été annulée.',
+			'widgets.error.auth.provider' => 'La connexion avec ce service a échoué. Réessayez.',
+			'widgets.error.auth.emailAlreadyVerified' => 'Votre adresse email est déjà vérifiée.',
+			'widgets.error.auth.emailNotVerified' => 'Votre adresse email n\'est pas encore vérifiée.',
+			'widgets.error.auth.profileMissing' => 'Votre profil n\'est pas encore finalisé.',
 			'widgets.common.viewMore' => 'En voir +',
 			'widgets.common.cancel' => 'Annuler',
+			_ => null,
+		} ?? switch (path) {
 			'widgets.common.confirm' => 'Confirmer',
 			'widgets.date.today' => 'Aujourd\'hui',
 			'widgets.date.yesterday' => 'Hier',

@@ -83,8 +83,8 @@ class ProfilScreen extends StatelessWidget {
             ProfilInitial() || ProfilLoading() => const Center(
                 child: CircularProgressIndicator(),
               ),
-            ProfilError(:final message) => ErrorPage(
-                errorMessage: message,
+            ProfilError(:final failure) => ErrorPage(
+                failure: failure,
                 onRetry: () =>
                     context.read<ProfilCubit>().getProfilUser(userId),
               ),

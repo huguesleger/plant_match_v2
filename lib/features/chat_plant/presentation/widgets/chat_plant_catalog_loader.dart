@@ -46,8 +46,8 @@ class _ChatPlantCatalogLoaderState extends State<ChatPlantCatalogLoader> {
             body: Center(child: CircularProgressIndicator()),
           ),
           (result) => result.match(
-            (_) => ErrorPage(
-              errorMessage: t.chatPlant.screen.error_loading,
+            (failure) => ErrorPage(
+              failure: failure,
               onRetry: _reload,
             ),
             (catalog) => catalog.match(

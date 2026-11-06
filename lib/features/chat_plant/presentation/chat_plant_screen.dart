@@ -165,8 +165,8 @@ class ChatPlantScreen extends StatelessWidget {
                 ChatPlantInitial() || ChatPlantLoading() => const Center(
                     child: CircularProgressIndicator(),
                   ),
-                ChatPlantError s => ErrorPage(
-                    errorMessage: s.message,
+                ChatPlantError(:final failure) => ErrorPage(
+                    failure: failure,
                     onRetry: () => context.read<ChatPlantCubit>().subscribe(
                           chatId: chatId,
                           currentUserId: userId,

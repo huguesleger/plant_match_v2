@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/features/level/domain/entities/user_points.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
+import 'package:plant_match_v2/core/failures/failure_mapper.dart';
 import 'package:plant_match_v2/features/level/domain/repository/user_points_repository.dart';
 
 class FirebaseUserPoints implements UserPointsRepository {
@@ -27,7 +28,7 @@ class FirebaseUserPoints implements UserPointsRepository {
           uid: userId,
         );
       },
-      (error, stackTrace) => _mapErrorToFailure(error),
+      (error, _) => mapError(error),
     );
   }
 
@@ -38,11 +39,11 @@ class FirebaseUserPoints implements UserPointsRepository {
         final doc = await _firestore.collection('userPoints').doc(userId).get();
 
         if (!doc.exists) {
-          throw NotFoundFailure('Utilisateur $userId non trouvé');
+          throw const NotFoundFailure('User points not found');
         }
 
         final data = Option.fromNullable(doc.data()).getOrElse(
-          () => throw NotFoundFailure('Données utilisateur $userId vides'),
+          () => throw const NotFoundFailure('User points empty'),
         );
 
         return UserPoints.fromJson({
@@ -50,7 +51,7 @@ class FirebaseUserPoints implements UserPointsRepository {
           'uid': userId,
         });
       },
-      (error, stackTrace) => _mapErrorToFailure(error),
+      (error, _) => mapError(error),
     );
   }
 
@@ -62,13 +63,13 @@ class FirebaseUserPoints implements UserPointsRepository {
       .map<Either<Failure, UserPoints>>(
         (snapshot) => Either.tryCatch(
           () => _fromData(userId, Option.fromNullable(snapshot.data())),
-          (error, _) => _mapErrorToFailure(error),
+          (error, _) => mapError(error),
         ),
       )
       .transform(
         StreamTransformer.fromHandlers(
           handleError: (error, _, sink) =>
-              sink.add(Left(_mapErrorToFailure(error))),
+              sink.add(Left(mapError(error))),
         ),
       );
 
@@ -79,18 +80,4 @@ class FirebaseUserPoints implements UserPointsRepository {
         ...data.getOrElse(() => {}),
         'uid': userId,
       });
-
-  Failure _mapErrorToFailure(Object error) {
-    if (error is Failure) {
-      return error;
-    }
-
-    if (error is FirebaseException) {
-      return FirebaseFailure(
-        'Erreur Firebase: ${Option.fromNullable(error.message).getOrElse(() => error.code)}',
-      );
-    }
-
-    return UnexpectedFailure('Erreur inattendue: $error');
-  }
 }

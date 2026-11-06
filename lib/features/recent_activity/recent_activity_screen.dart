@@ -40,8 +40,8 @@ class RecentActivityScreen extends StatelessWidget {
             AroundMeInitial() ||
             AroundMeLoading() =>
               const Center(child: CircularProgressIndicator()),
-            AroundMeError(:final message) => ErrorPage(
-                errorMessage: message,
+            AroundMeError(:final failure) => ErrorPage(
+                failure: failure,
                 onRetry: () =>
                     context.read<AroundMeCubit>().getAllUserProfiles(uid),
               ),

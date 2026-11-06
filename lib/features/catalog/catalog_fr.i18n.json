@@ -44,7 +44,6 @@
     "modifier_with_name": "Modifier ${name}",
     "save": "Enregistrer les modifications",
     "upload_error": "Erreur upload: ${error}",
-    "save_error": "Erreur lors de l'enregistrement : ${error}",
     "name": {
       "hint": "Nom de la plante",
       "label": "Nom"
@@ -84,7 +83,6 @@
   "wizard": {
     "title": "Ajouter une plante",
     "loading": "Création...",
-    "timeout": "La connexion est trop lente ou coupée. Vérifie ton réseau et réessaie.",
     "error_image": "Erreur lors de la sélection d’image.",
     "select_images": "Sélectionner des images",
     "image_count": "Image ${index}",
@@ -92,7 +90,6 @@
     "publish_label": "Publier la plante",
     "finish": "Terminer",
     "next": "Suivant",
-    "error_generic": "Erreur: ${error}",
     "quit_dialog": {
       "title": "Quitter sans enregistrer ?",
       "content": "Les informations saisies seront perdues.",

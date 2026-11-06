@@ -1,3 +1,4 @@
+import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/recommendation/domain/entities/recommendation_answers.dart';
 
@@ -32,10 +33,10 @@ class RecommendationResult extends RecommendationState {
 }
 
 class RecommendationError extends RecommendationState {
-  final String message;
+  final Failure failure;
 
   const RecommendationError({
-    required this.message,
+    required this.failure,
   });
 }
 

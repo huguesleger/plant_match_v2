@@ -26,8 +26,8 @@ class UserScreen extends StatelessWidget {
           UserInitial() || UserLoading() => const Center(
               child: CircularProgressIndicator(),
             ),
-          UserError(:final message) => ErrorPage(
-              errorMessage: message,
+          UserError(:final failure) => ErrorPage(
+              failure: failure,
               onRetry: () => context.read<UserCubit>().fetchUser(uid),
             ),
           UserLoaded(:final data) => RefreshScreen(
