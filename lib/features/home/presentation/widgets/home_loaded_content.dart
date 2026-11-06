@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/widgets/refresh/refresh_screen.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/cubit/around_me_cubit.dart';
 import 'package:fpdart/fpdart.dart' hide State;
 import 'package:plant_match_v2/core/util/distance/distance_helper.dart';
@@ -39,92 +40,98 @@ class _HomeLoadedContentState extends State<HomeLoadedContent> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          FilterBar<CatalogFilter>(
-            filters: CatalogFilter.values,
-            selected: _filter,
-            onChanged: (filter) => setState(() => _filter = filter),
-            labelBuilder: (f) => f.label,
-            iconBuilder: (f) => f.icon,
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 24, bottom: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: HomeAroundMeSection(
-                    plants: _getFilteredPlants(),
-                    isGeolocated:
-                        DistanceHelper.hasValidLocation(widget.currentUser),
-                    onSeeAllPressed: () => Option.fromNullable(context
-                            .findAncestorStateOfType<TemplatePageState>())
-                        .map((page) => page.onPageChanged(1)),
+    return RefreshScreen(
+      onRefresh: () =>
+          context.read<AroundMeCubit>().refresh(widget.currentUser.uid),
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            FilterBar<CatalogFilter>(
+              filters: CatalogFilter.values,
+              selected: _filter,
+              onChanged: (filter) => setState(() => _filter = filter),
+              labelBuilder: (f) => f.label,
+              iconBuilder: (f) => f.icon,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 24, bottom: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: HomeAroundMeSection(
+                      plants: _getFilteredPlants(),
+                      isGeolocated:
+                          DistanceHelper.hasValidLocation(widget.currentUser),
+                      onSeeAllPressed: () => Option.fromNullable(context
+                              .findAncestorStateOfType<TemplatePageState>())
+                          .map((page) => page.onPageChanged(1)),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 24),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: BlocBuilder<SavedRecommendationCubit,
-                      SavedRecommendationState>(
-                    builder: (context, state) {
-                      return state.match(
-                        initial: (_) => const SizedBox.shrink(),
-                        loading: (_) => const Center(
-                          child: Padding(
-                            padding: EdgeInsets.all(16.0),
-                            child: CircularProgressIndicator(
-                              color: AppColors.greenDark,
+                  const SizedBox(height: 24),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: BlocBuilder<SavedRecommendationCubit,
+                        SavedRecommendationState>(
+                      builder: (context, state) {
+                        return state.match(
+                          initial: (_) => const SizedBox.shrink(),
+                          loading: (_) => const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(16.0),
+                              child: CircularProgressIndicator(
+                                color: AppColors.greenDark,
+                              ),
                             ),
                           ),
-                        ),
-                        loaded: (loadedState) => loadedState.answers.match(
-                          () => HomeRecommendedBanner(
-                            onPressed: () => _navigateToQuestionnaire(context),
+                          loaded: (loadedState) => loadedState.answers.match(
+                            () => HomeRecommendedBanner(
+                              onPressed: () =>
+                                  _navigateToQuestionnaire(context),
+                            ),
+                            (answers) => HomeRecommendationSection(
+                              plants: loadedState.suggestedPlants,
+                              onAdjustPressed: () =>
+                                  _navigateToQuestionnaire(context),
+                            ),
                           ),
-                          (answers) => HomeRecommendationSection(
-                            plants: loadedState.suggestedPlants,
-                            onAdjustPressed: () =>
-                                _navigateToQuestionnaire(context),
+                          error: (errorState) => Center(
+                            child: Text(
+                              "Erreur de chargement : ${errorState.message}",
+                              style: const TextStyle(
+                                  color: Colors.red, fontSize: 12),
+                            ),
                           ),
-                        ),
-                        error: (errorState) => Center(
-                          child: Text(
-                            "Erreur de chargement : ${errorState.message}",
-                            style: const TextStyle(
-                                color: Colors.red, fontSize: 12),
-                          ),
-                        ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   ),
-                ),
-                const SizedBox(height: 24),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
-                  child: HomeRecentActivity(
-                    activities: _getRecentActivities(),
-                    onSeeAllPressed: () {
-                      final aroundMeCubit = context.read<AroundMeCubit>();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => RecentActivityPageRoute(
-                            aroundMeCubit: aroundMeCubit,
+                  const SizedBox(height: 24),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: HomeRecentActivity(
+                      activities: _getRecentActivities(),
+                      onSeeAllPressed: () {
+                        final aroundMeCubit = context.read<AroundMeCubit>();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => RecentActivityPageRoute(
+                              aroundMeCubit: aroundMeCubit,
+                            ),
                           ),
-                        ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

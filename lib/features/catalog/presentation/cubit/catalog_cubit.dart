@@ -64,6 +64,25 @@ class CatalogCubit extends SafeCubit<CatalogState> {
         .run();
   }
 
+  Future<void> refresh(String userId) => catalogRepository
+      .getCatalogsByUserId(userId)
+      .match<CatalogState>(
+        (failure) => switch (state) {
+          CatalogLoaded() => state,
+          CatalogInitial() ||
+          CatalogLoading() ||
+          CatalogError() =>
+            CatalogError(failure.message),
+        },
+        (catalogs) => CatalogLoaded(
+          catalogs,
+          Catalog.empty(userId),
+          sortOption: _currentSortFromState(),
+        ),
+      )
+      .map(emit)
+      .run();
+
   TaskEither<Failure, String> publishNewCatalog(Catalog catalog) =>
       _withTimeout(_publishNewCatalog(catalog));
 
@@ -92,7 +111,8 @@ class CatalogCubit extends SafeCubit<CatalogState> {
               .createCatalog(
                 catalog.copyWith(
                   newCatalogId: Some(Some(id)),
-                  newImages: Some([...catalog.images.filter(_isRemote), ...uploaded]),
+                  newImages:
+                      Some([...catalog.images.filter(_isRemote), ...uploaded]),
                 ),
               )
               .orElse(

@@ -5,6 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_theme.dart';
 import 'package:plant_match_v2/core/util/distance/distance_helper.dart';
+import 'package:plant_match_v2/core/util/navigation/app_route_observer.dart';
 import 'package:plant_match_v2/core/widgets/template/template_page.dart';
 import 'package:plant_match_v2/features/auth/data/firebase_auth_repository.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
@@ -130,6 +131,7 @@ class _MyAppBodyState extends State<_MyAppBody> with WidgetsBindingObserver {
       locale: TranslationProvider.of(context).locale.flutterLocale,
       supportedLocales: AppLocaleUtils.supportedLocales,
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
+      navigatorObservers: [appRouteObserver],
       home: MultiBlocListener(
         listeners: [
           BlocListener<AuthCubit, AuthState>(

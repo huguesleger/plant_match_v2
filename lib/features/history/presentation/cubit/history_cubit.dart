@@ -1,4 +1,5 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:plant_match_v2/core/util/safe_cubit.dart';
 import 'package:plant_match_v2/features/donation/domain/entities/donation.dart';
 import 'package:plant_match_v2/features/donation/domain/repository/donation_repository.dart';
 import 'package:plant_match_v2/features/exchange/domain/entities/exchange.dart';
@@ -6,13 +7,11 @@ import 'package:plant_match_v2/features/exchange/domain/repository/exchange_repo
 import 'package:plant_match_v2/features/history/presentation/cubit/history_state.dart';
 import 'package:plant_match_v2/features/history/presentation/widgets/history_item.dart';
 
-class HistoryCubit extends Cubit<HistoryState> {
+class HistoryCubit extends SafeCubit<HistoryState> {
   final ExchangeRepository exchangeRepository;
   final DonationRepository donationRepository;
   final String userId;
 
-  List<Exchange> _exchanges = [];
-  List<Donation> _donations = [];
   HistoryStatusFilter _currentFilter = HistoryStatusFilter.all;
 
   HistoryCubit({
@@ -24,39 +23,40 @@ class HistoryCubit extends Cubit<HistoryState> {
   void load({HistoryStatusFilter filter = HistoryStatusFilter.all}) {
     _currentFilter = filter;
     emit(const HistoryLoading());
-
-    exchangeRepository.getCompletedExchanges(userId).flatMap((exchanges) {
-      return donationRepository.getCompletedDonations(userId).map((donations) {
-        return (exchanges, donations);
-      });
-    }).match(
-      (failure) {
-        if (!isClosed) emit(HistoryError(failure.message));
-      },
-      (data) {
-        if (isClosed) return;
-        _exchanges = data.$1;
-        _donations = data.$2;
-        _emitLoaded();
-      },
-    ).run();
+    _fetch().map(emit).run();
   }
 
-  void _emitLoaded() {
-    if (isClosed) return;
+  Future<void> refresh() => _fetch()
+      .map(
+        (fetched) =>
+            fetched is HistoryError && state is HistoryLoaded ? state : fetched,
+      )
+      .map(emit)
+      .run();
 
-    final exchangeItems = _exchanges.map(HistoryItem.fromExchange).toList();
-    final donationItems = _donations.map(HistoryItem.fromDonation).toList();
+  Task<HistoryState> _fetch() => exchangeRepository
+      .getCompletedExchanges(userId)
+      .flatMap(
+        (exchanges) => donationRepository
+            .getCompletedDonations(userId)
+            .map((donations) => (exchanges, donations)),
+      )
+      .match(
+        (failure) => HistoryError(failure.message),
+        (data) => _loaded(data.$1, data.$2),
+      );
+
+  HistoryLoaded _loaded(List<Exchange> exchanges, List<Donation> donations) {
+    final exchangeItems = exchanges.map(HistoryItem.fromExchange).toList();
+    final donationItems = donations.map(HistoryItem.fromDonation).toList();
 
     final all = [...exchangeItems, ...donationItems]
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
-    final filtered = _filterItems(all, _currentFilter);
-
-    emit(HistoryLoaded(
-      items: filtered,
+    return HistoryLoaded(
+      items: _filterItems(all, _currentFilter),
       currentFilter: _currentFilter,
-    ));
+    );
   }
 
   List<HistoryItem> _filterItems(

@@ -7,7 +7,10 @@ import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_header_image.dart';
+import 'package:plant_match_v2/core/widgets/refresh/refresh_fill_view.dart';
+import 'package:plant_match_v2/core/widgets/refresh/refresh_screen.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
+import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/features/catalog/presentation/widgets/show_catalog_sort_bottom_sheet.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catalog/presentation/cubit/catalog_cubit.dart';
@@ -75,7 +78,13 @@ class CatalogLoadedView extends StatelessWidget {
           ),
           Expanded(
             child: catalogs.isEmpty
-                ? const CatalogEmptyView()
+                ? RefreshScreen(
+                    onRefresh: () => context.read<AuthCubit>().userId.match(
+                          () => Future<void>.value(),
+                          context.read<CatalogCubit>().refresh,
+                        ),
+                    child: const RefreshFillView(child: CatalogEmptyView()),
+                  )
                 : DefaultTabController(
                     length: 3,
                     child: Column(
@@ -88,16 +97,16 @@ class CatalogLoadedView extends StatelessWidget {
                             tabs: [
                               Tab(
                                   text: t.catalog.tabs.published(
-                                      count: _count(catalogs,
-                                          CatalogStatus.published))),
+                                      count: _count(
+                                          catalogs, CatalogStatus.published))),
                               Tab(
                                   text: t.catalog.tabs.draft(
                                       count: _count(
                                           catalogs, CatalogStatus.draft))),
                               Tab(
                                   text: t.catalog.tabs.archived(
-                                      count: _count(catalogs,
-                                          CatalogStatus.archived))),
+                                      count: _count(
+                                          catalogs, CatalogStatus.archived))),
                             ],
                           ),
                         ),

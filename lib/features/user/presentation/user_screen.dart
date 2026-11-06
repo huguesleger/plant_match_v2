@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/error/error_page.dart';
+import 'package:plant_match_v2/core/widgets/refresh/refresh_screen.dart';
 import 'package:plant_match_v2/features/user/presentation/cubit/user_cubit.dart';
 import 'package:plant_match_v2/features/user/presentation/cubit/user_state.dart';
 import 'package:plant_match_v2/features/user/domain/extension/user_extension.dart';
@@ -29,28 +30,33 @@ class UserScreen extends StatelessWidget {
               errorMessage: message,
               onRetry: () => context.read<UserCubit>().fetchUser(uid),
             ),
-          UserLoaded(:final data) => UserHeaderWithContent(
-              user: data.user,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  UserBio(bio: data.user.bio),
-                  const SizedBox(height: 30),
-                  ItemsCount(
-                    catalog: data.publishedCatalogs(data.user.uid),
-                    level: data.level,
-                    exchangeCount: data.exchangeCount,
-                  ),
-                  if (data.recentCatalogs(data.user.uid).isNotEmpty) ...[
-                    RecentPlants(catalogs: data.recentCatalogs(data.user.uid)),
+          UserLoaded(:final data) => RefreshScreen(
+              onRefresh: () => context.read<UserCubit>().refresh(uid),
+              notificationPredicate: (notification) => notification.depth == 1,
+              child: UserHeaderWithContent(
+                user: data.user,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    UserBio(bio: data.user.bio),
+                    const SizedBox(height: 30),
+                    ItemsCount(
+                      catalog: data.publishedCatalogs(data.user.uid),
+                      level: data.level,
+                      exchangeCount: data.exchangeCount,
+                    ),
+                    if (data.recentCatalogs(data.user.uid).isNotEmpty) ...[
+                      RecentPlants(
+                          catalogs: data.recentCatalogs(data.user.uid)),
+                    ],
+                    const SizedBox(height: 30),
+                    UserCatalogFilterSection(
+                      selectedFilter: data.selectedFilter,
+                      filteredCatalogs: data.filteredCatalogs(data.user.uid),
+                    ),
                   ],
-                  const SizedBox(height: 30),
-                  UserCatalogFilterSection(
-                    selectedFilter: data.selectedFilter,
-                    filteredCatalogs: data.filteredCatalogs(data.user.uid),
-                  ),
-                ],
+                ),
               ),
             ),
         },

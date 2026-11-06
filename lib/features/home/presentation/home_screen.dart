@@ -11,6 +11,7 @@ import 'package:plant_match_v2/features/home/presentation/widgets/home_header.da
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_state.dart';
 import 'package:plant_match_v2/features/home/presentation/widgets/home_loaded_content.dart';
+import 'package:plant_match_v2/features/home/presentation/widgets/home_recommendation_refresher.dart';
 import 'package:plant_match_v2/features/recommendation/data/repositories/recommendation_repository_impl.dart';
 import 'package:plant_match_v2/features/recommendation/presentation/cubit/saved_recommendation_cubit.dart';
 
@@ -19,72 +20,74 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final uid =
-        context.read<AuthCubit>().userId.getOrElse(() => '');
+    final uid = context.read<AuthCubit>().userId.getOrElse(() => '');
 
     return BlocProvider(
       create: (context) => SavedRecommendationCubit(
         repository: RecommendationRepositoryImpl(),
       )..loadSavedRecommendations(uid),
-      child: BlocBuilder<AroundMeCubit, AroundMeState>(
-        builder: (context, state) => switch (state) {
-          AroundMeInitial() || AroundMeLoading() => const Scaffold(
-              backgroundColor: AppColors.white,
-              body: SafeArea(
-                child: Center(child: CircularProgressIndicator()),
-              ),
-            ),
-          AroundMeError(:final message) => Scaffold(
-              backgroundColor: AppColors.white,
-              body: SafeArea(
-                child: ErrorPage(
-                  errorMessage: message,
-                  onRetry: () =>
-                      context.read<AroundMeCubit>().getAllUserProfiles(uid),
+      child: HomeRecommendationRefresher(
+        uid: uid,
+        child: BlocBuilder<AroundMeCubit, AroundMeState>(
+          builder: (context, state) => switch (state) {
+            AroundMeInitial() || AroundMeLoading() => const Scaffold(
+                backgroundColor: AppColors.white,
+                body: SafeArea(
+                  child: Center(child: CircularProgressIndicator()),
                 ),
               ),
-            ),
-          AroundMeLoaded(
-            :final users,
-            :final currentUser,
-            :final userCatalogs,
-          ) =>
-            Scaffold(
-              backgroundColor: AppColors.white,
-              appBar: AppBarTemplate(
+            AroundMeError(:final message) => Scaffold(
                 backgroundColor: AppColors.white,
-                surfaceTintColor: AppColors.white,
-                shadowColor: const Some(AppColors.black),
-                leading: false,
-                leadingWith: 0,
-                preferredHeight: 100,
-                titleWidget: Some(Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: BlocBuilder<ProfilCubit, ProfilState>(
-                    buildWhen: (_, current) => current is ProfilLoaded,
-                    builder: (context, profilState) => HomeHeader(
-                      firstName: currentUser.firstName,
-                      profilImg: currentUser.profilImg,
-                      userName: currentUser.userName,
-                      leaves: switch (profilState) {
-                        ProfilLoaded(:final profilUser) => profilUser.leaves,
-                        ProfilInitial() ||
-                        ProfilLoading() ||
-                        ProfilError() ||
-                        ProfilImageUploading() =>
-                          currentUser.leaves,
-                      },
-                    ),
+                body: SafeArea(
+                  child: ErrorPage(
+                    errorMessage: message,
+                    onRetry: () =>
+                        context.read<AroundMeCubit>().getAllUserProfiles(uid),
                   ),
-                )),
+                ),
               ),
-              body: HomeLoadedContent(
-                currentUser: currentUser,
-                users: users,
-                userCatalogs: userCatalogs,
+            AroundMeLoaded(
+              :final users,
+              :final currentUser,
+              :final userCatalogs,
+            ) =>
+              Scaffold(
+                backgroundColor: AppColors.white,
+                appBar: AppBarTemplate(
+                  backgroundColor: AppColors.white,
+                  surfaceTintColor: AppColors.white,
+                  shadowColor: const Some(AppColors.black),
+                  leading: false,
+                  leadingWith: 0,
+                  preferredHeight: 100,
+                  titleWidget: Some(Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: BlocBuilder<ProfilCubit, ProfilState>(
+                      buildWhen: (_, current) => current is ProfilLoaded,
+                      builder: (context, profilState) => HomeHeader(
+                        firstName: currentUser.firstName,
+                        profilImg: currentUser.profilImg,
+                        userName: currentUser.userName,
+                        leaves: switch (profilState) {
+                          ProfilLoaded(:final profilUser) => profilUser.leaves,
+                          ProfilInitial() ||
+                          ProfilLoading() ||
+                          ProfilError() ||
+                          ProfilImageUploading() =>
+                            currentUser.leaves,
+                        },
+                      ),
+                    ),
+                  )),
+                ),
+                body: HomeLoadedContent(
+                  currentUser: currentUser,
+                  users: users,
+                  userCatalogs: userCatalogs,
+                ),
               ),
-            ),
-        },
+          },
+        ),
       ),
     );
   }

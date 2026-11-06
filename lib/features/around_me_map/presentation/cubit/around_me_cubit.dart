@@ -29,21 +29,37 @@ class AroundMeCubit extends Cubit<AroundMeState> {
 
   void getAllUserProfiles(String uid) {
     emit(const AroundMeLoading());
-    profilRepository
-        .getProfilUser(uid)
-        .flatMap(
-          (option) => option.match(
-            () => TaskEither<Failure, ProfilUser>.left(
-              const AuthFailure('Utilisateur introuvable'),
-            ),
-            TaskEither.right,
-          ),
-        )
-        .flatMap(_loadAround)
+    _loadAll(uid)
         .match((failure) => AroundMeError(failure.message), (state) => state)
         .map(emit)
         .run();
   }
+
+  Future<void> refresh(String uid) => _loadAll(uid)
+      .match(
+        (failure) => switch (state) {
+          AroundMeLoaded() => state,
+          AroundMeInitial() ||
+          AroundMeLoading() ||
+          AroundMeError() =>
+            AroundMeError(failure.message),
+        },
+        (loaded) => loaded,
+      )
+      .map(emit)
+      .run();
+
+  TaskEither<Failure, AroundMeState> _loadAll(String uid) => profilRepository
+      .getProfilUser(uid)
+      .flatMap(
+        (option) => option.match(
+          () => TaskEither<Failure, ProfilUser>.left(
+            const AuthFailure('Utilisateur introuvable'),
+          ),
+          TaskEither.right,
+        ),
+      )
+      .flatMap(_loadAround);
 
   Future<void> updateUserLocation(ProfilUser user) {
     final previous = state;

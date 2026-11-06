@@ -15,27 +15,29 @@ class SavedRecommendationCubit extends SafeCubit<SavedRecommendationState> {
 
   void loadSavedRecommendations(String userId) {
     emit(const SavedRecommendationLoading());
-
-    _repository
-        .getSavedAnswers(userId)
-        .flatMap((optAnswers) => optAnswers.match(
-              () => TaskEither.of(
-                (const Option<RecommendationAnswers>.none(), const <Catalog>[]),
-              ),
-              (answers) => _repository
-                  .getRecommendedPlants(userId, answers)
-                  .map((plants) => (some(answers), plants)),
-            ))
-        .match(
-          (failure) => SavedRecommendationError(message: failure.message),
-          (tuple) => SavedRecommendationLoaded(
-            answers: tuple.$1,
-            suggestedPlants: tuple.$2,
-          ),
-        )
-        .map(emit)
-        .run();
+    _loadSaved(userId).map(emit).run();
   }
+
+  void refreshRecommendations(String userId) =>
+      _loadSaved(userId).map(emit).run();
+
+  Task<SavedRecommendationState> _loadSaved(String userId) => _repository
+      .getSavedAnswers(userId)
+      .flatMap((optAnswers) => optAnswers.match(
+            () => TaskEither.of(
+              (const Option<RecommendationAnswers>.none(), const <Catalog>[]),
+            ),
+            (answers) => _repository
+                .getRecommendedPlants(userId, answers)
+                .map((plants) => (some(answers), plants)),
+          ))
+      .match(
+        (failure) => SavedRecommendationError(message: failure.message),
+        (tuple) => SavedRecommendationLoaded(
+          answers: tuple.$1,
+          suggestedPlants: tuple.$2,
+        ),
+      );
 
   void updateRecommendationAnswers(
     String userId,

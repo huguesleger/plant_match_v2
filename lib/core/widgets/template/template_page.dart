@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart' hide State;
 import 'package:plant_match_v2/core/services/location/location_service.dart';
+import 'package:plant_match_v2/core/util/navigation/app_route_observer.dart';
 import 'package:plant_match_v2/features/around_me_map/data/firebase_around_me_repository.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/cubit/around_me_cubit.dart';
 import 'package:plant_match_v2/features/catalog/data/firebase_catalog_repository.dart';
@@ -32,7 +33,7 @@ class TemplatePage extends StatefulWidget {
   TemplatePageState createState() => TemplatePageState();
 }
 
-class TemplatePageState extends State<TemplatePage> {
+class TemplatePageState extends State<TemplatePage> with RouteAware {
   late int _currentIndex;
   late final String uid;
   late final List<Widget> _pages;
@@ -68,7 +69,21 @@ class TemplatePageState extends State<TemplatePage> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    Option.fromNullable(ModalRoute.of(context))
+        .flatMap<PageRoute<dynamic>>(
+          (route) => route is PageRoute ? Some(route) : const None(),
+        )
+        .map((route) => appRouteObserver.subscribe(this, route));
+  }
+
+  @override
+  void didPopNext() => _aroundMeCubit.refresh(uid);
+
+  @override
   void dispose() {
+    appRouteObserver.unsubscribe(this);
     _aroundMeCubit.close();
     super.dispose();
   }
@@ -84,19 +99,14 @@ class TemplatePageState extends State<TemplatePage> {
     });
   }
 
-  Future<void> _openAddPlantWizard() async {
-    final created = await Navigator.push<bool>(
-      context,
-      MaterialPageRoute(
-        builder: (_) => AddPlantWizardPageRoute(
-          catalog: Catalog.empty(uid),
+  void _openAddPlantWizard() => Navigator.push<bool>(
+        context,
+        MaterialPageRoute(
+          builder: (_) => AddPlantWizardPageRoute(
+            catalog: Catalog.empty(uid),
+          ),
         ),
-      ),
-    );
-    if (Option.fromNullable(created).getOrElse(() => false)) {
-      _aroundMeCubit.getAllUserProfiles(uid);
-    }
-  }
+      );
 
   @override
   Widget build(BuildContext context) {
