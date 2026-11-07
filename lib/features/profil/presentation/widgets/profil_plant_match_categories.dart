@@ -3,6 +3,7 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/widgets/list_tile_group/list_tile_group.dart';
+import 'package:plant_match_v2/features/legal_information/presentation/legal_information_page_route.dart';
 import 'package:plant_match_v2/features/profil/presentation/widgets/profil_item_sub_category.dart';
 
 class ProfilPlantMatchCategories extends StatelessWidget {
@@ -26,7 +27,12 @@ class ProfilPlantMatchCategories extends StatelessWidget {
         ProfilItemSubCategory(
           title: t.profil.navigation.legal,
           icon: LucideIcons.file_text,
-          onTap: () {},
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const LegalInformationPageRoute(),
+            ),
+          ),
         ),
       ],
     );

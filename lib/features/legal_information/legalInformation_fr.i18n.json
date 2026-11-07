@@ -1,0 +1,10 @@
+{
+  "screen": {
+    "title": "Informations juridiques"
+  },
+  "items": {
+    "privacy_policy": "Politique de confidentialité",
+    "terms": "Conditions générales",
+    "legal_notice": "Mentions légales"
+  }
+}

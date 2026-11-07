@@ -49,6 +49,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final TranslationsFavoriteFr favorite = TranslationsFavoriteFr.internal(_root);
 	late final TranslationsGetStartedFr getStarted = TranslationsGetStartedFr.internal(_root);
 	late final TranslationsHistoryFr history = TranslationsHistoryFr.internal(_root);
+	late final TranslationsLegalInformationFr legalInformation = TranslationsLegalInformationFr.internal(_root);
 	late final TranslationsLevelFr level = TranslationsLevelFr.internal(_root);
 	late final TranslationsLevelAwardedFr levelAwarded = TranslationsLevelAwardedFr.internal(_root);
 	late final TranslationsMessageFr message = TranslationsMessageFr.internal(_root);
@@ -198,6 +199,17 @@ class TranslationsHistoryFr {
 	late final TranslationsHistoryCardFr card = TranslationsHistoryCardFr.internal(_root);
 	late final TranslationsHistoryFiltersFr filters = TranslationsHistoryFiltersFr.internal(_root);
 	late final TranslationsHistoryStatusFr status = TranslationsHistoryStatusFr.internal(_root);
+}
+
+// Path: legalInformation
+class TranslationsLegalInformationFr {
+	TranslationsLegalInformationFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+	late final TranslationsLegalInformationScreenFr screen = TranslationsLegalInformationScreenFr.internal(_root);
+	late final TranslationsLegalInformationItemsFr items = TranslationsLegalInformationItemsFr.internal(_root);
 }
 
 // Path: level
@@ -1251,6 +1263,36 @@ class TranslationsHistoryStatusFr {
 
 	/// fr: 'En attente'
 	String get pending => 'En attente';
+}
+
+// Path: legalInformation.screen
+class TranslationsLegalInformationScreenFr {
+	TranslationsLegalInformationScreenFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Informations juridiques'
+	String get title => 'Informations juridiques';
+}
+
+// Path: legalInformation.items
+class TranslationsLegalInformationItemsFr {
+	TranslationsLegalInformationItemsFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Politique de confidentialité'
+	String get privacy_policy => 'Politique de confidentialité';
+
+	/// fr: 'Conditions générales'
+	String get terms => 'Conditions générales';
+
+	/// fr: 'Mentions légales'
+	String get legal_notice => 'Mentions légales';
 }
 
 // Path: level.screen
@@ -3771,6 +3813,10 @@ extension on Translations {
 			'history.status.completed' => 'Terminé',
 			'history.status.rejected' => 'Refusé',
 			'history.status.pending' => 'En attente',
+			'legalInformation.screen.title' => 'Informations juridiques',
+			'legalInformation.items.privacy_policy' => 'Politique de confidentialité',
+			'legalInformation.items.terms' => 'Conditions générales',
+			'legalInformation.items.legal_notice' => 'Mentions légales',
 			'level.screen.title' => 'Mes badges',
 			'level.screen.my_level' => 'Mon niveau',
 			'level.screen.my_badges' => 'Mes badges',
@@ -3975,12 +4021,12 @@ extension on Translations {
 			'widgets.error.auth.cancelled' => 'La connexion a été annulée.',
 			'widgets.error.auth.provider' => 'La connexion avec ce service a échoué. Réessayez.',
 			'widgets.error.auth.emailAlreadyVerified' => 'Votre adresse email est déjà vérifiée.',
+			_ => null,
+		} ?? switch (path) {
 			'widgets.error.auth.emailNotVerified' => 'Votre adresse email n\'est pas encore vérifiée.',
 			'widgets.error.auth.profileMissing' => 'Votre profil n\'est pas encore finalisé.',
 			'widgets.common.viewMore' => 'En voir +',
 			'widgets.common.cancel' => 'Annuler',
-			_ => null,
-		} ?? switch (path) {
 			'widgets.common.confirm' => 'Confirmer',
 			'widgets.date.today' => 'Aujourd\'hui',
 			'widgets.date.yesterday' => 'Hier',

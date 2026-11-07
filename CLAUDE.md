@@ -62,7 +62,7 @@ someRepo
 - Types somme plutôt que types produit : `sealed class` plutôt qu'`enum`.
 - Jamais de `default` dans un `switch` sur une `sealed class`, pour garder l'exhaustivité.
 - Expressions plutôt qu'instructions ; ternaire plutôt que `if`/`else`.
-- **Aucun commentaire** dans le code créé ou modifié : le code doit se suffire à lui-même.
+- **Aucun commentaire** a part les TODO dans le code créé ou modifié : le code doit se suffire à lui-même.
 
 ## Git
 
