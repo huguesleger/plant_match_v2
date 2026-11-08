@@ -2,6 +2,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/features/legal_information/domain/entities/legal_document.dart';
+import 'package:plant_match_v2/features/legal_information/presentation/legal_document_page_route.dart';
 
 class CguCheckboxField extends StatelessWidget {
   const CguCheckboxField({
@@ -12,6 +14,14 @@ class CguCheckboxField extends StatelessWidget {
 
   final bool value;
   final ValueChanged<bool> onChanged;
+
+  void _openDocument(BuildContext context, LegalDocument document) =>
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => LegalDocumentPageRoute(document: document),
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -42,9 +52,9 @@ class CguCheckboxField extends StatelessWidget {
                 style: const TextStyle(color: AppColors.greyDark, fontSize: 14),
                 children: [
                   TextSpan(
-                    recognizer: TapGestureRecognizer()..onTap = () {
-                      //TODO page terms and conditions
-                    },
+                    recognizer: TapGestureRecognizer()
+                      ..onTap =
+                          () => _openDocument(context, const TermsOfUse()),
                     text: t.auth.register.cgu.terms,
                     style: const TextStyle(
                         color: AppColors.greyDark,
@@ -60,9 +70,8 @@ class CguCheckboxField extends StatelessWidget {
                   ),
                   TextSpan(
                     recognizer: TapGestureRecognizer()
-                      ..onTap = () {
-                        //TODO page privacy policy
-                      },
+                      ..onTap =
+                          () => _openDocument(context, const PrivacyPolicy()),
                     text: t.auth.register.cgu.privacy,
                     style: const TextStyle(
                         color: AppColors.greyDark,
