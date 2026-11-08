@@ -1288,8 +1288,8 @@ class TranslationsLegalInformationItemsFr {
 	/// fr: 'Politique de confidentialité'
 	String get privacy_policy => 'Politique de confidentialité';
 
-	/// fr: 'Conditions générales'
-	String get terms => 'Conditions générales';
+	/// fr: 'Conditions d'utilisation'
+	String get terms => 'Conditions d\'utilisation';
 
 	/// fr: 'Mentions légales'
 	String get legal_notice => 'Mentions légales';
@@ -3815,7 +3815,7 @@ extension on Translations {
 			'history.status.pending' => 'En attente',
 			'legalInformation.screen.title' => 'Informations juridiques',
 			'legalInformation.items.privacy_policy' => 'Politique de confidentialité',
-			'legalInformation.items.terms' => 'Conditions générales',
+			'legalInformation.items.terms' => 'Conditions d\'utilisation',
 			'legalInformation.items.legal_notice' => 'Mentions légales',
 			'level.screen.title' => 'Mes badges',
 			'level.screen.my_level' => 'Mon niveau',

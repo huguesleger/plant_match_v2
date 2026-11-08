@@ -85,6 +85,7 @@ dependencies:
   cloud_functions: ^5.0.0
 
   vector_graphics: any
+  webview_flutter: ^4.14.1
 flutter_native_splash:
   color: "#12F4A9"
   image: "res/logo/logo-splash-screen.png"
