@@ -11,6 +11,8 @@ import 'package:plant_match_v2/features/recommendation/presentation/widgets/care
 import 'package:plant_match_v2/features/recommendation/presentation/widgets/pet_safety_step.dart';
 import 'package:plant_match_v2/features/recommendation/presentation/widgets/recommendation_result_view.dart';
 import 'package:plant_match_v2/features/recommendation/presentation/widgets/recommendation_footer.dart';
+import 'package:plant_match_v2/core/widgets/app_loader/app_loader_page.dart';
+import 'package:plant_match_v2/core/widgets/app_loader/app_loader_gate.dart';
 
 class RecommendationScreen extends StatelessWidget {
   const RecommendationScreen({super.key});
@@ -37,24 +39,18 @@ class RecommendationScreen extends StatelessWidget {
             ),
             centerTitle: true,
           ),
-          body: state.match(
-            initial: (_) => const Center(child: CircularProgressIndicator()),
-            step: (stepState) => _buildWizardBody(context, stepState),
-            loading: (_) => const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(color: AppColors.greenDark),
-                  SizedBox(height: 16),
-                  Text("Recherche en cours..."),
-                ],
+          body: AppLoaderGate(
+            isLoading: state is RecommendationInitial || state is RecommendationLoading,
+            child: state.match(
+              initial: (_) => const AppLoaderPage(),
+              step: (stepState) => _buildWizardBody(context, stepState),
+              loading: (_) => const AppLoaderPage(),
+              result: (resultState) => RecommendationResultView(
+                plants: resultState.suggestedPlants,
               ),
-            ),
-            result: (resultState) => RecommendationResultView(
-              plants: resultState.suggestedPlants,
-            ),
-            error: (errorState) => Center(
-              child: Text(errorState.failure.errorContent.message),
+              error: (errorState) => Center(
+                child: Text(errorState.failure.errorContent.message),
+              ),
             ),
           ),
         );

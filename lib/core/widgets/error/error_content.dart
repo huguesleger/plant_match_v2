@@ -111,6 +111,11 @@ extension FailureErrorContent on Failure {
             message: t.widgets.error.auth.profileMissing,
             action: const NoAction(),
           ),
+        AuthNoEmailFailure() => ErrorContent(
+            title: t.widgets.error.auth.title,
+            message: t.widgets.error.auth.noEmail,
+            action: const NoAction(),
+          ),
         NotFoundFailure() => ErrorContent(
             title: t.widgets.error.notFound.title,
             message: t.widgets.error.notFound.message,

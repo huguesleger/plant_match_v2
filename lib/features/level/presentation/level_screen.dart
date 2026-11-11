@@ -14,6 +14,8 @@ import 'package:plant_match_v2/features/level/presentation/my_level.dart';
 import 'package:plant_match_v2/features/level/utils/user_points_utils.dart';
 import 'package:plant_match_v2/features/level/widget/level_card/level_card.dart';
 import 'package:plant_match_v2/features/level/widget/level_items.dart';
+import 'package:plant_match_v2/core/widgets/app_loader/app_loader_page.dart';
+import 'package:plant_match_v2/core/widgets/app_loader/app_loader_gate.dart';
 
 class LevelScreen extends StatelessWidget {
   const LevelScreen({super.key, required this.userId});
@@ -37,68 +39,71 @@ class LevelScreen extends StatelessWidget {
         onPressed: Some(() => Navigator.pop(context)),
       ),
       body: BlocBuilder<UserPointsCubit, UserPointsState>(
-        builder: (context, state) => switch (state) {
-          UserPointsInitial() ||
-          UserPointsLoading() =>
-            const Center(child: CircularProgressIndicator()),
-          UserPointsError s => ErrorPage(
-              failure: s.failure,
-              onRetry: () =>
-                  context.read<UserPointsCubit>().fetchUserPoints(userId),
-            ),
-          UserPointsLoaded(:final userPoints) ||
-          UserPointsAwarded(:final userPoints) =>
-            Stack(
-              children: [
-                Container(
-                  height: 60,
-                  color: AppColors.greenLight,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    LevelHeader(
-                      currentPoints: userPoints.currentPoints,
-                      level: userPoints.level,
-                    ),
-                    Expanded(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: AppSpacing.paddingHorizontal +
-                                  const EdgeInsets.symmetric(vertical: 30),
-                              child: const LevelCard(),
-                            ),
-                            MyLevel(
-                              currentPoints: userPoints.currentPoints,
-                              level: userPoints.level,
-                            ),
-                            const SizedBox(height: 20),
-                            MyBadges(
-                              level: userPoints.level,
-                              levels: UserPointsUtils.levelData.length,
-                            ),
-                            const SizedBox(height: 20),
-                            SizedBox(
-                              height: 150,
-                              child: Padding(
-                                padding: AppSpacing.paddingHorizontal,
-                                child:
-                                    LevelItems(currentLevel: userPoints.level),
+        builder: (context, state) => AppLoaderGate(
+          isLoading: state is UserPointsInitial || state is UserPointsLoading,
+          child: switch (state) {
+            UserPointsInitial() ||
+            UserPointsLoading() =>
+              const AppLoaderPage(),
+            UserPointsError s => ErrorPage(
+                failure: s.failure,
+                onRetry: () =>
+                    context.read<UserPointsCubit>().fetchUserPoints(userId),
+              ),
+            UserPointsLoaded(:final userPoints) ||
+            UserPointsAwarded(:final userPoints) =>
+              Stack(
+                children: [
+                  Container(
+                    height: 60,
+                    color: AppColors.greenLight,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      LevelHeader(
+                        currentPoints: userPoints.currentPoints,
+                        level: userPoints.level,
+                      ),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: AppSpacing.paddingHorizontal +
+                                    const EdgeInsets.symmetric(vertical: 30),
+                                child: const LevelCard(),
                               ),
-                            ),
-                            const SizedBox(height: 50),
-                          ],
+                              MyLevel(
+                                currentPoints: userPoints.currentPoints,
+                                level: userPoints.level,
+                              ),
+                              const SizedBox(height: 20),
+                              MyBadges(
+                                level: userPoints.level,
+                                levels: UserPointsUtils.levelData.length,
+                              ),
+                              const SizedBox(height: 20),
+                              SizedBox(
+                                height: 150,
+                                child: Padding(
+                                  padding: AppSpacing.paddingHorizontal,
+                                  child:
+                                      LevelItems(currentLevel: userPoints.level),
+                                ),
+                              ),
+                              const SizedBox(height: 50),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-        },
+                    ],
+                  ),
+                ],
+              ),
+          },
+        ),
       ),
     );
   }

@@ -6,6 +6,8 @@ import 'package:plant_match_v2/features/exchange/presentation/cubit/exchange_cub
 import 'package:plant_match_v2/features/exchange/presentation/state/exchange_state.dart';
 import 'package:plant_match_v2/features/exchange/presentation/widgets/exchange_confirmation.dart';
 import 'package:plant_match_v2/features/exchange/presentation/widgets/exchange_plant_picker.dart';
+import 'package:plant_match_v2/core/widgets/app_loader/app_loader_page.dart';
+import 'package:plant_match_v2/core/widgets/app_loader/app_loader_gate.dart';
 
 class ExchangeScreen extends StatelessWidget {
   const ExchangeScreen({
@@ -28,7 +30,7 @@ class ExchangeScreen extends StatelessWidget {
         final (title, body) = switch (state) {
           ExchangeInitial() || ExchangeLoading() => (
               t.exchange.screen.loading,
-              const Center(child: CircularProgressIndicator()),
+              const AppLoaderPage(),
             ),
           ExchangePickingPlant(:final userPlants) => (
               t.exchange.screen.picking_title,
@@ -69,7 +71,10 @@ class ExchangeScreen extends StatelessWidget {
           appBar: AppBar(
             title: Text(title),
           ),
-          body: body,
+          body: AppLoaderGate(
+            isLoading: state is ExchangeInitial || state is ExchangeLoading,
+            child: body,
+          ),
         );
       },
     );

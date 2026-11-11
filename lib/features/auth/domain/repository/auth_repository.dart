@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
+import 'package:plant_match_v2/features/auth/domain/entities/password_status.dart';
 import 'package:plant_match_v2/features/auth/domain/entities/user_auth.dart';
 
 abstract class AuthRepository {
@@ -26,9 +27,21 @@ abstract class AuthRepository {
 
   TaskEither<Failure, Unit> logOut();
 
+  TaskEither<Failure, Unit> deleteAccount();
+
+  TaskEither<Failure, Unit> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  });
+
+  PasswordStatus passwordStatus();
+
+  TaskEither<Failure, Unit> createPassword({required String password});
+
   TaskEither<Failure, Unit> sendEmailVerification();
 
   TaskEither<Failure, bool> isEmailVerified();
 
-  TaskEither<Failure, bool> finalizeRegistration(User user, String firstName, String lastName);
+  TaskEither<Failure, bool> finalizeRegistration(
+      User user, String firstName, String lastName);
 }

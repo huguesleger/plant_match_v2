@@ -22,6 +22,8 @@ import 'package:plant_match_v2/features/profil/data/firebase_profil_repo.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
 import 'package:plant_match_v2/features/storage/data/firebase_storage_repository.dart';
 import 'package:plant_match_v2/core/services/location/location_service.dart';
+import 'package:plant_match_v2/core/widgets/app_loader/app_loader_page.dart';
+import 'package:plant_match_v2/core/widgets/app_loader/app_loader_gate.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -162,18 +164,19 @@ class _MyAppBodyState extends State<_MyAppBody> with WidgetsBindingObserver {
             buildWhen: (previous, current) => current is! AuthError,
             builder: (context, authState) {
               return Scaffold(
-                body: switch (authState) {
-                  AuthInitial() || AuthLoading() => const Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  Authenticated() => const TemplatePage(),
-                  Unauthenticated() ||
-                  AuthError() =>
-                    const GetStartedPageRoute(),
-                  AuthEmailVerificationSent(user: var u) ||
-                  AuthFinalizing(user: var u) =>
-                    EmailVerificationPageRoute(user: u),
-                },
+                body: AppLoaderGate(
+                  isLoading: authState is AuthInitial || authState is AuthLoading,
+                  child: switch (authState) {
+                    AuthInitial() || AuthLoading() => const AppLoaderPage(),
+                    Authenticated() => const TemplatePage(),
+                    Unauthenticated() ||
+                    AuthError() =>
+                      const GetStartedPageRoute(),
+                    AuthEmailVerificationSent(user: var u) ||
+                    AuthFinalizing(user: var u) =>
+                      EmailVerificationPageRoute(user: u),
+                  },
+                ),
               );
             },
           ),

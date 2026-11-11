@@ -4,6 +4,7 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/widgets/list_tile_group/list_tile_group.dart';
+import 'package:plant_match_v2/features/account_settings/presentation/account_settings_page_route.dart';
 import 'package:plant_match_v2/features/history/presentation/history_page_route.dart';
 import 'package:plant_match_v2/features/personal_information/presentation/personal_information_screen.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
@@ -57,7 +58,12 @@ class ProfilPersonalizationCategories extends StatelessWidget {
         ProfilItemSubCategory(
           title: t.profil.navigation.settings,
           icon: LucideIcons.settings,
-          onTap: () {},
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const AccountSettingsPageRoute(),
+            ),
+          ),
         ),
       ],
     );

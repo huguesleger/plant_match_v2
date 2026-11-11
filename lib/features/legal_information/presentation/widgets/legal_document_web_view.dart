@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:plant_match_v2/core/widgets/app_loader/app_loader_gate.dart';
 
 class LegalDocumentWebView extends StatelessWidget {
   const LegalDocumentWebView({
@@ -17,10 +17,10 @@ class LegalDocumentWebView extends StatelessWidget {
     return Stack(
       children: [
         WebViewWidget(controller: controller),
-        if (isLoading)
-          const Center(
-            child: CircularProgressIndicator(color: AppColors.blueGreen),
-          ),
+        AppLoaderGate(
+          isLoading: isLoading,
+          child: const SizedBox.shrink(),
+        ),
       ],
     );
   }

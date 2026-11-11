@@ -12,12 +12,14 @@ class PasswordField extends StatelessWidget {
     required this.onPressed,
     required this.controller,
     this.showErrors = false,
+    this.labelText = const None(),
   });
 
   final bool obscureText;
   final VoidCallback onPressed;
   final TextEditingController controller;
   final bool showErrors;
+  final Option<String> labelText;
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +112,7 @@ class PasswordField extends StatelessWidget {
           color: AppColors.error,
         ),
         isDense: true,
-        labelText: t.auth.common.password.label,
+        labelText: labelText.getOrElse(() => t.auth.common.password.label),
         border: const OutlineInputBorder(
           borderRadius: BorderRadius.all(
             Radius.circular(8),

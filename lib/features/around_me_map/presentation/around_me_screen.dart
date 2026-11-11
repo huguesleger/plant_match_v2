@@ -7,6 +7,8 @@ import 'package:plant_match_v2/features/around_me_map/presentation/cubit/around_
 import 'package:plant_match_v2/features/around_me_map/presentation/around_me_empty.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/map/around_me_map.dart';
 import 'package:plant_match_v2/core/util/distance/distance_helper.dart';
+import 'package:plant_match_v2/core/widgets/app_loader/app_loader_page.dart';
+import 'package:plant_match_v2/core/widgets/app_loader/app_loader_gate.dart';
 
 class AroundMeScreen extends StatelessWidget {
   const AroundMeScreen({super.key, required this.uid});
@@ -18,36 +20,39 @@ class AroundMeScreen extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: BlocBuilder<AroundMeCubit, AroundMeState>(
-          builder: (context, state) => switch (state) {
-            AroundMeInitial() ||
-            AroundMeLoading() =>
-              const Center(child: CircularProgressIndicator()),
-            AroundMeError(:final failure) => ErrorPage(
-                failure: failure,
-                onRetry: () =>
-                    context.read<AroundMeCubit>().getAllUserProfiles(uid),
-              ),
-            AroundMeLoaded(
-              :final users,
-              :final currentUser,
-              :final userCatalogs
-            ) =>
-              DistanceHelper.hasValidLocation(currentUser)
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const AroundMeHeader(),
-                        Expanded(
-                          child: AroundMeMap(
-                            users: users,
-                            currentUser: currentUser,
-                            userCatalogs: userCatalogs,
+          builder: (context, state) => AppLoaderGate(
+            isLoading: state is AroundMeInitial || state is AroundMeLoading,
+            child: switch (state) {
+              AroundMeInitial() ||
+              AroundMeLoading() =>
+                const AppLoaderPage(),
+              AroundMeError(:final failure) => ErrorPage(
+                  failure: failure,
+                  onRetry: () =>
+                      context.read<AroundMeCubit>().getAllUserProfiles(uid),
+                ),
+              AroundMeLoaded(
+                :final users,
+                :final currentUser,
+                :final userCatalogs
+              ) =>
+                DistanceHelper.hasValidLocation(currentUser)
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const AroundMeHeader(),
+                          Expanded(
+                            child: AroundMeMap(
+                              users: users,
+                              currentUser: currentUser,
+                              userCatalogs: userCatalogs,
+                            ),
                           ),
-                        ),
-                      ],
-                    )
-                  : AroundMeEmpty(state: state),
-          },
+                        ],
+                      )
+                    : AroundMeEmpty(state: state),
+            },
+          ),
         ),
       ),
     );

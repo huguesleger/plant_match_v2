@@ -6,6 +6,8 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_template.dart';
+import 'package:plant_match_v2/core/widgets/app_loader/app_loader.dart';
+import 'package:plant_match_v2/core/widgets/app_loader/app_loader_page.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catalog/presentation/cubit/catalog_cubit.dart';
 import 'package:plant_match_v2/features/catalog/catalog_edit/form/field/name_field.dart';
@@ -72,11 +74,7 @@ class _CatalogEditScreenState extends State<CatalogEditScreen> {
   Widget build(BuildContext context) {
     return BlocBuilder<CatalogCubit, CatalogState>(
       builder: (context, state) => switch (state) {
-        CatalogLoading() => const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
-          ),
+        CatalogLoading() => const Scaffold(body: AppLoaderPage()),
         CatalogError(:final failure) => Scaffold(
             body: ErrorPage(
               failure: failure,
@@ -176,13 +174,17 @@ class _CatalogEditScreenState extends State<CatalogEditScreen> {
     final navigator = Navigator.of(context);
     final result = await context
         .read<CatalogCubit>()
-        .saveEditedCatalog(original: widget.catalog, edited: _editedCatalog())
+        .saveEditedCatalog(
+          original: widget.catalog,
+          edited: _editedCatalog(),
+          minDuration: AppLoader.minDuration,
+        )
         .run();
     if (!mounted) return;
     result.match<void>(
       (failure) => messenger.showSnackBar(SnackBar(
           content: Text(failure.errorContent.message))),
-      (_) => navigator.pop(true),
+      (saved) => navigator.pop(saved),
     );
   }
 

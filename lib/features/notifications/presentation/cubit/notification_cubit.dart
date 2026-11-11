@@ -74,6 +74,8 @@ class NotificationCubit extends SafeCubit<NotificationState> {
     );
   }
 
+  void stopTokenRefresh() => _cancelTokenRefresh();
+
   void _cancelNotificationSubscription() {
     _notificationSubscription.map((subscription) => subscription.cancel());
     _notificationSubscription = const None();

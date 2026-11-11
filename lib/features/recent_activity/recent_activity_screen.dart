@@ -13,6 +13,8 @@ import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart'
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/features/recent_activity/recent_activity_tile.dart';
+import 'package:plant_match_v2/core/widgets/app_loader/app_loader_page.dart';
+import 'package:plant_match_v2/core/widgets/app_loader/app_loader_gate.dart';
 
 class RecentActivityScreen extends StatelessWidget {
   const RecentActivityScreen({super.key});
@@ -36,22 +38,25 @@ class RecentActivityScreen extends StatelessWidget {
       ),
       body: SafeArea(
         child: BlocBuilder<AroundMeCubit, AroundMeState>(
-          builder: (context, state) => switch (state) {
-            AroundMeInitial() ||
-            AroundMeLoading() =>
-              const Center(child: CircularProgressIndicator()),
-            AroundMeError(:final failure) => ErrorPage(
-                failure: failure,
-                onRetry: () =>
-                    context.read<AroundMeCubit>().getAllUserProfiles(uid),
-              ),
-            AroundMeLoaded(
-              :final users,
-              :final currentUser,
-              :final userCatalogs
-            ) =>
-              _buildList(context, users, currentUser, userCatalogs),
-          },
+          builder: (context, state) => AppLoaderGate(
+            isLoading: state is AroundMeInitial || state is AroundMeLoading,
+            child: switch (state) {
+              AroundMeInitial() ||
+              AroundMeLoading() =>
+                const AppLoaderPage(),
+              AroundMeError(:final failure) => ErrorPage(
+                  failure: failure,
+                  onRetry: () =>
+                      context.read<AroundMeCubit>().getAllUserProfiles(uid),
+                ),
+              AroundMeLoaded(
+                :final users,
+                :final currentUser,
+                :final userCatalogs
+              ) =>
+                _buildList(context, users, currentUser, userCatalogs),
+            },
+          ),
         ),
       ),
     );

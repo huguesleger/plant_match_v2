@@ -56,7 +56,8 @@
       "provider": "La connexion avec ce service a échoué. Réessayez.",
       "emailAlreadyVerified": "Votre adresse email est déjà vérifiée.",
       "emailNotVerified": "Votre adresse email n'est pas encore vérifiée.",
-      "profileMissing": "Votre profil n'est pas encore finalisé."
+      "profileMissing": "Votre profil n'est pas encore finalisé.",
+      "noEmail": "Aucune adresse e-mail n'est associée à votre compte."
     }
   },
   "common": {

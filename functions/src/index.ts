@@ -6,6 +6,8 @@ import {REGION} from "./config";
 admin.initializeApp();
 
 export {generateHandoverCode, validateHandover} from "./handover";
+export {deleteAccount} from "./account";
+export {notifyPasswordChanged} from "./password";
 export {applyReferral, payFirstContact} from "./leaves";
 export {getCompletedExchangeCount} from "./stats";
 export {sendWelcomeEmail} from "./welcome";

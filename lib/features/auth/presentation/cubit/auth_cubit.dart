@@ -188,6 +188,11 @@ class AuthCubit extends Cubit<AuthState> {
     ).run();
   }
 
+  void accountDeleted() {
+    _currentUser = const None();
+    emit(const Unauthenticated());
+  }
+
   TaskEither<Failure, Unit> sendPasswordResetEmail({required String email}) =>
       authRepository.sendPasswordResetEmail(email: email);
 

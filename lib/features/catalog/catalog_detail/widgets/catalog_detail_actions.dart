@@ -126,22 +126,13 @@ class _EditButton extends StatelessWidget {
     return ButtonRoundedWithIcon(
       text: t.catalog.detail.edit,
       onPressed: () async {
-        final result = await Navigator.push(
+        final result = await Navigator.push<Catalog>(
           context,
           MaterialPageRoute(
             builder: (_) => CatalogEditPageRoute(catalog: catalog),
           ),
         );
-        if (result == true && context.mounted) {
-          final getResult = await context
-              .read<CatalogCubit>()
-              .getCatalogById(catalog.catalogId.getOrElse(() => ''))
-              .run();
-          getResult.match<void>(
-            (_) {},
-            (updatedCatalog) => onUpdate(updatedCatalog),
-          );
-        }
+        Option.fromNullable(result).match(() {}, onUpdate);
       },
       bgColor: AppColors.greenLight,
       textColor: AppColors.blueGreen,

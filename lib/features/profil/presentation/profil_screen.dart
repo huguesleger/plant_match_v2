@@ -22,6 +22,8 @@ import 'package:plant_match_v2/core/theme/inter_text_style.dart';
 import 'package:plant_match_v2/features/profil/presentation/widgets/offer_premium_card.dart';
 import 'package:plant_match_v2/features/profil/presentation/widgets/profil_personalization_categories.dart';
 import 'package:plant_match_v2/features/profil/presentation/widgets/profil_plant_match_categories.dart';
+import 'package:plant_match_v2/core/widgets/app_loader/app_loader_page.dart';
+import 'package:plant_match_v2/core/widgets/app_loader/app_loader_gate.dart';
 
 class ProfilScreen extends StatelessWidget {
   const ProfilScreen({
@@ -79,109 +81,110 @@ class ProfilScreen extends StatelessWidget {
                   ]),
                   ))
               .toNullable(),
-          body: switch (state) {
-            ProfilInitial() || ProfilLoading() => const Center(
-                child: CircularProgressIndicator(),
-              ),
-            ProfilError(:final failure) => ErrorPage(
-                failure: failure,
-                onRetry: () =>
-                    context.read<ProfilCubit>().getProfilUser(userId),
-              ),
-            ProfilLoaded(:final profilUser) => SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      color: AppColors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
+          body: AppLoaderGate(
+            isLoading: state is ProfilInitial || state is ProfilLoading,
+            child: switch (state) {
+              ProfilInitial() || ProfilLoading() => const AppLoaderPage(),
+              ProfilError(:final failure) => ErrorPage(
+                  failure: failure,
+                  onRetry: () =>
+                      context.read<ProfilCubit>().getProfilUser(userId),
+                ),
+              ProfilLoaded(:final profilUser) => SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        color: AppColors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                                padding: AppSpacing.paddingHorizontal +
+                                    const EdgeInsets.only(top: 30),
+                                child: const OfferPremiumCard()),
+                            Padding(
                               padding: AppSpacing.paddingHorizontal +
-                                  const EdgeInsets.only(top: 30),
-                              child: const OfferPremiumCard()),
-                          Padding(
-                            padding: AppSpacing.paddingHorizontal +
-                                const EdgeInsets.only(top: 30, bottom: 12),
-                            child: Text(
-                              t.profil.navigation.navigation_title.essential,
-                              style: InterTextStyle.inter(
-                                AppTypo.textM,
-                                fontWeight: FontWeight.w700,
-                                color: AppColors.greyDark,
+                                  const EdgeInsets.only(top: 30, bottom: 12),
+                              child: Text(
+                                t.profil.navigation.navigation_title.essential,
+                                style: InterTextStyle.inter(
+                                  AppTypo.textM,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.greyDark,
+                                ),
                               ),
                             ),
+                            const SizedBox(
+                              height: 216,
+                              child: ProfilCard(),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: AppSpacing.paddingHorizontal +
+                            const EdgeInsets.only(top: 30, bottom: 12),
+                        child: Text(
+                          t.profil.navigation.navigation_title.personalization,
+                          style: InterTextStyle.inter(
+                            AppTypo.textM,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.greyDark,
                           ),
-                          const SizedBox(
-                            height: 216,
-                            child: ProfilCard(),
+                        ),
+                      ),
+                      ProfilPersonalizationCategories(
+                        profilUser: profilUser,
+                      ),
+                      Padding(
+                        padding: AppSpacing.paddingHorizontal +
+                            const EdgeInsets.only(top: 30, bottom: 12),
+                        child: Text(
+                          t.profil.navigation.navigation_title.plant_match,
+                          style: InterTextStyle.inter(
+                            AppTypo.textM,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.greyDark,
                           ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: AppSpacing.paddingHorizontal +
-                          const EdgeInsets.only(top: 30, bottom: 12),
-                      child: Text(
-                        t.profil.navigation.navigation_title.personalization,
-                        style: InterTextStyle.inter(
-                          AppTypo.textM,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.greyDark,
                         ),
                       ),
-                    ),
-                    ProfilPersonalizationCategories(
-                      profilUser: profilUser,
-                    ),
-                    Padding(
-                      padding: AppSpacing.paddingHorizontal +
-                          const EdgeInsets.only(top: 30, bottom: 12),
-                      child: Text(
-                        t.profil.navigation.navigation_title.plant_match,
-                        style: InterTextStyle.inter(
-                          AppTypo.textM,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.greyDark,
+                      const ProfilPlantMatchCategories(),
+                      const SizedBox(height: 30),
+                      Padding(
+                        padding: AppSpacing.paddingHorizontal,
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: ButtonRoundedWithIcon(
+                            text: t.profil.navigation.logout,
+                            onPressed: () async {
+                              final navigator =
+                                  Navigator.of(context, rootNavigator: true);
+                              final authCubit = context.read<AuthCubit>();
+                              await context
+                                  .read<NotificationCubit>()
+                                  .removeTokenAndLogout(userId);
+                              navigator.popUntil((route) => route.isFirst);
+                              await authCubit.logOut();
+                            },
+                            bgColor: AppColors.greenLight.withValues(alpha: 0.3),
+                            textColor: AppColors.blueGreen,
+                            icon: const Icon(LucideIcons.log_out,
+                                color: AppColors.blueGreen),
+                            iconAlignment: IconAlignment.start,
+                          ),
                         ),
                       ),
-                    ),
-                    const ProfilPlantMatchCategories(),
-                    const SizedBox(height: 30),
-                    Padding(
-                      padding: AppSpacing.paddingHorizontal,
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: ButtonRoundedWithIcon(
-                          text: t.profil.navigation.logout,
-                          onPressed: () async {
-                            final navigator =
-                                Navigator.of(context, rootNavigator: true);
-                            final authCubit = context.read<AuthCubit>();
-                            await context
-                                .read<NotificationCubit>()
-                                .removeTokenAndLogout(userId);
-                            navigator.popUntil((route) => route.isFirst);
-                            await authCubit.logOut();
-                          },
-                          bgColor: AppColors.greenLight.withValues(alpha: 0.3),
-                          textColor: AppColors.blueGreen,
-                          icon: const Icon(LucideIcons.log_out,
-                              color: AppColors.blueGreen),
-                          iconAlignment: IconAlignment.start,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 30),
-                  ],
+                      const SizedBox(height: 30),
+                    ],
+                  ),
                 ),
-              ),
-            ProfilImageUploading() => const SizedBox.shrink(),
-          },
+              ProfilImageUploading() => const SizedBox.shrink(),
+            },
+          ),
         );
       },
     );

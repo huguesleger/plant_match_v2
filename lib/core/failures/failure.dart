@@ -89,6 +89,10 @@ class AuthProfileMissingFailure extends AuthFailure {
   const AuthProfileMissingFailure() : super('Profile not finalized');
 }
 
+class AuthNoEmailFailure extends AuthFailure {
+  const AuthNoEmailFailure() : super('No email for current user');
+}
+
 sealed class LocationFailure extends Failure {
   const LocationFailure(super.debugMessage);
 }

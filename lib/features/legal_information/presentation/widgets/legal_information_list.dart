@@ -3,7 +3,7 @@ import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/features/legal_information/domain/entities/legal_document.dart';
 import 'package:plant_match_v2/features/legal_information/presentation/legal_document_page_route.dart';
 import 'package:plant_match_v2/features/legal_information/presentation/legal_document_presentation.dart';
-import 'package:plant_match_v2/features/legal_information/presentation/widgets/legal_information_item.dart';
+import 'package:plant_match_v2/core/widgets/icon_list_item/icon_list_item.dart';
 
 class LegalInformationList extends StatelessWidget {
   const LegalInformationList({super.key});
@@ -20,7 +20,7 @@ class LegalInformationList extends StatelessWidget {
         separatorBuilder: (_, __) => const SizedBox(height: spacing),
         itemBuilder: (context, index) {
           final document = LegalDocument.values[index];
-          return LegalInformationItem(
+          return IconListItem(
             title: document.title,
             icon: document.icon,
             onTap: () => Navigator.push(

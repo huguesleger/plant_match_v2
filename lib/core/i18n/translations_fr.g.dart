@@ -40,6 +40,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	Translations $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => Translations(meta: meta ?? this.$meta);
 
 	// Translations
+	late final TranslationsAccountSettingsFr accountSettings = TranslationsAccountSettingsFr.internal(_root);
 	late final TranslationsAroundMeMapFr aroundMeMap = TranslationsAroundMeMapFr.internal(_root);
 	late final TranslationsAuthFr auth = TranslationsAuthFr.internal(_root);
 	late final TranslationsCatalogFr catalog = TranslationsCatalogFr.internal(_root);
@@ -58,6 +59,19 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final TranslationsProfilFr profil = TranslationsProfilFr.internal(_root);
 	late final TranslationsUserFr user = TranslationsUserFr.internal(_root);
 	late final TranslationsWidgetsFr widgets = TranslationsWidgetsFr.internal(_root);
+}
+
+// Path: accountSettings
+class TranslationsAccountSettingsFr {
+	TranslationsAccountSettingsFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+	late final TranslationsAccountSettingsScreenFr screen = TranslationsAccountSettingsScreenFr.internal(_root);
+	late final TranslationsAccountSettingsItemsFr items = TranslationsAccountSettingsItemsFr.internal(_root);
+	late final TranslationsAccountSettingsChangePasswordFr change_password = TranslationsAccountSettingsChangePasswordFr.internal(_root);
+	late final TranslationsAccountSettingsDeleteAccountFr delete_account = TranslationsAccountSettingsDeleteAccountFr.internal(_root);
 }
 
 // Path: aroundMeMap
@@ -320,6 +334,92 @@ class TranslationsWidgetsFr {
 	late final TranslationsWidgetsErrorFr error = TranslationsWidgetsErrorFr.internal(_root);
 	late final TranslationsWidgetsCommonFr common = TranslationsWidgetsCommonFr.internal(_root);
 	late final TranslationsWidgetsDateFr date = TranslationsWidgetsDateFr.internal(_root);
+}
+
+// Path: accountSettings.screen
+class TranslationsAccountSettingsScreenFr {
+	TranslationsAccountSettingsScreenFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Paramètres de compte'
+	String get title => 'Paramètres de compte';
+}
+
+// Path: accountSettings.items
+class TranslationsAccountSettingsItemsFr {
+	TranslationsAccountSettingsItemsFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Modifier mon mot de passe'
+	String get change_password => 'Modifier mon mot de passe';
+
+	/// fr: 'Notifications'
+	String get notifications => 'Notifications';
+
+	/// fr: 'Paramètres de notification'
+	String get notification_settings => 'Paramètres de notification';
+
+	/// fr: 'Accès à ma position'
+	String get location_access => 'Accès à ma position';
+}
+
+// Path: accountSettings.change_password
+class TranslationsAccountSettingsChangePasswordFr {
+	TranslationsAccountSettingsChangePasswordFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+	late final TranslationsAccountSettingsChangePasswordCurrentPasswordFr current_password = TranslationsAccountSettingsChangePasswordCurrentPasswordFr.internal(_root);
+
+	/// fr: 'Choisissez un nouveau mot de passe'
+	String get new_password_section => 'Choisissez un nouveau mot de passe';
+
+	/// fr: 'Nouveau mot de passe'
+	String get new_password_label => 'Nouveau mot de passe';
+
+	/// fr: 'Envoyer'
+	String get submit => 'Envoyer';
+
+	/// fr: 'Modification du mot de passe…'
+	String get loading => 'Modification du mot de passe…';
+
+	/// fr: 'Votre mot de passe a été modifié.'
+	String get success => 'Votre mot de passe a été modifié.';
+
+	/// fr: 'Le mot de passe actuel est incorrect.'
+	String get wrong_current_password => 'Le mot de passe actuel est incorrect.';
+
+	late final TranslationsAccountSettingsChangePasswordCreateFr create = TranslationsAccountSettingsChangePasswordCreateFr.internal(_root);
+
+	/// fr: 'Votre compte est lié à un réseau social qui ne nous a pas transmis d'adresse e-mail. Vous ne pouvez donc pas créer de mot de passe : continuez à vous connecter avec ce réseau social.'
+	String get unavailable => 'Votre compte est lié à un réseau social qui ne nous a pas transmis d\'adresse e-mail. Vous ne pouvez donc pas créer de mot de passe : continuez à vous connecter avec ce réseau social.';
+}
+
+// Path: accountSettings.delete_account
+class TranslationsAccountSettingsDeleteAccountFr {
+	TranslationsAccountSettingsDeleteAccountFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Supprimer mon compte'
+	String get button => 'Supprimer mon compte';
+
+	/// fr: 'Suppression impossible'
+	String get error_title => 'Suppression impossible';
+
+	/// fr: 'Suppression du compte…'
+	String get loading => 'Suppression du compte…';
+
+	late final TranslationsAccountSettingsDeleteAccountDialogFr dialog = TranslationsAccountSettingsDeleteAccountDialogFr.internal(_root);
 }
 
 // Path: aroundMeMap.header
@@ -786,9 +886,6 @@ class TranslationsCatalogWizardFr {
 
 	/// fr: 'Ajouter une plante'
 	String get title => 'Ajouter une plante';
-
-	/// fr: 'Création...'
-	String get loading => 'Création...';
 
 	/// fr: 'Erreur lors de la sélection d’image.'
 	String get error_image => 'Erreur lors de la sélection d’image.';
@@ -1903,6 +2000,63 @@ class TranslationsWidgetsDateFr {
 	String get yesterday => 'Hier';
 
 	late final TranslationsWidgetsDateDaysFr days = TranslationsWidgetsDateDaysFr.internal(_root);
+}
+
+// Path: accountSettings.change_password.current_password
+class TranslationsAccountSettingsChangePasswordCurrentPasswordFr {
+	TranslationsAccountSettingsChangePasswordCurrentPasswordFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Entrez votre mot de passe actuel'
+	String get section => 'Entrez votre mot de passe actuel';
+
+	/// fr: 'Mot de passe actuel'
+	String get label => 'Mot de passe actuel';
+
+	/// fr: 'Entrez votre mot de passe actuel'
+	String get hint => 'Entrez votre mot de passe actuel';
+}
+
+// Path: accountSettings.change_password.create
+class TranslationsAccountSettingsChangePasswordCreateFr {
+	TranslationsAccountSettingsChangePasswordCreateFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Créer un mot de passe'
+	String get title => 'Créer un mot de passe';
+
+	/// fr: 'Création du mot de passe…'
+	String get loading => 'Création du mot de passe…';
+
+	/// fr: 'Votre compte est lié à Google ou Facebook. Créez un mot de passe pour pouvoir aussi vous connecter avec ${email}.'
+	String intro({required Object email}) => 'Votre compte est lié à Google ou Facebook. Créez un mot de passe pour pouvoir aussi vous connecter avec ${email}.';
+
+	/// fr: 'Votre mot de passe a été créé. Vous pouvez maintenant vous connecter avec votre e-mail.'
+	String get success => 'Votre mot de passe a été créé. Vous pouvez maintenant vous connecter avec votre e-mail.';
+}
+
+// Path: accountSettings.delete_account.dialog
+class TranslationsAccountSettingsDeleteAccountDialogFr {
+	TranslationsAccountSettingsDeleteAccountDialogFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Supprimer mon compte'
+	String get title => 'Supprimer mon compte';
+
+	/// fr: 'Cette action est définitive. Toutes vos données (profil, catalogue, échanges et messages) seront supprimées et ne pourront pas être récupérées.'
+	String get content => 'Cette action est définitive. Toutes vos données (profil, catalogue, échanges et messages) seront supprimées et ne pourront pas être récupérées.';
+
+	/// fr: 'Supprimer'
+	String get confirm => 'Supprimer';
 }
 
 // Path: auth.common.email
@@ -3175,6 +3329,9 @@ class TranslationsWidgetsErrorAuthFr {
 
 	/// fr: 'Votre profil n'est pas encore finalisé.'
 	String get profileMissing => 'Votre profil n\'est pas encore finalisé.';
+
+	/// fr: 'Aucune adresse e-mail n'est associée à votre compte.'
+	String get noEmail => 'Aucune adresse e-mail n\'est associée à votre compte.';
 }
 
 // Path: widgets.date.days
@@ -3509,6 +3666,31 @@ class TranslationsLevelLevelsK7ActionsFr {
 extension on Translations {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'accountSettings.screen.title' => 'Paramètres de compte',
+			'accountSettings.items.change_password' => 'Modifier mon mot de passe',
+			'accountSettings.items.notifications' => 'Notifications',
+			'accountSettings.items.notification_settings' => 'Paramètres de notification',
+			'accountSettings.items.location_access' => 'Accès à ma position',
+			'accountSettings.change_password.current_password.section' => 'Entrez votre mot de passe actuel',
+			'accountSettings.change_password.current_password.label' => 'Mot de passe actuel',
+			'accountSettings.change_password.current_password.hint' => 'Entrez votre mot de passe actuel',
+			'accountSettings.change_password.new_password_section' => 'Choisissez un nouveau mot de passe',
+			'accountSettings.change_password.new_password_label' => 'Nouveau mot de passe',
+			'accountSettings.change_password.submit' => 'Envoyer',
+			'accountSettings.change_password.loading' => 'Modification du mot de passe…',
+			'accountSettings.change_password.success' => 'Votre mot de passe a été modifié.',
+			'accountSettings.change_password.wrong_current_password' => 'Le mot de passe actuel est incorrect.',
+			'accountSettings.change_password.create.title' => 'Créer un mot de passe',
+			'accountSettings.change_password.create.loading' => 'Création du mot de passe…',
+			'accountSettings.change_password.create.intro' => ({required Object email}) => 'Votre compte est lié à Google ou Facebook. Créez un mot de passe pour pouvoir aussi vous connecter avec ${email}.',
+			'accountSettings.change_password.create.success' => 'Votre mot de passe a été créé. Vous pouvez maintenant vous connecter avec votre e-mail.',
+			'accountSettings.change_password.unavailable' => 'Votre compte est lié à un réseau social qui ne nous a pas transmis d\'adresse e-mail. Vous ne pouvez donc pas créer de mot de passe : continuez à vous connecter avec ce réseau social.',
+			'accountSettings.delete_account.button' => 'Supprimer mon compte',
+			'accountSettings.delete_account.error_title' => 'Suppression impossible',
+			'accountSettings.delete_account.loading' => 'Suppression du compte…',
+			'accountSettings.delete_account.dialog.title' => 'Supprimer mon compte',
+			'accountSettings.delete_account.dialog.content' => 'Cette action est définitive. Toutes vos données (profil, catalogue, échanges et messages) seront supprimées et ne pourront pas être récupérées.',
+			'accountSettings.delete_account.dialog.confirm' => 'Supprimer',
 			'aroundMeMap.header.title' => 'A proximité',
 			'aroundMeMap.header.subtitle' => 'Trouvez des utilisateurs autour de vous pour partager, échanger ...',
 			'aroundMeMap.empty.title' => 'Oups ! vous n\'êtes pas localisé',
@@ -3642,7 +3824,6 @@ extension on Translations {
 			'catalog.edit.environment.title' => 'Sélectionner une catégorie pour votre plante',
 			'catalog.edit.image.title' => 'Sélectionner une à trois photos de votre plante',
 			'catalog.wizard.title' => 'Ajouter une plante',
-			'catalog.wizard.loading' => 'Création...',
 			'catalog.wizard.error_image' => 'Erreur lors de la sélection d’image.',
 			'catalog.wizard.select_images' => 'Sélectionner des images',
 			'catalog.wizard.image_count' => ({required Object index}) => 'Image ${index}',
@@ -3997,6 +4178,8 @@ extension on Translations {
 			'widgets.error.network.message' => 'Vérifiez votre connexion internet puis réessayez.',
 			'widgets.error.server.title' => 'Service momentanément indisponible',
 			'widgets.error.server.message' => 'Nos serveurs rencontrent un souci. Réessayez dans quelques instants.',
+			_ => null,
+		} ?? switch (path) {
 			'widgets.error.permission.title' => 'Accès refusé',
 			'widgets.error.permission.message' => 'Vous n\'avez pas les droits pour accéder à ce contenu.',
 			'widgets.error.session.title' => 'Session expirée',
@@ -4021,10 +4204,9 @@ extension on Translations {
 			'widgets.error.auth.cancelled' => 'La connexion a été annulée.',
 			'widgets.error.auth.provider' => 'La connexion avec ce service a échoué. Réessayez.',
 			'widgets.error.auth.emailAlreadyVerified' => 'Votre adresse email est déjà vérifiée.',
-			_ => null,
-		} ?? switch (path) {
 			'widgets.error.auth.emailNotVerified' => 'Votre adresse email n\'est pas encore vérifiée.',
 			'widgets.error.auth.profileMissing' => 'Votre profil n\'est pas encore finalisé.',
+			'widgets.error.auth.noEmail' => 'Aucune adresse e-mail n\'est associée à votre compte.',
 			'widgets.common.viewMore' => 'En voir +',
 			'widgets.common.cancel' => 'Annuler',
 			'widgets.common.confirm' => 'Confirmer',

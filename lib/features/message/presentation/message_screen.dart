@@ -13,6 +13,8 @@ import 'package:plant_match_v2/features/message/presentation/cubit/message_state
 import 'package:plant_match_v2/features/message/presentation/message_empty.dart';
 import 'package:plant_match_v2/features/message/presentation/message_item.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:plant_match_v2/core/widgets/app_loader/app_loader_page.dart';
+import 'package:plant_match_v2/core/widgets/app_loader/app_loader_gate.dart';
 
 class MessagesScreen extends StatelessWidget {
   const MessagesScreen({super.key});
@@ -35,28 +37,29 @@ class MessagesScreen extends StatelessWidget {
         leadingWith: 16,
       ),
       body: BlocBuilder<MessagesCubit, MessagesState>(
-        builder: (context, state) => switch (state) {
-          MessagesInitial() || MessagesLoading() => const Center(
-              child: CircularProgressIndicator(),
-            ),
-          MessagesError(:final failure) => ErrorPage(
-              failure: failure,
-              onRetry: () {
-                userId.map((id) => context.read<MessagesCubit>().load(id));
-              },
-            ),
-          MessagesLoaded(:final chats) => chats.isEmpty
-              ? const MessageEmpty()
-              : ListView.separated(
-                  itemCount: chats.length,
-                  separatorBuilder: (_, __) => const Padding(
-                    padding: AppSpacing.paddingHorizontal,
-                    child: Divider(height: 1, color: AppColors.greyLight),
+        builder: (context, state) => AppLoaderGate(
+          isLoading: state is MessagesInitial || state is MessagesLoading,
+          child: switch (state) {
+            MessagesInitial() || MessagesLoading() => const AppLoaderPage(),
+            MessagesError(:final failure) => ErrorPage(
+                failure: failure,
+                onRetry: () {
+                  userId.map((id) => context.read<MessagesCubit>().load(id));
+                },
+              ),
+            MessagesLoaded(:final chats) => chats.isEmpty
+                ? const MessageEmpty()
+                : ListView.separated(
+                    itemCount: chats.length,
+                    separatorBuilder: (_, __) => const Padding(
+                      padding: AppSpacing.paddingHorizontal,
+                      child: Divider(height: 1, color: AppColors.greyLight),
+                    ),
+                    itemBuilder: (context, index) =>
+                        MessageItem(chat: chats[index]),
                   ),
-                  itemBuilder: (context, index) =>
-                      MessageItem(chat: chats[index]),
-                ),
-        },
+          },
+        ),
       ),
     );
   }

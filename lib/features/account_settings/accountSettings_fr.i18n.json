@@ -1,0 +1,41 @@
+{
+  "screen": {
+    "title": "Paramètres de compte"
+  },
+  "items": {
+    "change_password": "Modifier mon mot de passe",
+    "notifications": "Notifications",
+    "notification_settings": "Paramètres de notification",
+    "location_access": "Accès à ma position"
+  },
+  "change_password": {
+    "current_password": {
+      "section": "Entrez votre mot de passe actuel",
+      "label": "Mot de passe actuel",
+      "hint": "Entrez votre mot de passe actuel"
+    },
+    "new_password_section": "Choisissez un nouveau mot de passe",
+    "new_password_label": "Nouveau mot de passe",
+    "submit": "Envoyer",
+    "loading": "Modification du mot de passe…",
+    "success": "Votre mot de passe a été modifié.",
+    "wrong_current_password": "Le mot de passe actuel est incorrect.",
+    "create": {
+      "title": "Créer un mot de passe",
+      "loading": "Création du mot de passe…",
+      "intro": "Votre compte est lié à Google ou Facebook. Créez un mot de passe pour pouvoir aussi vous connecter avec ${email}.",
+      "success": "Votre mot de passe a été créé. Vous pouvez maintenant vous connecter avec votre e-mail."
+    },
+    "unavailable": "Votre compte est lié à un réseau social qui ne nous a pas transmis d'adresse e-mail. Vous ne pouvez donc pas créer de mot de passe : continuez à vous connecter avec ce réseau social."
+  },
+  "delete_account": {
+    "button": "Supprimer mon compte",
+    "error_title": "Suppression impossible",
+    "loading": "Suppression du compte…",
+    "dialog": {
+      "title": "Supprimer mon compte",
+      "content": "Cette action est définitive. Toutes vos données (profil, catalogue, échanges et messages) seront supprimées et ne pourront pas être récupérées.",
+      "confirm": "Supprimer"
+    }
+  }
+}

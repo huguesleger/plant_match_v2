@@ -5,14 +5,16 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:fpdart/fpdart.dart' hide State;
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/core/widgets/app_loader/app_loader.dart';
+import 'package:plant_match_v2/core/widgets/app_loader/app_loader_page.dart';
 import 'package:plant_match_v2/core/widgets/bottom_bar/bottom_bar.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/add_plant_draft.dart';
 import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/add_plant_wizard_pages.dart';
 import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/widgets/add_plant_wizard_app_bar.dart';
-import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/widgets/loading_overlay.dart';
 import 'package:plant_match_v2/features/catalog/presentation/cubit/catalog_cubit.dart';
+import 'package:plant_match_v2/features/catalog/presentation/cubit/catalog_state.dart';
 
 class AddPlantWizardScreen extends StatefulWidget {
   const AddPlantWizardScreen({super.key, required this.catalog});
@@ -43,7 +45,20 @@ class _AddPlantWizardScreenState extends State<AddPlantWizardScreen> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
+  Widget build(BuildContext context) =>
+      BlocBuilder<CatalogCubit, CatalogState>(
+        builder: (context, state) => PopScope(
+          canPop: state is! CatalogLoading,
+          child: Stack(
+            children: [
+              _wizard(),
+              if (state is CatalogLoading) const AppLoaderPage(),
+            ],
+          ),
+        ),
+      );
+
+  Widget _wizard() => Scaffold(
         appBar: AddPlantWizardAppBar(
           canGoBack: _page != 0,
           onBack: () => _goTo(_page - 1),
@@ -88,16 +103,17 @@ class _AddPlantWizardScreenState extends State<AddPlantWizardScreen> {
   }
 
   Future<void> _onSave() async {
-    final cubit = context.read<CatalogCubit>();
-    LoadingOverlay.show(context);
-    final result = await cubit
-        .publishNewCatalog(_draft.toCatalog(
-          name: _nameController.text,
-          description: _descriptionController.text,
-        ))
+    final result = await context
+        .read<CatalogCubit>()
+        .publishNewCatalog(
+          _draft.toCatalog(
+            name: _nameController.text,
+            description: _descriptionController.text,
+          ),
+          minDuration: AppLoader.minDuration,
+        )
         .run();
     if (!mounted) return;
-    Navigator.pop(context);
     result.match(
       (failure) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(failure.errorContent.message),

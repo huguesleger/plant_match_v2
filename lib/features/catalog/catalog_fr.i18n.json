@@ -82,7 +82,6 @@
   },
   "wizard": {
     "title": "Ajouter une plante",
-    "loading": "Création...",
     "error_image": "Erreur lors de la sélection d’image.",
     "select_images": "Sélectionner des images",
     "image_count": "Image ${index}",

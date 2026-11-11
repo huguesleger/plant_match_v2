@@ -5,6 +5,8 @@ import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart'
 import 'package:plant_match_v2/features/catalog/presentation/cubit/catalog_cubit.dart';
 import 'package:plant_match_v2/features/catalog/presentation/cubit/catalog_state.dart';
 import 'package:plant_match_v2/features/catalog/presentation/widgets/catalog_loaded_view.dart';
+import 'package:plant_match_v2/core/widgets/app_loader/app_loader_page.dart';
+import 'package:plant_match_v2/core/widgets/app_loader/app_loader_gate.dart';
 
 class CatalogScreen extends StatelessWidget {
   const CatalogScreen({super.key});
@@ -12,27 +14,28 @@ class CatalogScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CatalogCubit, CatalogState>(
-      builder: (context, state) => switch (state) {
-        CatalogInitial() || CatalogLoading() => const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
+      builder: (context, state) => AppLoaderGate(
+        isLoading: state is CatalogInitial || state is CatalogLoading,
+        child: switch (state) {
+          CatalogInitial() || CatalogLoading() => const Scaffold(
+              body: AppLoaderPage(),
             ),
-          ),
-        CatalogError(:final failure) => Scaffold(
-            body: ErrorPage(
-              failure: failure,
-              onRetry: () {
-                context.read<AuthCubit>().userId.map(
-                    context.read<CatalogCubit>().getCatalogsByUserId);
-              },
+          CatalogError(:final failure) => Scaffold(
+              body: ErrorPage(
+                failure: failure,
+                onRetry: () {
+                  context.read<AuthCubit>().userId.map(
+                      context.read<CatalogCubit>().getCatalogsByUserId);
+                },
+              ),
             ),
-          ),
-        CatalogLoaded(:final catalogs, :final catalog, :final sortOption) => CatalogLoadedView(
-            catalogs: catalogs,
-            catalog: catalog,
-            sortOption: sortOption,
-          ),
-      },
+          CatalogLoaded(:final catalogs, :final catalog, :final sortOption) => CatalogLoadedView(
+              catalogs: catalogs,
+              catalog: catalog,
+              sortOption: sortOption,
+            ),
+        },
+      ),
     );
   }
 }

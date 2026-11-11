@@ -83,14 +83,24 @@ class CatalogCubit extends SafeCubit<CatalogState> {
       .map(emit)
       .run();
 
-  TaskEither<Failure, String> publishNewCatalog(Catalog catalog) =>
-      _withTimeout(_publishNewCatalog(catalog));
+  TaskEither<Failure, String> publishNewCatalog(
+    Catalog catalog, {
+    Duration minDuration = Duration.zero,
+  }) {
+    final previous = state;
+    emit(const CatalogLoading());
+
+    return _lastingAtLeast(
+      minDuration,
+      _withTimeout(_publishNewCatalog(catalog)),
+    ).mapLeft((failure) {
+      emit(previous);
+      return failure;
+    });
+  }
 
   TaskEither<Failure, String> _publishNewCatalog(Catalog catalog) {
-    final previous = state;
-    final sortOption = _currentSortFromState();
     final id = catalogRepository.reserveCatalogId();
-    emit(const CatalogLoading());
 
     return TaskEither.sequenceList(
       catalog.images
@@ -121,18 +131,7 @@ class CatalogCubit extends SafeCubit<CatalogState> {
                 ).flatMap((_) => TaskEither.left(failure)),
               ),
         )
-        .flatMap(
-          (_) => TaskEither<Failure, List<Catalog>>.fromTask(
-            _refreshCatalogs(catalog.userId),
-          ),
-        )
-        .map((catalogs) {
-      emit(CatalogLoaded(catalogs, catalog, sortOption: sortOption));
-      return id;
-    }).mapLeft((failure) {
-      emit(previous);
-      return failure;
-    });
+        .map((_) => id);
   }
 
   static const Duration _saveTimeout = Duration(seconds: 90);
@@ -144,6 +143,16 @@ class CatalogCubit extends SafeCubit<CatalogState> {
               onTimeout: () =>
                   const Left(NetworkFailure('Catalog save timeout')),
             ),
+      );
+
+  static TaskEither<Failure, T> _lastingAtLeast<T>(
+    Duration minDuration,
+    TaskEither<Failure, T> task,
+  ) =>
+      TaskEither(
+        () => (task.run(), Future<void>.delayed(minDuration))
+            .wait
+            .then((results) => results.$1),
       );
 
   static bool _isRemote(String image) => image.startsWith('http');
@@ -192,17 +201,25 @@ class CatalogCubit extends SafeCubit<CatalogState> {
   TaskEither<Failure, Catalog> saveEditedCatalog({
     required Catalog original,
     required Catalog edited,
-  }) =>
-      _withTimeout(_saveEditedCatalog(original: original, edited: edited));
+    Duration minDuration = Duration.zero,
+  }) {
+    final previous = state;
+    emit(const CatalogLoading());
+
+    return _lastingAtLeast(
+      minDuration,
+      _withTimeout(_saveEditedCatalog(original: original, edited: edited)),
+    ).mapLeft((failure) {
+      emit(previous);
+      return failure;
+    });
+  }
 
   TaskEither<Failure, Catalog> _saveEditedCatalog({
     required Catalog original,
     required Catalog edited,
   }) {
-    final previous = state;
-    final sortOption = _currentSortFromState();
     final id = edited.catalogId.getOrElse(() => '');
-    emit(const CatalogLoading());
 
     return TaskEither.sequenceList(
       edited.images
@@ -238,16 +255,9 @@ class CatalogCubit extends SafeCubit<CatalogState> {
                   .filter(_isRemote)
                   .filter((image) => !saved.images.contains(image))
                   .toList(),
-            ).flatMap((_) => _refreshCatalogs(saved.userId)).map((catalogs) {
-              emit(CatalogLoaded(catalogs, saved, sortOption: sortOption));
-              return saved;
-            }),
+            ).map((_) => saved),
           ),
-        )
-        .mapLeft((failure) {
-          emit(previous);
-          return failure;
-        });
+        );
   }
 
   Task<List<Catalog>> _refreshCatalogs(String userId) =>
