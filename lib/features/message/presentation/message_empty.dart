@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
-import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/theme/inter_text_style.dart';
+import 'package:plant_match_v2/features/message/presentation/message_empty_illustration.dart';
 
 class MessageEmpty extends StatelessWidget {
   const MessageEmpty({super.key});
@@ -14,12 +14,9 @@ class MessageEmpty extends StatelessWidget {
     return Stack(
       fit: StackFit.expand,
       children: [
-        Align(
+        const Align(
           alignment: Alignment.bottomCenter,
-          child: Assets.res.images.emptyTchat.image(
-            width: double.infinity,
-            fit: BoxFit.fitWidth,
-          ),
+          child: MessageEmptyIllustration(),
         ),
         Align(
           alignment: const Alignment(0, -0.7),

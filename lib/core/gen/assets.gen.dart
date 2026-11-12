@@ -37,6 +37,10 @@ class $ResGen {
 class $ResAnimationsGen {
   const $ResAnimationsGen();
 
+  /// File path: res/animations/paper_planes.json
+  LottieGenImage get paperPlanes =>
+      const LottieGenImage('res/animations/paper_planes.json');
+
   /// File path: res/animations/plant_match_dots_loader.json
   LottieGenImage get plantMatchDotsLoader =>
       const LottieGenImage('res/animations/plant_match_dots_loader.json');
@@ -46,7 +50,8 @@ class $ResAnimationsGen {
       const LottieGenImage('res/animations/plant_match_loader.json');
 
   /// List of all assets
-  List<LottieGenImage> get values => [plantMatchDotsLoader, plantMatchLoader];
+  List<LottieGenImage> get values =>
+      [paperPlanes, plantMatchDotsLoader, plantMatchLoader];
 }
 
 class $ResFontsGen {
