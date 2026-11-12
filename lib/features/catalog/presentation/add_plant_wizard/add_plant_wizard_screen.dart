@@ -5,8 +5,8 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:fpdart/fpdart.dart' hide State;
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
-import 'package:plant_match_v2/core/widgets/app_loader/app_loader.dart';
-import 'package:plant_match_v2/core/widgets/app_loader/app_loader_page.dart';
+import 'package:plant_match_v2/core/widgets/dots_loader/dots_loader.dart';
+import 'package:plant_match_v2/core/widgets/dots_loader/dots_loader_page.dart';
 import 'package:plant_match_v2/core/widgets/bottom_bar/bottom_bar.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
@@ -52,7 +52,7 @@ class _AddPlantWizardScreenState extends State<AddPlantWizardScreen> {
           child: Stack(
             children: [
               _wizard(),
-              if (state is CatalogLoading) const AppLoaderPage(),
+              if (state is CatalogLoading) const DotsLoaderPage(),
             ],
           ),
         ),
@@ -110,7 +110,7 @@ class _AddPlantWizardScreenState extends State<AddPlantWizardScreen> {
             name: _nameController.text,
             description: _descriptionController.text,
           ),
-          minDuration: AppLoader.minDuration,
+          minDuration: DotsLoader.minDuration,
         )
         .run();
     if (!mounted) return;

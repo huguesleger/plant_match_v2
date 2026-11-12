@@ -1,4 +1,6 @@
+import 'package:plant_match_v2/core/extension/task_either_minimal_delay/task_either_minimal_delay.dart';
 import 'package:plant_match_v2/core/util/safe_cubit.dart';
+import 'package:plant_match_v2/core/widgets/dots_loader/dots_loader.dart';
 import 'package:plant_match_v2/features/account_settings/presentation/cubit/delete_account_state.dart';
 import 'package:plant_match_v2/features/auth/domain/repository/auth_repository.dart';
 
@@ -13,6 +15,7 @@ class DeleteAccountCubit extends SafeCubit<DeleteAccountState> {
     emit(const DeleteAccountInProgress());
     _authRepository
         .deleteAccount()
+        .withMinimalDelay(DotsLoader.minDuration)
         .match<DeleteAccountState>(
           DeleteAccountFailure.new,
           (_) => const DeleteAccountSuccess(),

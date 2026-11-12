@@ -1,4 +1,5 @@
 import 'package:fpdart/fpdart.dart';
+import 'package:plant_match_v2/core/extension/task_either_minimal_delay/task_either_minimal_delay.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/core/failures/failure_mapper.dart';
 import 'package:plant_match_v2/core/util/safe_cubit.dart';
@@ -90,10 +91,9 @@ class CatalogCubit extends SafeCubit<CatalogState> {
     final previous = state;
     emit(const CatalogLoading());
 
-    return _lastingAtLeast(
-      minDuration,
-      _withTimeout(_publishNewCatalog(catalog)),
-    ).mapLeft((failure) {
+    return _withTimeout(_publishNewCatalog(catalog))
+        .withMinimalDelay(minDuration)
+        .mapLeft((failure) {
       emit(previous);
       return failure;
     });
@@ -143,16 +143,6 @@ class CatalogCubit extends SafeCubit<CatalogState> {
               onTimeout: () =>
                   const Left(NetworkFailure('Catalog save timeout')),
             ),
-      );
-
-  static TaskEither<Failure, T> _lastingAtLeast<T>(
-    Duration minDuration,
-    TaskEither<Failure, T> task,
-  ) =>
-      TaskEither(
-        () => (task.run(), Future<void>.delayed(minDuration))
-            .wait
-            .then((results) => results.$1),
       );
 
   static bool _isRemote(String image) => image.startsWith('http');
@@ -206,10 +196,9 @@ class CatalogCubit extends SafeCubit<CatalogState> {
     final previous = state;
     emit(const CatalogLoading());
 
-    return _lastingAtLeast(
-      minDuration,
-      _withTimeout(_saveEditedCatalog(original: original, edited: edited)),
-    ).mapLeft((failure) {
+    return _withTimeout(_saveEditedCatalog(original: original, edited: edited))
+        .withMinimalDelay(minDuration)
+        .mapLeft((failure) {
       emit(previous);
       return failure;
     });

@@ -19,8 +19,7 @@ import 'package:plant_match_v2/features/donation/presentation/cubit/donation_cub
 import 'package:plant_match_v2/features/donation/presentation/state/donation_state.dart';
 import 'package:plant_match_v2/features/exchange/presentation/cubit/exchange_cubit.dart';
 import 'package:plant_match_v2/features/exchange/presentation/state/exchange_state.dart';
-import 'package:plant_match_v2/core/widgets/app_loader/app_loader_page.dart';
-import 'package:plant_match_v2/core/widgets/app_loader/app_loader_gate.dart';
+import 'package:plant_match_v2/core/widgets/dots_loader/dots_loader_page.dart';
 
 class ChatPlantScreen extends StatelessWidget {
   const ChatPlantScreen({
@@ -163,36 +162,33 @@ class ChatPlantScreen extends StatelessWidget {
               ]),
             ),
             body: BlocBuilder<ChatPlantCubit, ChatPlantState>(
-              builder: (context, state) => AppLoaderGate(
-                isLoading: state is ChatPlantInitial || state is ChatPlantLoading,
-                child: switch (state) {
-                  ChatPlantInitial() || ChatPlantLoading() => const AppLoaderPage(),
-                  ChatPlantError(:final failure) => ErrorPage(
-                      failure: failure,
-                      onRetry: () => context.read<ChatPlantCubit>().subscribe(
-                            chatId: chatId,
-                            currentUserId: userId,
-                            otherUserId: otherUserId,
-                          ),
-                    ),
-                  ChatPlantBlocked() => ChatPlantView(
-                      chatId: chatId,
-                      plantId: plantId,
-                      plant: plant,
-                      otherUserId: otherUserId,
-                      messages: const [],
-                      blockStatus: BlockStatus.blockedByMe,
-                    ),
-                  ChatPlantLoaded s => ChatPlantView(
-                      chatId: chatId,
-                      plantId: plantId,
-                      plant: plant,
-                      otherUserId: otherUserId,
-                      messages: s.messages,
-                      blockStatus: s.blockStatus,
-                    ),
-                },
-              ),
+              builder: (context, state) => switch (state) {
+                ChatPlantInitial() || ChatPlantLoading() => const DotsLoaderPage(),
+                ChatPlantError(:final failure) => ErrorPage(
+                    failure: failure,
+                    onRetry: () => context.read<ChatPlantCubit>().subscribe(
+                          chatId: chatId,
+                          currentUserId: userId,
+                          otherUserId: otherUserId,
+                        ),
+                  ),
+                ChatPlantBlocked() => ChatPlantView(
+                    chatId: chatId,
+                    plantId: plantId,
+                    plant: plant,
+                    otherUserId: otherUserId,
+                    messages: const [],
+                    blockStatus: BlockStatus.blockedByMe,
+                  ),
+                ChatPlantLoaded s => ChatPlantView(
+                    chatId: chatId,
+                    plantId: plantId,
+                    plant: plant,
+                    otherUserId: otherUserId,
+                    messages: s.messages,
+                    blockStatus: s.blockStatus,
+                  ),
+              },
             ),
           );
         },

@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
-import 'package:plant_match_v2/core/widgets/app_loader/app_loader.dart';
+import 'package:plant_match_v2/core/widgets/dots_loader/dots_loader.dart';
 
 class LoadingOverlay extends StatelessWidget {
   const LoadingOverlay({super.key, required this.message});
 
   final String message;
 
-  static Stopwatch _shownFor = Stopwatch();
-
   static void show(BuildContext context, {required String message}) {
-    _shownFor = Stopwatch()..start();
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -19,16 +16,9 @@ class LoadingOverlay extends StatelessWidget {
     );
   }
 
-  static Future<void> waitMinDuration() => Future.delayed(_remaining());
-
   static Future<void> hide(BuildContext context) {
-    final navigator = Navigator.of(context, rootNavigator: true);
-    return waitMinDuration().then((_) => navigator.pop());
-  }
-
-  static Duration _remaining() {
-    final remaining = AppLoader.minDuration - _shownFor.elapsed;
-    return remaining.isNegative ? Duration.zero : remaining;
+    Navigator.of(context, rootNavigator: true).pop();
+    return Future<void>.value();
   }
 
   @override
@@ -41,7 +31,7 @@ class LoadingOverlay extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const AppLoader(),
+              const DotsLoader(),
               const SizedBox(height: 24),
               Text(
                 message,

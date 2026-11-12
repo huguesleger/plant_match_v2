@@ -11,8 +11,7 @@ import 'package:plant_match_v2/features/recommendation/presentation/widgets/care
 import 'package:plant_match_v2/features/recommendation/presentation/widgets/pet_safety_step.dart';
 import 'package:plant_match_v2/features/recommendation/presentation/widgets/recommendation_result_view.dart';
 import 'package:plant_match_v2/features/recommendation/presentation/widgets/recommendation_footer.dart';
-import 'package:plant_match_v2/core/widgets/app_loader/app_loader_page.dart';
-import 'package:plant_match_v2/core/widgets/app_loader/app_loader_gate.dart';
+import 'package:plant_match_v2/core/widgets/dots_loader/dots_loader_page.dart';
 
 class RecommendationScreen extends StatelessWidget {
   const RecommendationScreen({super.key});
@@ -39,18 +38,15 @@ class RecommendationScreen extends StatelessWidget {
             ),
             centerTitle: true,
           ),
-          body: AppLoaderGate(
-            isLoading: state is RecommendationInitial || state is RecommendationLoading,
-            child: state.match(
-              initial: (_) => const AppLoaderPage(),
-              step: (stepState) => _buildWizardBody(context, stepState),
-              loading: (_) => const AppLoaderPage(),
-              result: (resultState) => RecommendationResultView(
-                plants: resultState.suggestedPlants,
-              ),
-              error: (errorState) => Center(
-                child: Text(errorState.failure.errorContent.message),
-              ),
+          body: state.match(
+            initial: (_) => const DotsLoaderPage(),
+            step: (stepState) => _buildWizardBody(context, stepState),
+            loading: (_) => const DotsLoaderPage(),
+            result: (resultState) => RecommendationResultView(
+              plants: resultState.suggestedPlants,
+            ),
+            error: (errorState) => Center(
+              child: Text(errorState.failure.errorContent.message),
             ),
           ),
         );

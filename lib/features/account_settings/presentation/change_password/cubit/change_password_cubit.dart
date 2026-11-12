@@ -1,4 +1,6 @@
+import 'package:plant_match_v2/core/extension/task_either_minimal_delay/task_either_minimal_delay.dart';
 import 'package:plant_match_v2/core/util/safe_cubit.dart';
+import 'package:plant_match_v2/core/widgets/dots_loader/dots_loader.dart';
 import 'package:plant_match_v2/features/account_settings/presentation/change_password/cubit/change_password_state.dart';
 import 'package:plant_match_v2/features/auth/domain/repository/auth_repository.dart';
 
@@ -19,6 +21,7 @@ class ChangePasswordCubit extends SafeCubit<ChangePasswordState> {
           currentPassword: currentPassword,
           newPassword: newPassword,
         )
+        .withMinimalDelay(DotsLoader.minDuration)
         .match<ChangePasswordState>(
           ChangePasswordFailure.new,
           (_) => const ChangePasswordSuccess(),
@@ -31,6 +34,7 @@ class ChangePasswordCubit extends SafeCubit<ChangePasswordState> {
     emit(const ChangePasswordInProgress());
     _authRepository
         .createPassword(password: newPassword)
+        .withMinimalDelay(DotsLoader.minDuration)
         .match<ChangePasswordState>(
           ChangePasswordFailure.new,
           (_) => const ChangePasswordSuccess(),

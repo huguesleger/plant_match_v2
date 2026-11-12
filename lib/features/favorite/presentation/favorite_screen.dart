@@ -9,8 +9,7 @@ import 'package:plant_match_v2/features/favorite/presentation/cubit/favorite_cub
 import 'package:plant_match_v2/features/favorite/presentation/cubit/favorite_state.dart';
 import 'package:plant_match_v2/features/favorite/presentation/widgets/favorite_plants_tab.dart';
 import 'package:plant_match_v2/features/favorite/presentation/widgets/favorite_users_tab.dart';
-import 'package:plant_match_v2/core/widgets/app_loader/app_loader_page.dart';
-import 'package:plant_match_v2/core/widgets/app_loader/app_loader_gate.dart';
+import 'package:plant_match_v2/core/widgets/dots_loader/dots_loader_page.dart';
 
 class FavoriteScreen extends StatelessWidget {
   const FavoriteScreen({
@@ -38,62 +37,59 @@ class FavoriteScreen extends StatelessWidget {
         onPressed: Some(() => Navigator.pop(context)),
       ),
       body: BlocBuilder<FavoriteCubit, FavoriteState>(
-        builder: (context, state) => AppLoaderGate(
-          isLoading: state is FavoriteInitial || state is FavoriteLoading,
-          child: switch (state) {
-            FavoriteInitial() ||
-            FavoriteLoading() =>
-              const AppLoaderPage(),
-            FavoriteError s => ErrorPage(
-                failure: s.failure,
-                onRetry: () =>
-                    context.read<FavoriteCubit>().loadFavorites(uid),
-              ),
-            FavoriteLoaded s => DefaultTabController(
-                length: 2,
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 12),
-                      child: TabBar.secondary(
-                        tabs: [
-                          Tab(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(Icons.eco_rounded, size: 16),
-                                const SizedBox(width: 6),
-                                Text(t.favorite.screen.plants_tab(count: s.plants.length)),
-                              ],
-                            ),
+        builder: (context, state) => switch (state) {
+          FavoriteInitial() ||
+          FavoriteLoading() =>
+            const DotsLoaderPage(),
+          FavoriteError s => ErrorPage(
+              failure: s.failure,
+              onRetry: () =>
+                  context.read<FavoriteCubit>().loadFavorites(uid),
+            ),
+          FavoriteLoaded s => DefaultTabController(
+              length: 2,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
+                    child: TabBar.secondary(
+                      tabs: [
+                        Tab(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.eco_rounded, size: 16),
+                              const SizedBox(width: 6),
+                              Text(t.favorite.screen.plants_tab(count: s.plants.length)),
+                            ],
                           ),
-                          Tab(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(Icons.person_rounded, size: 16),
-                                const SizedBox(width: 6),
-                                Text(t.favorite.screen.users_tab(count: s.users.length)),
-                              ],
-                            ),
+                        ),
+                        Tab(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.person_rounded, size: 16),
+                              const SizedBox(width: 6),
+                              Text(t.favorite.screen.users_tab(count: s.users.length)),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                    Expanded(
-                      child: TabBarView(
-                        children: [
-                          FavoritePlantsTab(uid: uid, plants: s.plants),
-                          FavoriteUsersTab(uid: uid, users: s.users),
-                        ],
-                      ),
+                  ),
+                  Expanded(
+                    child: TabBarView(
+                      children: [
+                        FavoritePlantsTab(uid: uid, plants: s.plants),
+                        FavoriteUsersTab(uid: uid, users: s.users),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-          },
-        ),
+            ),
+        },
       ),
     );
   }

@@ -11,8 +11,7 @@ import 'package:plant_match_v2/features/user/presentation/widgets/items_count/it
 import 'package:plant_match_v2/features/user/presentation/recent_plants/recent_plants.dart';
 import 'package:plant_match_v2/features/user/presentation/widgets/user_bio.dart';
 import 'package:plant_match_v2/features/user/presentation/widgets/user_catalog_filter_section.dart';
-import 'package:plant_match_v2/core/widgets/app_loader/app_loader_page.dart';
-import 'package:plant_match_v2/core/widgets/app_loader/app_loader_gate.dart';
+import 'package:plant_match_v2/core/widgets/dots_loader/dots_loader_page.dart';
 
 class UserScreen extends StatelessWidget {
   const UserScreen({super.key, required this.uid});
@@ -24,45 +23,42 @@ class UserScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.white,
       body: BlocBuilder<UserCubit, UserState>(
-        builder: (context, state) => AppLoaderGate(
-          isLoading: state is UserInitial || state is UserLoading,
-          child: switch (state) {
-            UserInitial() || UserLoading() => const AppLoaderPage(),
-            UserError(:final failure) => ErrorPage(
-                failure: failure,
-                onRetry: () => context.read<UserCubit>().fetchUser(uid),
-              ),
-            UserLoaded(:final data) => RefreshScreen(
-                onRefresh: () => context.read<UserCubit>().refresh(uid),
-                notificationPredicate: (notification) => notification.depth == 1,
-                child: UserHeaderWithContent(
-                  user: data.user,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      UserBio(bio: data.user.bio),
-                      const SizedBox(height: 30),
-                      ItemsCount(
-                        catalog: data.publishedCatalogs(data.user.uid),
-                        level: data.level,
-                        exchangeCount: data.exchangeCount,
-                      ),
-                      if (data.recentCatalogs(data.user.uid).isNotEmpty) ...[
-                        RecentPlants(
-                            catalogs: data.recentCatalogs(data.user.uid)),
-                      ],
-                      const SizedBox(height: 30),
-                      UserCatalogFilterSection(
-                        selectedFilter: data.selectedFilter,
-                        filteredCatalogs: data.filteredCatalogs(data.user.uid),
-                      ),
+        builder: (context, state) => switch (state) {
+          UserInitial() || UserLoading() => const DotsLoaderPage(),
+          UserError(:final failure) => ErrorPage(
+              failure: failure,
+              onRetry: () => context.read<UserCubit>().fetchUser(uid),
+            ),
+          UserLoaded(:final data) => RefreshScreen(
+              onRefresh: () => context.read<UserCubit>().refresh(uid),
+              notificationPredicate: (notification) => notification.depth == 1,
+              child: UserHeaderWithContent(
+                user: data.user,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    UserBio(bio: data.user.bio),
+                    const SizedBox(height: 30),
+                    ItemsCount(
+                      catalog: data.publishedCatalogs(data.user.uid),
+                      level: data.level,
+                      exchangeCount: data.exchangeCount,
+                    ),
+                    if (data.recentCatalogs(data.user.uid).isNotEmpty) ...[
+                      RecentPlants(
+                          catalogs: data.recentCatalogs(data.user.uid)),
                     ],
-                  ),
+                    const SizedBox(height: 30),
+                    UserCatalogFilterSection(
+                      selectedFilter: data.selectedFilter,
+                      filteredCatalogs: data.filteredCatalogs(data.user.uid),
+                    ),
+                  ],
                 ),
               ),
-          },
-        ),
+            ),
+        },
       ),
     );
   }

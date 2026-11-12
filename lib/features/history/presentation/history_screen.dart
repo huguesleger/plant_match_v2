@@ -13,8 +13,7 @@ import 'package:plant_match_v2/features/history/presentation/cubit/history_state
 import 'package:plant_match_v2/features/history/presentation/widgets/history_item.dart';
 import 'package:plant_match_v2/features/history/presentation/widgets/empty_history_view.dart';
 import 'package:plant_match_v2/features/history/presentation/widgets/history_card_item.dart';
-import 'package:plant_match_v2/core/widgets/app_loader/app_loader_page.dart';
-import 'package:plant_match_v2/core/widgets/app_loader/app_loader_gate.dart';
+import 'package:plant_match_v2/core/widgets/dots_loader/dots_loader_page.dart';
 
 class HistoryScreen extends StatelessWidget {
   const HistoryScreen({
@@ -59,37 +58,34 @@ class HistoryScreen extends StatelessWidget {
           ),
           Expanded(
             child: BlocBuilder<HistoryCubit, HistoryState>(
-              builder: (context, state) => AppLoaderGate(
-                isLoading: state is HistoryInitial || state is HistoryLoading,
-                child: switch (state) {
-                  HistoryInitial() ||
-                  HistoryLoading() =>
-                    const AppLoaderPage(),
-                  HistoryError s => Center(
-                      child: Text(
-                        s.failure.errorContent.message,
-                        style: const TextStyle(color: Colors.red),
-                      ),
+              builder: (context, state) => switch (state) {
+                HistoryInitial() ||
+                HistoryLoading() =>
+                  const DotsLoaderPage(),
+                HistoryError s => Center(
+                    child: Text(
+                      s.failure.errorContent.message,
+                      style: const TextStyle(color: Colors.red),
                     ),
-                  HistoryLoaded s => RefreshScreen(
-                      onRefresh: context.read<HistoryCubit>().refresh,
-                      child: s.items.isEmpty
-                          ? const RefreshFillView(child: EmptyHistoryView())
-                          : ListView.separated(
-                              physics: const AlwaysScrollableScrollPhysics(),
-                              padding: const EdgeInsets.only(
-                                  left: 16, right: 16, top: 16, bottom: 20),
-                              itemCount: s.items.length,
-                              separatorBuilder: (_, __) =>
-                                  const SizedBox(height: 12),
-                              itemBuilder: (context, index) => HistoryCardItem(
-                                item: s.items[index],
-                                currentUserId: currentUserId,
-                              ),
+                  ),
+                HistoryLoaded s => RefreshScreen(
+                    onRefresh: context.read<HistoryCubit>().refresh,
+                    child: s.items.isEmpty
+                        ? const RefreshFillView(child: EmptyHistoryView())
+                        : ListView.separated(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            padding: const EdgeInsets.only(
+                                left: 16, right: 16, top: 16, bottom: 20),
+                            itemCount: s.items.length,
+                            separatorBuilder: (_, __) =>
+                                const SizedBox(height: 12),
+                            itemBuilder: (context, index) => HistoryCardItem(
+                              item: s.items[index],
+                              currentUserId: currentUserId,
                             ),
-                    ),
-                },
-              ),
+                          ),
+                  ),
+              },
             ),
           ),
         ],

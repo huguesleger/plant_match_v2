@@ -11,8 +11,7 @@ import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catalog/presentation/widgets/catalog_card_item.dart';
 import 'package:plant_match_v2/features/catalog/presentation/cubit/catalog_cubit.dart';
 import 'package:plant_match_v2/features/catalog/presentation/cubit/catalog_state.dart';
-import 'package:plant_match_v2/core/widgets/app_loader/app_loader_page.dart';
-import 'package:plant_match_v2/core/widgets/app_loader/app_loader_gate.dart';
+import 'package:plant_match_v2/core/widgets/dots_loader/dots_loader_page.dart';
 
 import 'package:plant_match_v2/features/catalog/presentation/widgets/catalog_sort_option.dart';
 
@@ -30,24 +29,21 @@ class CatalogListTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<CatalogCubit, CatalogState>(
       builder: (context, state) {
-        return AppLoaderGate(
-          isLoading: state is CatalogInitial || state is CatalogLoading,
-          child: switch (state) {
-            CatalogInitial() || CatalogLoading() => const AppLoaderPage(),
-            CatalogError(:final failure) => Center(
-                child: Text(
-                  failure.errorContent.message,
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
+        return switch (state) {
+          CatalogInitial() || CatalogLoading() => const DotsLoaderPage(),
+          CatalogError(:final failure) => Center(
+              child: Text(
+                failure.errorContent.message,
+                style: Theme.of(context).textTheme.bodyLarge,
               ),
-            CatalogLoaded(:final catalogs) => _buildList(
-                context,
-                _sortCatalogs(
-                  catalogs.where((c) => c.status == status).toList(),
-                ),
+            ),
+          CatalogLoaded(:final catalogs) => _buildList(
+              context,
+              _sortCatalogs(
+                catalogs.where((c) => c.status == status).toList(),
               ),
-          },
-        );
+            ),
+        };
       },
     );
   }

@@ -5,8 +5,7 @@ import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/widgets/error/error_page.dart';
 import 'package:plant_match_v2/features/catalog/data/firebase_catalog_repository.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
-import 'package:plant_match_v2/core/widgets/app_loader/app_loader_page.dart';
-import 'package:plant_match_v2/core/widgets/app_loader/app_loader_gate.dart';
+import 'package:plant_match_v2/core/widgets/dots_loader/dots_loader_page.dart';
 
 class ChatPlantCatalogLoader extends StatefulWidget {
   const ChatPlantCatalogLoader({
@@ -42,25 +41,21 @@ class _ChatPlantCatalogLoaderState extends State<ChatPlantCatalogLoader> {
   Widget build(BuildContext context) =>
       FutureBuilder<Either<Failure, Option<Catalog>>>(
         future: _future,
-        builder: (context, snapshot) =>
-            AppLoaderGate(
-              isLoading: snapshot.connectionState != ConnectionState.done,
-              child: Option.fromNullable(snapshot.data).match(
-            () => const Scaffold(
-              body: AppLoaderPage(),
+        builder: (context, snapshot) => Option.fromNullable(snapshot.data).match(
+          () => const Scaffold(
+            body: DotsLoaderPage(),
+          ),
+          (result) => result.match(
+            (failure) => ErrorPage(
+              failure: failure,
+              onRetry: _reload,
             ),
-            (result) => result.match(
-              (failure) => ErrorPage(
-                failure: failure,
-                onRetry: _reload,
-              ),
-              (catalog) => catalog.match(
-                () => const _PlantUnavailable(),
-                (plant) => widget.builder(context, plant),
-              ),
+            (catalog) => catalog.match(
+              () => const _PlantUnavailable(),
+              (plant) => widget.builder(context, plant),
             ),
           ),
-            ),
+        ),
       );
 }
 

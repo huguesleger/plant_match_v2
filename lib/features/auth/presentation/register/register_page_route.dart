@@ -5,8 +5,6 @@ import 'package:plant_match_v2/features/auth/presentation/cubit/auth_state.dart'
 import 'package:plant_match_v2/features/auth/presentation/email_verification/email_verification_page_route.dart';
 import 'package:plant_match_v2/features/auth/presentation/register/register_screen.dart';
 import 'package:plant_match_v2/features/auth/presentation/widgets/auth_error_listener.dart';
-import 'package:plant_match_v2/core/widgets/app_loader/app_loader_page.dart';
-import 'package:plant_match_v2/core/widgets/app_loader/app_loader_gate.dart';
 
 class RegisterPageRoute extends StatelessWidget {
   const RegisterPageRoute({super.key});
@@ -17,21 +15,16 @@ class RegisterPageRoute extends StatelessWidget {
       child: BlocBuilder<AuthCubit, AuthState>(
         buildWhen: (previous, current) => current is! AuthError,
         builder: (context, state) {
-          return AppLoaderGate(
-            isLoading: state is AuthInitial || state is AuthLoading || state is Authenticated,
-            child: switch (state) {
-              AuthInitial() || AuthLoading() => const Scaffold(
-                  body: AppLoaderPage(),
-                ),
-              Authenticated() => const Scaffold(
-                body: AppLoaderPage(),
-              ),
-              Unauthenticated() || AuthError() => const RegisterScreen(),
-              AuthEmailVerificationSent(user: var u) ||
-              AuthFinalizing(user: var u) =>
-                EmailVerificationPageRoute(user: u),
-            },
-          );
+          return switch (state) {
+            AuthInitial() ||
+            AuthLoading() ||
+            Authenticated() ||
+            Unauthenticated() ||
+            AuthError() => const RegisterScreen(),
+            AuthEmailVerificationSent(user: var u) ||
+            AuthFinalizing(user: var u) =>
+              EmailVerificationPageRoute(user: u),
+          };
         },
       ),
     );

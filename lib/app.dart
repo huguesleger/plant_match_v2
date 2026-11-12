@@ -22,8 +22,10 @@ import 'package:plant_match_v2/features/profil/data/firebase_profil_repo.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
 import 'package:plant_match_v2/features/storage/data/firebase_storage_repository.dart';
 import 'package:plant_match_v2/core/services/location/location_service.dart';
-import 'package:plant_match_v2/core/widgets/app_loader/app_loader_page.dart';
-import 'package:plant_match_v2/core/widgets/app_loader/app_loader_gate.dart';
+import 'package:plant_match_v2/core/widgets/app_loader/app_loader_overlay.dart';
+import 'package:plant_match_v2/features/around_me_map/data/firebase_around_me_repository.dart';
+import 'package:plant_match_v2/features/around_me_map/presentation/cubit/around_me_cubit.dart';
+import 'package:plant_match_v2/features/catalog/data/firebase_catalog_repository.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -62,6 +64,14 @@ class _MyAppState extends State<MyApp> {
           create: (context) => ProfilCubit(
             profilRepository: FirebaseProfilRepo(),
             storageRepository: FirebaseStorageRepository(),
+            locationService: LocationServiceImpl(),
+          ),
+        ),
+        BlocProvider(
+          create: (context) => AroundMeCubit(
+            aroundMeRepository: FirebaseAroundMeRepository(),
+            profilRepository: FirebaseProfilRepo(),
+            catalogRepository: FirebaseCatalogRepository(),
             locationService: LocationServiceImpl(),
           ),
         ),
@@ -121,6 +131,7 @@ class _MyAppBodyState extends State<_MyAppBody> with WidgetsBindingObserver {
   void _resetUserSession(BuildContext context) {
     context.read<ProfilCubit>().reset();
     context.read<UserPointsCubit>().reset();
+    context.read<AroundMeCubit>().reset();
     DistanceHelper.maxDistance = 15.0;
   }
 
@@ -134,6 +145,9 @@ class _MyAppBodyState extends State<_MyAppBody> with WidgetsBindingObserver {
       supportedLocales: AppLocaleUtils.supportedLocales,
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
       navigatorObservers: [appRouteObserver],
+      builder: (context, child) => AppLoaderOverlay(
+        child: child ?? const SizedBox.shrink(),
+      ),
       home: MultiBlocListener(
         listeners: [
           BlocListener<AuthCubit, AuthState>(
@@ -148,6 +162,9 @@ class _MyAppBodyState extends State<_MyAppBody> with WidgetsBindingObserver {
                     .read<NotificationCubit>()
                     .requestPermissionAndSaveToken(authState.user.uid);
                 context.read<ProfilCubit>().getProfilUser(authState.user.uid);
+                context
+                    .read<AroundMeCubit>()
+                    .getAllUserProfiles(authState.user.uid);
                 authState.isFirstTime
                     ? context
                         .read<UserPointsCubit>()
@@ -161,22 +178,18 @@ class _MyAppBodyState extends State<_MyAppBody> with WidgetsBindingObserver {
         ],
         child: RewardListener(
           child: BlocBuilder<AuthCubit, AuthState>(
-            buildWhen: (previous, current) => current is! AuthError,
+            buildWhen: (previous, current) =>
+                current is! AuthError && current is! AuthLoading,
             builder: (context, authState) {
               return Scaffold(
-                body: AppLoaderGate(
-                  isLoading: authState is AuthInitial || authState is AuthLoading,
-                  child: switch (authState) {
-                    AuthInitial() || AuthLoading() => const AppLoaderPage(),
-                    Authenticated() => const TemplatePage(),
-                    Unauthenticated() ||
-                    AuthError() =>
-                      const GetStartedPageRoute(),
-                    AuthEmailVerificationSent(user: var u) ||
-                    AuthFinalizing(user: var u) =>
-                      EmailVerificationPageRoute(user: u),
-                  },
-                ),
+                body: switch (authState) {
+                  AuthInitial() || AuthLoading() => const SizedBox.shrink(),
+                  Authenticated() => const TemplatePage(),
+                  Unauthenticated() || AuthError() => const GetStartedPageRoute(),
+                  AuthEmailVerificationSent(user: var u) ||
+                  AuthFinalizing(user: var u) =>
+                    EmailVerificationPageRoute(user: u),
+                },
               );
             },
           ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:plant_match_v2/core/widgets/app_loader/app_loader_gate.dart';
+import 'package:plant_match_v2/core/widgets/dots_loader/dots_loader_page.dart';
 
 class LegalDocumentWebView extends StatelessWidget {
   const LegalDocumentWebView({
@@ -17,10 +17,7 @@ class LegalDocumentWebView extends StatelessWidget {
     return Stack(
       children: [
         WebViewWidget(controller: controller),
-        AppLoaderGate(
-          isLoading: isLoading,
-          child: const SizedBox.shrink(),
-        ),
+        if (isLoading) const Positioned.fill(child: DotsLoaderPage()),
       ],
     );
   }

@@ -37,12 +37,16 @@ class $ResGen {
 class $ResAnimationsGen {
   const $ResAnimationsGen();
 
+  /// File path: res/animations/plant_match_dots_loader.json
+  LottieGenImage get plantMatchDotsLoader =>
+      const LottieGenImage('res/animations/plant_match_dots_loader.json');
+
   /// File path: res/animations/plant_match_loader.json
   LottieGenImage get plantMatchLoader =>
       const LottieGenImage('res/animations/plant_match_loader.json');
 
   /// List of all assets
-  List<LottieGenImage> get values => [plantMatchLoader];
+  List<LottieGenImage> get values => [plantMatchDotsLoader, plantMatchLoader];
 }
 
 class $ResFontsGen {

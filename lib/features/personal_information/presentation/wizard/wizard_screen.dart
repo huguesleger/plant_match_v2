@@ -5,8 +5,7 @@ import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_state.dart';
 import 'package:plant_match_v2/features/personal_information/presentation/wizard/widgets/wizard_view.dart';
-import 'package:plant_match_v2/core/widgets/app_loader/app_loader_page.dart';
-import 'package:plant_match_v2/core/widgets/app_loader/app_loader_gate.dart';
+import 'package:plant_match_v2/core/widgets/dots_loader/dots_loader_page.dart';
 
 class DetailWizardScreen extends StatefulWidget {
   const DetailWizardScreen({super.key, required this.profilUser});
@@ -50,18 +49,15 @@ class _DetailWizardScreenState extends State<DetailWizardScreen> {
                 setState(() => _isLocating = locating),
           ),
           BlocBuilder<ProfilCubit, ProfilState>(
-            builder: (context, state) => AppLoaderGate(
-              isLoading: state is ProfilLoading && _isLocating,
-              child: switch (state) {
-                ProfilLoading() when _isLocating => const AppLoaderPage(),
-                ProfilInitial() ||
-                ProfilLoading() ||
-                ProfilLoaded() ||
-                ProfilError() ||
-                ProfilImageUploading() =>
-                  const SizedBox.shrink(),
-              },
-            ),
+            builder: (context, state) => switch (state) {
+              ProfilLoading() when _isLocating => const DotsLoaderPage(),
+              ProfilInitial() ||
+              ProfilLoading() ||
+              ProfilLoaded() ||
+              ProfilError() ||
+              ProfilImageUploading() =>
+                const SizedBox.shrink(),
+            },
           ),
         ],
       ),

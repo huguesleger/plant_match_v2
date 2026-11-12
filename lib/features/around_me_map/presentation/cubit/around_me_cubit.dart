@@ -34,6 +34,8 @@ class AroundMeCubit extends Cubit<AroundMeState> {
         .run();
   }
 
+  void reset() => emit(const AroundMeInitial());
+
   Future<void> refresh(String uid) => _loadAll(uid)
       .match(
         (failure) => switch (state) {

@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart' hide State;
-import 'package:plant_match_v2/core/services/location/location_service.dart';
 import 'package:plant_match_v2/core/util/navigation/app_route_observer.dart';
-import 'package:plant_match_v2/features/around_me_map/data/firebase_around_me_repository.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/cubit/around_me_cubit.dart';
-import 'package:plant_match_v2/features/catalog/data/firebase_catalog_repository.dart';
-import 'package:plant_match_v2/features/profil/data/firebase_profil_repo.dart';
 import 'package:plant_match_v2/core/widgets/navigation_bottom_bar/navigation_bottom_bar.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/add_plant_wizard_page_route.dart';
@@ -52,12 +48,7 @@ class TemplatePageState extends State<TemplatePage> with RouteAware {
         .map((user) => user.uid)
         .getOrElse(() => '');
 
-    _aroundMeCubit = AroundMeCubit(
-      aroundMeRepository: FirebaseAroundMeRepository(),
-      profilRepository: FirebaseProfilRepo(),
-      catalogRepository: FirebaseCatalogRepository(),
-      locationService: LocationServiceImpl(),
-    )..getAllUserProfiles(uid);
+    _aroundMeCubit = context.read<AroundMeCubit>();
 
     _pages = [
       const HomePageRoute(),
@@ -84,7 +75,6 @@ class TemplatePageState extends State<TemplatePage> with RouteAware {
   @override
   void dispose() {
     appRouteObserver.unsubscribe(this);
-    _aroundMeCubit.close();
     super.dispose();
   }
 
@@ -112,7 +102,6 @@ class TemplatePageState extends State<TemplatePage> with RouteAware {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider.value(value: _aroundMeCubit),
         BlocProvider(
           create: (_) => UnreadMessagesCubit(
             repository: chatRepository,

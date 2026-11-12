@@ -6,8 +6,8 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_template.dart';
-import 'package:plant_match_v2/core/widgets/app_loader/app_loader.dart';
-import 'package:plant_match_v2/core/widgets/app_loader/app_loader_page.dart';
+import 'package:plant_match_v2/core/widgets/dots_loader/dots_loader.dart';
+import 'package:plant_match_v2/core/widgets/dots_loader/dots_loader_page.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catalog/presentation/cubit/catalog_cubit.dart';
 import 'package:plant_match_v2/features/catalog/catalog_edit/form/field/name_field.dart';
@@ -74,7 +74,7 @@ class _CatalogEditScreenState extends State<CatalogEditScreen> {
   Widget build(BuildContext context) {
     return BlocBuilder<CatalogCubit, CatalogState>(
       builder: (context, state) => switch (state) {
-        CatalogLoading() => const Scaffold(body: AppLoaderPage()),
+        CatalogLoading() => const Scaffold(body: DotsLoaderPage()),
         CatalogError(:final failure) => Scaffold(
             body: ErrorPage(
               failure: failure,
@@ -177,7 +177,7 @@ class _CatalogEditScreenState extends State<CatalogEditScreen> {
         .saveEditedCatalog(
           original: widget.catalog,
           edited: _editedCatalog(),
-          minDuration: AppLoader.minDuration,
+          minDuration: DotsLoader.minDuration,
         )
         .run();
     if (!mounted) return;

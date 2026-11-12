@@ -43,9 +43,8 @@ class DeleteAccountListener extends StatelessWidget {
     final authCubit = context.read<AuthCubit>();
     final navigator = Navigator.of(context, rootNavigator: true);
     context.read<NotificationCubit>().stopTokenRefresh();
-    return LoadingOverlay.waitMinDuration().then((_) {
-      navigator.popUntil((route) => route.isFirst);
-      authCubit.accountDeleted();
-    });
+    navigator.popUntil((route) => route.isFirst);
+    authCubit.accountDeleted();
+    return Future<void>.value();
   }
 }

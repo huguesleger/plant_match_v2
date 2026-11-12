@@ -1,11 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:plant_match_v2/core/extension/task_either_minimal_delay/task_either_minimal_delay.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/core/failures/failure_mapper.dart';
 import 'package:plant_match_v2/features/auth/domain/entities/user_auth.dart';
 import 'package:plant_match_v2/features/auth/domain/repository/auth_repository.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_state.dart';
+import 'package:plant_match_v2/core/widgets/app_loader/app_loader.dart';
 import 'package:plant_match_v2/features/level/data/firebase_user_points.dart';
 
 class AuthCubit extends Cubit<AuthState> {
@@ -25,6 +27,7 @@ class AuthCubit extends Cubit<AuthState> {
   void checkCurrentUser() {
     authRepository
         .getCurrentUser()
+        .withMinimalDelay(AppLoader.minDuration)
         .match(
           (failure) => const Unauthenticated(),
           (option) => option.match(
@@ -47,6 +50,7 @@ class AuthCubit extends Cubit<AuthState> {
 
     authRepository
         .signInWithEmailAndPassword(email: email, password: password)
+        .withMinimalDelayOnRight(AppLoader.minDuration)
         .match(
       (failure) => failure is AuthProfileMissingFailure
           ? _resumeRegistration()
@@ -91,6 +95,7 @@ class AuthCubit extends Cubit<AuthState> {
             lastName: lastName)
         .flatMap(
             (user) => authRepository.sendEmailVerification().map((_) => user))
+        .withMinimalDelayOnRight(AppLoader.minDuration)
         .match(
       (failure) => _fail(failure, const Unauthenticated()),
       (user) {
@@ -156,7 +161,10 @@ class AuthCubit extends Cubit<AuthState> {
   void signInWithGoogle() {
     emit(const AuthLoading());
 
-    authRepository.signInWithGoogle().match(
+    authRepository
+        .signInWithGoogle()
+        .withMinimalDelayOnRight(AppLoader.minDuration)
+        .match(
       (failure) => _fail(failure, const Unauthenticated()),
       (result) {
         _currentUser = Some(result.$1);
@@ -168,7 +176,10 @@ class AuthCubit extends Cubit<AuthState> {
   void signInWithFacebook() {
     emit(const AuthLoading());
 
-    authRepository.signInWithFacebook().match(
+    authRepository
+        .signInWithFacebook()
+        .withMinimalDelayOnRight(AppLoader.minDuration)
+        .match(
       (failure) => _fail(failure, const Unauthenticated()),
       (result) {
         _currentUser = Some(result.$1);
