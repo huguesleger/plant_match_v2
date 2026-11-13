@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -51,15 +52,17 @@ class FavoriteUserCard extends StatelessWidget {
                   Positioned(
                     bottom: 2,
                     right: 2,
-                    child: Container(
-                      width: 12,
-                      height: 12,
-                      decoration: BoxDecoration(
-                        color: user.isOnline
-                            ? AppColors.greenLight
-                            : AppColors.red,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: AppColors.white, width: 2),
+                    child: Skeleton.leaf(
+                      child: Container(
+                        width: 12,
+                        height: 12,
+                        decoration: BoxDecoration(
+                          color: user.isOnline
+                              ? AppColors.greenLight
+                              : AppColors.red,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: AppColors.white, width: 2),
+                        ),
                       ),
                     ),
                   ),
@@ -95,16 +98,18 @@ class FavoriteUserCard extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: onRemove,
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: const BoxDecoration(
-                    color: AppColors.greyUltraLight,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.favorite_rounded,
-                    color: AppColors.greenMedium,
-                    size: 18,
+                child: Skeleton.leaf(
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: const BoxDecoration(
+                      color: AppColors.greyUltraLight,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.favorite_rounded,
+                      color: AppColors.greenMedium,
+                      size: 18,
+                    ),
                   ),
                 ),
               ),

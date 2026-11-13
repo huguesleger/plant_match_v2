@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/widgets/network_image/app_network_image.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
@@ -74,12 +75,11 @@ class UserPlantCard extends StatelessWidget {
                   borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(16),
                       bottomLeft: Radius.circular(16)),
-                  child: Image.network(
-                    imageUrl,
-                    fit: BoxFit.cover,
-                    width: 120,
-                    height: 130,
-                    errorBuilder: (_, __, ___) => _placeholder(),
+                  child: AppNetworkImage(
+                    url: imageUrl,
+                    width: const Some(120),
+                    height: const Some(130),
+                    errorWidget: Some(_placeholder()),
                   ),
                 ),
                 Positioned(

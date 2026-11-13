@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class BadgePill extends StatelessWidget {
   const BadgePill({
@@ -15,14 +16,16 @@ class BadgePill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-      decoration: BoxDecoration(
-        color: badgeColor,
-        borderRadius: BorderRadius.circular(20),
-        border: borderColor.map((c) => Border.all(color: c)).toNullable(),
+    return Skeleton.leaf(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+        decoration: BoxDecoration(
+          color: badgeColor,
+          borderRadius: BorderRadius.circular(20),
+          border: borderColor.map((c) => Border.all(color: c)).toNullable(),
+        ),
+        child: text,
       ),
-      child: text,
     );
   }
 

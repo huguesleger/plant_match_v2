@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:plant_match_v2/core/widgets/network_image/app_network_image.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -56,12 +59,11 @@ class FavoritePlantCard extends StatelessWidget {
                     bottomLeft: Radius.circular(16),
                   ),
                   child: imageUrl.isNotEmpty
-                      ? Image.network(
-                          imageUrl,
-                          width: 110,
-                          height: 120,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => _placeholder(),
+                      ? AppNetworkImage(
+                          url: imageUrl,
+                          width: const Some(110),
+                          height: const Some(120),
+                          errorWidget: Some(_placeholder()),
                         )
                       : _placeholder(),
                 ),
@@ -144,12 +146,17 @@ class FavoritePlantCard extends StatelessWidget {
   }
 
   Widget _placeholder() {
-    return Container(
-      width: 110,
-      height: 110,
-      color: AppColors.greyUltraLight,
-      child:
-          const Icon(Icons.eco_rounded, color: AppColors.greyLight, size: 32),
+    return Skeleton.leaf(
+      child: Container(
+        width: 110,
+        height: 110,
+        color: AppColors.greyUltraLight,
+        child: const Icon(
+          Icons.eco_rounded,
+          color: AppColors.greyLight,
+          size: 32,
+        ),
+      ),
     );
   }
 }

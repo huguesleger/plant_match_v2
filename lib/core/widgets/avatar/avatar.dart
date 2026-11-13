@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/widgets/network_image/app_network_image.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -39,27 +41,27 @@ class Avatar extends StatelessWidget {
     final bool isSelectedAvatar =
         effectiveImageUrl.isNotEmpty && effectiveImageUrl.contains('avatar');
 
-    if (isSelectedAvatar) {
-      return _buildSelectedAvatar(effectiveImageUrl);
-    }
-
-    return CircleAvatar(
-      backgroundColor: backgroundColor,
-      radius: radius,
-      child: ClipOval(
-        child: isNetworkImage
-            ? _buildNetworkImage(effectiveImageUrl)
-            : Center(
-                child: Text(
-                  effectiveName.toInitials(),
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: radius * 0.65,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+    return Skeleton.leaf(
+      child: isSelectedAvatar
+          ? _buildSelectedAvatar(effectiveImageUrl)
+          : CircleAvatar(
+              backgroundColor: backgroundColor,
+              radius: radius,
+              child: ClipOval(
+                child: isNetworkImage
+                    ? _buildNetworkImage(effectiveImageUrl)
+                    : Center(
+                        child: Text(
+                          effectiveName.toInitials(),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: radius * 0.65,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
               ),
-      ),
+            ),
     );
   }
 
@@ -75,18 +77,17 @@ class Avatar extends StatelessWidget {
         child: Transform.scale(
           alignment: Alignment.center,
           scale: 0.65,
-          child: Image.network(url),
+          child: AppNetworkImage(url: url, fit: BoxFit.contain),
         ),
       ),
     );
   }
 
   Widget _buildNetworkImage(String url) {
-    return Image.network(
-      url,
-      fit: BoxFit.cover,
-      width: imgSizeAvatar,
-      height: imgSizeAvatar,
+    return AppNetworkImage(
+      url: url,
+      width: Some(imgSizeAvatar),
+      height: Some(imgSizeAvatar),
     );
   }
 }

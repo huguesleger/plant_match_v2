@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/widgets/network_image/app_network_image.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
@@ -138,10 +139,7 @@ class _HorizontalPlantCard extends StatelessWidget {
                       () => Assets.res.images.emptyPicture.image(
                         fit: BoxFit.cover,
                       ),
-                      (url) => Image.network(
-                        url,
-                        fit: BoxFit.cover,
-                      ),
+                      (url) => AppNetworkImage(url: url),
                     ),
                   ),
                 ),

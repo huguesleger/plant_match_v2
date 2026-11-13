@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/widgets/network_image/app_network_image.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -64,12 +65,11 @@ class RecentCard extends StatelessWidget {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(16),
-                  child: Image.network(
-                    imageUrl,
-                    height: 150,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => _placeholder(),
+                  child: AppNetworkImage(
+                    url: imageUrl,
+                    height: const Some(150),
+                    width: const Some(double.infinity),
+                    errorWidget: Some(_placeholder()),
                   ),
                 ),
                 Positioned(

@@ -51,6 +51,25 @@ class Exchange {
     required this.validationCode,
   });
 
+  factory Exchange.boneMock() => Exchange(
+        chatId: '',
+        requestedBy: '',
+        ownerId: '',
+        targetPlantId: '',
+        offeredPlantId: '',
+        targetPlantName: 'Monstera deliciosa',
+        targetPlantImage: '',
+        offeredPlantName: 'Monstera deliciosa',
+        offeredPlantImage: '',
+        status: ExchangeStatus.completed,
+        createdAt: DateTime.now(),
+        seenByOwner: true,
+        seenByRequester: true,
+        completedAt: const None(),
+        completedBy: const None(),
+        validationCode: const None(),
+      );
+
   factory Exchange.fromJson(String id, Map<String, dynamic> json) {
     return Exchange(
       id: id,

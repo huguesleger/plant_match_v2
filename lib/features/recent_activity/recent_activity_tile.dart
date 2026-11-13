@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/widgets/network_image/app_network_image.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -51,7 +52,8 @@ class RecentActivityTile extends StatelessWidget {
                       children: [
                         TextSpan(
                             text: displayName,
-                            style: const TextStyle(fontWeight: FontWeight.bold)),
+                            style:
+                                const TextStyle(fontWeight: FontWeight.bold)),
                         const TextSpan(text: " a ajouté une plante"),
                       ],
                     ),
@@ -104,7 +106,7 @@ class RecentActivityTile extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
         child: hasImg
-            ? Image.network(catalog.images.first, fit: BoxFit.cover)
+            ? AppNetworkImage(url: catalog.images.first)
             : const Icon(LucideIcons.image,
                 color: AppColors.greyMedium, size: 20),
       ),

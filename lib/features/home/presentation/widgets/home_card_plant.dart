@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/widgets/network_image/app_network_image.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:fpdart/fpdart.dart';
@@ -27,8 +28,7 @@ class HomeCardPlant extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentUserId =
-        context.read<AuthCubit>().userId.getOrElse(() => '');
+    final currentUserId = context.read<AuthCubit>().userId.getOrElse(() => '');
     final isExchange = catalog.offerType == OfferType.exchange;
     final isImg = catalog.images.isNotEmpty;
 
@@ -55,8 +55,11 @@ class HomeCardPlant extends StatelessWidget {
                 clipBehavior: Clip.none,
                 children: [
                   isImg
-                      ? Image.network(catalog.images.first,
-                          height: 120, width: 155, fit: BoxFit.cover)
+                      ? AppNetworkImage(
+                          url: catalog.images.first,
+                          height: const Some(120),
+                          width: const Some(155),
+                        )
                       : Container(
                           height: 120,
                           color: AppColors.greyLight,

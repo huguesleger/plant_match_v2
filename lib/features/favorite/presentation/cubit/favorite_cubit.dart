@@ -1,14 +1,15 @@
 import 'dart:async';
 
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/failures/failure_mapper.dart';
+import 'package:plant_match_v2/core/util/safe_cubit.dart';
+import 'package:plant_match_v2/core/widgets/skeleton/skeleton_effect.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/features/favorite/domain/repository/favorites_repository.dart';
 import 'package:plant_match_v2/features/favorite/presentation/cubit/favorite_state.dart';
 
-class FavoriteCubit extends Cubit<FavoriteState> {
+class FavoriteCubit extends SafeCubit<FavoriteState> {
   final FavoritesRepository favoritesRepository;
 
   Option<StreamSubscription<List<Catalog>>> _plantsSub = const None();
@@ -18,69 +19,40 @@ class FavoriteCubit extends Cubit<FavoriteState> {
       : super(const FavoriteInitial());
 
   void loadFavorites(String uid) {
-    _plantsSub.map((sub) => sub.cancel());
-    _usersSub.map((sub) => sub.cancel());
-    emit(const FavoriteLoading());
+    _cancelSubscriptions();
+    emit(FavoriteLoading());
 
+    final minimalDelay =
+        Future<void>.delayed(SkeletonEffect.shimmerMinimumDelay);
     Option<List<Catalog>> latestPlants = const None();
     Option<List<ProfilUser>> latestUsers = const None();
 
+    void emitWhenBothLoaded() => latestPlants
+        .flatMap(
+          (plants) => latestUsers.map(
+            (users) => FavoriteLoaded(plants: plants, users: users),
+          ),
+        )
+        .map((loaded) => minimalDelay.then((_) => emit(loaded)));
+
     _plantsSub = Some(favoritesRepository.getFavoritePlants(uid).listen(
       (plants) {
-        if (isClosed) return;
         latestPlants = Some(plants);
-
-        final currentState = state;
-        if (currentState is FavoriteLoaded) {
-          emit(FavoriteLoaded(
-            plants: plants,
-            users: currentState.users,
-          ));
-        } else {
-          latestUsers.match(
-            () => {},
-            (users) => emit(FavoriteLoaded(
-              plants: plants,
-              users: users,
-            )),
-          );
-        }
+        emitWhenBothLoaded();
       },
-      onError: (Object e) {
-        if (!isClosed) {
-          emit(FavoriteError(mapError(e)));
-        }
-      },
+      onError: _emitError,
     ));
 
     _usersSub = Some(favoritesRepository.getFavoriteUsers(uid).listen(
       (users) {
-        if (isClosed) return;
         latestUsers = Some(users);
-
-        final currentState = state;
-        if (currentState is FavoriteLoaded) {
-          emit(FavoriteLoaded(
-            plants: currentState.plants,
-            users: users,
-          ));
-        } else {
-          latestPlants.match(
-            () => {},
-            (plants) => emit(FavoriteLoaded(
-              plants: plants,
-              users: users,
-            )),
-          );
-        }
+        emitWhenBothLoaded();
       },
-      onError: (Object e) {
-        if (!isClosed) {
-          emit(FavoriteError(mapError(e)));
-        }
-      },
+      onError: _emitError,
     ));
   }
+
+  void _emitError(Object e) => emit(FavoriteError(mapError(e)));
 
   void removeFavoritePlant(String uid, String catalogId) {
     favoritesRepository
@@ -89,11 +61,8 @@ class FavoriteCubit extends Cubit<FavoriteState> {
           (failure) => FavoriteError(failure),
           (_) => state,
         )
-        .map((s) {
-      if (!isClosed) {
-        emit(s);
-      }
-    }).run();
+        .map(emit)
+        .run();
   }
 
   void removeFavoriteUser(String uid, String targetUid) {
@@ -103,17 +72,18 @@ class FavoriteCubit extends Cubit<FavoriteState> {
           (failure) => FavoriteError(failure),
           (_) => state,
         )
-        .map((s) {
-      if (!isClosed) {
-        emit(s);
-      }
-    }).run();
+        .map(emit)
+        .run();
+  }
+
+  void _cancelSubscriptions() {
+    _plantsSub.map((sub) => sub.cancel());
+    _usersSub.map((sub) => sub.cancel());
   }
 
   @override
   Future<void> close() {
-    _plantsSub.map((sub) => sub.cancel());
-    _usersSub.map((sub) => sub.cancel());
+    _cancelSubscriptions();
     return super.close();
   }
 }

@@ -98,6 +98,13 @@ class Catalog {
     );
   }
 
+  factory Catalog.boneMock() => Catalog.empty('').copyWith(
+        newName: const Some('Monstera deliciosa'),
+        newDescription: const Some('Belle plante tropicale à grandes feuilles'),
+        newFamily: const Some([Family.tropical]),
+        newStatus: const Some(CatalogStatus.published),
+      );
+
   factory Catalog.empty(String userId) {
     return Catalog(
       userId: userId,

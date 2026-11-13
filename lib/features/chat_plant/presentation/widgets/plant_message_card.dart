@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/widgets/network_image/app_network_image.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
@@ -53,13 +54,12 @@ class PlantMessageCard extends StatelessWidget {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(8),
-                    child: Image.network(
-                      plantImage,
-                      width: 60,
-                      height: 60,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
+                    child: AppNetworkImage(
+                      url: plantImage,
+                      width: const Some(60),
+                      height: const Some(60),
+                      errorWidget: Some(
+                        Container(
                           width: 60,
                           height: 60,
                           color: AppColors.greyLight,
@@ -67,8 +67,8 @@ class PlantMessageCard extends StatelessWidget {
                             Icons.image_not_supported,
                             color: AppColors.greyDark,
                           ),
-                        );
-                      },
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 12),

@@ -26,6 +26,7 @@ class _UploadAvatarState extends State<UploadAvatar> {
     final image = Option.fromNullable(await _picker.pickImage(
       source: source,
       maxWidth: 300,
+      imageQuality: 80,
     ));
 
     if (!mounted) return;

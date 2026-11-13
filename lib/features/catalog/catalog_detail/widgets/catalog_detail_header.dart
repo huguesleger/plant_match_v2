@@ -1,5 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart' hide State;
+import 'package:plant_match_v2/core/widgets/network_image/app_network_image.dart';
 import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/badge/badge_pill.dart';
@@ -34,10 +36,9 @@ class _CatalogDetailHeaderState extends State<CatalogDetailHeader> {
           enableInfiniteScroll: false,
           onPageChanged: (index, _) => setState(() => _currentIndex = index),
         ),
-        itemBuilder: (context, index, _) => Image.network(
-          images[index],
-          fit: BoxFit.cover,
-          width: MediaQuery.of(context).size.width,
+        itemBuilder: (context, index, _) => AppNetworkImage(
+          url: images[index],
+          width: Some(MediaQuery.of(context).size.width),
         ),
       );
 

@@ -87,6 +87,7 @@ dependencies:
   vector_graphics: any
   webview_flutter: ^4.14.1
   lottie: ^3.3.3
+  cached_network_image: ^3.4.1
 flutter_native_splash:
   color: "#12F4A9"
   image: "res/logo/logo-splash-screen.png"

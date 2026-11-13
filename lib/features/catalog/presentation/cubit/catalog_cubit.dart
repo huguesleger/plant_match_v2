@@ -3,10 +3,12 @@ import 'package:plant_match_v2/core/extension/task_either_minimal_delay/task_eit
 import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/core/failures/failure_mapper.dart';
 import 'package:plant_match_v2/core/util/safe_cubit.dart';
+import 'package:plant_match_v2/core/widgets/skeleton/skeleton_effect.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/catalog/domain/repository/catalog_repository.dart';
 import 'package:plant_match_v2/features/catalog/presentation/cubit/catalog_state.dart';
 import 'package:plant_match_v2/features/catalog/presentation/widgets/catalog_sort_option.dart';
+import 'package:plant_match_v2/features/storage/domain/storage_cache_policy.dart';
 import 'package:plant_match_v2/features/storage/domain/storage_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -45,7 +47,7 @@ class CatalogCubit extends SafeCubit<CatalogState> {
   }
 
   void getCatalogsByUserId(String userId) async {
-    emit(const CatalogLoading());
+    emit(CatalogLoading());
 
     final prefs = await SharedPreferences.getInstance();
     final sortName = prefs.getString('catalog_sort_option');
@@ -56,6 +58,7 @@ class CatalogCubit extends SafeCubit<CatalogState> {
 
     catalogRepository
         .getCatalogsByUserId(userId)
+        .withMinimalDelay(SkeletonEffect.shimmerMinimumDelay)
         .match<CatalogState>(
           (failure) => CatalogError(failure),
           (catalogs) => CatalogLoaded(catalogs, Catalog.empty(userId),
@@ -89,7 +92,7 @@ class CatalogCubit extends SafeCubit<CatalogState> {
     Duration minDuration = Duration.zero,
   }) {
     final previous = state;
-    emit(const CatalogLoading());
+    emit(CatalogLoading());
 
     return _withTimeout(_publishNewCatalog(catalog))
         .withMinimalDelay(minDuration)
@@ -112,6 +115,7 @@ class CatalogCubit extends SafeCubit<CatalogState> {
               path: entry.$2,
               fileName: _uniqueFileName(id, entry.$1, entry.$2),
               folder: 'catalog_images',
+              cachePolicy: const ImmutableStorageCache(),
             ),
           )
           .toList(),
@@ -159,7 +163,7 @@ class CatalogCubit extends SafeCubit<CatalogState> {
       ).match((_) => unit, (_) => unit);
 
   void updateCatalog(Catalog catalog) {
-    emit(const CatalogLoading());
+    emit(CatalogLoading());
 
     catalogRepository
         .updateCatalog(catalog)
@@ -174,7 +178,7 @@ class CatalogCubit extends SafeCubit<CatalogState> {
   }
 
   void editCatalog(Catalog catalog) {
-    emit(const CatalogLoading());
+    emit(CatalogLoading());
 
     catalogRepository
         .updateCatalog(catalog)
@@ -194,7 +198,7 @@ class CatalogCubit extends SafeCubit<CatalogState> {
     Duration minDuration = Duration.zero,
   }) {
     final previous = state;
-    emit(const CatalogLoading());
+    emit(CatalogLoading());
 
     return _withTimeout(_saveEditedCatalog(original: original, edited: edited))
         .withMinimalDelay(minDuration)
@@ -220,6 +224,7 @@ class CatalogCubit extends SafeCubit<CatalogState> {
               path: entry.$2,
               fileName: _uniqueFileName(id, entry.$1, entry.$2),
               folder: 'catalog_images',
+              cachePolicy: const ImmutableStorageCache(),
             ),
           )
           .toList(),
@@ -256,7 +261,7 @@ class CatalogCubit extends SafeCubit<CatalogState> {
     required Catalog catalog,
     required String imageUrl,
   }) {
-    emit(const CatalogLoading());
+    emit(CatalogLoading());
 
     return storageRepository.deleteImage(imageUrl: imageUrl).flatMap((_) {
       final updatedImages =
@@ -280,7 +285,7 @@ class CatalogCubit extends SafeCubit<CatalogState> {
   }
 
   TaskEither<Failure, Catalog> getCatalogById(String catalogId) {
-    emit(const CatalogLoading());
+    emit(CatalogLoading());
 
     return catalogRepository.getCatalogById(catalogId).flatMap((option) =>
         option.match(
@@ -301,7 +306,7 @@ class CatalogCubit extends SafeCubit<CatalogState> {
   TaskEither<Failure, Unit> deleteCatalog(Catalog catalog) {
     final previous = state;
     final sortOption = _currentSortFromState();
-    emit(const CatalogLoading());
+    emit(CatalogLoading());
 
     return catalog.catalogId
         .match(

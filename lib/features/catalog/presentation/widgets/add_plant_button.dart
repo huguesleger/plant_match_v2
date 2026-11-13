@@ -2,6 +2,7 @@ import 'package:fpdart/fpdart.dart' hide State;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
@@ -14,25 +15,28 @@ class AddPlantButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FloatingActionButton(
-      heroTag: const None().toNullable(),
-      onPressed: () async {
-        final result = await Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => AddPlantWizardPageRoute(catalog: catalog)),
-        );
+    return Skeleton.leaf(
+      child: FloatingActionButton(
+        heroTag: const None().toNullable(),
+        onPressed: () async {
+          final result = await Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (_) => AddPlantWizardPageRoute(catalog: catalog)),
+          );
 
-        if (result == true && context.mounted) {
-          context
-              .read<AuthCubit>()
-              .userId
-              .map(context.read<CatalogCubit>().getCatalogsByUserId);
-        }
-      },
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-      elevation: 0,
-      backgroundColor: AppColors.greenLight,
-      child: const Icon(LucideIcons.plus, color: AppColors.blueGreen),
+          if (result == true && context.mounted) {
+            context
+                .read<AuthCubit>()
+                .userId
+                .map(context.read<CatalogCubit>().getCatalogsByUserId);
+          }
+        },
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+        elevation: 0,
+        backgroundColor: AppColors.greenLight,
+        child: const Icon(LucideIcons.plus, color: AppColors.blueGreen),
+      ),
     );
   }
 }

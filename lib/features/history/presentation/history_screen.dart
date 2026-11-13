@@ -4,16 +4,11 @@ import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_template.dart';
-import 'package:plant_match_v2/core/widgets/error/error_content.dart';
 import 'package:plant_match_v2/core/widgets/filter/filter_bar.dart';
-import 'package:plant_match_v2/core/widgets/refresh/refresh_fill_view.dart';
-import 'package:plant_match_v2/core/widgets/refresh/refresh_screen.dart';
 import 'package:plant_match_v2/features/history/presentation/cubit/history_cubit.dart';
 import 'package:plant_match_v2/features/history/presentation/cubit/history_state.dart';
 import 'package:plant_match_v2/features/history/presentation/widgets/history_item.dart';
-import 'package:plant_match_v2/features/history/presentation/widgets/empty_history_view.dart';
-import 'package:plant_match_v2/features/history/presentation/widgets/history_card_item.dart';
-import 'package:plant_match_v2/core/widgets/dots_loader/dots_loader_page.dart';
+import 'package:plant_match_v2/features/history/presentation/widgets/history_content.dart';
 
 class HistoryScreen extends StatelessWidget {
   const HistoryScreen({
@@ -45,10 +40,8 @@ class HistoryScreen extends StatelessWidget {
               filters: HistoryStatusFilter.values,
               selected: switch (state) {
                 HistoryLoaded s => s.currentFilter,
-                HistoryInitial() ||
-                HistoryLoading() ||
-                HistoryError() =>
-                  HistoryStatusFilter.all,
+                HistoryLoading s => s.currentFilter,
+                HistoryInitial() || HistoryError() => HistoryStatusFilter.all,
               },
               onChanged: (filter) =>
                   context.read<HistoryCubit>().load(filter: filter),
@@ -57,36 +50,7 @@ class HistoryScreen extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: BlocBuilder<HistoryCubit, HistoryState>(
-              builder: (context, state) => switch (state) {
-                HistoryInitial() ||
-                HistoryLoading() =>
-                  const DotsLoaderPage(),
-                HistoryError s => Center(
-                    child: Text(
-                      s.failure.errorContent.message,
-                      style: const TextStyle(color: Colors.red),
-                    ),
-                  ),
-                HistoryLoaded s => RefreshScreen(
-                    onRefresh: context.read<HistoryCubit>().refresh,
-                    child: s.items.isEmpty
-                        ? const RefreshFillView(child: EmptyHistoryView())
-                        : ListView.separated(
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            padding: const EdgeInsets.only(
-                                left: 16, right: 16, top: 16, bottom: 20),
-                            itemCount: s.items.length,
-                            separatorBuilder: (_, __) =>
-                                const SizedBox(height: 12),
-                            itemBuilder: (context, index) => HistoryCardItem(
-                              item: s.items[index],
-                              currentUserId: currentUserId,
-                            ),
-                          ),
-                  ),
-              },
-            ),
+            child: HistoryContent(currentUserId: currentUserId),
           ),
         ],
       ),

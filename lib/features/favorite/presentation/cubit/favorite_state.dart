@@ -11,7 +11,12 @@ class FavoriteInitial extends FavoriteState {
 }
 
 class FavoriteLoading extends FavoriteState {
-  const FavoriteLoading();
+  final List<Catalog> plantBoneMocks =
+      List.generate(4, (_) => Catalog.boneMock());
+  final List<ProfilUser> userBoneMocks =
+      List.generate(4, (_) => ProfilUser.boneMock());
+
+  FavoriteLoading();
 }
 
 class FavoriteLoaded extends FavoriteState {

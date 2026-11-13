@@ -44,6 +44,7 @@ sealed class HistoryItem {
 
   factory HistoryItem.fromExchange(Exchange e) => HistoryExchangeItem(e);
   factory HistoryItem.fromDonation(Donation d) => HistoryDonationItem(d);
+  factory HistoryItem.boneMock() => HistoryExchangeItem(Exchange.boneMock());
 }
 
 class HistoryExchangeItem extends HistoryItem {

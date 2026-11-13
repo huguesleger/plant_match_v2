@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/widgets/network_image/app_network_image.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/favorite_btn/favorite_btn.dart';
@@ -20,11 +21,10 @@ class CardPlantHeader extends StatelessWidget {
       children: [
         ClipRRect(
           borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-          child: Image.network(
-            catalog.images.isNotEmpty ? catalog.images.first : '',
-            height: 120,
-            width: 200,
-            fit: BoxFit.cover,
+          child: AppNetworkImage(
+            url: catalog.images.isNotEmpty ? catalog.images.first : '',
+            height: const Some(120),
+            width: const Some(200),
           ),
         ),
         Positioned(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/widgets/network_image/app_network_image.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/gen/assets.gen.dart';
 
@@ -27,11 +28,10 @@ class HistoryCardImage extends StatelessWidget {
           width: width,
           fit: BoxFit.cover,
         ),
-        (url) => Image.network(
-          url,
-          height: height,
-          width: width,
-          fit: BoxFit.cover,
+        (url) => AppNetworkImage(
+          url: url,
+          height: Some(height),
+          width: Some(width),
         ),
       ),
     );

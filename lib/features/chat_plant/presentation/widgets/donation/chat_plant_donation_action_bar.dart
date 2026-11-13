@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/widgets/network_image/app_network_image.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
@@ -123,10 +124,9 @@ class ChatPlantDonationActionBar extends StatelessWidget {
             if (plantImage.isNotEmpty)
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: Image.network(
-                  plantImage,
-                  height: 120,
-                  fit: BoxFit.cover,
+                child: AppNetworkImage(
+                  url: plantImage,
+                  height: const Some(120),
                 ),
               ),
             const SizedBox(height: 12),

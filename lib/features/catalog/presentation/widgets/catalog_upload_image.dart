@@ -2,6 +2,7 @@ import 'package:fpdart/fpdart.dart' hide State;
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/widgets/network_image/app_network_image.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/gen/assets.gen.dart';
@@ -51,7 +52,9 @@ class _CatalogUploadImageState extends State<CatalogUploadImage> {
   Future<void> _pickImages() async {
     try {
       final pickedFiles = await _picker.pickMultiImage(
-        maxHeight: 500,
+        maxWidth: 1200,
+        maxHeight: 1200,
+        imageQuality: 80,
         limit: maxImages,
       );
       if (pickedFiles.isEmpty) return;
@@ -66,7 +69,8 @@ class _CatalogUploadImageState extends State<CatalogUploadImage> {
         catalogImages.addAll(localPaths);
       });
 
-      final updatedCatalog = widget.catalog.copyWith(newImages: Some(catalogImages));
+      final updatedCatalog =
+          widget.catalog.copyWith(newImages: Some(catalogImages));
       _notifyFieldChanged(catalogImages);
       widget.onCatalogUpdated(updatedCatalog);
     } catch (e) {
@@ -83,14 +87,19 @@ class _CatalogUploadImageState extends State<CatalogUploadImage> {
       catalogImages.removeAt(index);
     });
 
-    final updatedCatalog = widget.catalog.copyWith(newImages: Some(catalogImages));
+    final updatedCatalog =
+        widget.catalog.copyWith(newImages: Some(catalogImages));
     _notifyFieldChanged(catalogImages);
     widget.onCatalogUpdated(updatedCatalog);
   }
 
   Widget _buildImage(String path) {
     if (path.startsWith('http')) {
-      return Image.network(path, width: 56, height: 56, fit: BoxFit.cover);
+      return AppNetworkImage(
+        url: path,
+        width: const Some(56),
+        height: const Some(56),
+      );
     } else {
       return Image.file(File(path), width: 56, height: 56, fit: BoxFit.cover);
     }
@@ -125,8 +134,7 @@ class _CatalogUploadImageState extends State<CatalogUploadImage> {
                   const SizedBox(height: 10),
                   ButtonRounded(
                     text: t.catalog.wizard.select_images,
-                    onPressed:
-                        catalogImages.length < maxImages
+                    onPressed: catalogImages.length < maxImages
                         ? Some(_pickImages)
                         : const None(),
                     bgColor: AppColors.blueGreen,

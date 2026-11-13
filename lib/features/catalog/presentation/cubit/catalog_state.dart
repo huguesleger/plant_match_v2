@@ -11,7 +11,9 @@ class CatalogInitial extends CatalogState {
 }
 
 class CatalogLoading extends CatalogState {
-  const CatalogLoading();
+  final List<Catalog> boneMocks = List.generate(4, (_) => Catalog.boneMock());
+
+  CatalogLoading();
 }
 
 class CatalogLoaded extends CatalogState {

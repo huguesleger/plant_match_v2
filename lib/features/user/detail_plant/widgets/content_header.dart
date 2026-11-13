@@ -1,6 +1,7 @@
 import 'package:fpdart/fpdart.dart' hide State;
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/widgets/network_image/app_network_image.dart';
 import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/badge/badge_pill.dart';
@@ -44,21 +45,9 @@ class _ContentHeaderState extends State<ContentHeader> {
                   },
                 ),
                 itemBuilder: (BuildContext context, int index, int realIndex) {
-                  return Image.network(
-                    images[index],
-                    fit: BoxFit.cover,
-                    width: MediaQuery.of(context).size.width,
-                    loadingBuilder: (context, child, loadingProgress) =>
-                        Option.fromNullable(loadingProgress).match(
-                      () => child,
-                      (_) => const Center(
-                        child: SizedBox(
-                          width: 30,
-                          height: 30,
-                          child: CircularProgressIndicator(),
-                        ),
-                      ),
-                    ),
+                  return AppNetworkImage(
+                    url: images[index],
+                    width: Some(MediaQuery.of(context).size.width),
                   );
                 },
               )

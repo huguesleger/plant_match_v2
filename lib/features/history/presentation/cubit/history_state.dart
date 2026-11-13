@@ -10,7 +10,11 @@ class HistoryInitial extends HistoryState {
 }
 
 class HistoryLoading extends HistoryState {
-  const HistoryLoading();
+  final HistoryStatusFilter currentFilter;
+  final List<HistoryItem> boneMocks =
+      List.generate(5, (_) => HistoryItem.boneMock());
+
+  HistoryLoading({required this.currentFilter});
 }
 
 class HistoryLoaded extends HistoryState {

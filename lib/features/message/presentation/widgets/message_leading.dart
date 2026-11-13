@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:plant_match_v2/core/widgets/network_image/app_network_image.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 
 class MessageLeading extends StatelessWidget {
@@ -19,11 +21,10 @@ class MessageLeading extends StatelessWidget {
         ClipRRect(
           borderRadius: BorderRadius.circular(8),
           child: plantImage.isNotEmpty
-              ? Image.network(
-                  plantImage,
-                  width: 50,
-                  height: 50,
-                  fit: BoxFit.cover,
+              ? AppNetworkImage(
+                  url: plantImage,
+                  width: const Some(50),
+                  height: const Some(50),
                 )
               : Container(
                   width: 50,

@@ -1,5 +1,8 @@
 import 'package:fpdart/fpdart.dart';
+import 'package:plant_match_v2/core/extension/task_either_minimal_delay/task_either_minimal_delay.dart';
+import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/core/util/safe_cubit.dart';
+import 'package:plant_match_v2/core/widgets/skeleton/skeleton_effect.dart';
 import 'package:plant_match_v2/features/donation/domain/entities/donation.dart';
 import 'package:plant_match_v2/features/donation/domain/repository/donation_repository.dart';
 import 'package:plant_match_v2/features/exchange/domain/entities/exchange.dart';
@@ -22,11 +25,22 @@ class HistoryCubit extends SafeCubit<HistoryState> {
 
   void load({HistoryStatusFilter filter = HistoryStatusFilter.all}) {
     _currentFilter = filter;
-    emit(const HistoryLoading());
-    _fetch().map(emit).run();
+    emit(HistoryLoading(currentFilter: filter));
+    _fetch()
+        .withMinimalDelay(SkeletonEffect.shimmerMinimumDelay)
+        .match(
+          (failure) => HistoryError(failure),
+          (data) => _loaded(data.$1, data.$2),
+        )
+        .map(emit)
+        .run();
   }
 
   Future<void> refresh() => _fetch()
+      .match(
+        (failure) => HistoryError(failure),
+        (data) => _loaded(data.$1, data.$2),
+      )
       .map(
         (fetched) =>
             fetched is HistoryError && state is HistoryLoaded ? state : fetched,
@@ -34,17 +48,12 @@ class HistoryCubit extends SafeCubit<HistoryState> {
       .map(emit)
       .run();
 
-  Task<HistoryState> _fetch() => exchangeRepository
-      .getCompletedExchanges(userId)
-      .flatMap(
-        (exchanges) => donationRepository
-            .getCompletedDonations(userId)
-            .map((donations) => (exchanges, donations)),
-      )
-      .match(
-        (failure) => HistoryError(failure),
-        (data) => _loaded(data.$1, data.$2),
-      );
+  TaskEither<Failure, (List<Exchange>, List<Donation>)> _fetch() =>
+      exchangeRepository.getCompletedExchanges(userId).flatMap(
+            (exchanges) => donationRepository
+                .getCompletedDonations(userId)
+                .map((donations) => (exchanges, donations)),
+          );
 
   HistoryLoaded _loaded(List<Exchange> exchanges, List<Donation> donations) {
     final exchangeItems = exchanges.map(HistoryItem.fromExchange).toList();

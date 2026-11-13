@@ -105,6 +105,27 @@ class ProfilUser extends UserAuth {
     };
   }
 
+  factory ProfilUser.boneMock() => ProfilUser(
+        uid: '',
+        email: const None(),
+        firstName: 'Camille',
+        lastName: 'Martin',
+        bio: const None(),
+        profilImg: '',
+        userName: const Some('Camille Martin'),
+        localisation: 'Montpellier',
+        country: 'France',
+        zipCode: '34000',
+        birthdayDate: const None(),
+        latitude: const None(),
+        longitude: const None(),
+        isOnline: true,
+        createdAt: DateTime.now(),
+        leaves: 0,
+        referralCode: '',
+        referredBy: const None(),
+      );
+
   factory ProfilUser.fromJson(Map<String, dynamic> json) {
     final firstName = json.string('firstName');
     final lastName = json.string('lastName');

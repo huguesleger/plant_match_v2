@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/widgets/network_image/app_network_image.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart';
@@ -36,7 +37,8 @@ class CatalogCardItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _CardImage(
-                      imageUrl: Option.fromNullable(catalog.images.firstOrNull)),
+                      imageUrl:
+                          Option.fromNullable(catalog.images.firstOrNull)),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
@@ -80,8 +82,7 @@ class _CardImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final imageOpt =
-        imageUrl.filter((url) => url.startsWith('http'));
+    final imageOpt = imageUrl.filter((url) => url.startsWith('http'));
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
@@ -91,7 +92,11 @@ class _CardImage extends StatelessWidget {
           width: 80,
           fit: BoxFit.cover,
         ),
-        (url) => Image.network(url, height: 100, width: 80, fit: BoxFit.cover),
+        (url) => AppNetworkImage(
+          url: url,
+          height: const Some(100),
+          width: const Some(80),
+        ),
       ),
     );
   }
@@ -164,7 +169,8 @@ class _CardBadges extends StatelessWidget {
                 child: BadgePill(
                   text: Text(
                     f.familyName,
-                    style: const TextStyle(fontSize: 12, color: AppColors.greenDark),
+                    style: const TextStyle(
+                        fontSize: 12, color: AppColors.greenDark),
                   ),
                   badgeColor: AppColors.greenLight.withValues(alpha: 0.2),
                 ),
