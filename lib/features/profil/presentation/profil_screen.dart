@@ -29,16 +29,29 @@ class ProfilScreen extends StatelessWidget {
             ),
           ProfilLoaded(:final profilUser) =>
             _page(profilUser, isLoading: false),
+          ProfilImageUploading(:final profilUser, :final boneMock) =>
+            profilUser.match(
+              () => _page(boneMock, isLoading: true),
+              (user) => _page(user, isLoading: false, isAvatarLoading: true),
+            ),
           ProfilInitial(:final boneMock) ||
-          ProfilLoading(:final boneMock) ||
-          ProfilImageUploading(:final boneMock) =>
+          ProfilLoading(:final boneMock) =>
             _page(boneMock, isLoading: true),
         },
       );
 
-  Widget _page(ProfilUser profilUser, {required bool isLoading}) => Scaffold(
+  Widget _page(
+    ProfilUser profilUser, {
+    required bool isLoading,
+    bool isAvatarLoading = false,
+  }) =>
+      Scaffold(
         backgroundColor: AppColors.greyUltraLight,
-        appBar: ProfilAppBar(profilUser: profilUser, isLoading: isLoading),
+        appBar: ProfilAppBar(
+          profilUser: profilUser,
+          isLoading: isLoading,
+          isAvatarLoading: isAvatarLoading,
+        ),
         body: ProfilContent(
           profilUser: profilUser,
           userId: userId,

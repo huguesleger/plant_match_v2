@@ -34,10 +34,7 @@ class ProfilPersonalizationCategories extends StatelessWidget {
               MaterialPageRoute(
                 builder: (contextRoute) => BlocProvider.value(
                   value: profilCubit,
-                  child: PersonalInformationScreen(
-                    profilUser: profilUser,
-                    userId: profilUser.uid,
-                  ),
+                  child: PersonalInformationScreen(userId: profilUser.uid),
                 ),
               ),
             );

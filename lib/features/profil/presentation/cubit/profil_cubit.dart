@@ -42,7 +42,11 @@ class ProfilCubit extends Cubit<ProfilState> {
     required String imagePath,
     bool isAsset = false,
   }) {
-    emit(ProfilImageUploading(uid: uid, imagePath: imagePath));
+    emit(ProfilImageUploading(
+      uid: uid,
+      imagePath: imagePath,
+      profilUser: _currentProfilUser(),
+    ));
 
     final uploadTask = isAsset
         ? storageRepository.uploadAssetImage(
@@ -76,6 +80,12 @@ class ProfilCubit extends Cubit<ProfilState> {
         .map(emit)
         .run();
   }
+
+  Option<ProfilUser> _currentProfilUser() => switch (state) {
+        ProfilLoaded(:final profilUser) => Some(profilUser),
+        ProfilImageUploading(:final profilUser) => profilUser,
+        ProfilInitial() || ProfilLoading() || ProfilError() => const None(),
+      };
 
   void deleteImageProfile(String imageUrl) {
     final currentState = state;

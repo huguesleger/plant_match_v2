@@ -35,7 +35,12 @@ class ProfilError extends ProfilState {
 class ProfilImageUploading extends ProfilState {
   final String uid;
   final String imagePath;
+  final Option<ProfilUser> profilUser;
   final ProfilUser boneMock = ProfilUser.boneMock();
 
-  ProfilImageUploading({required this.uid, required this.imagePath});
+  ProfilImageUploading({
+    required this.uid,
+    required this.imagePath,
+    required this.profilUser,
+  });
 }

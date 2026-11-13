@@ -13,6 +13,8 @@ class AppNetworkImage extends StatelessWidget {
     this.height = const None(),
     this.fit = BoxFit.cover,
     this.errorWidget = const None(),
+    this.placeholder = const None(),
+    this.imageBuilder = const None(),
   });
 
   final String url;
@@ -20,6 +22,8 @@ class AppNetworkImage extends StatelessWidget {
   final Option<double> height;
   final BoxFit fit;
   final Option<Widget> errorWidget;
+  final Option<Widget> placeholder;
+  final Option<Widget Function(BuildContext, ImageProvider)> imageBuilder;
 
   static const _fadeInDuration = Duration(milliseconds: 300);
 
@@ -30,7 +34,10 @@ class AppNetworkImage extends StatelessWidget {
         height: height.toNullable(),
         fit: fit,
         fadeInDuration: _fadeInDuration,
-        placeholder: (_, __) => _ImagePlaceholder(width: width, height: height),
+        imageBuilder: imageBuilder.toNullable(),
+        placeholder: (_, __) => placeholder.getOrElse(
+          () => _ImagePlaceholder(width: width, height: height),
+        ),
         errorWidget: (_, __, ___) => errorWidget.getOrElse(
           () => Assets.res.images.emptyPicture.image(
             width: width.toNullable(),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:fpdart/fpdart.dart';
 
 class ButtonRounded extends StatelessWidget {
@@ -31,19 +32,21 @@ class ButtonRounded extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FilledButton(
-      onPressed: onPressed.toNullable(),
-      style: FilledButton.styleFrom(
-        backgroundColor: bgColor,
-        foregroundColor: bgColor,
-        padding: padding,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(50),
+    return Skeleton.leaf(
+      child: FilledButton(
+        onPressed: onPressed.toNullable(),
+        style: FilledButton.styleFrom(
+          backgroundColor: bgColor,
+          foregroundColor: bgColor,
+          padding: padding,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(50),
+          ),
         ),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(color: textColor, fontSize: fontSize),
+        child: Text(
+          text,
+          style: TextStyle(color: textColor, fontSize: fontSize),
+        ),
       ),
     );
   }

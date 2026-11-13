@@ -14,10 +14,12 @@ class ProfilAppBar extends StatelessWidget implements PreferredSizeWidget {
     super.key,
     required this.profilUser,
     required this.isLoading,
+    this.isAvatarLoading = false,
   });
 
   final ProfilUser profilUser;
   final bool isLoading;
+  final bool isAvatarLoading;
 
   static const double _height = 70;
 
@@ -47,7 +49,7 @@ class ProfilAppBar extends StatelessWidget implements PreferredSizeWidget {
         preferredHeight: _height,
         actions: Some([
           AppSkeletonizer(
-            enabled: isLoading,
+            enabled: isLoading || isAvatarLoading,
             child: Container(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
