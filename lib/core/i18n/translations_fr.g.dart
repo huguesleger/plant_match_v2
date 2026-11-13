@@ -58,6 +58,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final TranslationsOnboardingFr onboarding = TranslationsOnboardingFr.internal(_root);
 	late final TranslationsPersonalInformationFr personalInformation = TranslationsPersonalInformationFr.internal(_root);
 	late final TranslationsProfilFr profil = TranslationsProfilFr.internal(_root);
+	late final TranslationsRecentActivityFr recentActivity = TranslationsRecentActivityFr.internal(_root);
 	late final TranslationsUserFr user = TranslationsUserFr.internal(_root);
 	late final TranslationsWidgetsFr widgets = TranslationsWidgetsFr.internal(_root);
 }
@@ -321,6 +322,18 @@ class TranslationsProfilFr {
 	late final TranslationsProfilNavigationFr navigation = TranslationsProfilNavigationFr.internal(_root);
 	late final TranslationsProfilCardsFr cards = TranslationsProfilCardsFr.internal(_root);
 	late final TranslationsProfilPremiumFr premium = TranslationsProfilPremiumFr.internal(_root);
+}
+
+// Path: recentActivity
+class TranslationsRecentActivityFr {
+	TranslationsRecentActivityFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+	late final TranslationsRecentActivityScreenFr screen = TranslationsRecentActivityScreenFr.internal(_root);
+	late final TranslationsRecentActivityEmptyFr empty = TranslationsRecentActivityEmptyFr.internal(_root);
+	late final TranslationsRecentActivityTileFr tile = TranslationsRecentActivityTileFr.internal(_root);
 }
 
 // Path: user
@@ -1909,6 +1922,51 @@ class TranslationsProfilPremiumFr {
 
 	/// fr: 'Découvrir'
 	String get btn => 'Découvrir';
+}
+
+// Path: recentActivity.screen
+class TranslationsRecentActivityScreenFr {
+	TranslationsRecentActivityScreenFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Activité récente'
+	String get title => 'Activité récente';
+}
+
+// Path: recentActivity.empty
+class TranslationsRecentActivityEmptyFr {
+	TranslationsRecentActivityEmptyFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aucune activité récente'
+	String get message => 'Aucune activité récente';
+}
+
+// Path: recentActivity.tile
+class TranslationsRecentActivityTileFr {
+	TranslationsRecentActivityTileFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: ' a ajouté une plante'
+	String get added_plant => ' a ajouté une plante';
+
+	/// fr: '${count} min'
+	String minutes({required Object count}) => '${count} min';
+
+	/// fr: '${count} h'
+	String hours({required Object count}) => '${count} h';
+
+	/// fr: '${count} j'
+	String days({required Object count}) => '${count} j';
 }
 
 // Path: user.bio
@@ -4382,18 +4440,24 @@ extension on Translations {
 			'profil.premium.title' => 'PlantMatch Premium',
 			'profil.premium.description' => 'Profiter des avantages premium avec des fonctionnalités exclusives.',
 			'profil.premium.btn' => 'Découvrir',
+			'recentActivity.screen.title' => 'Activité récente',
+			'recentActivity.empty.message' => 'Aucune activité récente',
+			'recentActivity.tile.added_plant' => ' a ajouté une plante',
+			'recentActivity.tile.minutes' => ({required Object count}) => '${count} min',
+			'recentActivity.tile.hours' => ({required Object count}) => '${count} h',
+			'recentActivity.tile.days' => ({required Object count}) => '${count} j',
 			'user.bio.empty' => 'Pas encore de description...',
 			'user.stats.plants' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'plante', other: 'plantes', ), 
 			'user.stats.matches' => 'plantMatch',
 			'user.stats.level' => 'niveau',
+			_ => null,
+		} ?? switch (path) {
 			'user.stats.level_suffix' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'er', other: 'ème', ), 
 			'user.card.added_on' => ({required Object date}) => 'Ajouté le ${date}',
 			'user.card.added_prefix' => 'Ajouté le',
 			'user.recent_plants.title' => 'Ajouts Récents',
 			'user.catalog_list.empty' => 'Aucune plante',
 			'user.detail_plant.owner_placeholder' => 'Propriétaire',
-			_ => null,
-		} ?? switch (path) {
 			'user.detail_plant.send_message' => 'Envoyer un message',
 			'user.detail_plant.env_prefix' => ({required Object env}) => 'plante ${env}',
 			'user.detail_plant.lighting' => 'lumière',

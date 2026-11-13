@@ -2,6 +2,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/util/distance/distance_helper.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
+import 'package:plant_match_v2/features/recent_activity/domain/entities/recent_activity.dart';
 import 'package:plant_match_v2/features/user/domain/entities/catalog_filter.dart';
 
 class Home {
@@ -9,7 +10,7 @@ class Home {
   final List<ProfilUser> users;
   final Map<String, List<Catalog>> userCatalogs;
   final List<(Catalog, ProfilUser, double)> nearbyPlants;
-  final List<(Catalog, ProfilUser)> recentActivities;
+  final List<RecentActivity> recentActivities;
   final bool isGeolocated;
 
   const Home({
@@ -35,7 +36,11 @@ class Home {
       users: users,
       userCatalogs: userCatalogs,
       nearbyPlants: _nearbyPlants(currentUser, others, filter),
-      recentActivities: _recentActivities(others),
+      recentActivities: RecentActivity.fromAroundMe(
+        currentUser: currentUser,
+        users: users,
+        userCatalogs: userCatalogs,
+      ).take(_recentActivitiesLimit).toList(),
       isGeolocated: DistanceHelper.hasValidLocation(currentUser),
     );
   }
@@ -48,10 +53,7 @@ class Home {
           3,
           (_) => (Catalog.boneMock(), ProfilUser.boneMock(), 1.5),
         ),
-        recentActivities: List.generate(
-          3,
-          (_) => (Catalog.boneMock(), ProfilUser.boneMock()),
-        ),
+        recentActivities: List.generate(3, (_) => RecentActivity.boneMock()),
         isGeolocated: true,
       );
 
@@ -96,20 +98,6 @@ class Home {
           )
           .toList()
         ..sort((a, b) => a.$3.compareTo(b.$3));
-
-  static List<(Catalog, ProfilUser)> _recentActivities(
-    List<(ProfilUser, List<Catalog>)> others,
-  ) =>
-      (others
-              .expand(
-                (other) => other.$2
-                    .where(_isPublished)
-                    .map((catalog) => (catalog, other.$1)),
-              )
-              .toList()
-            ..sort((a, b) => b.$1.createdAt.compareTo(a.$1.createdAt)))
-          .take(_recentActivitiesLimit)
-          .toList();
 
   static bool _isPublished(Catalog catalog) =>
       catalog.status == CatalogStatus.published;

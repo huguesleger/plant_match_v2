@@ -1,0 +1,14 @@
+{
+  "screen": {
+    "title": "Activité récente"
+  },
+  "empty": {
+    "message": "Aucune activité récente"
+  },
+  "tile": {
+    "added_plant": " a ajouté une plante",
+    "minutes": "${count} min",
+    "hours": "${count} h",
+    "days": "${count} j"
+  }
+}

@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
-import 'package:fpdart/fpdart.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
-import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
-import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/home/presentation/widgets/home_section_message.dart';
-import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
-import 'package:plant_match_v2/features/recent_activity/recent_activity_tile.dart';
+import 'package:plant_match_v2/features/recent_activity/domain/entities/recent_activity.dart';
+import 'package:plant_match_v2/features/recent_activity/presentation/widgets/recent_activity_tile.dart';
 
 class HomeRecentActivity extends StatelessWidget {
   const HomeRecentActivity({
@@ -18,13 +14,11 @@ class HomeRecentActivity extends StatelessWidget {
     required this.onSeeAllPressed,
   });
 
-  final List<(Catalog, ProfilUser)> activities;
+  final List<RecentActivity> activities;
   final VoidCallback onSeeAllPressed;
 
   @override
   Widget build(BuildContext context) {
-    final currentUserId = context.read<AuthCubit>().userId.getOrElse(() => '');
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -74,9 +68,7 @@ class HomeRecentActivity extends StatelessWidget {
                 itemCount: activities.length,
                 separatorBuilder: (_, __) => const SizedBox(height: 12),
                 itemBuilder: (_, index) => RecentActivityTile(
-                  catalog: activities[index].$1,
-                  owner: activities[index].$2,
-                  currentUserId: currentUserId,
+                  activity: activities[index],
                 ),
               ),
       ],

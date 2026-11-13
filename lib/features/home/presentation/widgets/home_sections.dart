@@ -9,7 +9,7 @@ import 'package:plant_match_v2/features/home/presentation/cubit/home_recommendat
 import 'package:plant_match_v2/features/home/presentation/widgets/around_me/home_around_me_section.dart';
 import 'package:plant_match_v2/features/home/presentation/widgets/home_recent_activity.dart';
 import 'package:plant_match_v2/features/home/presentation/widgets/recommendation/home_recommendation_content.dart';
-import 'package:plant_match_v2/features/recent_activity/recent_activity_page_route.dart';
+import 'package:plant_match_v2/features/recent_activity/presentation/recent_activity_page_route.dart';
 
 class HomeSections extends StatelessWidget {
   const HomeSections({
