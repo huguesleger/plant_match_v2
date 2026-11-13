@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/core/failures/failure_mapper.dart';
@@ -13,20 +14,39 @@ class NotificationRepositoryImpl implements NotificationRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final Uuid _uuid = const Uuid();
 
+  static const String _enabledField = 'notificationsEnabled';
+  static const String _promptShownKey = 'notifications_prompt_shown';
+
   NotificationRepositoryImpl({required FcmRemoteDataSource remoteDataSource})
       : _remoteDataSource = remoteDataSource;
 
   @override
   TaskEither<Failure, bool> requestPermission() {
     return TaskEither.tryCatch(
-      () async {
-        final settings = await _remoteDataSource.requestPermission();
-        return settings.authorizationStatus == AuthorizationStatus.authorized ||
-            settings.authorizationStatus == AuthorizationStatus.provisional;
-      },
+      () => _remoteDataSource.requestPermission().then(_isAuthorized),
       (error, _) => mapError(error),
     );
   }
+
+  @override
+  TaskEither<Failure, bool> isPermissionGranted() {
+    return TaskEither.tryCatch(
+      () => _remoteDataSource.getNotificationSettings().then(_isAuthorized),
+      (error, _) => mapError(error),
+    );
+  }
+
+  @override
+  TaskEither<Failure, Unit> openNotificationSettings() {
+    return TaskEither.tryCatch(
+      () => _remoteDataSource.openAppSettings().then((_) => unit),
+      (error, _) => mapError(error),
+    );
+  }
+
+  bool _isAuthorized(NotificationSettings settings) =>
+      settings.authorizationStatus == AuthorizationStatus.authorized ||
+      settings.authorizationStatus == AuthorizationStatus.provisional;
 
   @override
   TaskEither<Failure, Option<String>> getFCMToken() {
@@ -65,6 +85,74 @@ class NotificationRepositoryImpl implements NotificationRepository {
         }, SetOptions(merge: true));
         return unit;
       },
+      (error, _) => mapError(error),
+    );
+  }
+
+  @override
+  TaskEither<Failure, bool> areNotificationsEnabled(String userId) {
+    return TaskEither.tryCatch(
+      () async {
+        final snapshot = await _messagingDoc(userId).get();
+        return Option.fromNullable(snapshot.data())
+            .flatMap((data) => Option.fromNullable(data[_enabledField]))
+            .flatMap<bool>(
+              (value) => value is bool ? Some(value) : const None(),
+            )
+            .getOrElse(() => true);
+      },
+      (error, _) => mapError(error),
+    );
+  }
+
+  @override
+  TaskEither<Failure, Unit> setNotificationsEnabled(
+    String userId,
+    bool enabled,
+  ) {
+    return TaskEither.tryCatch(
+      () async {
+        await _messagingDoc(userId).set({
+          _enabledField: enabled,
+        }, SetOptions(merge: true));
+        return unit;
+      },
+      (error, _) => mapError(error),
+    );
+  }
+
+  @override
+  TaskEither<Failure, Unit> enableNotifications(String userId) =>
+      setNotificationsEnabled(userId, true)
+          .flatMap((_) => _saveCurrentToken(userId))
+          .map((_) => unit);
+
+  TaskEither<Failure, Unit> _saveCurrentToken(String userId) => getFCMToken()
+      .flatMap(
+        (token) => token.match(
+          () => TaskEither<Failure, Unit>.right(unit),
+          (token) => saveTokenToUser(userId, token),
+        ),
+      )
+      .orElse((_) => TaskEither.right(unit));
+
+  @override
+  TaskEither<Failure, bool> hasPromptBeenShown() {
+    return TaskEither.tryCatch(
+      () => SharedPreferences.getInstance().then(
+        (prefs) => Option.fromNullable(prefs.getBool(_promptShownKey))
+            .getOrElse(() => false),
+      ),
+      (error, _) => mapError(error),
+    );
+  }
+
+  @override
+  TaskEither<Failure, Unit> markPromptShown() {
+    return TaskEither.tryCatch(
+      () => SharedPreferences.getInstance()
+          .then((prefs) => prefs.setBool(_promptShownKey, true))
+          .then((_) => unit),
       (error, _) => mapError(error),
     );
   }

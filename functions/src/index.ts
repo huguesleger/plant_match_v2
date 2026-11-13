@@ -75,6 +75,10 @@ export const sendChatNotification = onDocumentCreated(
         .collection("private")
         .doc("messaging");
       const messagingDoc = await messagingRef.get();
+      if (messagingDoc.data()?.notificationsEnabled === false) {
+        console.log(`Notifications disabled for: ${receiverId}`);
+        return;
+      }
       const fcmTokens: string[] = messagingDoc.data()?.fcmTokens || [];
 
       if (fcmTokens.length === 0) {

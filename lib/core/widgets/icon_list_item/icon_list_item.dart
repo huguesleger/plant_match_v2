@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/theme/inter_text_style.dart';
@@ -9,11 +10,13 @@ class IconListItem extends StatelessWidget {
     required this.title,
     required this.icon,
     required this.onTap,
+    this.trailing = const None(),
   });
 
   final String title;
   final IconData icon;
   final VoidCallback onTap;
+  final Option<Widget> trailing;
 
   static const double iconBoxSize = 52;
   static const double radius = 16;
@@ -48,6 +51,7 @@ class IconListItem extends StatelessWidget {
               ),
             ),
           ),
+          ...trailing.match(() => const <Widget>[], (widget) => [widget]),
         ],
       ),
     );

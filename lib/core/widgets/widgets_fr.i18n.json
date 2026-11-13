@@ -77,5 +77,13 @@
       "saturday": "Samedi",
       "sunday": "Dimanche"
     }
+  },
+  "notifications": {
+    "later": "Plus tard",
+    "prompt": {
+      "title": "Ne manquez aucune réponse",
+      "content": "Activez les notifications pour être prévenu dès que vous recevez un nouveau message.",
+      "confirm": "Activer"
+    }
   }
 }

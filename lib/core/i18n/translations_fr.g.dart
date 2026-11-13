@@ -72,6 +72,7 @@ class TranslationsAccountSettingsFr {
 	late final TranslationsAccountSettingsItemsFr items = TranslationsAccountSettingsItemsFr.internal(_root);
 	late final TranslationsAccountSettingsChangePasswordFr change_password = TranslationsAccountSettingsChangePasswordFr.internal(_root);
 	late final TranslationsAccountSettingsDeleteAccountFr delete_account = TranslationsAccountSettingsDeleteAccountFr.internal(_root);
+	late final TranslationsAccountSettingsNotificationsFr notifications = TranslationsAccountSettingsNotificationsFr.internal(_root);
 }
 
 // Path: aroundMeMap
@@ -334,6 +335,7 @@ class TranslationsWidgetsFr {
 	late final TranslationsWidgetsErrorFr error = TranslationsWidgetsErrorFr.internal(_root);
 	late final TranslationsWidgetsCommonFr common = TranslationsWidgetsCommonFr.internal(_root);
 	late final TranslationsWidgetsDateFr date = TranslationsWidgetsDateFr.internal(_root);
+	late final TranslationsWidgetsNotificationsFr notifications = TranslationsWidgetsNotificationsFr.internal(_root);
 }
 
 // Path: accountSettings.screen
@@ -420,6 +422,23 @@ class TranslationsAccountSettingsDeleteAccountFr {
 	String get loading => 'Suppression du compte…';
 
 	late final TranslationsAccountSettingsDeleteAccountDialogFr dialog = TranslationsAccountSettingsDeleteAccountDialogFr.internal(_root);
+}
+
+// Path: accountSettings.notifications
+class TranslationsAccountSettingsNotificationsFr {
+	TranslationsAccountSettingsNotificationsFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Activation des notifications…'
+	String get enabling => 'Activation des notifications…';
+
+	/// fr: 'Désactivation des notifications…'
+	String get disabling => 'Désactivation des notifications…';
+
+	late final TranslationsAccountSettingsNotificationsPermissionDialogFr permission_dialog = TranslationsAccountSettingsNotificationsPermissionDialogFr.internal(_root);
 }
 
 // Path: aroundMeMap.header
@@ -2002,6 +2021,20 @@ class TranslationsWidgetsDateFr {
 	late final TranslationsWidgetsDateDaysFr days = TranslationsWidgetsDateDaysFr.internal(_root);
 }
 
+// Path: widgets.notifications
+class TranslationsWidgetsNotificationsFr {
+	TranslationsWidgetsNotificationsFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Plus tard'
+	String get later => 'Plus tard';
+
+	late final TranslationsWidgetsNotificationsPromptFr prompt = TranslationsWidgetsNotificationsPromptFr.internal(_root);
+}
+
 // Path: accountSettings.change_password.current_password
 class TranslationsAccountSettingsChangePasswordCurrentPasswordFr {
 	TranslationsAccountSettingsChangePasswordCurrentPasswordFr.internal(this._root);
@@ -2057,6 +2090,24 @@ class TranslationsAccountSettingsDeleteAccountDialogFr {
 
 	/// fr: 'Supprimer'
 	String get confirm => 'Supprimer';
+}
+
+// Path: accountSettings.notifications.permission_dialog
+class TranslationsAccountSettingsNotificationsPermissionDialogFr {
+	TranslationsAccountSettingsNotificationsPermissionDialogFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Notifications désactivées'
+	String get title => 'Notifications désactivées';
+
+	/// fr: 'Pour être prévenu de vos nouveaux messages, autorisez PlantMatch à vous envoyer des notifications dans les réglages de votre téléphone.'
+	String get content => 'Pour être prévenu de vos nouveaux messages, autorisez PlantMatch à vous envoyer des notifications dans les réglages de votre téléphone.';
+
+	/// fr: 'Réglages'
+	String get open_settings => 'Réglages';
 }
 
 // Path: auth.common.email
@@ -3364,6 +3415,24 @@ class TranslationsWidgetsDateDaysFr {
 	String get sunday => 'Dimanche';
 }
 
+// Path: widgets.notifications.prompt
+class TranslationsWidgetsNotificationsPromptFr {
+	TranslationsWidgetsNotificationsPromptFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ne manquez aucune réponse'
+	String get title => 'Ne manquez aucune réponse';
+
+	/// fr: 'Activez les notifications pour être prévenu dès que vous recevez un nouveau message.'
+	String get content => 'Activez les notifications pour être prévenu dès que vous recevez un nouveau message.';
+
+	/// fr: 'Activer'
+	String get confirm => 'Activer';
+}
+
 // Path: catalog.wizard.steps.name
 class TranslationsCatalogWizardStepsNameFr {
 	TranslationsCatalogWizardStepsNameFr.internal(this._root);
@@ -3691,6 +3760,11 @@ extension on Translations {
 			'accountSettings.delete_account.dialog.title' => 'Supprimer mon compte',
 			'accountSettings.delete_account.dialog.content' => 'Cette action est définitive. Toutes vos données (profil, catalogue, échanges et messages) seront supprimées et ne pourront pas être récupérées.',
 			'accountSettings.delete_account.dialog.confirm' => 'Supprimer',
+			'accountSettings.notifications.enabling' => 'Activation des notifications…',
+			'accountSettings.notifications.disabling' => 'Désactivation des notifications…',
+			'accountSettings.notifications.permission_dialog.title' => 'Notifications désactivées',
+			'accountSettings.notifications.permission_dialog.content' => 'Pour être prévenu de vos nouveaux messages, autorisez PlantMatch à vous envoyer des notifications dans les réglages de votre téléphone.',
+			'accountSettings.notifications.permission_dialog.open_settings' => 'Réglages',
 			'aroundMeMap.header.title' => 'A proximité',
 			'aroundMeMap.header.subtitle' => 'Trouvez des utilisateurs autour de vous pour partager, échanger ...',
 			'aroundMeMap.empty.title' => 'Oups ! vous n\'êtes pas localisé',
@@ -4173,13 +4247,13 @@ extension on Translations {
 			'widgets.navigation.profile' => 'Mon profil',
 			'widgets.error.back' => 'Retour',
 			'widgets.error.retry' => 'Essayer à nouveau',
+			_ => null,
+		} ?? switch (path) {
 			'widgets.error.reconnect' => 'Se reconnecter',
 			'widgets.error.network.title' => 'Pas de connexion',
 			'widgets.error.network.message' => 'Vérifiez votre connexion internet puis réessayez.',
 			'widgets.error.server.title' => 'Service momentanément indisponible',
 			'widgets.error.server.message' => 'Nos serveurs rencontrent un souci. Réessayez dans quelques instants.',
-			_ => null,
-		} ?? switch (path) {
 			'widgets.error.permission.title' => 'Accès refusé',
 			'widgets.error.permission.message' => 'Vous n\'avez pas les droits pour accéder à ce contenu.',
 			'widgets.error.session.title' => 'Session expirée',
@@ -4219,6 +4293,10 @@ extension on Translations {
 			'widgets.date.days.friday' => 'Vendredi',
 			'widgets.date.days.saturday' => 'Samedi',
 			'widgets.date.days.sunday' => 'Dimanche',
+			'widgets.notifications.later' => 'Plus tard',
+			'widgets.notifications.prompt.title' => 'Ne manquez aucune réponse',
+			'widgets.notifications.prompt.content' => 'Activez les notifications pour être prévenu dès que vous recevez un nouveau message.',
+			'widgets.notifications.prompt.confirm' => 'Activer',
 			_ => null,
 		};
 	}

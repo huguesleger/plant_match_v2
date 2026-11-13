@@ -3,14 +3,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/features/account_settings/presentation/account_settings_screen.dart';
 import 'package:plant_match_v2/features/account_settings/presentation/cubit/account_settings_cubit.dart';
 import 'package:plant_match_v2/features/account_settings/presentation/cubit/delete_account_cubit.dart';
+import 'package:plant_match_v2/features/account_settings/presentation/cubit/notification_preference_cubit.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:plant_match_v2/features/notifications/presentation/cubit/notification_cubit.dart';
 
 class AccountSettingsPageRoute extends StatelessWidget {
   const AccountSettingsPageRoute({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final authRepository = context.read<AuthCubit>().authRepository;
+    final authCubit = context.read<AuthCubit>();
+    final authRepository = authCubit.authRepository;
+    final notificationRepository =
+        context.read<NotificationCubit>().notificationRepository;
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -18,6 +23,12 @@ class AccountSettingsPageRoute extends StatelessWidget {
         ),
         BlocProvider(
           create: (_) => DeleteAccountCubit(authRepository: authRepository),
+        ),
+        BlocProvider(
+          create: (_) => NotificationPreferenceCubit(
+            notificationRepository: notificationRepository,
+            userId: authCubit.userId,
+          )..load(),
         ),
       ],
       child: const AccountSettingsScreen(),

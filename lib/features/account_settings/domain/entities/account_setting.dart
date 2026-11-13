@@ -11,7 +11,11 @@ sealed class AccountSetting {
       ];
 }
 
-class ChangePassword extends AccountSetting {
+sealed class NavigableAccountSetting extends AccountSetting {
+  const NavigableAccountSetting();
+}
+
+class ChangePassword extends NavigableAccountSetting {
   const ChangePassword(this.passwordStatus);
 
   final PasswordStatus passwordStatus;
@@ -21,10 +25,10 @@ class Notifications extends AccountSetting {
   const Notifications();
 }
 
-class NotificationSettings extends AccountSetting {
+class NotificationSettings extends NavigableAccountSetting {
   const NotificationSettings();
 }
 
-class LocationAccess extends AccountSetting {
+class LocationAccess extends NavigableAccountSetting {
   const LocationAccess();
 }

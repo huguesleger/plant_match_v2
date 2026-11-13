@@ -1,6 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:geolocator/geolocator.dart';
 
 class FcmRemoteDataSource {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
@@ -22,6 +23,11 @@ class FcmRemoteDataSource {
       provisional: false,
     );
   }
+
+  Future<NotificationSettings> getNotificationSettings() =>
+      _firebaseMessaging.getNotificationSettings();
+
+  Future<bool> openAppSettings() => Geolocator.openAppSettings();
 
   Future<Option<String>> getToken() async {
     return Option.fromNullable(await _firebaseMessaging.getToken());

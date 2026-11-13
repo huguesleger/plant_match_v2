@@ -37,5 +37,14 @@
       "content": "Cette action est définitive. Toutes vos données (profil, catalogue, échanges et messages) seront supprimées et ne pourront pas être récupérées.",
       "confirm": "Supprimer"
     }
+  },
+  "notifications": {
+    "enabling": "Activation des notifications…",
+    "disabling": "Désactivation des notifications…",
+    "permission_dialog": {
+      "title": "Notifications désactivées",
+      "content": "Pour être prévenu de vos nouveaux messages, autorisez PlantMatch à vous envoyer des notifications dans les réglages de votre téléphone.",
+      "open_settings": "Réglages"
+    }
   }
 }

@@ -16,6 +16,8 @@ class NotificationCubit extends SafeCubit<NotificationState> {
       : _notificationRepository = notificationRepository,
         super(const NotificationInitial());
 
+  NotificationRepository get notificationRepository => _notificationRepository;
+
   void initialize() {
     _notificationRepository
         .initializeLocalNotifications()

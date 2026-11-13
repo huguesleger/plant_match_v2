@@ -5,7 +5,6 @@ import 'package:plant_match_v2/features/account_settings/domain/entities/account
 import 'package:plant_match_v2/features/account_settings/presentation/change_password/change_password_page_route.dart';
 import 'package:plant_match_v2/features/account_settings/presentation/location_access/location_access_page_route.dart';
 import 'package:plant_match_v2/features/account_settings/presentation/notification_settings/notification_settings_page_route.dart';
-import 'package:plant_match_v2/features/account_settings/presentation/notifications/notifications_page_route.dart';
 import 'package:plant_match_v2/features/account_settings/presentation/password_status_presentation.dart';
 
 extension AccountSettingPresentation on AccountSetting {
@@ -22,11 +21,12 @@ extension AccountSettingPresentation on AccountSetting {
         NotificationSettings() => LucideIcons.sliders_horizontal,
         LocationAccess() => LucideIcons.map_pin,
       };
+}
 
+extension NavigableAccountSettingPresentation on NavigableAccountSetting {
   Widget get page => switch (this) {
         ChangePassword(:final passwordStatus) =>
           ChangePasswordPageRoute(passwordStatus: passwordStatus),
-        Notifications() => const NotificationsPageRoute(),
         NotificationSettings() => const NotificationSettingsPageRoute(),
         LocationAccess() => const LocationAccessPageRoute(),
       };

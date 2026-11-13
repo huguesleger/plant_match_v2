@@ -4,11 +4,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/features/chat_plant/data/firebase_chat_plant.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/chat_plant_screen.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/cubit/chat_plant_cubit.dart';
+import 'package:plant_match_v2/features/chat_plant/presentation/widgets/chat_notification_prompt.dart';
 import 'package:plant_match_v2/features/donation/data/firebase_donation.dart';
 import 'package:plant_match_v2/features/donation/presentation/cubit/donation_cubit.dart';
 import 'package:plant_match_v2/features/exchange/data/firebase_exchange.dart';
 import 'package:plant_match_v2/features/exchange/presentation/cubit/exchange_cubit.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:plant_match_v2/features/notifications/presentation/cubit/notification_cubit.dart';
+import 'package:plant_match_v2/features/notifications/presentation/cubit/notification_prompt_cubit.dart';
 
 class ChatPlantPageRoute extends StatelessWidget {
   const ChatPlantPageRoute({
@@ -32,12 +35,14 @@ class ChatPlantPageRoute extends StatelessWidget {
           () => Scaffold(
             body: Center(child: Text(t.common.notConnected)),
           ),
-          (userId) => _buildChat(userId),
+          (userId) => _buildChat(context, userId),
         );
   }
 
-  Widget _buildChat(String userId) {
+  Widget _buildChat(BuildContext context, String userId) {
     final chatRepository = FirebaseChatPlant();
+    final notificationRepository =
+        context.read<NotificationCubit>().notificationRepository;
 
     return MultiBlocProvider(
       providers: [
@@ -65,13 +70,21 @@ class ChatPlantPageRoute extends StatelessWidget {
               currentUserId: userId,
             ),
         ),
+        BlocProvider(
+          create: (_) => NotificationPromptCubit(
+            notificationRepository: notificationRepository,
+            userId: userId,
+          ),
+        ),
       ],
-      child: ChatPlantScreen(
-        chatId: chatId,
-        otherUserId: otherUserId,
-        plantId: plantId,
-        plantOwnerName: plantOwnerName,
-        plantOwnerAvatar: plantOwnerAvatar,
+      child: ChatNotificationPrompt(
+        child: ChatPlantScreen(
+          chatId: chatId,
+          otherUserId: otherUserId,
+          plantId: plantId,
+          plantOwnerName: plantOwnerName,
+          plantOwnerAvatar: plantOwnerAvatar,
+        ),
       ),
     );
   }
