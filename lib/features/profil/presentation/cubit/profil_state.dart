@@ -6,9 +6,13 @@ sealed class ProfilState {
   const ProfilState();
 }
 
-class ProfilInitial extends ProfilState {}
+class ProfilInitial extends ProfilState {
+  final ProfilUser boneMock = ProfilUser.boneMock();
+}
 
-class ProfilLoading extends ProfilState {}
+class ProfilLoading extends ProfilState {
+  final ProfilUser boneMock = ProfilUser.boneMock();
+}
 
 class ProfilLoaded extends ProfilState {
   final ProfilUser profilUser;
@@ -31,6 +35,7 @@ class ProfilError extends ProfilState {
 class ProfilImageUploading extends ProfilState {
   final String uid;
   final String imagePath;
+  final ProfilUser boneMock = ProfilUser.boneMock();
 
   ProfilImageUploading({required this.uid, required this.imagePath});
 }
