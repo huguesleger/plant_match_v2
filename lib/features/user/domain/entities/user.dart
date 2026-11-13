@@ -18,6 +18,16 @@ class User {
     this.selectedFilter = CatalogFilter.all,
   });
 
+  factory User.boneMock() => User(
+        user: ProfilUser.boneMock().copyWith(
+          newBio: const Some(
+              Some('Passionnée de plantes tropicales et de boutures.')),
+        ),
+        userCatalogs: {'': List.generate(3, (_) => Catalog.boneMock())},
+        level: 3,
+        exchangeCount: const Some(12),
+      );
+
   User copyWith({
     Option<ProfilUser> user = const None(),
     Option<Map<String, List<Catalog>>> userCatalogs = const None(),

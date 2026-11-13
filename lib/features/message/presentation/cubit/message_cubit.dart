@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/failures/failure_mapper.dart';
+import 'package:plant_match_v2/core/widgets/skeleton/skeleton_effect.dart';
 import 'package:plant_match_v2/features/chat_plant/domain/entities/chat_plant.dart';
 import 'package:plant_match_v2/features/chat_plant/domain/repository/chat_plant_repository.dart';
 import 'package:plant_match_v2/features/exchange/domain/entities/exchange.dart';
@@ -26,6 +27,7 @@ class MessagesCubit extends Cubit<MessagesState> {
   List<Exchange> _lastExchanges = [];
   List<Donation> _lastDonations = [];
   int _generation = 0;
+  Future<void> _minimalDelay = Future.value();
 
   MessagesCubit({
     required this.chatPlantRepository,
@@ -37,7 +39,8 @@ class MessagesCubit extends Cubit<MessagesState> {
   void load(String currentUserId) {
     _cancelSubscriptions();
     _generation++;
-    emit(const MessagesLoading());
+    _minimalDelay = Future.delayed(SkeletonEffect.shimmerMinimumDelay);
+    emit(MessagesLoading());
 
     _chatsSub = Some(chatPlantRepository.chatsForUser(currentUserId).listen(
       (chats) {
@@ -83,9 +86,11 @@ class MessagesCubit extends Cubit<MessagesState> {
     final generation = ++_generation;
 
     if (_lastChats.isEmpty) {
-      if (!isClosed) {
-        emit(const MessagesLoaded(chats: []));
-      }
+      _minimalDelay.then((_) {
+        if (!isClosed && generation == _generation) {
+          emit(const MessagesLoaded(chats: []));
+        }
+      });
       return;
     }
 
@@ -195,6 +200,7 @@ class MessagesCubit extends Cubit<MessagesState> {
             .toList(),
       ),
     )
+        .flatMap((s) => Task(() => _minimalDelay.then((_) => s)))
         .map((s) {
       if (!isClosed && generation == _generation) {
         emit(s);

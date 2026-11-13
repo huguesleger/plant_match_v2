@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/widgets/skeleton/app_skeletonizer.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_dynamic_header.dart';
 import 'package:plant_match_v2/core/widgets/favorite_btn/favorite_btn.dart';
@@ -15,10 +17,14 @@ class UserHeaderWithContent extends StatelessWidget {
     super.key,
     required this.child,
     required this.user,
+    this.isLoading = false,
   });
 
   final Widget child;
   final ProfilUser user;
+  final bool isLoading;
+
+  static const double _favoriteButtonSize = 42;
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +62,10 @@ class UserHeaderWithContent extends StatelessWidget {
             left: 0,
             right: 0,
             child: Center(
-              child: AvatarWithInfos(user: user),
+              child: AppSkeletonizer(
+                enabled: isLoading,
+                child: AvatarWithInfos(user: user),
+              ),
             ),
           ),
         ],
@@ -69,25 +78,36 @@ class UserHeaderWithContent extends StatelessWidget {
             left: 0,
             right: 0,
             child: Center(
-              child: AvatarWithInfos(user: user),
+              child: AppSkeletonizer(
+                enabled: isLoading,
+                child: AvatarWithInfos(user: user),
+              ),
             ),
           ),
         ],
       ),
       backgroundAppBar: const BgHeader(),
       actions: Some([
-        Container(
-          decoration: const BoxDecoration(
-            color: AppColors.white,
-            shape: BoxShape.circle,
-            border: Border.fromBorderSide(
-              BorderSide(color: AppColors.greyLight),
+        AppSkeletonizer(
+          enabled: isLoading,
+          child: Skeleton.replace(
+            width: _favoriteButtonSize,
+            height: _favoriteButtonSize,
+            replacement: const Bone.circle(size: _favoriteButtonSize),
+            child: Container(
+              decoration: const BoxDecoration(
+                color: AppColors.white,
+                shape: BoxShape.circle,
+                border: Border.fromBorderSide(
+                  BorderSide(color: AppColors.greyLight),
+                ),
+              ),
+              padding: const EdgeInsets.all(6),
+              child: FavoriteBtn(
+                targetUser: Some(user),
+                currentUserId: currentUserId,
+              ),
             ),
-          ),
-          padding: const EdgeInsets.all(6),
-          child: FavoriteBtn(
-            targetUser: Some(user),
-            currentUserId: currentUserId,
           ),
         ),
       ]),

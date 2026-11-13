@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -133,12 +134,14 @@ class _MetricItem extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        ClipOval(
-          child: Container(
-            color: AppColors.greenLight.withValues(alpha: 0.2),
-            width: 30,
-            height: 30,
-            child: Icon(icon, color: AppColors.greenDark, size: AppTypo.text),
+        Skeleton.leaf(
+          child: ClipOval(
+            child: Container(
+              color: AppColors.greenLight.withValues(alpha: 0.2),
+              width: 30,
+              height: 30,
+              child: Icon(icon, color: AppColors.greenDark, size: AppTypo.text),
+            ),
           ),
         ),
         const SizedBox(width: 8),

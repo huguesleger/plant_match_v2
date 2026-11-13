@@ -1,4 +1,6 @@
+import 'package:plant_match_v2/core/extension/task_either_minimal_delay/task_either_minimal_delay.dart';
 import 'package:plant_match_v2/core/util/safe_cubit.dart';
+import 'package:plant_match_v2/core/widgets/skeleton/skeleton_effect.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/features/catalog/domain/repository/catalog_repository.dart';
@@ -23,11 +25,13 @@ class UserCubit extends SafeCubit<UserState> {
   }) : super(const UserInitial());
 
   void fetchUser(String uid) {
-    emit(const UserLoading());
-    _fetch(uid).map(emit).run();
+    emit(UserLoading());
+    _toState(
+      _fetchUser(uid).withMinimalDelay(SkeletonEffect.shimmerMinimumDelay),
+    ).map(emit).run();
   }
 
-  Future<void> refresh(String uid) => _fetch(uid)
+  Future<void> refresh(String uid) => _toState(_fetchUser(uid))
       .map(
         (fetched) => switch (state) {
           UserLoaded(:final data) => switch (fetched) {
@@ -44,7 +48,12 @@ class UserCubit extends SafeCubit<UserState> {
       .map(emit)
       .run();
 
-  Task<UserState> _fetch(String uid) => userRepository
+  Task<UserState> _toState(TaskEither<Failure, User> task) => task.match(
+        (failure) => UserError(failure),
+        (userData) => UserLoaded(data: userData),
+      );
+
+  TaskEither<Failure, User> _fetchUser(String uid) => userRepository
           .getUserUid(uid)
           .flatMap((user) => catalogRepository
               .getCatalogsByUserId(user.uid)
@@ -71,10 +80,7 @@ class UserCubit extends SafeCubit<UserState> {
           exchangeCount: exchangeCount,
           selectedFilter: CatalogFilter.all,
         );
-      }).match(
-        (failure) => UserError(failure),
-        (userData) => UserLoaded(data: userData),
-      );
+      });
 
   void updateFilter(CatalogFilter filter) {
     final currentState = state;

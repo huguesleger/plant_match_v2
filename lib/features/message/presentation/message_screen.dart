@@ -3,7 +3,6 @@ import 'package:fpdart/fpdart.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
-import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_template.dart';
 import 'package:plant_match_v2/core/widgets/error/error_page.dart';
@@ -11,9 +10,9 @@ import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
 import 'package:plant_match_v2/features/message/presentation/cubit/message_cubit.dart';
 import 'package:plant_match_v2/features/message/presentation/cubit/message_state.dart';
 import 'package:plant_match_v2/features/message/presentation/message_empty.dart';
-import 'package:plant_match_v2/features/message/presentation/message_item.dart';
+import 'package:plant_match_v2/features/message/presentation/widgets/message_list.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
-import 'package:plant_match_v2/core/widgets/dots_loader/dots_loader_page.dart';
+import 'package:plant_match_v2/core/widgets/skeleton/app_skeletonizer.dart';
 
 class MessagesScreen extends StatelessWidget {
   const MessagesScreen({super.key});
@@ -37,7 +36,11 @@ class MessagesScreen extends StatelessWidget {
       ),
       body: BlocBuilder<MessagesCubit, MessagesState>(
         builder: (context, state) => switch (state) {
-          MessagesInitial() || MessagesLoading() => const DotsLoaderPage(),
+          MessagesInitial() => const SizedBox.shrink(),
+          MessagesLoading(:final boneMocks) => AppSkeletonizer(
+              enabled: true,
+              child: MessageList(chats: boneMocks),
+            ),
           MessagesError(:final failure) => ErrorPage(
               failure: failure,
               onRetry: () {
@@ -46,15 +49,7 @@ class MessagesScreen extends StatelessWidget {
             ),
           MessagesLoaded(:final chats) => chats.isEmpty
               ? const MessageEmpty()
-              : ListView.separated(
-                  itemCount: chats.length,
-                  separatorBuilder: (_, __) => const Padding(
-                    padding: AppSpacing.paddingHorizontal,
-                    child: Divider(height: 1, color: AppColors.greyLight),
-                  ),
-                  itemBuilder: (context, index) =>
-                      MessageItem(chat: chats[index]),
-                ),
+              : MessageList(chats: chats),
         },
       ),
     );

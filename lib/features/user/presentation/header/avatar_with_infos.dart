@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
 import 'package:plant_match_v2/core/extension/first_word_before_space/first_word_after_space.dart';
@@ -43,15 +44,17 @@ class AvatarWithInfos extends StatelessWidget {
             Positioned(
               bottom: 4,
               right: 4,
-              child: Container(
-                width: 16,
-                height: 16,
-                decoration: BoxDecoration(
-                  color: user.isOnline ? AppColors.greenLight : AppColors.red,
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: AppColors.white,
-                    width: 2,
+              child: Skeleton.leaf(
+                child: Container(
+                  width: 16,
+                  height: 16,
+                  decoration: BoxDecoration(
+                    color: user.isOnline ? AppColors.greenLight : AppColors.red,
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: AppColors.white,
+                      width: 2,
+                    ),
                   ),
                 ),
               ),

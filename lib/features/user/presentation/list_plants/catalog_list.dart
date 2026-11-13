@@ -45,7 +45,8 @@ class CatalogList extends StatelessWidget {
                 return UserPlantCard(
                   title: item.name,
                   subtitle: item.description,
-                  imageUrl: item.images.first,
+                  imageUrl: Option.fromNullable(item.images.firstOrNull)
+                      .getOrElse(() => ''),
                   offerType: item.offerType,
                   environment: item.environment,
                   createdDate: item.createdAt,

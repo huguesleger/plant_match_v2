@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -23,17 +24,19 @@ class PlantEnvironment extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 5),
-        ClipOval(
-          child: Container(
-            color: AppColors.greenLight.withValues(alpha: 0.5),
-            width: 25,
-            height: 25,
-            child: Icon(
-              environment == Environment.outdoor
-                  ? LucideIcons.trees
-                  : LucideIcons.house,
-              color: AppColors.blueGreen,
-              size: AppTypo.textS,
+        Skeleton.leaf(
+          child: ClipOval(
+            child: Container(
+              color: AppColors.greenLight.withValues(alpha: 0.5),
+              width: 25,
+              height: 25,
+              child: Icon(
+                environment == Environment.outdoor
+                    ? LucideIcons.trees
+                    : LucideIcons.house,
+                color: AppColors.blueGreen,
+                size: AppTypo.textS,
+              ),
             ),
           ),
         ),

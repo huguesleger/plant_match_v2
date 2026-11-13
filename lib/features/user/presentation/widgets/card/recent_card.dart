@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:plant_match_v2/core/widgets/network_image/app_network_image.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -31,14 +32,16 @@ class RecentCard extends StatelessWidget {
   final Option<Catalog> catalog;
 
   // Image indisponible (hors ligne, supprimée du Storage…).
-  Widget _placeholder() => Container(
-        height: 150,
-        width: double.infinity,
-        color: AppColors.greyUltraLight,
-        child: const Icon(
-          Icons.eco_rounded,
-          color: AppColors.greyLight,
-          size: 32,
+  Widget _placeholder() => Skeleton.leaf(
+        child: Container(
+          height: 150,
+          width: double.infinity,
+          color: AppColors.greyUltraLight,
+          child: const Icon(
+            Icons.eco_rounded,
+            color: AppColors.greyLight,
+            size: 32,
+          ),
         ),
       );
 
@@ -97,27 +100,29 @@ class RecentCard extends StatelessWidget {
                 Positioned(
                   bottom: 16,
                   left: 0,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: offerTypeDonation
-                          ? AppColors.greenMedium
-                          : AppColors.blueGreen,
-                      borderRadius: const BorderRadius.only(
-                        topRight: Radius.circular(16),
-                        bottomRight: Radius.circular(16),
-                      ),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 4,
-                      horizontal: 8,
-                    ),
-                    child: Text(
-                      offerType.offerTypeName,
-                      style: InterTextStyle.inter(
-                        AppTypo.textS,
+                  child: Skeleton.leaf(
+                    child: Container(
+                      decoration: BoxDecoration(
                         color: offerTypeDonation
-                            ? AppColors.white
-                            : AppColors.greenLight,
+                            ? AppColors.greenMedium
+                            : AppColors.blueGreen,
+                        borderRadius: const BorderRadius.only(
+                          topRight: Radius.circular(16),
+                          bottomRight: Radius.circular(16),
+                        ),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 4,
+                        horizontal: 8,
+                      ),
+                      child: Text(
+                        offerType.offerTypeName,
+                        style: InterTextStyle.inter(
+                          AppTypo.textS,
+                          color: offerTypeDonation
+                              ? AppColors.white
+                              : AppColors.greenLight,
+                        ),
                       ),
                     ),
                   ),

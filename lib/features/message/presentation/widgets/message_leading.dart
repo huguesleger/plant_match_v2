@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/widgets/network_image/app_network_image.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -26,26 +27,30 @@ class MessageLeading extends StatelessWidget {
                   width: const Some(50),
                   height: const Some(50),
                 )
-              : Container(
-                  width: 50,
-                  height: 50,
-                  color: AppColors.greyLight,
-                  child: const Icon(
-                    Icons.local_florist,
-                    color: AppColors.greyDark,
+              : Skeleton.leaf(
+                  child: Container(
+                    width: 50,
+                    height: 50,
+                    color: AppColors.greyLight,
+                    child: const Icon(
+                      Icons.local_florist,
+                      color: AppColors.greyDark,
+                    ),
                   ),
                 ),
         ),
         Positioned(
           bottom: -3,
           right: -6,
-          child: Container(
-            width: 12,
-            height: 12,
-            decoration: BoxDecoration(
-              color: isOnline ? AppColors.green : AppColors.red,
-              shape: BoxShape.circle,
-              border: Border.all(color: AppColors.white, width: 2),
+          child: Skeleton.leaf(
+            child: Container(
+              width: 12,
+              height: 12,
+              decoration: BoxDecoration(
+                color: isOnline ? AppColors.green : AppColors.red,
+                shape: BoxShape.circle,
+                border: Border.all(color: AppColors.white, width: 2),
+              ),
             ),
           ),
         ),

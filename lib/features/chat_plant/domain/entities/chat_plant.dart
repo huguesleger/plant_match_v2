@@ -119,6 +119,30 @@ class ChatPlant {
     };
   }
 
+  factory ChatPlant.boneMock() => ChatPlant(
+        chatId: '',
+        plantId: '',
+        plantName: 'Monstera deliciosa',
+        plantDescription: '',
+        plantImage: '',
+        plantExchangeType: OfferType.exchange,
+        plantOwnerId: '',
+        plantOwnerName: 'Camille',
+        plantOwnerAvatar: const None(),
+        participants: const [],
+        lastMessage: const Some('Bonjour, ta plante est toujours disponible ?'),
+        lastMessageAt: Some(DateTime.now()),
+        unreadCount: const {},
+        otherUserId: '',
+        hasUnreadExchange: false,
+        acceptedExchangeId: const None(),
+        isExchangeCompleted: false,
+        hasUnreadDonation: false,
+        acceptedDonationId: const None(),
+        isDonationCompleted: false,
+        isOtherUserOnline: true,
+      );
+
   factory ChatPlant.fromJson(String id, Map<String, dynamic> json) {
     return ChatPlant(
       chatId: id,

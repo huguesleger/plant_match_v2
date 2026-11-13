@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/util/date_formatter.dart';
@@ -31,15 +32,17 @@ class MessageTrailing extends StatelessWidget {
         ),
         const SizedBox(height: 4),
         if (totalUnread > 0)
-          CircleAvatar(
-            radius: 12,
-            backgroundColor: AppColors.greenDark,
-            child: Text(
-              totalUnread > 9 ? '9+' : totalUnread.toString(),
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 11,
-                fontWeight: FontWeight.bold,
+          Skeleton.leaf(
+            child: CircleAvatar(
+              radius: 12,
+              backgroundColor: AppColors.greenDark,
+              child: Text(
+                totalUnread > 9 ? '9+' : totalUnread.toString(),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           )

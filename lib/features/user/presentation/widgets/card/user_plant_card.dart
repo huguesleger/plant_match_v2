@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:plant_match_v2/core/widgets/network_image/app_network_image.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -37,14 +38,16 @@ class UserPlantCard extends StatelessWidget {
   final Option<Catalog> catalog;
 
   // Image indisponible (hors ligne, supprimée du Storage…).
-  Widget _placeholder() => Container(
-        width: 120,
-        height: 130,
-        color: AppColors.greyUltraLight,
-        child: const Icon(
-          Icons.eco_rounded,
-          color: AppColors.greyLight,
-          size: 32,
+  Widget _placeholder() => Skeleton.leaf(
+        child: Container(
+          width: 120,
+          height: 130,
+          color: AppColors.greyUltraLight,
+          child: const Icon(
+            Icons.eco_rounded,
+            color: AppColors.greyLight,
+            size: 32,
+          ),
         ),
       );
 
@@ -129,17 +132,20 @@ class UserPlantCard extends StatelessWidget {
                               ? AppColors.greenMedium
                               : AppColors.blueGreen,
                         ),
-                        ClipOval(
-                          child: Container(
-                            color: AppColors.greenLight.withValues(alpha: 0.5),
-                            width: 25,
-                            height: 25,
-                            child: Icon(
-                              environment == Environment.outdoor
-                                  ? LucideIcons.trees
-                                  : LucideIcons.house,
-                              color: AppColors.blueGreen,
-                              size: AppTypo.textS,
+                        Skeleton.leaf(
+                          child: ClipOval(
+                            child: Container(
+                              color:
+                                  AppColors.greenLight.withValues(alpha: 0.5),
+                              width: 25,
+                              height: 25,
+                              child: Icon(
+                                environment == Environment.outdoor
+                                    ? LucideIcons.trees
+                                    : LucideIcons.house,
+                                color: AppColors.blueGreen,
+                                size: AppTypo.textS,
+                              ),
                             ),
                           ),
                         ),

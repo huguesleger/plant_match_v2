@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -36,15 +37,17 @@ class PlantCharacteristic extends StatelessWidget {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              ClipOval(
-                child: Container(
-                  color: AppColors.greenLight.withValues(alpha: 0.5),
-                  width: 35,
-                  height: 35,
-                  child: const Icon(
-                    LucideIcons.sun,
-                    color: AppColors.blueGreen,
-                    size: AppTypo.text,
+              Skeleton.leaf(
+                child: ClipOval(
+                  child: Container(
+                    color: AppColors.greenLight.withValues(alpha: 0.5),
+                    width: 35,
+                    height: 35,
+                    child: const Icon(
+                      LucideIcons.sun,
+                      color: AppColors.blueGreen,
+                      size: AppTypo.text,
+                    ),
                   ),
                 ),
               ),
@@ -70,15 +73,17 @@ class PlantCharacteristic extends StatelessWidget {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              ClipOval(
-                child: Container(
-                  color: AppColors.greenLight.withValues(alpha: 0.5),
-                  width: 35,
-                  height: 35,
-                  child: const Icon(
-                    LucideIcons.droplet,
-                    color: AppColors.blueGreen,
-                    size: AppTypo.text,
+              Skeleton.leaf(
+                child: ClipOval(
+                  child: Container(
+                    color: AppColors.greenLight.withValues(alpha: 0.5),
+                    width: 35,
+                    height: 35,
+                    child: const Icon(
+                      LucideIcons.droplet,
+                      color: AppColors.blueGreen,
+                      size: AppTypo.text,
+                    ),
                   ),
                 ),
               ),
@@ -106,15 +111,17 @@ class PlantCharacteristic extends StatelessWidget {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              ClipOval(
-                child: Container(
-                  color: AppColors.greenLight.withValues(alpha: 0.5),
-                  width: 35,
-                  height: 35,
-                  child: const Icon(
-                    LucideIcons.shovel,
-                    color: AppColors.blueGreen,
-                    size: AppTypo.text,
+              Skeleton.leaf(
+                child: ClipOval(
+                  child: Container(
+                    color: AppColors.greenLight.withValues(alpha: 0.5),
+                    width: 35,
+                    height: 35,
+                    child: const Icon(
+                      LucideIcons.shovel,
+                      color: AppColors.blueGreen,
+                      size: AppTypo.text,
+                    ),
                   ),
                 ),
               ),

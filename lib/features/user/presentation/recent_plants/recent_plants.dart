@@ -55,7 +55,8 @@ class RecentPlants extends StatelessWidget {
                 width: 150,
                 child: RecentCard(
                   name: item.name,
-                  imageUrl: item.images.first,
+                  imageUrl: Option.fromNullable(item.images.firstOrNull)
+                      .getOrElse(() => ''),
                   recentDate: item.createdAt,
                   offerType: item.offerType,
                   onPressed: () {

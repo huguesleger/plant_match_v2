@@ -10,7 +10,10 @@ class MessagesInitial extends MessagesState {
 }
 
 class MessagesLoading extends MessagesState {
-  const MessagesLoading();
+  final List<ChatPlant> boneMocks =
+      List.generate(6, (_) => ChatPlant.boneMock());
+
+  MessagesLoading();
 }
 
 class MessagesLoaded extends MessagesState {

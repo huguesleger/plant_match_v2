@@ -10,7 +10,9 @@ class UserInitial extends UserState {
 }
 
 class UserLoading extends UserState {
-  const UserLoading();
+  final User boneMock = User.boneMock();
+
+  UserLoading();
 }
 
 class UserLoaded extends UserState {
