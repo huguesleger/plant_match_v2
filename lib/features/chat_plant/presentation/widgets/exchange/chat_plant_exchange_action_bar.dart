@@ -64,10 +64,6 @@ class ChatPlantExchangeActionBar extends StatelessWidget {
           icon: LucideIcons.calendar_check,
         ),
       ExchangeInitial() ||
-      ExchangeLoading() ||
-      ExchangePickingPlant() ||
-      ExchangeConfirming() ||
-      ExchangeSuccess() ||
       ExchangeError() ||
       ExchangePending() ||
       ExchangeAccepted() ||

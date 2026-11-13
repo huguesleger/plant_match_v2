@@ -1270,6 +1270,15 @@ class TranslationsExchangePickerFr {
 
 	/// fr: 'Tu n'as pas encore de plantes à échanger'
 	String get no_plants => 'Tu n\'as pas encore de plantes à échanger';
+
+	/// fr: 'Ajoute une plante proposée à l'échange pour pouvoir la proposer en retour.'
+	String get no_plants_description => 'Ajoute une plante proposée à l\'échange pour pouvoir la proposer en retour.';
+
+	/// fr: 'Ajouter une plante'
+	String get add_plant => 'Ajouter une plante';
+
+	/// fr: 'Sélectionne la plante que tu veux proposer en échange.'
+	String get subtitle => 'Sélectionne la plante que tu veux proposer en échange.';
 }
 
 // Path: favorite.screen
@@ -4243,6 +4252,9 @@ extension on Translations {
 			'exchange.confirmation.confirm_btn' => 'Confirmer l\'échange',
 			'exchange.confirmation.change_plant_btn' => 'Choisir une autre plante',
 			'exchange.picker.no_plants' => 'Tu n\'as pas encore de plantes à échanger',
+			'exchange.picker.no_plants_description' => 'Ajoute une plante proposée à l\'échange pour pouvoir la proposer en retour.',
+			'exchange.picker.add_plant' => 'Ajouter une plante',
+			'exchange.picker.subtitle' => 'Sélectionne la plante que tu veux proposer en échange.',
 			'favorite.screen.title' => 'Mes Favoris',
 			'favorite.screen.plants_tab' => ({required Object count}) => 'Plantes (${count})',
 			'favorite.screen.users_tab' => ({required Object count}) => 'Profils (${count})',
@@ -4447,11 +4459,11 @@ extension on Translations {
 			'recentActivity.tile.hours' => ({required Object count}) => '${count} h',
 			'recentActivity.tile.days' => ({required Object count}) => '${count} j',
 			'user.bio.empty' => 'Pas encore de description...',
+			_ => null,
+		} ?? switch (path) {
 			'user.stats.plants' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'plante', other: 'plantes', ), 
 			'user.stats.matches' => 'plantMatch',
 			'user.stats.level' => 'niveau',
-			_ => null,
-		} ?? switch (path) {
 			'user.stats.level_suffix' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'er', other: 'ème', ), 
 			'user.card.added_on' => ({required Object date}) => 'Ajouté le ${date}',
 			'user.card.added_prefix' => 'Ajouté le',

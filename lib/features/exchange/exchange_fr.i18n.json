@@ -14,6 +14,9 @@
     "change_plant_btn": "Choisir une autre plante"
   },
   "picker": {
-    "no_plants": "Tu n'as pas encore de plantes à échanger"
+    "no_plants": "Tu n'as pas encore de plantes à échanger",
+    "no_plants_description": "Ajoute une plante proposée à l'échange pour pouvoir la proposer en retour.",
+    "add_plant": "Ajouter une plante",
+    "subtitle": "Sélectionne la plante que tu veux proposer en échange."
   }
 }

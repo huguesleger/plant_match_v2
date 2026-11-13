@@ -1,12 +1,13 @@
-import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:plant_match_v2/features/catalog/data/firebase_catalog_repository.dart';
 import 'package:plant_match_v2/features/chat_plant/data/firebase_chat_plant.dart';
 import 'package:plant_match_v2/features/exchange/data/firebase_exchange.dart';
-import 'package:plant_match_v2/features/exchange/presentation/cubit/exchange_cubit.dart';
+import 'package:plant_match_v2/features/exchange/presentation/cubit/exchange_proposal_cubit.dart';
 import 'package:plant_match_v2/features/exchange/presentation/exchange_screen.dart';
-import 'package:plant_match_v2/features/exchange/presentation/state/exchange_state.dart';
+import 'package:plant_match_v2/features/exchange/presentation/widgets/exchange_success_listener.dart';
 
 class ExchangePageRoute extends StatelessWidget {
   const ExchangePageRoute({
@@ -21,43 +22,20 @@ class ExchangePageRoute extends StatelessWidget {
   final String targetOwnerId;
 
   @override
-  Widget build(BuildContext context) {
-    return context.read<AuthCubit>().userId.match(
-          () => Scaffold(
-            body: Center(child: Text(t.common.notConnected)),
+  Widget build(BuildContext context) => context.read<AuthCubit>().userId.match(
+        () => Scaffold(body: Center(child: Text(t.common.notConnected))),
+        (userId) => BlocProvider(
+          create: (_) => ExchangeProposalCubit(
+            catalogRepository: FirebaseCatalogRepository(),
+            exchangeRepository: FirebaseExchange(),
+            chatRepository: FirebaseChatPlant(),
+            userId: userId,
+            targetPlantId: targetPlantId,
+            chatId: chatId,
+          )..load(),
+          child: ExchangeSuccessListener(
+            child: ExchangeScreen(userId: userId),
           ),
-          (userId) => _buildExchange(userId),
-        );
-  }
-
-  Widget _buildExchange(String userId) {
-    return BlocProvider(
-      create: (context) => ExchangeCubit(
-        repository: FirebaseExchange(),
-        chatRepository: FirebaseChatPlant(),
-      )..initExchange(
-          userId: userId,
-          targetPlantId: targetPlantId,
-          targetOwnerId: targetOwnerId,
-          chatId: chatId,
         ),
-      child: BlocListener<ExchangeCubit, ExchangeState>(
-        listener: (context, state) {
-          if (state is ExchangeSuccess) {
-            Future.delayed(const Duration(milliseconds: 500), () {
-              if (context.mounted) {
-                Navigator.pop(context);
-              }
-            });
-          }
-        },
-        child: ExchangeScreen(
-          userId: userId,
-          targetPlantId: targetPlantId,
-          targetOwnerId: targetOwnerId,
-          chatId: chatId,
-        ),
-      ),
-    );
-  }
+      );
 }

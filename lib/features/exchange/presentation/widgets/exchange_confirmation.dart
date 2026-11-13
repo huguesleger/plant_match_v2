@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
-import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
-import 'package:fpdart/fpdart.dart';
+import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
-import 'package:plant_match_v2/features/exchange/domain/entities/exchange.dart';
-import 'package:plant_match_v2/features/exchange/presentation/cubit/exchange_cubit.dart';
-import 'package:plant_match_v2/features/exchange/presentation/state/exchange_state.dart';
-import 'package:plant_match_v2/features/exchange/presentation/widgets/exchange_plant_preview.dart';
+import 'package:plant_match_v2/features/exchange/presentation/widgets/exchange_confirmation_actions.dart';
+import 'package:plant_match_v2/features/exchange/presentation/widgets/exchange_plant_card.dart';
+import 'package:plant_match_v2/features/exchange/presentation/widgets/exchange_section_title.dart';
+import 'package:plant_match_v2/features/exchange/presentation/widgets/exchange_swap_divider.dart';
 
 class ExchangeConfirmation extends StatelessWidget {
   const ExchangeConfirmation({
@@ -21,80 +18,33 @@ class ExchangeConfirmation extends StatelessWidget {
   final Catalog offeredPlant;
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
+  Widget build(BuildContext context) => Column(
         children: [
-          Text(
-            t.exchange.confirmation.offered_plant_title,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-          ),
-          const SizedBox(height: 20),
-          ExchangePlantPreview(plant: offeredPlant),
-          const SizedBox(height: 20),
-          const Icon(Icons.swap_vert, size: 40, color: Colors.grey),
-          const SizedBox(height: 20),
-          Text(
-            t.exchange.confirmation.target_plant_title,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-          ),
-          const SizedBox(height: 20),
-          ExchangePlantPreview(plant: targetPlant),
-          const Spacer(),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              minimumSize: const Size(double.infinity, 50),
-              backgroundColor: Theme.of(context).primaryColor,
-              foregroundColor: Colors.white,
+          Expanded(
+            child: SingleChildScrollView(
+              padding: AppSpacing.paddingAll,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ExchangeSectionTitle(
+                    title: t.exchange.confirmation.offered_plant_title,
+                  ),
+                  const SizedBox(height: 12),
+                  ExchangePlantCard(plant: offeredPlant),
+                  const ExchangeSwapDivider(),
+                  ExchangeSectionTitle(
+                    title: t.exchange.confirmation.target_plant_title,
+                  ),
+                  const SizedBox(height: 12),
+                  ExchangePlantCard(plant: targetPlant),
+                ],
+              ),
             ),
-            onPressed: () {
-              final authCubit = context.read<AuthCubit>();
-              final exchangeCubit = context.read<ExchangeCubit>();
-              final state = exchangeCubit.state;
-
-              if (state is ExchangeConfirming) {
-                authCubit.userId.map((userId) {
-                  final exchange = Exchange(
-                    chatId: state.chatId,
-                    requestedBy: userId,
-                    ownerId: targetPlant.userId,
-                    targetPlantId: targetPlant.catalogId.getOrElse(() => ''),
-                    targetPlantName: targetPlant.name,
-                    targetPlantImage: targetPlant.images.isNotEmpty
-                        ? targetPlant.images.first
-                        : '',
-                    offeredPlantId: offeredPlant.catalogId.getOrElse(() => ''),
-                    offeredPlantName: offeredPlant.name,
-                    offeredPlantImage: offeredPlant.images.isNotEmpty
-                        ? offeredPlant.images.first
-                        : '',
-                    status: ExchangeStatus.pending,
-                    createdAt: DateTime.now(),
-                    seenByOwner: false,
-                    seenByRequester: true,
-                    completedAt: const None(),
-                    completedBy: const None(),
-                    validationCode: const None(),
-                  );
-
-                  final profilCubit = context.read<ProfilCubit>();
-                  exchangeCubit.propose(exchange).then(
-                      (_) => profilCubit.refreshLeaves(exchange.requestedBy));
-                });
-              }
-            },
-            child: Text(t.exchange.confirmation.confirm_btn),
           ),
-          const SizedBox(height: 10),
-          TextButton(
-            onPressed: () {
-              context.read<ExchangeCubit>().cancelSelection();
-            },
-            child: Text(t.exchange.confirmation.change_plant_btn),
+          ExchangeConfirmationActions(
+            targetPlant: targetPlant,
+            offeredPlant: offeredPlant,
           ),
         ],
-      ),
-    );
-  }
+      );
 }

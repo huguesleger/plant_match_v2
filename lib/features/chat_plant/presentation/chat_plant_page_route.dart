@@ -49,7 +49,6 @@ class ChatPlantPageRoute extends StatelessWidget {
         BlocProvider(
           create: (_) => ExchangeCubit(
             repository: FirebaseExchange(),
-            chatRepository: chatRepository,
           )..listen(chatId),
         ),
         BlocProvider(

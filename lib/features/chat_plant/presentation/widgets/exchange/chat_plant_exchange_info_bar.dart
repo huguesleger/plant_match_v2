@@ -36,13 +36,7 @@ class ChatPlantExchangeInfoBar extends StatelessWidget {
           color: Colors.blue,
           icon: Icons.task_alt_rounded,
         ),
-      ExchangeInitial() ||
-      ExchangeLoading() ||
-      ExchangePickingPlant() ||
-      ExchangeConfirming() ||
-      ExchangeSuccess() ||
-      ExchangeError() =>
-        const SizedBox.shrink(),
+      ExchangeInitial() || ExchangeError() => const SizedBox.shrink(),
     };
   }
 }

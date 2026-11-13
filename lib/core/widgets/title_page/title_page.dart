@@ -36,6 +36,7 @@ class TitlePage extends StatelessWidget {
               fontWeight: fontWeight,
               overflow: overflow.toNullable(),
             ),
+            textAlign: textAlign.toNullable(),
           ),
           (sub) => Column(
             crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,78 +1,71 @@
 import 'package:flutter/material.dart';
-import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:plant_match_v2/core/widgets/error/error_page.dart';
-import 'package:plant_match_v2/features/exchange/presentation/cubit/exchange_cubit.dart';
-import 'package:plant_match_v2/features/exchange/presentation/state/exchange_state.dart';
-import 'package:plant_match_v2/features/exchange/presentation/widgets/exchange_confirmation.dart';
-import 'package:plant_match_v2/features/exchange/presentation/widgets/exchange_plant_picker.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
+import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/dots_loader/dots_loader_page.dart';
+import 'package:plant_match_v2/core/widgets/error/error_page.dart';
+import 'package:plant_match_v2/core/widgets/skeleton/app_skeletonizer.dart';
+import 'package:plant_match_v2/features/exchange/presentation/cubit/exchange_proposal_cubit.dart';
+import 'package:plant_match_v2/features/exchange/presentation/state/exchange_proposal_state.dart';
+import 'package:plant_match_v2/features/exchange/presentation/widgets/exchange_app_bar.dart';
+import 'package:plant_match_v2/features/exchange/presentation/widgets/exchange_confirmation.dart';
+import 'package:plant_match_v2/features/exchange/presentation/widgets/exchange_plant_list.dart';
+import 'package:plant_match_v2/features/exchange/presentation/widgets/exchange_plant_picker.dart';
 
 class ExchangeScreen extends StatelessWidget {
-  const ExchangeScreen({
-    required this.chatId,
-    required this.targetPlantId,
-    required this.targetOwnerId,
-    required this.userId,
-    super.key,
-  });
+  const ExchangeScreen({super.key, required this.userId});
 
-  final String chatId;
-  final String targetPlantId;
-  final String targetOwnerId;
   final String userId;
 
   @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<ExchangeCubit, ExchangeState>(
-      builder: (context, state) {
-        final (title, body) = switch (state) {
-          ExchangeInitial() || ExchangeLoading() => (
-              t.exchange.screen.loading,
-              const DotsLoaderPage(),
-            ),
-          ExchangePickingPlant(:final userPlants) => (
-              t.exchange.screen.picking_title,
-              ExchangePlantPicker(plants: userPlants),
-            ),
-          ExchangeConfirming(:final targetPlant, :final offeredPlant) => (
-              t.exchange.screen.confirm_title,
-              ExchangeConfirmation(
-                targetPlant: targetPlant,
-                offeredPlant: offeredPlant,
+  Widget build(BuildContext context) =>
+      BlocBuilder<ExchangeProposalCubit, ExchangeProposalState>(
+        builder: (context, state) {
+          final (title, body) = switch (state) {
+            ExchangeProposalLoading(:final boneMocks) => (
+                t.exchange.screen.picking_title,
+                AppSkeletonizer(
+                  enabled: true,
+                  child: ExchangePlantList(plants: boneMocks),
+                ),
               ),
-            ),
-          ExchangeSuccess() => (
-              t.exchange.screen.success_title,
-              Center(child: Text(t.exchange.screen.success_message)),
-            ),
-          ExchangeError(:final failure) => (
-              t.exchange.screen.error_title,
-              ErrorPage(
-                failure: failure,
-                onRetry: () => context.read<ExchangeCubit>().initExchange(
-                      userId: userId,
-                      targetPlantId: targetPlantId,
-                      targetOwnerId: targetOwnerId,
-                      chatId: chatId,
-                    ),
+            ExchangeProposalPicking(:final userPlants) => (
+                t.exchange.screen.picking_title,
+                ExchangePlantPicker(plants: userPlants, userId: userId),
               ),
-            ),
-          ExchangePending() ||
-          ExchangeAccepted() ||
-          ExchangeWaitingValidation() ||
-          ExchangeRejected() ||
-          ExchangeCompleted() =>
-            ("", const SizedBox.shrink()),
-        };
+            ExchangeProposalConfirming(
+              :final targetPlant,
+              :final offeredPlant,
+            ) =>
+              (
+                t.exchange.screen.confirm_title,
+                ExchangeConfirmation(
+                  targetPlant: targetPlant,
+                  offeredPlant: offeredPlant,
+                ),
+              ),
+            ExchangeProposalSending() => (
+                t.exchange.screen.confirm_title,
+                const DotsLoaderPage(),
+              ),
+            ExchangeProposalSuccess() => (
+                t.exchange.screen.success_title,
+                Center(child: Text(t.exchange.screen.success_message)),
+              ),
+            ExchangeProposalError(:final failure) => (
+                t.exchange.screen.error_title,
+                ErrorPage(
+                  failure: failure,
+                  onRetry: context.read<ExchangeProposalCubit>().load,
+                ),
+              ),
+          };
 
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(title),
-          ),
-          body: body,
-        );
-      },
-    );
-  }
+          return Scaffold(
+            backgroundColor: AppColors.white,
+            appBar: ExchangeAppBar(title: title),
+            body: SafeArea(child: body),
+          );
+        },
+      );
 }

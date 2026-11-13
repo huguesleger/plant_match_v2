@@ -1,5 +1,6 @@
 import 'package:plant_match_v2/core/util/json_reader.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 
 enum ExchangeStatus {
   pending,
@@ -50,6 +51,31 @@ class Exchange {
     required this.completedBy,
     required this.validationCode,
   });
+
+  factory Exchange.proposal({
+    required String chatId,
+    required String requestedBy,
+    required Catalog targetPlant,
+    required Catalog offeredPlant,
+  }) =>
+      Exchange(
+        chatId: chatId,
+        requestedBy: requestedBy,
+        ownerId: targetPlant.userId,
+        targetPlantId: targetPlant.catalogId.getOrElse(() => ''),
+        targetPlantName: targetPlant.name,
+        targetPlantImage: targetPlant.images.firstOption.getOrElse(() => ''),
+        offeredPlantId: offeredPlant.catalogId.getOrElse(() => ''),
+        offeredPlantName: offeredPlant.name,
+        offeredPlantImage: offeredPlant.images.firstOption.getOrElse(() => ''),
+        status: ExchangeStatus.pending,
+        createdAt: DateTime.now(),
+        seenByOwner: false,
+        seenByRequester: true,
+        completedAt: const None(),
+        completedBy: const None(),
+        validationCode: const None(),
+      );
 
   factory Exchange.boneMock() => Exchange(
         chatId: '',

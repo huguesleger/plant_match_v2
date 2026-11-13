@@ -88,13 +88,7 @@ class ChatPlantScreen extends StatelessWidget {
               ExchangeRejected(:final exchange) ||
               ExchangeCompleted(:final exchange) =>
                 Some(exchange),
-              ExchangeInitial() ||
-              ExchangeLoading() ||
-              ExchangePickingPlant() ||
-              ExchangeConfirming() ||
-              ExchangeSuccess() ||
-              ExchangeError() =>
-                const None(),
+              ExchangeInitial() || ExchangeError() => const None(),
             };
 
             option.match(
@@ -163,7 +157,9 @@ class ChatPlantScreen extends StatelessWidget {
             ),
             body: BlocBuilder<ChatPlantCubit, ChatPlantState>(
               builder: (context, state) => switch (state) {
-                ChatPlantInitial() || ChatPlantLoading() => const DotsLoaderPage(),
+                ChatPlantInitial() ||
+                ChatPlantLoading() =>
+                  const DotsLoaderPage(),
                 ChatPlantError(:final failure) => ErrorPage(
                     failure: failure,
                     onRetry: () => context.read<ChatPlantCubit>().subscribe(
