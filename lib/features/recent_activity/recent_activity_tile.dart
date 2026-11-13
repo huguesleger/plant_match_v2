@@ -8,6 +8,7 @@ import 'package:plant_match_v2/core/widgets/avatar/avatar.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/features/user/detail_plant/detail_plant.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class RecentActivityTile extends StatelessWidget {
   const RecentActivityTile({
@@ -96,19 +97,21 @@ class RecentActivityTile extends StatelessWidget {
 
   Widget _buildPlantThumbnail() {
     final hasImg = catalog.images.isNotEmpty;
-    return Container(
-      width: 48,
-      height: 48,
-      decoration: BoxDecoration(
-        color: AppColors.greyLight,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(10),
-        child: hasImg
-            ? AppNetworkImage(url: catalog.images.first)
-            : const Icon(LucideIcons.image,
-                color: AppColors.greyMedium, size: 20),
+    return Skeleton.leaf(
+      child: Container(
+        width: 48,
+        height: 48,
+        decoration: BoxDecoration(
+          color: AppColors.greyLight,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: hasImg
+              ? AppNetworkImage(url: catalog.images.first)
+              : const Icon(LucideIcons.image,
+                  color: AppColors.greyMedium, size: 20),
+        ),
       ),
     );
   }

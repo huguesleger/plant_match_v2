@@ -1,0 +1,30 @@
+{
+  "header": {
+    "greeting": "Hello, ${name}",
+    "subtitle": "Prêt à échanger ou donner\nde nouvelles plantes ?"
+  },
+  "around_me": {
+    "title": "Autour de toi",
+    "see_on_map": "Voir sur la carte",
+    "no_location": "Activez la géolocalisation pour voir les plantes autour de vous",
+    "empty": "Aucune plante trouvée à proximité"
+  },
+  "card": {
+    "exchange": "Échange",
+    "donation": "Donation",
+    "distance_owner": "${distance} km • ${name}"
+  },
+  "recommendation": {
+    "title": "Tes suggestions personnalisées",
+    "adjust_preferences": "Ajuster mes préférences",
+    "empty": "Aucune plante ne correspond à tes préférences actuelles.",
+    "adjust_filters": "Ajuster les filtres",
+    "banner_title": "Trouve ta plante idéale",
+    "banner_subtitle": "Réponds à quelques questions et nous te suggérons des plantes !"
+  },
+  "recent_activity": {
+    "title": "Activité récente",
+    "see_all": "Voir tout",
+    "empty": "Aucune activité récente"
+  }
+}

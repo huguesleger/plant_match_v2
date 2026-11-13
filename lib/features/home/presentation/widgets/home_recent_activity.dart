@@ -1,11 +1,13 @@
-import 'package:fpdart/fpdart.dart' hide State;
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
+import 'package:plant_match_v2/features/home/presentation/widgets/home_section_message.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/features/recent_activity/recent_activity_tile.dart';
 
@@ -21,8 +23,7 @@ class HomeRecentActivity extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentUserId =
-        context.read<AuthCubit>().userId.getOrElse(() => '');
+    final currentUserId = context.read<AuthCubit>().userId.getOrElse(() => '');
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -32,18 +33,28 @@ class HomeRecentActivity extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                "Activité récente",
-                style: TextStyle(fontSize: AppTypo.textM, fontWeight: FontWeight.bold, color: AppColors.black),
+              Text(
+                t.home.recent_activity.title,
+                style: const TextStyle(
+                  fontSize: AppTypo.textM,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.black,
+                ),
               ),
-              TextButton(
+              TextButton.icon(
                 onPressed: onSeeAllPressed,
-                child: const Row(
-                  children: [
-                    Text("Voir tout", style: TextStyle(color: AppColors.greyMedium, fontSize: AppTypo.textXs)),
-                    SizedBox(width: 2),
-                    Icon(LucideIcons.chevron_right, color: AppColors.greyMedium, size: 12),
-                  ],
+                iconAlignment: IconAlignment.end,
+                label: Text(
+                  t.home.recent_activity.see_all,
+                  style: const TextStyle(
+                    color: AppColors.greyMedium,
+                    fontSize: AppTypo.textXs,
+                  ),
+                ),
+                icon: const Icon(
+                  LucideIcons.chevron_right,
+                  color: AppColors.greyMedium,
+                  size: 12,
                 ),
               ),
             ],
@@ -51,23 +62,22 @@ class HomeRecentActivity extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         activities.isEmpty
-            ? const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 12),
-                child: Text("Aucune activité récente", style: TextStyle(color: AppColors.greyMedium, fontSize: AppTypo.textS)),
+            ? Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: HomeSectionMessage(
+                  message: t.home.recent_activity.empty,
+                ),
               )
             : ListView.separated(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: activities.length,
-                separatorBuilder: (context, index) => const SizedBox(height: 12),
-                itemBuilder: (context, index) {
-                  final (catalog, owner) = activities[index];
-                  return RecentActivityTile(
-                    catalog: catalog,
-                    owner: owner,
-                    currentUserId: currentUserId,
-                  );
-                },
+                separatorBuilder: (_, __) => const SizedBox(height: 12),
+                itemBuilder: (_, index) => RecentActivityTile(
+                  catalog: activities[index].$1,
+                  owner: activities[index].$2,
+                  currentUserId: currentUserId,
+                ),
               ),
       ],
     );

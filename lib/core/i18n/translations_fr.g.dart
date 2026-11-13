@@ -50,6 +50,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final TranslationsFavoriteFr favorite = TranslationsFavoriteFr.internal(_root);
 	late final TranslationsGetStartedFr getStarted = TranslationsGetStartedFr.internal(_root);
 	late final TranslationsHistoryFr history = TranslationsHistoryFr.internal(_root);
+	late final TranslationsHomeFr home = TranslationsHomeFr.internal(_root);
 	late final TranslationsLegalInformationFr legalInformation = TranslationsLegalInformationFr.internal(_root);
 	late final TranslationsLevelFr level = TranslationsLevelFr.internal(_root);
 	late final TranslationsLevelAwardedFr levelAwarded = TranslationsLevelAwardedFr.internal(_root);
@@ -214,6 +215,20 @@ class TranslationsHistoryFr {
 	late final TranslationsHistoryCardFr card = TranslationsHistoryCardFr.internal(_root);
 	late final TranslationsHistoryFiltersFr filters = TranslationsHistoryFiltersFr.internal(_root);
 	late final TranslationsHistoryStatusFr status = TranslationsHistoryStatusFr.internal(_root);
+}
+
+// Path: home
+class TranslationsHomeFr {
+	TranslationsHomeFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+	late final TranslationsHomeHeaderFr header = TranslationsHomeHeaderFr.internal(_root);
+	late final TranslationsHomeAroundMeFr around_me = TranslationsHomeAroundMeFr.internal(_root);
+	late final TranslationsHomeCardFr card = TranslationsHomeCardFr.internal(_root);
+	late final TranslationsHomeRecommendationFr recommendation = TranslationsHomeRecommendationFr.internal(_root);
+	late final TranslationsHomeRecentActivityFr recent_activity = TranslationsHomeRecentActivityFr.internal(_root);
 }
 
 // Path: legalInformation
@@ -1379,6 +1394,105 @@ class TranslationsHistoryStatusFr {
 
 	/// fr: 'En attente'
 	String get pending => 'En attente';
+}
+
+// Path: home.header
+class TranslationsHomeHeaderFr {
+	TranslationsHomeHeaderFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Hello, ${name}'
+	String greeting({required Object name}) => 'Hello, ${name}';
+
+	/// fr: 'Prêt à échanger ou donner de nouvelles plantes ?'
+	String get subtitle => 'Prêt à échanger ou donner\nde nouvelles plantes ?';
+}
+
+// Path: home.around_me
+class TranslationsHomeAroundMeFr {
+	TranslationsHomeAroundMeFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Autour de toi'
+	String get title => 'Autour de toi';
+
+	/// fr: 'Voir sur la carte'
+	String get see_on_map => 'Voir sur la carte';
+
+	/// fr: 'Activez la géolocalisation pour voir les plantes autour de vous'
+	String get no_location => 'Activez la géolocalisation pour voir les plantes autour de vous';
+
+	/// fr: 'Aucune plante trouvée à proximité'
+	String get empty => 'Aucune plante trouvée à proximité';
+}
+
+// Path: home.card
+class TranslationsHomeCardFr {
+	TranslationsHomeCardFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Échange'
+	String get exchange => 'Échange';
+
+	/// fr: 'Donation'
+	String get donation => 'Donation';
+
+	/// fr: '${distance} km • ${name}'
+	String distance_owner({required Object distance, required Object name}) => '${distance} km • ${name}';
+}
+
+// Path: home.recommendation
+class TranslationsHomeRecommendationFr {
+	TranslationsHomeRecommendationFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Tes suggestions personnalisées'
+	String get title => 'Tes suggestions personnalisées';
+
+	/// fr: 'Ajuster mes préférences'
+	String get adjust_preferences => 'Ajuster mes préférences';
+
+	/// fr: 'Aucune plante ne correspond à tes préférences actuelles.'
+	String get empty => 'Aucune plante ne correspond à tes préférences actuelles.';
+
+	/// fr: 'Ajuster les filtres'
+	String get adjust_filters => 'Ajuster les filtres';
+
+	/// fr: 'Trouve ta plante idéale'
+	String get banner_title => 'Trouve ta plante idéale';
+
+	/// fr: 'Réponds à quelques questions et nous te suggérons des plantes !'
+	String get banner_subtitle => 'Réponds à quelques questions et nous te suggérons des plantes !';
+}
+
+// Path: home.recent_activity
+class TranslationsHomeRecentActivityFr {
+	TranslationsHomeRecentActivityFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Activité récente'
+	String get title => 'Activité récente';
+
+	/// fr: 'Voir tout'
+	String get see_all => 'Voir tout';
+
+	/// fr: 'Aucune activité récente'
+	String get empty => 'Aucune activité récente';
 }
 
 // Path: legalInformation.screen
@@ -4099,6 +4213,24 @@ extension on Translations {
 			'history.status.completed' => 'Terminé',
 			'history.status.rejected' => 'Refusé',
 			'history.status.pending' => 'En attente',
+			'home.header.greeting' => ({required Object name}) => 'Hello, ${name}',
+			'home.header.subtitle' => 'Prêt à échanger ou donner\nde nouvelles plantes ?',
+			'home.around_me.title' => 'Autour de toi',
+			'home.around_me.see_on_map' => 'Voir sur la carte',
+			'home.around_me.no_location' => 'Activez la géolocalisation pour voir les plantes autour de vous',
+			'home.around_me.empty' => 'Aucune plante trouvée à proximité',
+			'home.card.exchange' => 'Échange',
+			'home.card.donation' => 'Donation',
+			'home.card.distance_owner' => ({required Object distance, required Object name}) => '${distance} km • ${name}',
+			'home.recommendation.title' => 'Tes suggestions personnalisées',
+			'home.recommendation.adjust_preferences' => 'Ajuster mes préférences',
+			'home.recommendation.empty' => 'Aucune plante ne correspond à tes préférences actuelles.',
+			'home.recommendation.adjust_filters' => 'Ajuster les filtres',
+			'home.recommendation.banner_title' => 'Trouve ta plante idéale',
+			'home.recommendation.banner_subtitle' => 'Réponds à quelques questions et nous te suggérons des plantes !',
+			'home.recent_activity.title' => 'Activité récente',
+			'home.recent_activity.see_all' => 'Voir tout',
+			'home.recent_activity.empty' => 'Aucune activité récente',
 			'legalInformation.screen.title' => 'Informations juridiques',
 			'legalInformation.items.privacy_policy' => 'Politique de confidentialité',
 			'legalInformation.items.terms' => 'Conditions d\'utilisation',
@@ -4260,6 +4392,8 @@ extension on Translations {
 			'user.recent_plants.title' => 'Ajouts Récents',
 			'user.catalog_list.empty' => 'Aucune plante',
 			'user.detail_plant.owner_placeholder' => 'Propriétaire',
+			_ => null,
+		} ?? switch (path) {
 			'user.detail_plant.send_message' => 'Envoyer un message',
 			'user.detail_plant.env_prefix' => ({required Object env}) => 'plante ${env}',
 			'user.detail_plant.lighting' => 'lumière',
@@ -4278,8 +4412,6 @@ extension on Translations {
 			'user.filters.exchange' => 'Échanges',
 			'user.filters.outdoor' => 'Extérieur',
 			'user.filters.indoor' => 'Intérieur',
-			_ => null,
-		} ?? switch (path) {
 			'widgets.navigation.explorer' => 'Explorer',
 			'widgets.navigation.aroundMe' => 'À proximité',
 			'widgets.navigation.add' => 'Ajouter',

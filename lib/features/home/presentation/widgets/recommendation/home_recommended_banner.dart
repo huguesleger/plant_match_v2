@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
@@ -37,16 +38,16 @@ class HomeRecommendedBanner extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    "Trouve ta plante idéale",
-                    style: TextStyle(
+                  Text(
+                    t.home.recommendation.banner_title,
+                    style: const TextStyle(
                         fontSize: AppTypo.text,
                         fontWeight: FontWeight.bold,
                         color: AppColors.black),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    "Réponds à quelques questions et nous te suggérons des plantes !",
+                    t.home.recommendation.banner_subtitle,
                     style: TextStyle(
                         fontSize: AppTypo.textXs,
                         color: AppColors.greyDark.withValues(alpha: 0.8),

@@ -1,7 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:plant_match_v2/core/extension/task_either_minimal_delay/task_either_minimal_delay.dart';
 import 'package:plant_match_v2/core/failures/failure.dart';
+import 'package:plant_match_v2/core/widgets/skeleton/skeleton_effect.dart';
 import 'package:plant_match_v2/features/around_me_map/domain/repository/around_me_repository.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/cubit/around_me_state.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
@@ -29,6 +31,7 @@ class AroundMeCubit extends Cubit<AroundMeState> {
   void getAllUserProfiles(String uid) {
     emit(const AroundMeLoading());
     _loadAll(uid)
+        .withMinimalDelay(SkeletonEffect.shimmerMinimumDelay)
         .match((failure) => AroundMeError(failure), (state) => state)
         .map(emit)
         .run();
@@ -66,8 +69,7 @@ class AroundMeCubit extends Cubit<AroundMeState> {
     final previous = state;
     emit(
       switch (previous) {
-        AroundMeLoaded() =>
-          previous.copyWith(
+        AroundMeLoaded() => previous.copyWith(
             locating: const Some(true),
             locationError: const Some(None()),
           ),
