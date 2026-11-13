@@ -119,10 +119,11 @@ class ProfilCubit extends Cubit<ProfilState> {
         .run();
   }
 
-  void saveProfilUser(ProfilUser profilUser) {
+  TaskEither<Failure, Unit> saveProfilUser(ProfilUser profilUser) {
+    final previous = state;
     emit(ProfilLoading());
 
-    profilRepository
+    return profilRepository
         .getProfilUser(profilUser.uid)
         .flatMap((existing) => existing
             .match(
@@ -135,19 +136,21 @@ class ProfilCubit extends Cubit<ProfilState> {
                 )))
         .flatMap(
             (gained) => _loadUser(profilUser.uid).map((user) => (user, gained)))
-        .match(
-          (failure) => ProfilError(failure),
-          (result) => ProfilLoaded(
+        .map((result) {
+          emit(ProfilLoaded(
             result.$1,
             leavesGained: result.$2,
             rewardMessage: Option.fromPredicate(
               t.levelAwarded.rewards.referral,
               (_) => result.$2 > 0,
             ),
-          ),
-        )
-        .map(emit)
-        .run();
+          ));
+          return unit;
+        })
+        .mapLeft((failure) {
+          emit(previous);
+          return failure;
+        });
   }
 
   TaskEither<Failure, int> _applyReferral(
@@ -236,17 +239,18 @@ class ProfilCubit extends Cubit<ProfilState> {
         .run();
   }
 
-  void updateLocation(String uid) {
+  TaskEither<Failure, ProfilUser> updateLocation(String uid) {
+    final previous = state;
     emit(ProfilLoading());
 
-    locationService
+    return locationService
         .getCurrentPosition()
         .flatMap((position) => locationService
             .getPlacemarkFromPosition(position)
             .map<Option<Placemark>>(Some.new)
             .alt(() => TaskEither.right(const None()))
             .map((placemark) => (position, placemark)))
-        .flatMap((data) {
+        .flatMap<ProfilUser>((data) {
           final position = data.$1;
           final placemark = data.$2;
           return profilRepository.getProfilUser(uid).flatMap((option) =>
@@ -272,12 +276,14 @@ class ProfilCubit extends Cubit<ProfilState> {
                 },
               ));
         })
-        .match(
-          (failure) => ProfilError(failure),
-          (user) => ProfilLoaded(user),
-        )
-        .map(emit)
-        .run();
+        .map((user) {
+          emit(ProfilLoaded(user));
+          return user;
+        })
+        .mapLeft((failure) {
+          emit(previous);
+          return failure;
+        });
   }
 
   void reset() => emit(ProfilInitial());

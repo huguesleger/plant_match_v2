@@ -10,40 +10,29 @@ class DetailWizardItem extends StatelessWidget {
     required this.title,
     required this.description,
     required this.child,
-    required this.formKey,
   });
 
   final String title;
   final String description;
   final Widget child;
-  final GlobalKey<FormBuilderState> formKey;
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: AppSpacing.paddingHorizontal,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 50),
-          TitlePage(
-            title: title,
-            fontSize: 24,
-          ),
-          Text(
-            description,
-            style: const TextStyle(
-              fontSize: 14,
-              color: AppColors.blueGreen,
+  Widget build(BuildContext context) => SingleChildScrollView(
+        padding: AppSpacing.paddingHorizontal,
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 50),
+            TitlePage(title: title, fontSize: 24),
+            Text(
+              description,
+              style: const TextStyle(fontSize: 14, color: AppColors.blueGreen),
             ),
-          ),
-          const SizedBox(height: 40),
-          FormBuilder(
-            key: formKey,
-            child: child,
-          ),
-        ],
-      ),
-    );
-  }
+            const SizedBox(height: 40),
+            FormBuilder(child: child),
+            const SizedBox(height: 24),
+          ],
+        ),
+      );
 }

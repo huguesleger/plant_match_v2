@@ -1699,6 +1699,7 @@ class TranslationsPersonalInformationWizardFr {
 	late final TranslationsPersonalInformationWizardLocationFr location = TranslationsPersonalInformationWizardLocationFr.internal(_root);
 	late final TranslationsPersonalInformationWizardCommonFr common = TranslationsPersonalInformationWizardCommonFr.internal(_root);
 	late final TranslationsPersonalInformationWizardReferralFr referral = TranslationsPersonalInformationWizardReferralFr.internal(_root);
+	late final TranslationsPersonalInformationWizardLeaveFr leave = TranslationsPersonalInformationWizardLeaveFr.internal(_root);
 }
 
 // Path: personalInformation.avatar
@@ -3089,6 +3090,18 @@ class TranslationsPersonalInformationWizardCommonFr {
 
 	/// fr: 'Me géolocaliser'
 	String get geolocate => 'Me géolocaliser';
+
+	/// fr: 'Passer'
+	String get skip => 'Passer';
+
+	/// fr: 'Terminer'
+	String get finish => 'Terminer';
+
+	/// fr: 'Enregistrer'
+	String get save => 'Enregistrer';
+
+	/// fr: 'Mettre à jour ma position'
+	String get update_location => 'Mettre à jour ma position';
 }
 
 // Path: personalInformation.wizard.referral
@@ -3110,6 +3123,24 @@ class TranslationsPersonalInformationWizardReferralFr {
 
 	/// fr: 'Code de parrainage (Optionnel)'
 	String get label => 'Code de parrainage (Optionnel)';
+}
+
+// Path: personalInformation.wizard.leave
+class TranslationsPersonalInformationWizardLeaveFr {
+	TranslationsPersonalInformationWizardLeaveFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Quitter sans enregistrer ?'
+	String get title => 'Quitter sans enregistrer ?';
+
+	/// fr: 'Vos modifications ne seront pas enregistrées.'
+	String get content => 'Vos modifications ne seront pas enregistrées.';
+
+	/// fr: 'Quitter'
+	String get confirm => 'Quitter';
 }
 
 // Path: profil.navigation.navigation_title
@@ -4181,10 +4212,17 @@ extension on Translations {
 			'personalInformation.wizard.common.required' => 'Ce champ est requis',
 			'personalInformation.wizard.common.next' => 'Suivant',
 			'personalInformation.wizard.common.geolocate' => 'Me géolocaliser',
+			'personalInformation.wizard.common.skip' => 'Passer',
+			'personalInformation.wizard.common.finish' => 'Terminer',
+			'personalInformation.wizard.common.save' => 'Enregistrer',
+			'personalInformation.wizard.common.update_location' => 'Mettre à jour ma position',
 			'personalInformation.wizard.referral.title' => 'Code de parrainage',
 			'personalInformation.wizard.referral.description' => 'Si un ami vous a parrainé, saisissez son code pour gagner tous les deux 3 feuilles supplémentaires !',
 			'personalInformation.wizard.referral.hint' => 'Ex : PM-XYZ12',
 			'personalInformation.wizard.referral.label' => 'Code de parrainage (Optionnel)',
+			'personalInformation.wizard.leave.title' => 'Quitter sans enregistrer ?',
+			'personalInformation.wizard.leave.content' => 'Vos modifications ne seront pas enregistrées.',
+			'personalInformation.wizard.leave.confirm' => 'Quitter',
 			'personalInformation.avatar.sheet_title' => 'Photo de profil',
 			'personalInformation.avatar.gallery' => 'Choisir depuis la galerie',
 			'personalInformation.avatar.camera' => 'Prendre une photo',
@@ -4240,6 +4278,8 @@ extension on Translations {
 			'user.filters.exchange' => 'Échanges',
 			'user.filters.outdoor' => 'Extérieur',
 			'user.filters.indoor' => 'Intérieur',
+			_ => null,
+		} ?? switch (path) {
 			'widgets.navigation.explorer' => 'Explorer',
 			'widgets.navigation.aroundMe' => 'À proximité',
 			'widgets.navigation.add' => 'Ajouter',
@@ -4247,8 +4287,6 @@ extension on Translations {
 			'widgets.navigation.profile' => 'Mon profil',
 			'widgets.error.back' => 'Retour',
 			'widgets.error.retry' => 'Essayer à nouveau',
-			_ => null,
-		} ?? switch (path) {
 			'widgets.error.reconnect' => 'Se reconnecter',
 			'widgets.error.network.title' => 'Pas de connexion',
 			'widgets.error.network.message' => 'Vérifiez votre connexion internet puis réessayez.',

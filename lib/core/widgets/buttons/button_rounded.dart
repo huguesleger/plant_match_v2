@@ -9,6 +9,7 @@ class ButtonRounded extends StatelessWidget {
     this.onPressed = const None(),
     required this.bgColor,
     required this.textColor,
+    this.isLoading = false,
     this.fontSize = 14,
     this.padding = const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
   });
@@ -19,6 +20,7 @@ class ButtonRounded extends StatelessWidget {
     this.onPressed = const None(),
     required this.bgColor,
     required this.textColor,
+    this.isLoading = false,
     this.fontSize = 12,
     this.padding = const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
   });
@@ -27,6 +29,7 @@ class ButtonRounded extends StatelessWidget {
   final Option<VoidCallback> onPressed;
   final Color bgColor;
   final Color textColor;
+  final bool isLoading;
   final double fontSize;
   final EdgeInsets padding;
 
@@ -34,19 +37,30 @@ class ButtonRounded extends StatelessWidget {
   Widget build(BuildContext context) {
     return Skeleton.leaf(
       child: FilledButton(
-        onPressed: onPressed.toNullable(),
+        onPressed: onPressed.filter((_) => !isLoading).toNullable(),
         style: FilledButton.styleFrom(
           backgroundColor: bgColor,
           foregroundColor: bgColor,
+          disabledBackgroundColor:
+              Option.fromPredicate(bgColor, (_) => isLoading).toNullable(),
           padding: padding,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(50),
           ),
         ),
-        child: Text(
-          text,
-          style: TextStyle(color: textColor, fontSize: fontSize),
-        ),
+        child: isLoading
+            ? SizedBox(
+                width: fontSize + 4,
+                height: fontSize + 4,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: textColor,
+                ),
+              )
+            : Text(
+                text,
+                style: TextStyle(color: textColor, fontSize: fontSize),
+              ),
       ),
     );
   }

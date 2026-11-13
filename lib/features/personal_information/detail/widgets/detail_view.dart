@@ -8,6 +8,8 @@ import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
 import 'package:plant_match_v2/features/personal_information/detail/detail_item.dart';
+import 'package:plant_match_v2/features/personal_information/detail/open_detail_wizard.dart';
+import 'package:plant_match_v2/features/personal_information/presentation/wizard/cubit/wizard_step.dart';
 import 'package:plant_match_v2/features/personal_information/detail/widgets/detail_edit_button.dart';
 
 class DetailView extends StatelessWidget {
@@ -26,6 +28,7 @@ class DetailView extends StatelessWidget {
         ),
         DetailItem(
           title: t.personalInformation.detail.pseudo,
+          onEdit: Some(() => _edit(context, const WizardStepPseudo())),
           subtitle: profilUser.userName.match(
             () => t.personalInformation.detail.empty_field,
             (userName) => userName.isEmpty ? t.personalInformation.detail.empty_field : userName,
@@ -39,6 +42,7 @@ class DetailView extends StatelessWidget {
         const Divider(height: 0),
         DetailItem(
           title: t.personalInformation.detail.birthday,
+          onEdit: Some(() => _edit(context, const WizardStepBirthday())),
           subtitle: profilUser.birthdayDate.match(
             () => t.personalInformation.detail.empty_field,
             (date) => DateFormat('dd/MM/yyyy').format(date),
@@ -51,6 +55,7 @@ class DetailView extends StatelessWidget {
         const Divider(height: 0),
         DetailItem(
           title: t.personalInformation.detail.bio,
+          onEdit: Some(() => _edit(context, const WizardStepBio())),
           subtitle: profilUser.bio.match(
             () => t.personalInformation.detail.empty_field,
             (bio) => bio.isEmpty ? t.personalInformation.detail.empty_field : bio,
@@ -64,6 +69,7 @@ class DetailView extends StatelessWidget {
         const Divider(height: 0),
         DetailItem(
           title: t.personalInformation.detail.location,
+          onEdit: Some(() => _edit(context, const WizardStepLocation())),
           subtitle: profilUser.localisation.isEmpty
               ? t.personalInformation.detail.empty_field
               : '${profilUser.localisation} ${(profilUser.zipCode)} - ${profilUser.country}',
@@ -78,4 +84,7 @@ class DetailView extends StatelessWidget {
       ],
     );
   }
+
+  void _edit(BuildContext context, WizardStep step) =>
+      openDetailWizard(context, profilUser: profilUser, step: Some(step));
 }

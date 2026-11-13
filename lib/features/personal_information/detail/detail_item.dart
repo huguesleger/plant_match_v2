@@ -12,15 +12,18 @@ class DetailItem extends StatelessWidget {
     required this.title,
     required this.subtitle,
     this.onTap = const None(),
+    this.onEdit = const None(),
   });
 
   final String title;
   final String subtitle;
   final Option<VoidCallback> onTap;
+  final Option<VoidCallback> onEdit;
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      onTap: onEdit.toNullable(),
       tileColor: AppColors.white,
       title: Text(
         title,
