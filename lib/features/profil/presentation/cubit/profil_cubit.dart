@@ -288,13 +288,11 @@ class ProfilCubit extends Cubit<ProfilState> {
 
   void reset() => emit(ProfilInitial());
 
-  void refreshLeaves(String uid) {
-    _loadUser(uid)
-        .match(
-          (failure) => ProfilError(failure),
-          (user) => ProfilLoaded(user),
-        )
-        .map(emit)
-        .run();
-  }
+  Future<void> refreshLeaves(String uid) => _loadUser(uid)
+      .match(
+        (failure) => ProfilError(failure),
+        (user) => ProfilLoaded(user),
+      )
+      .map(emit)
+      .run();
 }

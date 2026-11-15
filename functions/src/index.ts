@@ -10,6 +10,7 @@ export {deleteAccount} from "./account";
 export {notifyPasswordChanged} from "./password";
 export {applyReferral, payFirstContact} from "./leaves";
 export {getCompletedExchangeCount} from "./stats";
+export {enforcePublishQuota} from "./publishing";
 export {sendWelcomeEmail} from "./welcome";
 export {assignReferralCode} from "./referral";
 

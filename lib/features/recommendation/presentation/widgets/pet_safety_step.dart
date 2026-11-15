@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -21,24 +22,24 @@ class PetSafetyStep extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          "As-tu des animaux de compagnie ?",
-          style: TextStyle(
+        Text(
+          t.recommendation.pet_safety.title,
+          style: const TextStyle(
             fontSize: 20,
             fontWeight: bold,
             color: AppColors.black,
           ),
         ),
         const SizedBox(height: 8),
-        const Text(
-          "Certaines plantes peuvent être toxiques pour les chats ou les chiens.",
-          style: TextStyle(fontSize: 14, color: AppColors.greyDark),
+        Text(
+          t.recommendation.pet_safety.description,
+          style: const TextStyle(fontSize: 14, color: AppColors.greyDark),
         ),
         const SizedBox(height: 24),
         _buildOptionCard(
           context,
-          title: "Non toxique",
-          subtitle: "Sécurisé pour mes animaux domestiques",
+          title: t.recommendation.pet_safety.safe_title,
+          subtitle: t.recommendation.pet_safety.safe_subtitle,
           icon: LucideIcons.paw_print,
           isSelected: selectedSafety is SafeForPets,
           onTap: () => cubit.selectPetSafety(SafeForPets()),
@@ -46,8 +47,8 @@ class PetSafetyStep extends StatelessWidget {
         const SizedBox(height: 16),
         _buildOptionCard(
           context,
-          title: "Indifférent",
-          subtitle: "Pas d'animaux ou plante hors de portée",
+          title: t.recommendation.pet_safety.indifferent_title,
+          subtitle: t.recommendation.pet_safety.indifferent_subtitle,
           icon: LucideIcons.info,
           isSelected: selectedSafety is IndifferentSafety,
           onTap: () => cubit.selectPetSafety(IndifferentSafety()),

@@ -8,47 +8,41 @@ import 'package:plant_match_v2/features/level/domain/entities/user_points.dart';
 
 class UserPointsUtils {
   static const int maxLevel = 7;
+  static const int transactionLeaves = 2;
 
   static Map<int, LevelData> get levelData => {
         1: LevelData(
           maxPoints: 2,
-          bonusLeaves: 5,
           name: t.level.levels.names.k1,
           icon: LucideIcons.sprout,
         ),
         2: LevelData(
           maxPoints: 5,
-          bonusLeaves: 3,
           name: t.level.levels.names.k2,
           icon: LucideIcons.leaf,
         ),
         3: LevelData(
           maxPoints: 10,
-          bonusLeaves: 5,
           name: t.level.levels.names.k3,
           icon: LucideIcons.wheat,
         ),
         4: LevelData(
           maxPoints: 25,
-          bonusLeaves: 8,
           name: t.level.levels.names.k4,
           icon: LucideIcons.shovel,
         ),
         5: LevelData(
           maxPoints: 50,
-          bonusLeaves: 12,
           name: t.level.levels.names.k5,
           icon: LucideIcons.flower,
         ),
         6: LevelData(
           maxPoints: 100,
-          bonusLeaves: 20,
           name: t.level.levels.names.k6,
           icon: LucideIcons.tree_pine,
         ),
         7: LevelData(
           maxPoints: 100,
-          bonusLeaves: 0,
           name: t.level.levels.names.k7,
           icon: LucideIcons.trees,
         ),
@@ -56,7 +50,6 @@ class UserPointsUtils {
 
   static LevelData get defaultLevel => LevelData(
         maxPoints: 2,
-        bonusLeaves: 5,
         name: t.level.levels.names.k1,
         icon: LucideIcons.sprout,
       );
@@ -74,16 +67,6 @@ class UserPointsUtils {
       levelData.containsKey(currentLevel + 1)
           ? Some(currentLevel + 1)
           : const None();
-
-  static int getBonusLeavesForLevel(int level) =>
-      levelData.containsKey(level) ? _dataFor(level).bonusLeaves : 0;
-
-  static int bonusLeavesBetween(int fromLevel, int toLevel) => List.generate(
-        (toLevel - fromLevel).clamp(0, maxLevel),
-        (index) => getBonusLeavesForLevel(fromLevel + index + 1),
-      ).fold(0, (sum, bonus) => sum + bonus);
-
-  static bool hasUnlimitedContacts(int level) => level >= maxLevel;
 
   static int requiredPointsFor(int level) =>
       level > 1 ? getMaxPointsForLevel(level - 1) : 0;
@@ -120,13 +103,11 @@ class UserPointsUtils {
 
 class LevelData {
   final int maxPoints;
-  final int bonusLeaves;
   final String name;
   final IconData icon;
 
   const LevelData({
     required this.maxPoints,
-    required this.bonusLeaves,
     required this.name,
     required this.icon,
   });

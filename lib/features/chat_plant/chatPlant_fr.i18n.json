@@ -42,14 +42,8 @@
   "actions": {
     "accept": "Accepter",
     "refuse": "Refuser",
-    "cancel": "Annuler",
-    "confirm": "Confirmer",
-    "complete_label": "Marquer $label comme terminée",
     "propose_exchange_btn": "Proposer un échange",
-    "labels": {
-      "exchange": "l'échange",
-      "donation": "la donation"
-    }
+    "request_donation_btn": "Demander cette plante"
   },
   "validation": {
     "title": "Confirmation de réception",
@@ -84,5 +78,10 @@
       "rejected": "Donation refusée",
       "completed": "Donation terminée ✅"
     }
+  },
+  "donation_request": {
+    "title": "Demander cette plante",
+    "content": "Souhaites-tu envoyer une demande de donation pour « ${plant} » ?",
+    "send": "Envoyer la demande"
   }
 }

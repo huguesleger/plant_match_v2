@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -21,24 +22,24 @@ class LightSelectionStep extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          "Quelle est l'exposition ?",
-          style: TextStyle(
+        Text(
+          t.recommendation.light.title,
+          style: const TextStyle(
             fontSize: 20,
             fontWeight: bold,
             color: AppColors.black,
           ),
         ),
         const SizedBox(height: 8),
-        const Text(
-          "La luminosité est essentielle pour le bon développement de la plante.",
-          style: TextStyle(fontSize: 14, color: AppColors.greyDark),
+        Text(
+          t.recommendation.light.description,
+          style: const TextStyle(fontSize: 14, color: AppColors.greyDark),
         ),
         const SizedBox(height: 24),
         _buildOptionCard(
           context,
-          title: "Ombragée / Sombre",
-          subtitle: "Peu de fenêtres, pièces fraîches",
+          title: t.recommendation.light.low_title,
+          subtitle: t.recommendation.light.low_subtitle,
           icon: LucideIcons.cloud,
           isSelected: selectedLight is LowLight,
           onTap: () => cubit.selectLight(LowLight()),
@@ -46,8 +47,8 @@ class LightSelectionStep extends StatelessWidget {
         const SizedBox(height: 16),
         _buildOptionCard(
           context,
-          title: "Lumière indirecte",
-          subtitle: "Lumineux sans soleil direct sur les feuilles",
+          title: t.recommendation.light.indirect_title,
+          subtitle: t.recommendation.light.indirect_subtitle,
           icon: LucideIcons.sun_dim,
           isSelected: selectedLight is IndirectLight,
           onTap: () => cubit.selectLight(IndirectLight()),
@@ -55,8 +56,8 @@ class LightSelectionStep extends StatelessWidget {
         const SizedBox(height: 16),
         _buildOptionCard(
           context,
-          title: "Plein soleil / Direct",
-          subtitle: "Soleil direct plusieurs heures par jour",
+          title: t.recommendation.light.direct_title,
+          subtitle: t.recommendation.light.direct_subtitle,
           icon: LucideIcons.sun,
           isSelected: selectedLight is DirectLight,
           onTap: () => cubit.selectLight(DirectLight()),

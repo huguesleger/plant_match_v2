@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart' hide State;
 import 'package:plant_match_v2/core/failures/failure.dart';
+import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/core/widgets/error/error_content.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/validation_code_display.dart';
 
@@ -45,10 +46,13 @@ class _OwnerValidationCodeState extends State<OwnerValidationCode> {
             padding: EdgeInsets.all(16),
             child: Center(child: CircularProgressIndicator()),
           ),
-          (code) => ValidationCodeDisplay(
-            onGenerate: _generate,
-            generating: _generating,
-            code: code,
+          (code) => Padding(
+            padding: AppSpacing.paddingHorizontal,
+            child: ValidationCodeDisplay(
+              onGenerate: _generate,
+              generating: _generating,
+              code: code,
+            ),
           ),
         ),
       );

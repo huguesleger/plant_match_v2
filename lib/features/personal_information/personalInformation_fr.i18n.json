@@ -50,7 +50,7 @@
     },
     "referral": {
       "title": "Code de parrainage",
-      "description": "Si un ami vous a parrainé, saisissez son code pour gagner tous les deux 3 feuilles supplémentaires !",
+      "description": "Si un ami vous a parrainé, saisissez son code : vous gagnez 1 feuille et votre parrain 2 feuilles !",
       "hint": "Ex : PM-XYZ12",
       "label": "Code de parrainage (Optionnel)"
     },

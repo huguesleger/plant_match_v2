@@ -21,7 +21,9 @@ class RecommendationQuestionStep extends RecommendationState {
 }
 
 class RecommendationLoading extends RecommendationState {
-  const RecommendationLoading();
+  final List<Catalog> boneMocks = List.generate(3, (_) => Catalog.boneMock());
+
+  RecommendationLoading();
 }
 
 class RecommendationResult extends RecommendationState {

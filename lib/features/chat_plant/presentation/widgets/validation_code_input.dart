@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
 import 'package:fpdart/fpdart.dart' hide State;
 import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/core/widgets/error/error_content.dart';
@@ -47,9 +48,9 @@ class _ValidationCodeInputState extends State<ValidationCodeInput> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.blueGreen.withValues(alpha: 0.05),
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.blueGreen.withValues(alpha: 0.2)),
+        border: Border.all(color: AppColors.blueGreen.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -108,29 +109,16 @@ class _ValidationCodeInputState extends State<ValidationCodeInput> {
             ],
           ),
           const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: Option<VoidCallback>.of(_handleValidate)
-                .filter((_) => !_isValidating)
-                .toNullable(),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.blueGreen,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
+          SizedBox(
+            width: double.infinity,
+            child: ButtonRounded(
+              onPressed: Some(_handleValidate),
+              isLoading: _isValidating,
+              text: t.chatPlant.validation.confirm_btn,
+              bgColor: AppColors.blueGreen,
+              textColor: AppColors.white,
+              padding: const EdgeInsets.symmetric(vertical: 14),
             ),
-            child: _isValidating
-                ? const SizedBox(
-                    height: 20,
-                    width: 200,
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      ),
-                    ),
-                  )
-                : Text(t.chatPlant.validation.confirm_btn),
           ),
         ],
       ),

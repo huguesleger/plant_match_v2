@@ -59,6 +59,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final TranslationsPersonalInformationFr personalInformation = TranslationsPersonalInformationFr.internal(_root);
 	late final TranslationsProfilFr profil = TranslationsProfilFr.internal(_root);
 	late final TranslationsRecentActivityFr recentActivity = TranslationsRecentActivityFr.internal(_root);
+	late final TranslationsRecommendationFr recommendation = TranslationsRecommendationFr.internal(_root);
 	late final TranslationsUserFr user = TranslationsUserFr.internal(_root);
 	late final TranslationsWidgetsFr widgets = TranslationsWidgetsFr.internal(_root);
 }
@@ -148,6 +149,7 @@ class TranslationsChatPlantFr {
 	late final TranslationsChatPlantDisplayCodeFr display_code = TranslationsChatPlantDisplayCodeFr.internal(_root);
 	late final TranslationsChatPlantPlantCardFr plant_card = TranslationsChatPlantPlantCardFr.internal(_root);
 	late final TranslationsChatPlantInfoBarFr info_bar = TranslationsChatPlantInfoBarFr.internal(_root);
+	late final TranslationsChatPlantDonationRequestFr donation_request = TranslationsChatPlantDonationRequestFr.internal(_root);
 }
 
 // Path: common
@@ -334,6 +336,23 @@ class TranslationsRecentActivityFr {
 	late final TranslationsRecentActivityScreenFr screen = TranslationsRecentActivityScreenFr.internal(_root);
 	late final TranslationsRecentActivityEmptyFr empty = TranslationsRecentActivityEmptyFr.internal(_root);
 	late final TranslationsRecentActivityTileFr tile = TranslationsRecentActivityTileFr.internal(_root);
+}
+
+// Path: recommendation
+class TranslationsRecommendationFr {
+	TranslationsRecommendationFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+	late final TranslationsRecommendationScreenFr screen = TranslationsRecommendationScreenFr.internal(_root);
+	late final TranslationsRecommendationFooterFr footer = TranslationsRecommendationFooterFr.internal(_root);
+	late final TranslationsRecommendationEnvironmentFr environment = TranslationsRecommendationEnvironmentFr.internal(_root);
+	late final TranslationsRecommendationLightFr light = TranslationsRecommendationLightFr.internal(_root);
+	late final TranslationsRecommendationCareFr care = TranslationsRecommendationCareFr.internal(_root);
+	late final TranslationsRecommendationPetSafetyFr pet_safety = TranslationsRecommendationPetSafetyFr.internal(_root);
+	late final TranslationsRecommendationResultFr result = TranslationsRecommendationResultFr.internal(_root);
+	late final TranslationsRecommendationCardFr card = TranslationsRecommendationCardFr.internal(_root);
 }
 
 // Path: user
@@ -957,6 +976,9 @@ class TranslationsCatalogWizardFr {
 
 	late final TranslationsCatalogWizardQuitDialogFr quit_dialog = TranslationsCatalogWizardQuitDialogFr.internal(_root);
 	late final TranslationsCatalogWizardStepsFr steps = TranslationsCatalogWizardStepsFr.internal(_root);
+
+	/// fr: 'Tu as déjà publié ${max} plantes identiques ces dernières 48 h. Réessaie un peu plus tard.'
+	String quota_reached({required Object max}) => 'Tu as déjà publié ${max} plantes identiques ces dernières 48 h. Réessaie un peu plus tard.';
 }
 
 // Path: catalog.families
@@ -1117,19 +1139,11 @@ class TranslationsChatPlantActionsFr {
 	/// fr: 'Refuser'
 	String get refuse => 'Refuser';
 
-	/// fr: 'Annuler'
-	String get cancel => 'Annuler';
-
-	/// fr: 'Confirmer'
-	String get confirm => 'Confirmer';
-
-	/// fr: 'Marquer $label comme terminée'
-	String complete_label({required Object label}) => 'Marquer ${label} comme terminée';
-
 	/// fr: 'Proposer un échange'
 	String get propose_exchange_btn => 'Proposer un échange';
 
-	late final TranslationsChatPlantActionsLabelsFr labels = TranslationsChatPlantActionsLabelsFr.internal(_root);
+	/// fr: 'Demander cette plante'
+	String get request_donation_btn => 'Demander cette plante';
 }
 
 // Path: chatPlant.validation
@@ -1210,6 +1224,24 @@ class TranslationsChatPlantInfoBarFr {
 	// Translations
 	late final TranslationsChatPlantInfoBarExchangeFr exchange = TranslationsChatPlantInfoBarExchangeFr.internal(_root);
 	late final TranslationsChatPlantInfoBarDonationFr donation = TranslationsChatPlantInfoBarDonationFr.internal(_root);
+}
+
+// Path: chatPlant.donation_request
+class TranslationsChatPlantDonationRequestFr {
+	TranslationsChatPlantDonationRequestFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Demander cette plante'
+	String get title => 'Demander cette plante';
+
+	/// fr: 'Souhaites-tu envoyer une demande de donation pour « ${plant} » ?'
+	String content({required Object plant}) => 'Souhaites-tu envoyer une demande de donation pour « ${plant} » ?';
+
+	/// fr: 'Envoyer la demande'
+	String get send => 'Envoyer la demande';
 }
 
 // Path: exchange.screen
@@ -1641,17 +1673,11 @@ class TranslationsLevelDetailFr {
 		other: ' ${n} dons ou échanges',
 	);
 
-	/// fr: '(one) {+$n feuille bonus} (other) {+$n feuilles bonus}'
-	String bonus_leaves({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
-		one: '+${n} feuille bonus',
-		other: '+${n} feuilles bonus',
-	);
-
 	/// fr: 'Pack de bienvenue (5 feuilles)'
 	String get welcome_pack => 'Pack de bienvenue (5 feuilles)';
 
-	/// fr: 'Contacts illimités, sans dépenser de feuilles'
-	String get unlimited_contacts => 'Contacts illimités, sans dépenser de feuilles';
+	/// fr: 'Titre « ${name} »'
+	String title_reward({required Object name}) => 'Titre « ${name} »';
 }
 
 // Path: level.levels
@@ -1728,8 +1754,8 @@ class TranslationsLevelAwardedRewardsFr {
 	/// fr: 'Niveau $level atteint !'
 	String level_up_title({required Object level}) => 'Niveau ${level} atteint !';
 
-	/// fr: 'Vous êtes maintenant $name. Voici vos feuilles bonus pour continuer vos adoptions.'
-	String level_up_description({required Object name}) => 'Vous êtes maintenant ${name}. Voici vos feuilles bonus pour continuer vos adoptions.';
+	/// fr: 'Vous êtes maintenant $name. Continuez à donner et échanger pour faire grandir la communauté !'
+	String level_up_description({required Object name}) => 'Vous êtes maintenant ${name}. Continuez à donner et échanger pour faire grandir la communauté !';
 
 	/// fr: '(one) {+$n feuille} (other) {+$n feuilles}'
 	String leaves({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
@@ -1976,6 +2002,204 @@ class TranslationsRecentActivityTileFr {
 
 	/// fr: '${count} j'
 	String days({required Object count}) => '${count} j';
+}
+
+// Path: recommendation.screen
+class TranslationsRecommendationScreenFr {
+	TranslationsRecommendationScreenFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Trouve ta plante'
+	String get title => 'Trouve ta plante';
+
+	/// fr: 'Étape ${current} sur ${total}'
+	String step({required Object current, required Object total}) => 'Étape ${current} sur ${total}';
+}
+
+// Path: recommendation.footer
+class TranslationsRecommendationFooterFr {
+	TranslationsRecommendationFooterFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Retour'
+	String get back => 'Retour';
+
+	/// fr: 'Suivant'
+	String get next => 'Suivant';
+
+	/// fr: 'Terminer'
+	String get finish => 'Terminer';
+}
+
+// Path: recommendation.environment
+class TranslationsRecommendationEnvironmentFr {
+	TranslationsRecommendationEnvironmentFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Où placeras-tu ta plante ?'
+	String get title => 'Où placeras-tu ta plante ?';
+
+	/// fr: 'Choisis l'environnement principal pour adapter les suggestions.'
+	String get description => 'Choisis l\'environnement principal pour adapter les suggestions.';
+
+	/// fr: 'En intérieur'
+	String get indoor_title => 'En intérieur';
+
+	/// fr: 'Salon, chambre, bureau...'
+	String get indoor_subtitle => 'Salon, chambre, bureau...';
+
+	/// fr: 'En extérieur'
+	String get outdoor_title => 'En extérieur';
+
+	/// fr: 'Balcon, terrasse, jardin...'
+	String get outdoor_subtitle => 'Balcon, terrasse, jardin...';
+
+	/// fr: 'Les deux'
+	String get both_title => 'Les deux';
+
+	/// fr: 'Une plante polyvalente'
+	String get both_subtitle => 'Une plante polyvalente';
+}
+
+// Path: recommendation.light
+class TranslationsRecommendationLightFr {
+	TranslationsRecommendationLightFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Quelle est l'exposition ?'
+	String get title => 'Quelle est l\'exposition ?';
+
+	/// fr: 'La luminosité est essentielle pour le bon développement de la plante.'
+	String get description => 'La luminosité est essentielle pour le bon développement de la plante.';
+
+	/// fr: 'Ombragée / Sombre'
+	String get low_title => 'Ombragée / Sombre';
+
+	/// fr: 'Peu de fenêtres, pièces fraîches'
+	String get low_subtitle => 'Peu de fenêtres, pièces fraîches';
+
+	/// fr: 'Lumière indirecte'
+	String get indirect_title => 'Lumière indirecte';
+
+	/// fr: 'Lumineux sans soleil direct sur les feuilles'
+	String get indirect_subtitle => 'Lumineux sans soleil direct sur les feuilles';
+
+	/// fr: 'Plein soleil / Direct'
+	String get direct_title => 'Plein soleil / Direct';
+
+	/// fr: 'Soleil direct plusieurs heures par jour'
+	String get direct_subtitle => 'Soleil direct plusieurs heures par jour';
+}
+
+// Path: recommendation.care
+class TranslationsRecommendationCareFr {
+	TranslationsRecommendationCareFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Quel est ton niveau de jardinage ?'
+	String get title => 'Quel est ton niveau de jardinage ?';
+
+	/// fr: 'Choisis des plantes adaptées au temps que tu peux leur consacrer.'
+	String get description => 'Choisis des plantes adaptées au temps que tu peux leur consacrer.';
+
+	/// fr: 'Débutant (Tranquille)'
+	String get beginner_title => 'Débutant (Tranquille)';
+
+	/// fr: 'Facile, survit aux arrosages oubliés'
+	String get beginner_subtitle => 'Facile, survit aux arrosages oubliés';
+
+	/// fr: 'Intermédiaire'
+	String get intermediate_title => 'Intermédiaire';
+
+	/// fr: 'Demande un arrosage et des soins réguliers'
+	String get intermediate_subtitle => 'Demande un arrosage et des soins réguliers';
+
+	/// fr: 'Expert (Main verte)'
+	String get expert_title => 'Expert (Main verte)';
+
+	/// fr: 'Soins méticuleux, engrais, rempotage complexe'
+	String get expert_subtitle => 'Soins méticuleux, engrais, rempotage complexe';
+}
+
+// Path: recommendation.pet_safety
+class TranslationsRecommendationPetSafetyFr {
+	TranslationsRecommendationPetSafetyFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'As-tu des animaux de compagnie ?'
+	String get title => 'As-tu des animaux de compagnie ?';
+
+	/// fr: 'Certaines plantes peuvent être toxiques pour les chats ou les chiens.'
+	String get description => 'Certaines plantes peuvent être toxiques pour les chats ou les chiens.';
+
+	/// fr: 'Non toxique'
+	String get safe_title => 'Non toxique';
+
+	/// fr: 'Sécurisé pour mes animaux domestiques'
+	String get safe_subtitle => 'Sécurisé pour mes animaux domestiques';
+
+	/// fr: 'Indifférent'
+	String get indifferent_title => 'Indifférent';
+
+	/// fr: 'Pas d'animaux ou plante hors de portée'
+	String get indifferent_subtitle => 'Pas d\'animaux ou plante hors de portée';
+}
+
+// Path: recommendation.result
+class TranslationsRecommendationResultFr {
+	TranslationsRecommendationResultFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aucune plante ne correspond à tes critères.'
+	String get empty_title => 'Aucune plante ne correspond à tes critères.';
+
+	/// fr: 'Essaie d'ajuster tes critères en élargissant tes choix.'
+	String get empty_description => 'Essaie d\'ajuster tes critères en élargissant tes choix.';
+
+	/// fr: 'Recommencer le questionnaire'
+	String get restart => 'Recommencer le questionnaire';
+
+	/// fr: '(one) {Nous avons trouvé 1 plante idéale pour toi !} (other) {Nous avons trouvé $n plantes idéales pour toi !}'
+	String found({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'Nous avons trouvé 1 plante idéale pour toi !',
+		other: 'Nous avons trouvé ${n} plantes idéales pour toi !',
+	);
+
+	/// fr: 'Refaire le test'
+	String get retake => 'Refaire le test';
+}
+
+// Path: recommendation.card
+class TranslationsRecommendationCardFr {
+	TranslationsRecommendationCardFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aucune description'
+	String get no_description => 'Aucune description';
 }
 
 // Path: user.bio
@@ -2818,21 +3042,6 @@ class TranslationsChatPlantMenuBlockDialogFr {
 	String get warning_active_transaction => 'Attention : un échange est en cours. Bloquer cet utilisateur notifiera l\'équipe PlantMatch et aucun point ne sera distribué.';
 }
 
-// Path: chatPlant.actions.labels
-class TranslationsChatPlantActionsLabelsFr {
-	TranslationsChatPlantActionsLabelsFr.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// fr: 'l'échange'
-	String get exchange => 'l\'échange';
-
-	/// fr: 'la donation'
-	String get donation => 'la donation';
-}
-
 // Path: chatPlant.info_bar.exchange
 class TranslationsChatPlantInfoBarExchangeFr {
 	TranslationsChatPlantInfoBarExchangeFr.internal(this._root);
@@ -3296,8 +3505,8 @@ class TranslationsPersonalInformationWizardReferralFr {
 	/// fr: 'Code de parrainage'
 	String get title => 'Code de parrainage';
 
-	/// fr: 'Si un ami vous a parrainé, saisissez son code pour gagner tous les deux 3 feuilles supplémentaires !'
-	String get description => 'Si un ami vous a parrainé, saisissez son code pour gagner tous les deux 3 feuilles supplémentaires !';
+	/// fr: 'Si un ami vous a parrainé, saisissez son code : vous gagnez 1 feuille et votre parrain 2 feuilles !'
+	String get description => 'Si un ami vous a parrainé, saisissez son code : vous gagnez 1 feuille et votre parrain 2 feuilles !';
 
 	/// fr: 'Ex : PM-XYZ12'
 	String get hint => 'Ex : PM-XYZ12';
@@ -3398,8 +3607,8 @@ class TranslationsUserDetailPlantNoLeavesFr {
 	/// fr: 'Plus de feuilles disponibles'
 	String get title => 'Plus de feuilles disponibles';
 
-	/// fr: 'Vous n'avez plus de feuilles pour contacter un donneur. Donnez ou échangez une plante (+2 feuilles) ou parrainez un ami (+3 feuilles) pour continuer !'
-	String get content => 'Vous n\'avez plus de feuilles pour contacter un donneur.\n\nDonnez ou échangez une plante (+2 feuilles) ou parrainez un ami (+3 feuilles) pour continuer !';
+	/// fr: 'Vous n'avez plus de feuilles pour contacter un donneur. Donnez ou échangez une plante (+2 feuilles) ou parrainez un ami (+2 feuilles, puis +3 à son premier don ou échange) pour continuer !'
+	String get content => 'Vous n\'avez plus de feuilles pour contacter un donneur.\n\nDonnez ou échangez une plante (+2 feuilles) ou parrainez un ami (+2 feuilles, puis +3 à son premier don ou échange) pour continuer !';
 
 	/// fr: 'D'accord'
 	String get ok => 'D\'accord';
@@ -3875,8 +4084,8 @@ class TranslationsLevelLevelsK2ActionsFr {
 
 	// Translations
 
-	/// fr: '2 dons ou échanges réussis (+3 feuilles bonus)'
-	String get first_exchange => '2 dons ou échanges réussis (+3 feuilles bonus)';
+	/// fr: '2 dons ou échanges réussis'
+	String get first_exchange => '2 dons ou échanges réussis';
 }
 
 // Path: level.levels.k3.actions
@@ -3887,8 +4096,8 @@ class TranslationsLevelLevelsK3ActionsFr {
 
 	// Translations
 
-	/// fr: '5 dons ou échanges réussis (+5 feuilles bonus)'
-	String get exchange => '5 dons ou échanges réussis (+5 feuilles bonus)';
+	/// fr: '5 dons ou échanges réussis'
+	String get exchange => '5 dons ou échanges réussis';
 }
 
 // Path: level.levels.k4.actions
@@ -3899,8 +4108,8 @@ class TranslationsLevelLevelsK4ActionsFr {
 
 	// Translations
 
-	/// fr: '10 dons ou échanges réussis (+8 feuilles bonus)'
-	String get exchange => '10 dons ou échanges réussis (+8 feuilles bonus)';
+	/// fr: '10 dons ou échanges réussis'
+	String get exchange => '10 dons ou échanges réussis';
 }
 
 // Path: level.levels.k5.actions
@@ -3911,8 +4120,8 @@ class TranslationsLevelLevelsK5ActionsFr {
 
 	// Translations
 
-	/// fr: '25 dons ou échanges réussis (+12 feuilles bonus)'
-	String get exchange => '25 dons ou échanges réussis (+12 feuilles bonus)';
+	/// fr: '25 dons ou échanges réussis'
+	String get exchange => '25 dons ou échanges réussis';
 }
 
 // Path: level.levels.k6.actions
@@ -3923,8 +4132,8 @@ class TranslationsLevelLevelsK6ActionsFr {
 
 	// Translations
 
-	/// fr: '50 dons ou échanges réussis (+20 feuilles bonus)'
-	String get exchange => '50 dons ou échanges réussis (+20 feuilles bonus)';
+	/// fr: '50 dons ou échanges réussis'
+	String get exchange => '50 dons ou échanges réussis';
 }
 
 // Path: level.levels.k7.actions
@@ -3935,8 +4144,8 @@ class TranslationsLevelLevelsK7ActionsFr {
 
 	// Translations
 
-	/// fr: '100 dons ou échanges réussis (Feuilles illimitées)'
-	String get exchange => '100 dons ou échanges réussis (Feuilles illimitées)';
+	/// fr: '100 dons ou échanges réussis'
+	String get exchange => '100 dons ou échanges réussis';
 }
 
 /// The flat map containing all translations for locale <fr>.
@@ -4160,6 +4369,7 @@ extension on Translations {
 			'catalog.wizard.steps.offer_type.exchange' => 'Echange',
 			'catalog.wizard.steps.publish.title' => 'Publication',
 			'catalog.wizard.steps.publish.description' => 'Publier maintenant ?',
+			'catalog.wizard.quota_reached' => ({required Object max}) => 'Tu as déjà publié ${max} plantes identiques ces dernières 48 h. Réessaie un peu plus tard.',
 			'catalog.families.tropical' => 'Tropicale',
 			'catalog.families.succulent' => 'Succulente',
 			'catalog.families.aquatic' => 'Aquatique',
@@ -4212,12 +4422,8 @@ extension on Translations {
 			'chatPlant.menu.block_dialog.warning_active_transaction' => 'Attention : un échange est en cours. Bloquer cet utilisateur notifiera l\'équipe PlantMatch et aucun point ne sera distribué.',
 			'chatPlant.actions.accept' => 'Accepter',
 			'chatPlant.actions.refuse' => 'Refuser',
-			'chatPlant.actions.cancel' => 'Annuler',
-			'chatPlant.actions.confirm' => 'Confirmer',
-			'chatPlant.actions.complete_label' => ({required Object label}) => 'Marquer ${label} comme terminée',
 			'chatPlant.actions.propose_exchange_btn' => 'Proposer un échange',
-			'chatPlant.actions.labels.exchange' => 'l\'échange',
-			'chatPlant.actions.labels.donation' => 'la donation',
+			'chatPlant.actions.request_donation_btn' => 'Demander cette plante',
 			'chatPlant.validation.title' => 'Confirmation de réception',
 			'chatPlant.validation.description' => 'Saisissez le code à 6 chiffres donné par le propriétaire.',
 			'chatPlant.validation.hint' => '000000',
@@ -4240,6 +4446,9 @@ extension on Translations {
 			'chatPlant.info_bar.donation.accepted' => 'Donation acceptée 🎉',
 			'chatPlant.info_bar.donation.rejected' => 'Donation refusée',
 			'chatPlant.info_bar.donation.completed' => 'Donation terminée ✅',
+			'chatPlant.donation_request.title' => 'Demander cette plante',
+			'chatPlant.donation_request.content' => ({required Object plant}) => 'Souhaites-tu envoyer une demande de donation pour « ${plant} » ?',
+			'chatPlant.donation_request.send' => 'Envoyer la demande',
 			'common.notConnected' => 'Utilisateur non connecté',
 			'exchange.screen.loading' => 'Chargement...',
 			'exchange.screen.picking_title' => 'Choisir une plante à échanger',
@@ -4324,31 +4533,30 @@ extension on Translations {
 			'level.detail.required_points' => 'Dons/Échanges requis : ',
 			'level.detail.rewarded_actions_title' => 'Récompense du palier :',
 			'level.detail.points' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: ' ${n} don ou échange', other: ' ${n} dons ou échanges', ), 
-			'level.detail.bonus_leaves' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '+${n} feuille bonus', other: '+${n} feuilles bonus', ), 
 			'level.detail.welcome_pack' => 'Pack de bienvenue (5 feuilles)',
-			'level.detail.unlimited_contacts' => 'Contacts illimités, sans dépenser de feuilles',
+			'level.detail.title_reward' => ({required Object name}) => 'Titre « ${name} »',
 			'level.levels.k1.condition' => 'Inscription sur PlantMatch.',
 			'level.levels.k1.description' => 'Bienvenue dans la communauté ! Tu viens de planter ta première graine.',
 			'level.levels.k1.actions.registration' => 'Inscription',
 			'level.levels.k1.actions.first_plant' => 'Pack de bienvenue (5 feuilles)',
 			'level.levels.k2.condition' => 'Réaliser 2 dons ou échanges confirmés.',
 			'level.levels.k2.description' => 'Tu commences à échanger et donner tes plantes avec la communauté !',
-			'level.levels.k2.actions.first_exchange' => '2 dons ou échanges réussis (+3 feuilles bonus)',
+			'level.levels.k2.actions.first_exchange' => '2 dons ou échanges réussis',
 			'level.levels.k3.condition' => 'Réaliser 5 dons ou échanges confirmés.',
 			'level.levels.k3.description' => 'Un cultivateur actif qui partage régulièrement ses boutures !',
-			'level.levels.k3.actions.exchange' => '5 dons ou échanges réussis (+5 feuilles bonus)',
+			'level.levels.k3.actions.exchange' => '5 dons ou échanges réussis',
 			'level.levels.k4.condition' => 'Réaliser 10 dons ou échanges confirmés.',
 			'level.levels.k4.description' => 'Un jardinier confirmé réputé pour sa générosité !',
-			'level.levels.k4.actions.exchange' => '10 dons ou échanges réussis (+8 feuilles bonus)',
+			'level.levels.k4.actions.exchange' => '10 dons ou échanges réussis',
 			'level.levels.k5.condition' => 'Réaliser 25 dons ou échanges confirmés.',
 			'level.levels.k5.description' => 'Expert des plantes de la communauté PlantMatch !',
-			'level.levels.k5.actions.exchange' => '25 dons ou échanges réussis (+12 feuilles bonus)',
+			'level.levels.k5.actions.exchange' => '25 dons ou échanges réussis',
 			'level.levels.k6.condition' => 'Réaliser 50 dons ou échanges confirmés.',
 			'level.levels.k6.description' => 'Maître du jardinage d\'exception !',
-			'level.levels.k6.actions.exchange' => '50 dons ou échanges réussis (+20 feuilles bonus)',
+			'level.levels.k6.actions.exchange' => '50 dons ou échanges réussis',
 			'level.levels.k7.condition' => 'Réaliser 100 dons ou échanges confirmés.',
 			'level.levels.k7.description' => 'Gardien de la nature légendaire de PlantMatch !',
-			'level.levels.k7.actions.exchange' => '100 dons ou échanges réussis (Feuilles illimitées)',
+			'level.levels.k7.actions.exchange' => '100 dons ou échanges réussis',
 			'level.levels.unknown.condition' => 'Non défini',
 			'level.levels.unknown.description' => 'Niveau inconnu.',
 			'level.levels.names.k1' => 'Novice des plantes',
@@ -4370,7 +4578,7 @@ extension on Translations {
 			'levelAwarded.rewards.plant_given_description' => 'Merci d\'avoir fait vivre la communauté. Voici vos feuilles pour continuer vos adoptions.',
 			'levelAwarded.rewards.referral' => 'Code de parrainage validé !',
 			'levelAwarded.rewards.level_up_title' => ({required Object level}) => 'Niveau ${level} atteint !',
-			'levelAwarded.rewards.level_up_description' => ({required Object name}) => 'Vous êtes maintenant ${name}. Voici vos feuilles bonus pour continuer vos adoptions.',
+			'levelAwarded.rewards.level_up_description' => ({required Object name}) => 'Vous êtes maintenant ${name}. Continuez à donner et échanger pour faire grandir la communauté !',
 			'levelAwarded.rewards.leaves' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '+${n} feuille', other: '+${n} feuilles', ), 
 			'message.screen.title' => 'Mes messages',
 			'message.empty.title' => 'Aucune conversation',
@@ -4419,7 +4627,7 @@ extension on Translations {
 			'personalInformation.wizard.common.save' => 'Enregistrer',
 			'personalInformation.wizard.common.update_location' => 'Mettre à jour ma position',
 			'personalInformation.wizard.referral.title' => 'Code de parrainage',
-			'personalInformation.wizard.referral.description' => 'Si un ami vous a parrainé, saisissez son code pour gagner tous les deux 3 feuilles supplémentaires !',
+			'personalInformation.wizard.referral.description' => 'Si un ami vous a parrainé, saisissez son code : vous gagnez 1 feuille et votre parrain 2 feuilles !',
 			'personalInformation.wizard.referral.hint' => 'Ex : PM-XYZ12',
 			'personalInformation.wizard.referral.label' => 'Code de parrainage (Optionnel)',
 			'personalInformation.wizard.leave.title' => 'Quitter sans enregistrer ?',
@@ -4458,9 +4666,50 @@ extension on Translations {
 			'recentActivity.tile.minutes' => ({required Object count}) => '${count} min',
 			'recentActivity.tile.hours' => ({required Object count}) => '${count} h',
 			'recentActivity.tile.days' => ({required Object count}) => '${count} j',
-			'user.bio.empty' => 'Pas encore de description...',
+			'recommendation.screen.title' => 'Trouve ta plante',
+			'recommendation.screen.step' => ({required Object current, required Object total}) => 'Étape ${current} sur ${total}',
 			_ => null,
 		} ?? switch (path) {
+			'recommendation.footer.back' => 'Retour',
+			'recommendation.footer.next' => 'Suivant',
+			'recommendation.footer.finish' => 'Terminer',
+			'recommendation.environment.title' => 'Où placeras-tu ta plante ?',
+			'recommendation.environment.description' => 'Choisis l\'environnement principal pour adapter les suggestions.',
+			'recommendation.environment.indoor_title' => 'En intérieur',
+			'recommendation.environment.indoor_subtitle' => 'Salon, chambre, bureau...',
+			'recommendation.environment.outdoor_title' => 'En extérieur',
+			'recommendation.environment.outdoor_subtitle' => 'Balcon, terrasse, jardin...',
+			'recommendation.environment.both_title' => 'Les deux',
+			'recommendation.environment.both_subtitle' => 'Une plante polyvalente',
+			'recommendation.light.title' => 'Quelle est l\'exposition ?',
+			'recommendation.light.description' => 'La luminosité est essentielle pour le bon développement de la plante.',
+			'recommendation.light.low_title' => 'Ombragée / Sombre',
+			'recommendation.light.low_subtitle' => 'Peu de fenêtres, pièces fraîches',
+			'recommendation.light.indirect_title' => 'Lumière indirecte',
+			'recommendation.light.indirect_subtitle' => 'Lumineux sans soleil direct sur les feuilles',
+			'recommendation.light.direct_title' => 'Plein soleil / Direct',
+			'recommendation.light.direct_subtitle' => 'Soleil direct plusieurs heures par jour',
+			'recommendation.care.title' => 'Quel est ton niveau de jardinage ?',
+			'recommendation.care.description' => 'Choisis des plantes adaptées au temps que tu peux leur consacrer.',
+			'recommendation.care.beginner_title' => 'Débutant (Tranquille)',
+			'recommendation.care.beginner_subtitle' => 'Facile, survit aux arrosages oubliés',
+			'recommendation.care.intermediate_title' => 'Intermédiaire',
+			'recommendation.care.intermediate_subtitle' => 'Demande un arrosage et des soins réguliers',
+			'recommendation.care.expert_title' => 'Expert (Main verte)',
+			'recommendation.care.expert_subtitle' => 'Soins méticuleux, engrais, rempotage complexe',
+			'recommendation.pet_safety.title' => 'As-tu des animaux de compagnie ?',
+			'recommendation.pet_safety.description' => 'Certaines plantes peuvent être toxiques pour les chats ou les chiens.',
+			'recommendation.pet_safety.safe_title' => 'Non toxique',
+			'recommendation.pet_safety.safe_subtitle' => 'Sécurisé pour mes animaux domestiques',
+			'recommendation.pet_safety.indifferent_title' => 'Indifférent',
+			'recommendation.pet_safety.indifferent_subtitle' => 'Pas d\'animaux ou plante hors de portée',
+			'recommendation.result.empty_title' => 'Aucune plante ne correspond à tes critères.',
+			'recommendation.result.empty_description' => 'Essaie d\'ajuster tes critères en élargissant tes choix.',
+			'recommendation.result.restart' => 'Recommencer le questionnaire',
+			'recommendation.result.found' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Nous avons trouvé 1 plante idéale pour toi !', other: 'Nous avons trouvé ${n} plantes idéales pour toi !', ), 
+			'recommendation.result.retake' => 'Refaire le test',
+			'recommendation.card.no_description' => 'Aucune description',
+			'user.bio.empty' => 'Pas encore de description...',
 			'user.stats.plants' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'plante', other: 'plantes', ), 
 			'user.stats.matches' => 'plantMatch',
 			'user.stats.level' => 'niveau',
@@ -4478,7 +4727,7 @@ extension on Translations {
 			'user.detail_plant.description_title' => 'Description',
 			'user.detail_plant.key_info_title' => 'Les informations clés',
 			'user.detail_plant.no_leaves.title' => 'Plus de feuilles disponibles',
-			'user.detail_plant.no_leaves.content' => 'Vous n\'avez plus de feuilles pour contacter un donneur.\n\nDonnez ou échangez une plante (+2 feuilles) ou parrainez un ami (+3 feuilles) pour continuer !',
+			'user.detail_plant.no_leaves.content' => 'Vous n\'avez plus de feuilles pour contacter un donneur.\n\nDonnez ou échangez une plante (+2 feuilles) ou parrainez un ami (+2 feuilles, puis +3 à son premier don ou échange) pour continuer !',
 			'user.detail_plant.no_leaves.ok' => 'D\'accord',
 			'user.detail_plant.share.donation' => 'donne',
 			'user.detail_plant.share.exchange' => 'échange',

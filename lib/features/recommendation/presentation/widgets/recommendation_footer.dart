@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/core/widgets/buttons/button_outlined_rounded.dart';
+import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
 import 'package:plant_match_v2/features/recommendation/presentation/cubit/recommendation_cubit.dart';
 import 'package:plant_match_v2/features/recommendation/presentation/cubit/recommendation_state.dart';
 
@@ -25,39 +28,28 @@ class RecommendationFooter extends StatelessWidget {
           children: [
             if (state.stepIndex > 0) ...[
               Expanded(
-                child: OutlinedButton(
+                child: ButtonOutlinedRounded(
                   onPressed: cubit.previousStep,
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    side: const BorderSide(color: AppColors.greenDark),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: const Text(
-                    "Retour",
-                    style: TextStyle(color: AppColors.greenDark),
-                  ),
+                  text: t.recommendation.footer.back,
+                  borderColor: AppColors.greyLight,
+                  textColor: AppColors.greyMedium,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
               ),
               const SizedBox(width: 16),
             ],
             Expanded(
-              child: ElevatedButton(
-                onPressed: Option.fromPredicate(cubit.nextStep, (_) => hasAnswered)
-                    .toNullable(),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.greenDark,
-                  disabledBackgroundColor: AppColors.greyLight,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+              child: ButtonRounded(
+                onPressed: Option.fromPredicate(
+                  cubit.nextStep,
+                  (_) => hasAnswered,
                 ),
-                child: Text(
-                  state.stepIndex == 3 ? "Terminer" : "Suivant",
-                  style: const TextStyle(color: AppColors.white),
-                ),
+                text: state.stepIndex == 3
+                    ? t.recommendation.footer.finish
+                    : t.recommendation.footer.next,
+                bgColor: AppColors.greenLight,
+                textColor: AppColors.blueGreen,
+                padding: const EdgeInsets.symmetric(vertical: 16),
               ),
             ),
           ],

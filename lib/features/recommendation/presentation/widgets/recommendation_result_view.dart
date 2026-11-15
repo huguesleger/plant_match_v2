@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/core/widgets/buttons/button_outlined_rounded.dart';
+import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
 import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/recommendation/presentation/cubit/recommendation_cubit.dart';
@@ -36,36 +40,27 @@ class _EmptyResultsView extends StatelessWidget {
           children: [
             Assets.res.images.emptyCatalogFilter.image(height: 200),
             const SizedBox(height: 24),
-            const Text(
-              "Aucune plante ne correspond à tes critères.",
+            Text(
+              t.recommendation.result.empty_title,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: AppColors.black,
               ),
             ),
             const SizedBox(height: 8),
-            const Text(
-              "Essaie d'ajuster tes critères en élargissant tes choix.",
+            Text(
+              t.recommendation.result.empty_description,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14, color: AppColors.greyDark),
+              style: const TextStyle(fontSize: 14, color: AppColors.greyDark),
             ),
             const SizedBox(height: 32),
-            ElevatedButton(
-              onPressed: () => context.read<RecommendationCubit>().reset(),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.greenDark,
-                foregroundColor: AppColors.white,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 32,
-                  vertical: 12,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24),
-                ),
-              ),
-              child: const Text("Recommencer le questionnaire"),
+            ButtonRounded(
+              onPressed: Some(context.read<RecommendationCubit>().reset),
+              text: t.recommendation.result.restart,
+              bgColor: AppColors.greenLight,
+              textColor: AppColors.blueGreen,
             ),
           ],
         ),
@@ -86,9 +81,7 @@ class _ResultsListView extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(24.0),
           child: Text(
-            plants.length == 1
-                ? "Nous avons trouvé 1 plante idéale pour toi !"
-                : "Nous avons trouvé ${plants.length} plantes idéales pour toi !",
+            t.recommendation.result.found(n: plants.length),
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -110,17 +103,11 @@ class _ResultsListView extends StatelessWidget {
           padding: const EdgeInsets.all(24.0),
           child: SizedBox(
             width: double.infinity,
-            child: OutlinedButton(
-              onPressed: () => context.read<RecommendationCubit>().reset(),
-              style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: AppColors.greenDark),
-                foregroundColor: AppColors.greenDark,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24),
-                ),
-              ),
-              child: const Text("Refaire le test"),
+            child: ButtonOutlinedRounded(
+              onPressed: context.read<RecommendationCubit>().reset,
+              text: t.recommendation.result.retake,
+              borderColor: AppColors.blueGreen,
+              textColor: AppColors.blueGreen,
             ),
           ),
         ),

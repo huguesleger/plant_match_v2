@@ -1,0 +1,62 @@
+{
+  "screen": {
+    "title": "Trouve ta plante",
+    "step": "Étape ${current} sur ${total}"
+  },
+  "footer": {
+    "back": "Retour",
+    "next": "Suivant",
+    "finish": "Terminer"
+  },
+  "environment": {
+    "title": "Où placeras-tu ta plante ?",
+    "description": "Choisis l'environnement principal pour adapter les suggestions.",
+    "indoor_title": "En intérieur",
+    "indoor_subtitle": "Salon, chambre, bureau...",
+    "outdoor_title": "En extérieur",
+    "outdoor_subtitle": "Balcon, terrasse, jardin...",
+    "both_title": "Les deux",
+    "both_subtitle": "Une plante polyvalente"
+  },
+  "light": {
+    "title": "Quelle est l'exposition ?",
+    "description": "La luminosité est essentielle pour le bon développement de la plante.",
+    "low_title": "Ombragée / Sombre",
+    "low_subtitle": "Peu de fenêtres, pièces fraîches",
+    "indirect_title": "Lumière indirecte",
+    "indirect_subtitle": "Lumineux sans soleil direct sur les feuilles",
+    "direct_title": "Plein soleil / Direct",
+    "direct_subtitle": "Soleil direct plusieurs heures par jour"
+  },
+  "care": {
+    "title": "Quel est ton niveau de jardinage ?",
+    "description": "Choisis des plantes adaptées au temps que tu peux leur consacrer.",
+    "beginner_title": "Débutant (Tranquille)",
+    "beginner_subtitle": "Facile, survit aux arrosages oubliés",
+    "intermediate_title": "Intermédiaire",
+    "intermediate_subtitle": "Demande un arrosage et des soins réguliers",
+    "expert_title": "Expert (Main verte)",
+    "expert_subtitle": "Soins méticuleux, engrais, rempotage complexe"
+  },
+  "pet_safety": {
+    "title": "As-tu des animaux de compagnie ?",
+    "description": "Certaines plantes peuvent être toxiques pour les chats ou les chiens.",
+    "safe_title": "Non toxique",
+    "safe_subtitle": "Sécurisé pour mes animaux domestiques",
+    "indifferent_title": "Indifférent",
+    "indifferent_subtitle": "Pas d'animaux ou plante hors de portée"
+  },
+  "result": {
+    "empty_title": "Aucune plante ne correspond à tes critères.",
+    "empty_description": "Essaie d'ajuster tes critères en élargissant tes choix.",
+    "restart": "Recommencer le questionnaire",
+    "found(n)": {
+      "one": "Nous avons trouvé 1 plante idéale pour toi !",
+      "other": "Nous avons trouvé $n plantes idéales pour toi !"
+    },
+    "retake": "Refaire le test"
+  },
+  "card": {
+    "no_description": "Aucune description"
+  }
+}

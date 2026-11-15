@@ -3,6 +3,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/app_bar/app_bar_template.dart';
+import 'package:plant_match_v2/features/level_awarded/presentation/level_awarded_exit.dart';
 import 'package:plant_match_v2/features/level_awarded/presentation/widgets/level_awarded_success_view.dart';
 
 class LevelAwardedScreen extends StatelessWidget {
@@ -27,7 +28,7 @@ class LevelAwardedScreen extends StatelessWidget {
         leading: false,
         actions: Some([
           IconButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(context, const LevelAwardedClosed()),
             icon: const Icon(LucideIcons.x, color: AppColors.greyDark),
           ),
         ]),

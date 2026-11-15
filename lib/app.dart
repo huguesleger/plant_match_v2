@@ -184,7 +184,7 @@ class _MyAppBodyState extends State<_MyAppBody> with WidgetsBindingObserver {
               return Scaffold(
                 body: switch (authState) {
                   AuthInitial() || AuthLoading() => const SizedBox.shrink(),
-                  Authenticated() => const TemplatePage(),
+                  Authenticated() => TemplatePage(key: templatePageKey),
                   Unauthenticated() || AuthError() => const GetStartedPageRoute(),
                   AuthEmailVerificationSent(user: var u) ||
                   AuthFinalizing(user: var u) =>

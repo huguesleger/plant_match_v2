@@ -155,7 +155,8 @@
         "title": "Publication",
         "description": "Publier maintenant ?"
       }
-    }
+    },
+    "quota_reached": "Tu as déjà publié ${max} plantes identiques ces dernières 48 h. Réessaie un peu plus tard."
   },
   "families": {
     "tropical": "Tropicale",

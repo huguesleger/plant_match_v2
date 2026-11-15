@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
-import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/core/theme/app_spacing.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/common/chat_plant_action_button.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/common/chat_plant_action_button_templates.dart';
@@ -51,13 +52,15 @@ class ChatPlantExchangeActionBar extends StatelessWidget {
           generate: () =>
               context.read<ExchangeCubit>().generateCode(exchange.id),
         ),
-      ExchangeWaitingValidation(:final exchange) when !isPlantOwner =>
-        ValidationCodeInput(
-          onValidate: (code) => context.read<ExchangeCubit>().validateCode(
-                exchange.id,
-                code,
-                context.read<UserPointsCubit>(),
-              ),
+      ExchangeWaitingValidation(:final exchange) when !isPlantOwner => Padding(
+          padding: AppSpacing.paddingAll,
+          child: ValidationCodeInput(
+            onValidate: (code) => context.read<ExchangeCubit>().validateCode(
+                  exchange.id,
+                  code,
+                  context.read<UserPointsCubit>(),
+                ),
+          ),
         ),
       ExchangeAccepted() when !isPlantOwner => ChatPlantStatusBanner(
           message: t.chatPlant.view.status.exchange_accepted_waiting,

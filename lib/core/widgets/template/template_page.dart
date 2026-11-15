@@ -19,6 +19,9 @@ import 'package:plant_match_v2/features/donation/data/firebase_donation.dart';
 import 'package:plant_match_v2/features/donation/presentation/cubit/unread_donation_cubit.dart';
 
 const int _addButtonIndex = 2;
+const int profilPageIndex = 4;
+
+final templatePageKey = GlobalKey<TemplatePageState>();
 
 class TemplatePage extends StatefulWidget {
   final int initialIndex;

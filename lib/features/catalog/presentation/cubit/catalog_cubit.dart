@@ -4,7 +4,9 @@ import 'package:plant_match_v2/core/failures/failure.dart';
 import 'package:plant_match_v2/core/failures/failure_mapper.dart';
 import 'package:plant_match_v2/core/util/safe_cubit.dart';
 import 'package:plant_match_v2/core/widgets/skeleton/skeleton_effect.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
+import 'package:plant_match_v2/features/catalog/domain/entity/publish_quota.dart';
 import 'package:plant_match_v2/features/catalog/domain/repository/catalog_repository.dart';
 import 'package:plant_match_v2/features/catalog/presentation/cubit/catalog_state.dart';
 import 'package:plant_match_v2/features/catalog/presentation/widgets/catalog_sort_option.dart';
@@ -102,7 +104,25 @@ class CatalogCubit extends SafeCubit<CatalogState> {
     });
   }
 
-  TaskEither<Failure, String> _publishNewCatalog(Catalog catalog) {
+  TaskEither<Failure, Unit> _ensurePublishQuota(Catalog catalog) =>
+      catalogRepository.getCatalogsByUserId(catalog.userId).flatMap(
+            (owned) => PublishQuota.isReached(
+              owned: owned,
+              name: catalog.name,
+              now: DateTime.now(),
+            )
+                ? TaskEither.left(ValidationFailure(
+                    t.catalog.wizard.quota_reached(
+                      max: PublishQuota.maxIdenticalPlants,
+                    ),
+                  ))
+                : TaskEither.right(unit),
+          );
+
+  TaskEither<Failure, String> _publishNewCatalog(Catalog catalog) =>
+      _ensurePublishQuota(catalog).flatMap((_) => _uploadAndCreate(catalog));
+
+  TaskEither<Failure, String> _uploadAndCreate(Catalog catalog) {
     final id = catalogRepository.reserveCatalogId();
 
     return TaskEither.sequenceList(

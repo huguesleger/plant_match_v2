@@ -23,9 +23,9 @@ class ValidationCodeDisplay extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.greenMedium.withValues(alpha: 0.3),
+        color: AppColors.greenMedium.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.greenMedium.withValues(alpha: 0.3)),
+        border: Border.all(color: AppColors.greenMedium.withValues(alpha: 0.5)),
       ),
       child: Column(
         children: [
@@ -87,7 +87,7 @@ class ValidationCodeDisplay extends StatelessWidget {
               Text(
                 t.chatPlant.display_code.code_subtitle,
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 12, color: AppColors.grey),
+                style: const TextStyle(fontSize: 12, color: AppColors.white),
               ),
               // Le code est bloqué après 5 essais erronés : le propriétaire
               // doit pouvoir en générer un nouveau.
@@ -96,14 +96,13 @@ class ValidationCodeDisplay extends StatelessWidget {
                       padding: EdgeInsets.only(top: 8),
                       child: CircularProgressIndicator(),
                     )
-                  : TextButton(
-                      onPressed: onGenerate,
-                      child: Text(
-                        t.chatPlant.display_code.regenerate_btn,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: AppColors.greenDark,
-                        ),
+                  : Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: ButtonRounded.small(
+                        onPressed: Some(onGenerate),
+                        text: t.chatPlant.display_code.regenerate_btn,
+                        bgColor: AppColors.blueGreen,
+                        textColor: AppColors.white,
                       ),
                     ),
             ],

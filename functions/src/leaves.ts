@@ -2,7 +2,11 @@ import * as admin from "firebase-admin";
 import {FieldValue} from "firebase-admin/firestore";
 import {HttpsError, onCall} from "firebase-functions/v2/https";
 import {REGION} from "./config";
-import {CONTACT_COST, hasUnlimitedContacts, REFERRAL_BONUS} from "./rewards";
+import {
+  CONTACT_COST,
+  REFERRAL_REFEREE_BONUS,
+  REFERRAL_SPONSOR_BONUS,
+} from "./rewards";
 
 const requireAuth = (uid: string | undefined): string => {
   if (uid) return uid;
@@ -18,13 +22,11 @@ export const payFirstContact = onCall({region: REGION}, async (request) => {
   const db = admin.firestore();
   const chatRef = db.collection("plant_chats").doc(chatId);
   const userRef = db.collection("users").doc(uid);
-  const pointsRef = db.collection("userPoints").doc(uid);
 
   return db.runTransaction(async (tx) => {
-    const [chat, user, points, existingMessages] = await Promise.all([
+    const [chat, user, existingMessages] = await Promise.all([
       tx.get(chatRef),
       tx.get(userRef),
-      tx.get(pointsRef),
       tx.get(chatRef.collection("messages").limit(1)),
     ]);
     const chatData = chat.data();
@@ -42,8 +44,7 @@ export const payFirstContact = onCall({region: REGION}, async (request) => {
     const alreadyPaid = chatData.plantOwnerId === uid ||
       chatData.contactPaid === true ||
       !existingMessages.empty;
-    const unlimited = hasUnlimitedContacts(points.data()?.level ?? 1);
-    const cost = alreadyPaid || unlimited ? 0 : CONTACT_COST;
+    const cost = alreadyPaid ? 0 : CONTACT_COST;
     if ((user.data()?.leaves ?? 0) < cost) {
       throw new HttpsError(
         "failed-precondition",
@@ -100,14 +101,14 @@ export const applyReferral = onCall({region: REGION}, async (request) => {
     const sponsorRewarded = (stats.data()?.count ?? 0) < MAX_SPONSOR_REWARDS;
     tx.set(userRef, {
       referredBy: code,
-      leaves: FieldValue.increment(REFERRAL_BONUS),
+      leaves: FieldValue.increment(REFERRAL_REFEREE_BONUS),
     }, {merge: true});
     if (sponsorRewarded) {
       tx.set(sponsorRef, {
-        leaves: FieldValue.increment(REFERRAL_BONUS),
+        leaves: FieldValue.increment(REFERRAL_SPONSOR_BONUS),
       }, {merge: true});
       tx.set(statsRef, {count: FieldValue.increment(1)}, {merge: true});
     }
-    return {bonus: REFERRAL_BONUS};
+    return {bonus: REFERRAL_REFEREE_BONUS};
   });
 });

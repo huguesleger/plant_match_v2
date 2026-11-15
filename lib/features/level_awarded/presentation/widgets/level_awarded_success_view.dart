@@ -9,7 +9,7 @@ import 'package:plant_match_v2/core/theme/app_typo.dart';
 import 'package:plant_match_v2/core/theme/inter_text_style.dart';
 import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
 import 'package:plant_match_v2/core/widgets/title_page/title_page.dart';
-import 'package:plant_match_v2/features/level/presentation/level_page_route.dart';
+import 'package:plant_match_v2/features/level_awarded/presentation/level_awarded_exit.dart';
 
 class LevelAwardedSuccessView extends StatelessWidget {
   const LevelAwardedSuccessView({
@@ -50,11 +50,10 @@ class LevelAwardedSuccessView extends StatelessWidget {
                 description,
                 textAlign: TextAlign.center,
                 style: InterTextStyle.inter(
-                  AppTypo.textM,
-                  color: AppColors.greyMedium,
+                  AppTypo.text,
+                  color: AppColors.greyDark,
                 ),
               ),
-              const Spacer(),
               if (leavesGained > 0)
                 Container(
                   padding:
@@ -68,7 +67,7 @@ class LevelAwardedSuccessView extends StatelessWidget {
                     children: [
                       const Icon(
                         LucideIcons.leaf,
-                        color: AppColors.greenDark,
+                        color: AppColors.greyDark,
                         size: 24,
                       ),
                       const SizedBox(width: 8),
@@ -77,7 +76,7 @@ class LevelAwardedSuccessView extends StatelessWidget {
                         style: InterTextStyle.inter(
                           AppTypo.textL,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.greenDark,
+                          color: AppColors.greyDark,
                         ),
                       ),
                     ],
@@ -89,16 +88,19 @@ class LevelAwardedSuccessView extends StatelessWidget {
                   children: [
                     SizedBox(
                       width: double.infinity,
-                      child: ButtonRounded(
-                        text: t.levelAwarded.success.view_progression,
-                        onPressed: Some(() => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => LevelPageRoute(),
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: ButtonRounded(
+                          text: t.levelAwarded.success.view_progression,
+                          onPressed: Some(
+                            () => Navigator.pop(
+                              context,
+                              const LevelAwardedViewProgression(),
+                            ),
                           ),
-                        )),
-                        bgColor: AppColors.white,
-                        textColor: AppColors.blueGreen,
+                          bgColor: AppColors.white,
+                          textColor: AppColors.blueGreen,
+                        ),
                       ),
                     ),
                   ],

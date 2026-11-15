@@ -3,7 +3,13 @@ import * as admin from "firebase-admin";
 import {FieldValue} from "firebase-admin/firestore";
 import {HttpsError, onCall} from "firebase-functions/v2/https";
 import {REGION} from "./config";
-import {computeUpdate, PLANT_GIVEN_LEAVES, PointsUpdate} from "./rewards";
+import {
+  computeUpdate,
+  PointsUpdate,
+  TRANSACTION_LEAVES,
+  TRANSACTION_POINTS,
+} from "./rewards";
+import {applySponsorReward, findSponsorReward} from "./sponsorship";
 
 type Kind = "donation" | "exchange";
 
@@ -30,12 +36,9 @@ const ensure = (condition: boolean, message: string) => {
 };
 
 const MAX_ATTEMPTS = 5;
-const PAIR_REWARD_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
 
 const completedFlagFor = (kind: Kind) =>
   kind === "donation" ? "isDonationCompleted" : "isExchangeCompleted";
-
-const pairKey = (a: string, b: string) => [a, b].sort().join("_");
 
 type Doc = FirebaseFirestore.DocumentData;
 
@@ -161,12 +164,9 @@ export const validateHandover = onCall({region: REGION}, async (request) => {
     const plants = await Promise.all(plantRefs.map((r) => tx.get(r)));
     const ownerPointsRef = db.collection("userPoints").doc(ownerId);
     const requesterPointsRef = db.collection("userPoints").doc(requesterId);
-    const rewardRef = db.collection("rewardLog")
-      .doc(pairKey(ownerId, requesterId));
-    const [ownerPoints, requesterPoints, rewardLog] = await Promise.all([
+    const [ownerPoints, requesterPoints] = await Promise.all([
       tx.get(ownerPointsRef),
       tx.get(requesterPointsRef),
-      tx.get(rewardRef),
     ]);
 
     ensure(data.status === "waitingValidation", "Ce code a déjà été utilisé");
@@ -189,21 +189,19 @@ export const validateHandover = onCall({region: REGION}, async (request) => {
       plants.every((p) => p.data()?.status === "published"),
       "Cette plante n'est plus disponible",
     );
-
-    const lastRewardAt: number =
-      rewardLog.data()?.lastAt?.toMillis?.() ?? 0;
-    const rewarded = Date.now() - lastRewardAt >= PAIR_REWARD_COOLDOWN_MS;
-    const points = rewarded ? 1 : 0;
-    const gift = rewarded ? PLANT_GIVEN_LEAVES : 0;
+    const sponsorRewards = (await Promise.all([
+      findSponsorReward(tx, db, ownerId, requesterId),
+      findSponsorReward(tx, db, requesterId, ownerId),
+    ])).filter((reward) => reward !== null);
 
     const ownerUpdate = computeUpdate(
-      ownerId, ownerPoints.data(), points, gift,
+      ownerId, ownerPoints.data(), TRANSACTION_POINTS, TRANSACTION_LEAVES,
     );
     const requesterUpdate = computeUpdate(
       requesterId,
       requesterPoints.data(),
-      points,
-      kind === "exchange" ? gift : 0,
+      TRANSACTION_POINTS,
+      kind === "exchange" ? TRANSACTION_LEAVES : 0,
     );
 
     tx.update(ref, {
@@ -217,12 +215,7 @@ export const validateHandover = onCall({region: REGION}, async (request) => {
         true,
     });
     plantRefs.forEach((r) => tx.update(r, {status: "archived"}));
-    if (rewarded) {
-      tx.set(rewardRef, {
-        lastAt: FieldValue.serverTimestamp(),
-        count: FieldValue.increment(1),
-      }, {merge: true});
-    }
+    sponsorRewards.forEach((reward) => applySponsorReward(tx, reward));
     [
       [ownerPointsRef, ownerUpdate] as const,
       [requesterPointsRef, requesterUpdate] as const,

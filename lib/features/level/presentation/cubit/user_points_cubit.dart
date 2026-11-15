@@ -90,25 +90,23 @@ class UserPointsCubit extends Cubit<UserPointsState> {
   }
 
   UserPointsState _onSnapshot(UserPoints userPoints) {
-    final remoteLevelUp = _known.map((previous) => previous.level).filter(
-        (previousLevel) =>
-            _pendingUpdates == 0 && userPoints.level > previousLevel);
+    final remoteAward = _known
+        .filter(
+          (previous) =>
+              _pendingUpdates == 0 &&
+              userPoints.currentPoints > previous.currentPoints,
+        )
+        .map(
+          (previous) => PointsUpdate(
+            userPoints: userPoints,
+            previousLevel: previous.level,
+            bonusLeaves: 0,
+            giftedLeaves: UserPointsUtils.transactionLeaves,
+          ),
+        );
     return _remember(
       userPoints,
-      remoteLevelUp.match(
-        () => _loaded(userPoints),
-        (previousLevel) => UserPointsAwarded(
-          PointsUpdate(
-            userPoints: userPoints,
-            previousLevel: previousLevel,
-            bonusLeaves: UserPointsUtils.bonusLeavesBetween(
-              previousLevel,
-              userPoints.level,
-            ),
-            giftedLeaves: 0,
-          ),
-        ),
-      ),
+      remoteAward.match(() => _loaded(userPoints), UserPointsAwarded.new),
     );
   }
 

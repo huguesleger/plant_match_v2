@@ -6,7 +6,7 @@ import 'package:plant_match_v2/features/level/domain/entities/points_update.dart
 import 'package:plant_match_v2/features/level/presentation/cubit/user_points_cubit.dart';
 import 'package:plant_match_v2/features/level/presentation/cubit/user_points_state.dart';
 import 'package:plant_match_v2/features/level/utils/user_points_utils.dart';
-import 'package:plant_match_v2/features/level_awarded/presentation/level_awarded_page_route.dart';
+import 'package:plant_match_v2/features/level_awarded/presentation/show_level_awarded.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_state.dart';
 
@@ -21,17 +21,12 @@ class RewardListener extends StatelessWidget {
     required String title,
     required String description,
   }) =>
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          fullscreenDialog: true,
-          builder: (_) => LevelAwardedPageRoute(
-            leavesGained: leaves,
-            title: title,
-            description: description,
-          ),
-        ),
-      ).then((_) => unit);
+      showLevelAwarded(
+        Navigator.of(context),
+        leaves: leaves,
+        title: title,
+        description: description,
+      );
 
   void _onProfil(BuildContext context, ProfilState state) => switch (state) {
         ProfilLoaded(:final leavesGained, :final rewardMessage)

@@ -26,27 +26,6 @@ void main() {
     });
   });
 
-  group('bonusLeavesBetween', () {
-    test('awards the bonus of the reached level', () {
-      expect(UserPointsUtils.bonusLeavesBetween(1, 2), 3);
-      expect(UserPointsUtils.bonusLeavesBetween(5, 6), 20);
-    });
-
-    test('sums bonuses when several levels are skipped', () {
-      expect(UserPointsUtils.bonusLeavesBetween(1, 4), 3 + 5 + 8);
-    });
-
-    test('gives nothing without level up or for level 7', () {
-      expect(UserPointsUtils.bonusLeavesBetween(3, 3), 0);
-      expect(UserPointsUtils.bonusLeavesBetween(6, 7), 0);
-    });
-  });
-
-  test('only level 7 has unlimited contacts', () {
-    expect(UserPointsUtils.hasUnlimitedContacts(6), isFalse);
-    expect(UserPointsUtils.hasUnlimitedContacts(7), isTrue);
-  });
-
   test('getNextLevel stops after level 7', () {
     expect(UserPointsUtils.getNextLevel(6), const Some(7));
     expect(UserPointsUtils.getNextLevel(7), const None());

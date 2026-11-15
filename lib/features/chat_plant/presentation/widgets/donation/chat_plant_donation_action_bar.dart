@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:plant_match_v2/core/widgets/network_image/app_network_image.dart';
+import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
-import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
-import 'package:plant_match_v2/core/theme/app_colors.dart';
-import 'package:plant_match_v2/core/theme/app_typo.dart';
-import 'package:plant_match_v2/core/theme/inter_text_style.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/common/chat_plant_action_button.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/common/chat_plant_action_button_templates.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/common/chat_plant_accept_or_refuse_bar.dart';
+import 'package:plant_match_v2/features/chat_plant/presentation/widgets/donation/donation_request_dialog.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/owner_validation_code.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/validation_code_input.dart';
 import 'package:plant_match_v2/features/donation/domain/entities/donation.dart';
@@ -88,94 +85,35 @@ class ChatPlantDonationActionBar extends StatelessWidget {
                 state is! DonationAccepted &&
                 state is! DonationCompleted)
             ? ChatPlantActionButton(
-                onPressed: () => _showDonationConfirmDialog(
-                  context: context,
-                  chatId: chatId,
-                  currentUserId: currentUserId,
-                  plantId: plantId,
-                  plantName: plantName,
-                  plantImage: plantImage,
-                  ownerId: plantOwnerId,
-                ),
+                onPressed: () => _requestDonation(context),
                 backgroundColor: AppColors.blueGreen,
                 icon: Icons.volunteer_activism_rounded,
-                label: 'Demander cette plante',
+                label: t.chatPlant.actions.request_donation_btn,
               )
             : const SizedBox.shrink(),
     };
   }
 
-  void _showDonationConfirmDialog({
-    required BuildContext context,
-    required String chatId,
-    required String currentUserId,
-    required String plantId,
-    required String plantName,
-    required String plantImage,
-    required String ownerId,
-  }) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Demander cette plante'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (plantImage.isNotEmpty)
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: AppNetworkImage(
-                  url: plantImage,
-                  height: const Some(120),
-                ),
-              ),
-            const SizedBox(height: 12),
-            Text(
-              'Souhaitez-vous envoyer une demande de donation pour "$plantName" ?',
-              textAlign: TextAlign.center,
-              style: InterTextStyle.inter(AppTypo.textS,
-                  color: AppColors.greyDark),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Annuler'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-              final profilCubit = context.read<ProfilCubit>();
-              context
-                  .read<DonationCubit>()
-                  .request(
-                    Donation(
-                      chatId: chatId,
-                      requestedBy: currentUserId,
-                      ownerId: ownerId,
-                      plantId: plantId,
-                      plantName: plantName,
-                      plantImage: plantImage,
-                      status: DonationStatus.pending,
-                      createdAt: DateTime.now(),
-                      seenByOwner: false,
-                      seenByRequester: true,
-                      completedAt: const None(),
-                      completedBy: const None(),
-                      validationCode: const None(),
-                    ),
-                  )
-                  .then((_) => profilCubit.refreshLeaves(currentUserId));
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.greenDark,
-              foregroundColor: Colors.white,
-            ),
-            child: const Text('Envoyer la demande'),
-          ),
-        ],
-      ),
+  Future<void> _requestDonation(BuildContext context) {
+    final profilCubit = context.read<ProfilCubit>();
+    final donationCubit = context.read<DonationCubit>();
+    return showDonationRequestDialog(
+      context,
+      plantName: plantName,
+      plantImage: plantImage,
+    ).then(
+      (confirmed) => confirmed
+          ? donationCubit
+              .request(Donation.request(
+                chatId: chatId,
+                requestedBy: currentUserId,
+                ownerId: plantOwnerId,
+                plantId: plantId,
+                plantName: plantName,
+                plantImage: plantImage,
+              ))
+              .then((_) => profilCubit.refreshLeaves(currentUserId))
+          : null,
     );
   }
 }

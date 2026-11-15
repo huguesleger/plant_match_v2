@@ -7,6 +7,7 @@ import 'package:plant_match_v2/features/home/domain/entities/home.dart';
 import 'package:plant_match_v2/features/home/presentation/cubit/home_cubit.dart';
 import 'package:plant_match_v2/features/home/presentation/cubit/home_recommendation.dart';
 import 'package:plant_match_v2/features/home/presentation/widgets/home_sections.dart';
+import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
 import 'package:plant_match_v2/features/user/domain/entities/catalog_filter.dart';
 
 class HomeContent extends StatelessWidget {
@@ -54,7 +55,10 @@ class HomeContent extends StatelessWidget {
     return isLoading
         ? content
         : RefreshScreen(
-            onRefresh: () => context.read<AroundMeCubit>().refresh(uid),
+            onRefresh: () => Future.wait([
+              context.read<AroundMeCubit>().refresh(uid),
+              context.read<ProfilCubit>().refreshLeaves(uid),
+            ]),
             child: content,
           );
   }

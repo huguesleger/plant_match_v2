@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -21,24 +22,24 @@ class CareLevelStep extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          "Quel est ton niveau de jardinage ?",
-          style: TextStyle(
+        Text(
+          t.recommendation.care.title,
+          style: const TextStyle(
             fontSize: 20,
             fontWeight: bold,
             color: AppColors.black,
           ),
         ),
         const SizedBox(height: 8),
-        const Text(
-          "Choisis des plantes adaptées au temps que tu peux leur consacrer.",
-          style: TextStyle(fontSize: 14, color: AppColors.greyDark),
+        Text(
+          t.recommendation.care.description,
+          style: const TextStyle(fontSize: 14, color: AppColors.greyDark),
         ),
         const SizedBox(height: 24),
         _buildOptionCard(
           context,
-          title: "Débutant (Tranquille)",
-          subtitle: "Facile, survit aux arrosages oubliés",
+          title: t.recommendation.care.beginner_title,
+          subtitle: t.recommendation.care.beginner_subtitle,
           icon: LucideIcons.smile,
           isSelected: selectedCare is BeginnerCare,
           onTap: () => cubit.selectCareLevel(BeginnerCare()),
@@ -46,8 +47,8 @@ class CareLevelStep extends StatelessWidget {
         const SizedBox(height: 16),
         _buildOptionCard(
           context,
-          title: "Intermédiaire",
-          subtitle: "Demande un arrosage et des soins réguliers",
+          title: t.recommendation.care.intermediate_title,
+          subtitle: t.recommendation.care.intermediate_subtitle,
           icon: LucideIcons.gauge,
           isSelected: selectedCare is IntermediateCare,
           onTap: () => cubit.selectCareLevel(IntermediateCare()),
@@ -55,8 +56,8 @@ class CareLevelStep extends StatelessWidget {
         const SizedBox(height: 16),
         _buildOptionCard(
           context,
-          title: "Expert (Main verte)",
-          subtitle: "Soins méticuleux, engrais, rempotage complexe",
+          title: t.recommendation.care.expert_title,
+          subtitle: t.recommendation.care.expert_subtitle,
           icon: LucideIcons.sparkles,
           isSelected: selectedCare is ExpertCare,
           onTap: () => cubit.selectCareLevel(ExpertCare()),

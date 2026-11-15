@@ -1,5 +1,7 @@
 import 'package:fpdart/fpdart.dart';
+import 'package:plant_match_v2/core/extension/task_either_minimal_delay/task_either_minimal_delay.dart';
 import 'package:plant_match_v2/core/util/safe_cubit.dart';
+import 'package:plant_match_v2/core/widgets/skeleton/skeleton_effect.dart';
 import 'package:plant_match_v2/features/recommendation/domain/entities/recommendation_answers.dart';
 import 'package:plant_match_v2/features/recommendation/domain/repositories/recommendation_repository.dart';
 import 'package:plant_match_v2/features/recommendation/presentation/cubit/recommendation_state.dart';
@@ -119,10 +121,11 @@ class RecommendationCubit extends SafeCubit<RecommendationState> {
   }
 
   void _submitAnswers(RecommendationAnswers answers) {
-    emit(const RecommendationLoading());
+    emit(RecommendationLoading());
     _repository
         .saveAnswers(_userId, answers)
         .flatMap((_) => _repository.getRecommendedPlants(_userId, answers))
+        .withMinimalDelay(SkeletonEffect.shimmerMinimumDelay)
         .match<RecommendationState>(
           (failure) => RecommendationError(failure: failure),
           (plants) => RecommendationResult(suggestedPlants: plants),

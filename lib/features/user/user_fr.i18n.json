@@ -35,7 +35,7 @@
     "key_info_title": "Les informations clés",
     "no_leaves": {
       "title": "Plus de feuilles disponibles",
-      "content": "Vous n'avez plus de feuilles pour contacter un donneur.\n\nDonnez ou échangez une plante (+2 feuilles) ou parrainez un ami (+3 feuilles) pour continuer !",
+      "content": "Vous n'avez plus de feuilles pour contacter un donneur.\n\nDonnez ou échangez une plante (+2 feuilles) ou parrainez un ami (+2 feuilles, puis +3 à son premier don ou échange) pour continuer !",
       "ok": "D'accord"
     },
     "share": {

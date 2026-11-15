@@ -82,8 +82,29 @@ void main() {
     await _flush();
 
     expect(awarded().single.update.isLevelUp, isTrue);
-    expect(awarded().single.update.bonusLeaves, 3);
+    expect(awarded().single.update.giftedLeaves, 2);
     expect(cubit.currentLevel, 2);
+  });
+
+  test('rewards a remote transaction without level up', () async {
+    cubit.fetchUserPoints(_uid);
+    repository.controller.add(Right(_points(2, 2)));
+    await _flush();
+    repository.controller.add(Right(_points(3, 2)));
+    await _flush();
+
+    expect(awarded().single.update.isLevelUp, isFalse);
+    expect(awarded().single.update.giftedLeaves, 2);
+  });
+
+  test('ignores a snapshot without new points', () async {
+    cubit.fetchUserPoints(_uid);
+    repository.controller.add(Right(_points(3, 2)));
+    await _flush();
+    repository.controller.add(Right(_points(3, 2)));
+    await _flush();
+
+    expect(awarded(), isEmpty);
   });
 
   test('does not celebrate twice for the user who validated', () async {
@@ -95,8 +116,8 @@ void main() {
       PointsUpdate(
         userPoints: _points(2, 2),
         previousLevel: 1,
-        bonusLeaves: 3,
-        giftedLeaves: 0,
+        bonusLeaves: 0,
+        giftedLeaves: 2,
       ),
     );
     cubit.track(repository.pendingUpdate());

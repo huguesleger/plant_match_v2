@@ -1,7 +1,9 @@
-export const MAX_LEVEL = 7;
-export const PLANT_GIVEN_LEAVES = 2;
+export const TRANSACTION_LEAVES = 2;
+export const TRANSACTION_POINTS = 1;
 export const CONTACT_COST = 1;
-export const REFERRAL_BONUS = 3;
+export const REFERRAL_SPONSOR_BONUS = 2;
+export const REFERRAL_REFEREE_BONUS = 1;
+export const REFERRAL_FIRST_TRANSACTION_BONUS = 3;
 
 const REQUIRED_POINTS: Record<number, number> = {
   1: 0,
@@ -13,28 +15,11 @@ const REQUIRED_POINTS: Record<number, number> = {
   7: 100,
 };
 
-const LEVEL_UP_LEAVES: Record<number, number> = {
-  2: 3,
-  3: 5,
-  4: 8,
-  5: 12,
-  6: 20,
-  7: 0,
-};
-
 export const levelForPoints = (points: number): number =>
   Object.keys(REQUIRED_POINTS)
     .map(Number)
     .filter((level) => points >= REQUIRED_POINTS[level])
     .reduce((best, level) => Math.max(best, level), 1);
-
-export const bonusLeavesBetween = (from: number, to: number): number =>
-  Array.from({length: Math.max(0, to - from)}, (_, i) => from + i + 1)
-    .map((level) => LEVEL_UP_LEAVES[level] ?? 0)
-    .reduce((sum, bonus) => sum + bonus, 0);
-
-export const hasUnlimitedContacts = (level: number): boolean =>
-  level >= MAX_LEVEL;
 
 export interface PointsUpdate {
   uid: string;
@@ -60,7 +45,7 @@ export const computeUpdate = (
     previousLevel,
     level,
     currentPoints,
-    bonusLeaves: bonusLeavesBetween(previousLevel, level),
+    bonusLeaves: 0,
     giftedLeaves,
   };
 };

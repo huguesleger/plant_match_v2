@@ -34,12 +34,8 @@
       "one": " $n don ou échange",
       "other": " $n dons ou échanges"
     },
-    "bonus_leaves": {
-      "one": "+$n feuille bonus",
-      "other": "+$n feuilles bonus"
-    },
     "welcome_pack": "Pack de bienvenue (5 feuilles)",
-    "unlimited_contacts": "Contacts illimités, sans dépenser de feuilles"
+    "title_reward": "Titre « ${name} »"
   },
   "levels": {
     "1": {
@@ -54,42 +50,42 @@
       "condition": "Réaliser 2 dons ou échanges confirmés.",
       "description": "Tu commences à échanger et donner tes plantes avec la communauté !",
       "actions": {
-        "first_exchange": "2 dons ou échanges réussis (+3 feuilles bonus)"
+        "first_exchange": "2 dons ou échanges réussis"
       }
     },
     "3": {
       "condition": "Réaliser 5 dons ou échanges confirmés.",
       "description": "Un cultivateur actif qui partage régulièrement ses boutures !",
       "actions": {
-        "exchange": "5 dons ou échanges réussis (+5 feuilles bonus)"
+        "exchange": "5 dons ou échanges réussis"
       }
     },
     "4": {
       "condition": "Réaliser 10 dons ou échanges confirmés.",
       "description": "Un jardinier confirmé réputé pour sa générosité !",
       "actions": {
-        "exchange": "10 dons ou échanges réussis (+8 feuilles bonus)"
+        "exchange": "10 dons ou échanges réussis"
       }
     },
     "5": {
       "condition": "Réaliser 25 dons ou échanges confirmés.",
       "description": "Expert des plantes de la communauté PlantMatch !",
       "actions": {
-        "exchange": "25 dons ou échanges réussis (+12 feuilles bonus)"
+        "exchange": "25 dons ou échanges réussis"
       }
     },
     "6": {
       "condition": "Réaliser 50 dons ou échanges confirmés.",
       "description": "Maître du jardinage d'exception !",
       "actions": {
-        "exchange": "50 dons ou échanges réussis (+20 feuilles bonus)"
+        "exchange": "50 dons ou échanges réussis"
       }
     },
     "7": {
       "condition": "Réaliser 100 dons ou échanges confirmés.",
       "description": "Gardien de la nature légendaire de PlantMatch !",
       "actions": {
-        "exchange": "100 dons ou échanges réussis (Feuilles illimitées)"
+        "exchange": "100 dons ou échanges réussis"
       }
     },
     "unknown": {

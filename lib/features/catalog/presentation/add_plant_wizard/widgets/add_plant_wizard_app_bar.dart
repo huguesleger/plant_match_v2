@@ -25,7 +25,10 @@ class AddPlantWizardAppBar extends StatelessWidget
     final shouldExit = await showDialog<bool>(
       context: context,
       builder: (_) => DialogWithImage(
-        image: Assets.res.images.emptyCatalogFilter,
+        image: Assets.res.images.emptyCatalogFilter.image(
+          height: 150,
+          width: 150,
+        ),
         title: t.catalog.wizard.quit_dialog.title,
         text: t.catalog.wizard.quit_dialog.content,
         confirmLabel: Some(t.catalog.wizard.quit_dialog.quit),

@@ -12,11 +12,12 @@ class RecentActivityScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        backgroundColor: AppColors.greyUltraLight,
+        backgroundColor: AppColors.white,
         appBar: AppBarTemplate(
           title: Some(t.recentActivity.screen.title),
-          backgroundColor: AppColors.greyUltraLight,
-          surfaceTintColor: AppColors.greyUltraLight,
+          backgroundColor: AppColors.white,
+          surfaceTintColor: AppColors.white,
+          shadowColor: const Some(AppColors.black),
           styleIconButton: Some(
             IconButton.styleFrom(
               shape: RoundedRectangleBorder(

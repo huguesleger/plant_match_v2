@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/widgets/network_image/app_network_image.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/gen/assets.gen.dart';
@@ -7,6 +8,7 @@ import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/badge/badge_pill.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/user/detail_plant/detail_plant.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class RecommendationCardItem extends StatelessWidget {
   const RecommendationCardItem({super.key, required this.catalog});
@@ -74,18 +76,20 @@ class _CardImage extends StatelessWidget {
   Widget build(BuildContext context) {
     final imageOpt = imageUrl.filter((url) => url.startsWith('http'));
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: imageOpt.match(
-        () => Assets.res.images.emptyPicture.image(
-          height: 100,
-          width: 80,
-          fit: BoxFit.cover,
-        ),
-        (url) => AppNetworkImage(
-          url: url,
-          height: const Some(100),
-          width: const Some(80),
+    return Skeleton.leaf(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: imageOpt.match(
+          () => Assets.res.images.emptyPicture.image(
+            height: 100,
+            width: 80,
+            fit: BoxFit.cover,
+          ),
+          (url) => AppNetworkImage(
+            url: url,
+            height: const Some(100),
+            width: const Some(80),
+          ),
         ),
       ),
     );
@@ -128,7 +132,9 @@ class _CardDescription extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      description.isNotEmpty ? description : "Aucune description",
+      description.isNotEmpty
+          ? description
+          : t.recommendation.card.no_description,
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
       style: const TextStyle(fontSize: 12, color: Colors.grey),

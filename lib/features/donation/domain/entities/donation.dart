@@ -44,6 +44,30 @@ class Donation {
     required this.validationCode,
   });
 
+  factory Donation.request({
+    required String chatId,
+    required String requestedBy,
+    required String ownerId,
+    required String plantId,
+    required String plantName,
+    required String plantImage,
+  }) =>
+      Donation(
+        chatId: chatId,
+        requestedBy: requestedBy,
+        ownerId: ownerId,
+        plantId: plantId,
+        plantName: plantName,
+        plantImage: plantImage,
+        status: DonationStatus.pending,
+        createdAt: DateTime.now(),
+        seenByOwner: false,
+        seenByRequester: true,
+        completedAt: const None(),
+        completedBy: const None(),
+        validationCode: const None(),
+      );
+
   factory Donation.fromJson(String id, Map<String, dynamic> json) {
     return Donation(
       id: id,

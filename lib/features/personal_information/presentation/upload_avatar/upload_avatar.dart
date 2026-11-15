@@ -72,7 +72,7 @@ class _UploadAvatarState extends State<UploadAvatar> {
               Positioned(
                 bottom: 0,
                 right: 0,
-                child: Skeleton.leaf(
+                child: Skeleton.keep(
                   child: Container(
                     width: 30,
                     height: 30,

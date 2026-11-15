@@ -36,12 +36,14 @@ class SharePlantButton extends StatelessWidget {
         shape: BoxShape.circle,
         border: Border.fromBorderSide(BorderSide(color: AppColors.greyLight)),
       ),
+      width: 42,
+      height: 42,
       padding: const EdgeInsets.all(2),
       child: Builder(
         builder: (buttonContext) => IconButton(
           icon: const Icon(
             LucideIcons.share_2,
-            color: AppColors.greyDark,
+            color: AppColors.grey,
             size: 20,
           ),
           onPressed: () => _share(buttonContext),

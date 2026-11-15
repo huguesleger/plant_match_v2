@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/core/widgets/app_bar/app_bar_template.dart';
+import 'package:plant_match_v2/core/widgets/skeleton/app_skeletonizer.dart';
 import 'package:plant_match_v2/core/widgets/error/error_content.dart';
 import 'package:plant_match_v2/features/recommendation/presentation/cubit/recommendation_cubit.dart';
 import 'package:plant_match_v2/features/recommendation/presentation/cubit/recommendation_state.dart';
@@ -22,26 +25,30 @@ class RecommendationScreen extends StatelessWidget {
       builder: (context, state) {
         return Scaffold(
           backgroundColor: AppColors.white,
-          appBar: AppBar(
+          appBar: AppBarTemplate(
             backgroundColor: AppColors.white,
-            elevation: 0,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back, color: AppColors.black),
-              onPressed: () => Navigator.pop(context),
-            ),
-            title: const Text(
-              "Trouve ta plante",
-              style: TextStyle(
-                color: AppColors.black,
-                fontWeight: FontWeight.bold,
+            surfaceTintColor: AppColors.white,
+            shadowColor: const Some(AppColors.black),
+            title: Some(t.recommendation.screen.title),
+            styleIconButton: Some(
+              IconButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                side: const BorderSide(color: AppColors.greyLight),
               ),
             ),
-            centerTitle: true,
+            onPressed: Some(() => Navigator.pop(context)),
           ),
           body: state.match(
             initial: (_) => const DotsLoaderPage(),
             step: (stepState) => _buildWizardBody(context, stepState),
-            loading: (_) => const DotsLoaderPage(),
+            loading: (loadingState) => AppSkeletonizer(
+              enabled: true,
+              child: RecommendationResultView(
+                plants: loadingState.boneMocks,
+              ),
+            ),
             result: (resultState) => RecommendationResultView(
               plants: resultState.suggestedPlants,
             ),
@@ -66,7 +73,8 @@ class RecommendationScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Étape ${state.stepIndex + 1} sur 4",
+                t.recommendation.screen
+                    .step(current: state.stepIndex + 1, total: 4),
                 style: const TextStyle(color: AppColors.greyDark, fontSize: 13),
               ),
               const SizedBox(height: 8),

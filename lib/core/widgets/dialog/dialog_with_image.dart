@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
-import 'package:plant_match_v2/core/gen/assets.gen.dart';
 import 'package:plant_match_v2/core/gen/fonts.gen.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/theme/app_typo.dart';
@@ -20,7 +19,7 @@ class DialogWithImage extends StatelessWidget {
 
   final String title;
   final String text;
-  final AssetGenImage image;
+  final Widget image;
   final Option<String> confirmLabel;
   final Option<String> cancelLabel;
 
@@ -36,10 +35,7 @@ class DialogWithImage extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            image.image(
-              height: 150,
-              width: 150,
-            ),
+            image,
             const SizedBox(height: 20),
             Text(
               title,

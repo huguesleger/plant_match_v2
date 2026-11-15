@@ -6,8 +6,6 @@ import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart'
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/chat_plant/data/firebase_chat_plant.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/chat_plant_page_route.dart';
-import 'package:plant_match_v2/features/level/presentation/cubit/user_points_cubit.dart';
-import 'package:plant_match_v2/features/level/utils/user_points_utils.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_state.dart';
@@ -43,11 +41,8 @@ class PlantContact {
         .match((_) => false, (exists) => exists)
         .run();
     if (!context.mounted) return;
-    final canContact = chatExists ||
-        _hasContactCredit(context.read<ProfilCubit>().state) ||
-        UserPointsUtils.hasUnlimitedContacts(
-          context.read<UserPointsCubit>().currentLevel,
-        );
+    final canContact =
+        chatExists || _hasContactCredit(context.read<ProfilCubit>().state);
     await (canContact
         ? _openChat(context, catalog, owner, chatId)
         : NoLeavesDialog.show(context));

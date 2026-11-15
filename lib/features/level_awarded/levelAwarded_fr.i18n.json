@@ -17,7 +17,7 @@
     "plant_given_description": "Merci d'avoir fait vivre la communauté. Voici vos feuilles pour continuer vos adoptions.",
     "referral": "Code de parrainage validé !",
     "level_up_title": "Niveau $level atteint !",
-    "level_up_description": "Vous êtes maintenant $name. Voici vos feuilles bonus pour continuer vos adoptions.",
+    "level_up_description": "Vous êtes maintenant $name. Continuez à donner et échanger pour faire grandir la communauté !",
     "leaves": {
       "one": "+$n feuille",
       "other": "+$n feuilles"

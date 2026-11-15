@@ -35,11 +35,7 @@ class UserLevelDetails {
 
   static String _reward(int level) => level == 1
       ? t.level.detail.welcome_pack
-      : level == UserPointsUtils.maxLevel
-          ? t.level.detail.unlimited_contacts
-          : t.level.detail.bonus_leaves(
-              n: UserPointsUtils.getBonusLeavesForLevel(level),
-            );
+      : t.level.detail.title_reward(name: UserPointsUtils.getLevelName(level));
 
   static LevelDetail getLevelDetails(int level) {
     final (condition, description) = _texts(level);

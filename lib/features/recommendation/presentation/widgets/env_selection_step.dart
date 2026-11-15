@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -21,24 +22,24 @@ class EnvSelectionStep extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          "Où placeras-tu ta plante ?",
-          style: TextStyle(
+        Text(
+          t.recommendation.environment.title,
+          style: const TextStyle(
             fontSize: 20,
             fontWeight: bold,
             color: AppColors.black,
           ),
         ),
         const SizedBox(height: 8),
-        const Text(
-          "Choisis l'environnement principal pour adapter les suggestions.",
-          style: TextStyle(fontSize: 14, color: AppColors.greyDark),
+        Text(
+          t.recommendation.environment.description,
+          style: const TextStyle(fontSize: 14, color: AppColors.greyDark),
         ),
         const SizedBox(height: 24),
         _buildOptionCard(
           context,
-          title: "En intérieur",
-          subtitle: "Salon, chambre, bureau...",
+          title: t.recommendation.environment.indoor_title,
+          subtitle: t.recommendation.environment.indoor_subtitle,
           icon: LucideIcons.house,
           isSelected: selectedEnv is IndoorEnv,
           onTap: () => cubit.selectEnvironment(IndoorEnv()),
@@ -46,8 +47,8 @@ class EnvSelectionStep extends StatelessWidget {
         const SizedBox(height: 16),
         _buildOptionCard(
           context,
-          title: "En extérieur",
-          subtitle: "Balcon, terrasse, jardin...",
+          title: t.recommendation.environment.outdoor_title,
+          subtitle: t.recommendation.environment.outdoor_subtitle,
           icon: LucideIcons.trees,
           isSelected: selectedEnv is OutdoorEnv,
           onTap: () => cubit.selectEnvironment(OutdoorEnv()),
@@ -55,8 +56,8 @@ class EnvSelectionStep extends StatelessWidget {
         const SizedBox(height: 16),
         _buildOptionCard(
           context,
-          title: "Les deux",
-          subtitle: "Une plante polyvalente",
+          title: t.recommendation.environment.both_title,
+          subtitle: t.recommendation.environment.both_subtitle,
           icon: LucideIcons.compass,
           isSelected: selectedEnv is BothEnv,
           onTap: () => cubit.selectEnvironment(BothEnv()),
