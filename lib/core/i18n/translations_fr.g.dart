@@ -1237,11 +1237,17 @@ class TranslationsChatPlantDonationRequestFr {
 	/// fr: 'Demander cette plante'
 	String get title => 'Demander cette plante';
 
-	/// fr: 'Souhaites-tu envoyer une demande de donation pour « ${plant} » ?'
-	String content({required Object plant}) => 'Souhaites-tu envoyer une demande de donation pour « ${plant} » ?';
-
 	/// fr: 'Envoyer la demande'
 	String get send => 'Envoyer la demande';
+
+	/// fr: 'Un premier contact avec un donneur utilise 1 feuille.'
+	String get cost => 'Un premier contact avec un donneur utilise 1 feuille.';
+
+	/// fr: '(one) {Il te reste $n feuille.} (other) {Il te reste $n feuilles.}'
+	String remaining({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'Il te reste ${n} feuille.',
+		other: 'Il te reste ${n} feuilles.',
+	);
 }
 
 // Path: exchange.screen
@@ -4447,8 +4453,9 @@ extension on Translations {
 			'chatPlant.info_bar.donation.rejected' => 'Donation refusée',
 			'chatPlant.info_bar.donation.completed' => 'Donation terminée ✅',
 			'chatPlant.donation_request.title' => 'Demander cette plante',
-			'chatPlant.donation_request.content' => ({required Object plant}) => 'Souhaites-tu envoyer une demande de donation pour « ${plant} » ?',
 			'chatPlant.donation_request.send' => 'Envoyer la demande',
+			'chatPlant.donation_request.cost' => 'Un premier contact avec un donneur utilise 1 feuille.',
+			'chatPlant.donation_request.remaining' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Il te reste ${n} feuille.', other: 'Il te reste ${n} feuilles.', ), 
 			'common.notConnected' => 'Utilisateur non connecté',
 			'exchange.screen.loading' => 'Chargement...',
 			'exchange.screen.picking_title' => 'Choisir une plante à échanger',
@@ -4667,9 +4674,9 @@ extension on Translations {
 			'recentActivity.tile.hours' => ({required Object count}) => '${count} h',
 			'recentActivity.tile.days' => ({required Object count}) => '${count} j',
 			'recommendation.screen.title' => 'Trouve ta plante',
-			'recommendation.screen.step' => ({required Object current, required Object total}) => 'Étape ${current} sur ${total}',
 			_ => null,
 		} ?? switch (path) {
+			'recommendation.screen.step' => ({required Object current, required Object total}) => 'Étape ${current} sur ${total}',
 			'recommendation.footer.back' => 'Retour',
 			'recommendation.footer.next' => 'Suivant',
 			'recommendation.footer.finish' => 'Terminer',

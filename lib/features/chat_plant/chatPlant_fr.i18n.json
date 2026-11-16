@@ -81,7 +81,11 @@
   },
   "donation_request": {
     "title": "Demander cette plante",
-    "content": "Souhaites-tu envoyer une demande de donation pour « ${plant} » ?",
-    "send": "Envoyer la demande"
+    "send": "Envoyer la demande",
+    "cost": "Un premier contact avec un donneur utilise 1 feuille.",
+    "remaining": {
+      "one": "Il te reste $n feuille.",
+      "other": "Il te reste $n feuilles."
+    }
   }
 }

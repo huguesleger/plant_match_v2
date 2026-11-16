@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 
 class AppBottomSheet {
-  static void showBottomSheet(BuildContext context, Widget child) {
-    showModalBottomSheet(
+  static Future<T?> showBottomSheet<T>(BuildContext context, Widget child) {
+    return showModalBottomSheet<T>(
       context: context,
       isScrollControlled: true,
       showDragHandle: true,

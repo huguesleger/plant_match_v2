@@ -42,7 +42,8 @@ class ChatPlantView extends StatelessWidget {
     final userId = context.read<AuthCubit>().userId.getOrElse(() => '');
     final exchangeState = context.watch<ExchangeCubit>().state;
     final donationState = context.watch<DonationCubit>().state;
-    const hintStyle = TextStyle(color: AppColors.grey, fontSize: AppTypo.text);
+    const hintStyle =
+        TextStyle(color: AppColors.greyDark, fontSize: AppTypo.text);
 
     return Column(
       children: [
@@ -88,7 +89,8 @@ class ChatPlantView extends StatelessWidget {
             dateHeaderThreshold: const Duration(days: 1).inMilliseconds,
             bubbleBuilder: (child,
                     {required message, required nextMessageInGroup}) =>
-                ChatBubble(message: message, currentUserId: userId, child: child),
+                ChatBubble(
+                    message: message, currentUserId: userId, child: child),
           ),
         ),
       ],

@@ -64,8 +64,7 @@ class ChatPlantBottomBar extends StatelessWidget {
           ChatPlantDonationActionBar(
             chatId: chatId,
             plantId: plantId,
-            plantName: plant.name,
-            plantImage: plant.images.isNotEmpty ? plant.images.first : '',
+            plant: plant,
             plantOwnerId: plant.userId,
             plantOfferType: plant.offerType,
             currentUserId: currentUserId,

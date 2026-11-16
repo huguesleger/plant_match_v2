@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
@@ -8,21 +9,21 @@ import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/common/chat_plant_action_button.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/common/chat_plant_action_button_templates.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/common/chat_plant_accept_or_refuse_bar.dart';
-import 'package:plant_match_v2/features/chat_plant/presentation/widgets/donation/donation_request_dialog.dart';
+import 'package:plant_match_v2/features/chat_plant/presentation/widgets/donation/donation_request_sheet.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/owner_validation_code.dart';
 import 'package:plant_match_v2/features/chat_plant/presentation/widgets/validation_code_input.dart';
 import 'package:plant_match_v2/features/donation/domain/entities/donation.dart';
 import 'package:plant_match_v2/features/donation/presentation/cubit/donation_cubit.dart';
 import 'package:plant_match_v2/features/donation/presentation/state/donation_state.dart';
 import 'package:plant_match_v2/features/level/presentation/cubit/user_points_cubit.dart';
+import 'package:plant_match_v2/features/profil/presentation/cubit/profil_state.dart';
 
 class ChatPlantDonationActionBar extends StatelessWidget {
   const ChatPlantDonationActionBar({
     super.key,
     required this.chatId,
     required this.plantId,
-    required this.plantName,
-    required this.plantImage,
+    required this.plant,
     required this.plantOwnerId,
     required this.plantOfferType,
     required this.currentUserId,
@@ -31,8 +32,7 @@ class ChatPlantDonationActionBar extends StatelessWidget {
 
   final String chatId;
   final String plantId;
-  final String plantName;
-  final String plantImage;
+  final Catalog plant;
   final String plantOwnerId;
   final OfferType plantOfferType;
   final String currentUserId;
@@ -87,7 +87,7 @@ class ChatPlantDonationActionBar extends StatelessWidget {
             ? ChatPlantActionButton(
                 onPressed: () => _requestDonation(context),
                 backgroundColor: AppColors.blueGreen,
-                icon: Icons.volunteer_activism_rounded,
+                icon: LucideIcons.hand_heart,
                 label: t.chatPlant.actions.request_donation_btn,
               )
             : const SizedBox.shrink(),
@@ -97,10 +97,17 @@ class ChatPlantDonationActionBar extends StatelessWidget {
   Future<void> _requestDonation(BuildContext context) {
     final profilCubit = context.read<ProfilCubit>();
     final donationCubit = context.read<DonationCubit>();
-    return showDonationRequestDialog(
+    return showDonationRequestSheet(
       context,
-      plantName: plantName,
-      plantImage: plantImage,
+      plant: plant,
+      leaves: switch (profilCubit.state) {
+        ProfilLoaded(:final profilUser) => Some(profilUser.leaves),
+        ProfilInitial() ||
+        ProfilLoading() ||
+        ProfilError() ||
+        ProfilImageUploading() =>
+          const None(),
+      },
     ).then(
       (confirmed) => confirmed
           ? donationCubit
@@ -109,8 +116,8 @@ class ChatPlantDonationActionBar extends StatelessWidget {
                 requestedBy: currentUserId,
                 ownerId: plantOwnerId,
                 plantId: plantId,
-                plantName: plantName,
-                plantImage: plantImage,
+                plantName: plant.name,
+                plantImage: plant.images.firstOption.getOrElse(() => ''),
               ))
               .then((_) => profilCubit.refreshLeaves(currentUserId))
           : null,
