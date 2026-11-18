@@ -54,9 +54,19 @@
       "one": "Nous avons trouvé 1 plante idéale pour toi !",
       "other": "Nous avons trouvé $n plantes idéales pour toi !"
     },
-    "retake": "Refaire le test"
+    "retake": "Refaire le test",
+    "no_exact_match": "Aucune plante ne correspond exactement, mais celles-ci s'en approchent !",
+    "alternatives_title": "Ça pourrait aussi te plaire"
   },
   "card": {
-    "no_description": "Aucune description"
+    "no_description": "Aucune description",
+    "score": "${score} %",
+    "reasons": {
+      "light": "Lumière idéale",
+      "care": "Entretien adapté",
+      "nearby": "À ${distance} km",
+      "pet_safe": "Sans danger pour tes animaux",
+      "pet_unverified": "Toxicité non vérifiée"
+    }
   }
 }

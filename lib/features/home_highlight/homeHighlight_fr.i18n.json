@@ -1,0 +1,35 @@
+{
+  "someone": "Quelqu'un",
+  "answer_proposal": {
+    "title": "Nouvelle demande à traiter",
+    "exchange": "${name} te propose son ${offered} contre ton ${target}.",
+    "donation": "${name} aimerait adopter ton ${plant}.",
+    "cta": "Répondre"
+  },
+  "validate_handover": {
+    "title": "Valide ta remise",
+    "subtitle": "${name} t'a remis son ${plant} ? Saisis son code pour gagner 2 feuilles.",
+    "cta": "Valider la remise"
+  },
+  "generate_code": {
+    "title": "Remise à préparer",
+    "subtitle": "Génère ton code pour remettre ton ${plant} à ${name}.",
+    "cta": "Générer le code"
+  },
+  "first_plant": {
+    "title": "Publie ta première plante",
+    "subtitle": "Propose une plante en don ou en échange pour commencer.",
+    "cta": "Publier une plante"
+  },
+  "earn_leaves": {
+    "title": "Plus de feuilles pour contacter",
+    "subtitle": "Parraine un ami et gagne 2 feuilles.",
+    "cta": "Partager mon code",
+    "share": "Rejoins-moi sur PlantMatch pour échanger des plantes ! Utilise mon code de parrainage ${code} à l'inscription."
+  },
+  "find_plant": {
+    "title": "Trouve ta plante idéale",
+    "subtitle": "Réponds à quelques questions et nous te suggérons des plantes !",
+    "cta": "Commencer"
+  }
+}

@@ -16,6 +16,7 @@ import 'package:plant_match_v2/features/catalog/catalog_edit/form/field/family_f
 import 'package:plant_match_v2/features/catalog/catalog_edit/form/field/maintenance_field.dart';
 import 'package:plant_match_v2/features/catalog/catalog_edit/form/field/watering_field.dart';
 import 'package:plant_match_v2/features/catalog/catalog_edit/form/field/lighting_field.dart';
+import 'package:plant_match_v2/features/catalog/catalog_edit/form/field/pet_toxicity_field.dart';
 import 'package:plant_match_v2/features/catalog/catalog_edit/form/field/description_field.dart';
 import 'package:plant_match_v2/features/catalog/catalog_edit/form/field/image_field.dart';
 import 'package:plant_match_v2/features/catalog/catalog_edit/form/field/offer_type_field.dart';
@@ -44,6 +45,7 @@ class _CatalogEditScreenState extends State<CatalogEditScreen> {
   late LevelMaintenance _maintenance;
   late Watering _watering;
   late Lighting _lighting;
+  late PetToxicity _petToxicity;
   late List<String> _updatedImages;
   late bool _isPublish;
 
@@ -58,6 +60,7 @@ class _CatalogEditScreenState extends State<CatalogEditScreen> {
     _maintenance = widget.catalog.levelMaintenance;
     _watering = widget.catalog.watering;
     _lighting = widget.catalog.lighting;
+    _petToxicity = widget.catalog.petToxicity;
     _updatedImages = List.from(widget.catalog.images);
     _offerType = widget.catalog.offerType;
     _isPublish = widget.catalog.status == CatalogStatus.published;
@@ -84,8 +87,8 @@ class _CatalogEditScreenState extends State<CatalogEditScreen> {
           ),
         CatalogInitial() || CatalogLoaded() => Scaffold(
             appBar: AppBarTemplate(
-              title:
-                  Some(t.catalog.edit.modifier_with_name(name: widget.catalog.name)),
+              title: Some(
+                  t.catalog.edit.modifier_with_name(name: widget.catalog.name)),
               centerTitle: true,
               backgroundColor: AppColors.white,
               surfaceTintColor: AppColors.white,
@@ -136,6 +139,11 @@ class _CatalogEditScreenState extends State<CatalogEditScreen> {
                       onChanged: (val) => setState(() => _lighting = val),
                     ),
                     const SizedBox(height: 25),
+                    PetToxicityField(
+                      selectedToxicity: _petToxicity,
+                      onChanged: (val) => setState(() => _petToxicity = val),
+                    ),
+                    const SizedBox(height: 25),
                     DescriptionField(controller: _descriptionController),
                     const SizedBox(height: 25),
                     ImageField(
@@ -182,8 +190,8 @@ class _CatalogEditScreenState extends State<CatalogEditScreen> {
         .run();
     if (!mounted) return;
     result.match<void>(
-      (failure) => messenger.showSnackBar(SnackBar(
-          content: Text(failure.errorContent.message))),
+      (failure) => messenger
+          .showSnackBar(SnackBar(content: Text(failure.errorContent.message))),
       (saved) => navigator.pop(saved),
     );
   }
@@ -197,6 +205,7 @@ class _CatalogEditScreenState extends State<CatalogEditScreen> {
         newLevelMaintenance: Some(_maintenance),
         newWatering: Some(_watering),
         newLighting: Some(_lighting),
+        newPetToxicity: Some(_petToxicity),
         newOfferType: Some(_offerType),
         newStatus:
             Some(_isPublish ? CatalogStatus.published : CatalogStatus.draft),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/features/catalog/presentation/widgets/pet_toxicity_badge.dart';
 import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -56,6 +57,7 @@ class DetailPlantContent extends StatelessWidget {
               watering: catalog.watering,
               levelMaintenance: catalog.levelMaintenance,
             ),
+            PetToxicityBadge(toxicity: catalog.petToxicity),
             const SizedBox(height: 24),
           ],
         ),

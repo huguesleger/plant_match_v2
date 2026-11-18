@@ -7,13 +7,17 @@ import 'package:plant_match_v2/core/extension/capitalize/capitalize.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
 import 'package:plant_match_v2/core/widgets/badge/badge_pill.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
+import 'package:plant_match_v2/features/recommendation/domain/entities/scored_plant.dart';
+import 'package:plant_match_v2/features/recommendation/presentation/widgets/match_reason_label.dart';
 import 'package:plant_match_v2/features/user/detail_plant/detail_plant.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class RecommendationCardItem extends StatelessWidget {
-  const RecommendationCardItem({super.key, required this.catalog});
+  const RecommendationCardItem({super.key, required this.scored});
 
-  final Catalog catalog;
+  final ScoredPlant scored;
+
+  Catalog get catalog => scored.plant;
 
   @override
   Widget build(BuildContext context) {
@@ -43,9 +47,9 @@ class RecommendationCardItem extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _CardHeader(catalog: catalog),
+                        _CardHeader(scored: scored),
                         _CardDescription(description: catalog.description),
-                        _CardBadges(catalog: catalog),
+                        _CardBadges(scored: scored),
                       ],
                     ),
                   ),
@@ -97,8 +101,8 @@ class _CardImage extends StatelessWidget {
 }
 
 class _CardHeader extends StatelessWidget {
-  const _CardHeader({required this.catalog});
-  final Catalog catalog;
+  const _CardHeader({required this.scored});
+  final ScoredPlant scored;
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +111,7 @@ class _CardHeader extends StatelessWidget {
       children: [
         Expanded(
           child: Text(
-            catalog.name.toCapitalize(),
+            scored.plant.name.toCapitalize(),
             style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
             overflow: TextOverflow.ellipsis,
           ),
@@ -115,10 +119,14 @@ class _CardHeader extends StatelessWidget {
         const SizedBox(width: 8),
         BadgePill(
           text: Text(
-            catalog.status.label,
-            style: TextStyle(fontSize: 12, color: catalog.status.textColor),
+            t.recommendation.card.score(score: scored.score),
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: AppColors.white,
+            ),
           ),
-          badgeColor: catalog.status.badgeColor,
+          badgeColor: AppColors.greenDark,
         ),
       ],
     );
@@ -143,39 +151,36 @@ class _CardDescription extends StatelessWidget {
 }
 
 class _CardBadges extends StatelessWidget {
-  const _CardBadges({required this.catalog});
-  final Catalog catalog;
+  const _CardBadges({required this.scored});
+  final ScoredPlant scored;
+
+  List<String> get _labels => [
+        ...scored.reasons.map((reason) => reason.label),
+        ...scored.plant.family.map((family) => family.familyName),
+      ];
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
-        children: [
-          BadgePill(
-            text: Text(
-              catalog.environment.envName,
-              style: const TextStyle(fontSize: 12, color: AppColors.greenDark),
-            ),
-            badgeColor: AppColors.greenLight.withValues(alpha: 0.2),
-          ),
-          const SizedBox(width: 8),
-          ...catalog.family.map(
-            (f) => Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: BadgePill(
-                text: Text(
-                  f.familyName,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: AppColors.greenDark,
+        children: _labels
+            .map(
+              (label) => Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: BadgePill(
+                  text: Text(
+                    label,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.greenDark,
+                    ),
                   ),
+                  badgeColor: AppColors.greenLight.withValues(alpha: 0.2),
                 ),
-                badgeColor: AppColors.greenLight.withValues(alpha: 0.2),
               ),
-            ),
-          ),
-        ],
+            )
+            .toList(),
       ),
     );
   }

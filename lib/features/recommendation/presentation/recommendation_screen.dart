@@ -46,11 +46,11 @@ class RecommendationScreen extends StatelessWidget {
             loading: (loadingState) => AppSkeletonizer(
               enabled: true,
               child: RecommendationResultView(
-                plants: loadingState.boneMocks,
+                results: loadingState.boneMock,
               ),
             ),
             result: (resultState) => RecommendationResultView(
-              plants: resultState.suggestedPlants,
+              results: resultState.results,
             ),
             error: (errorState) => Center(
               child: Text(errorState.failure.errorContent.message),

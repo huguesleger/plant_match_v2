@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_match_v2/features/catalog/presentation/widgets/pet_toxicity_badge.dart';
 import 'package:fpdart/fpdart.dart' hide State;
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
@@ -52,6 +53,7 @@ class _CatalogDetailScreenState extends State<CatalogDetailScreen> {
               CatalogDetailBasicInfo(catalog: _catalog),
               const SizedBox(height: 24),
               CatalogDetailCharacteristics(catalog: _catalog),
+              PetToxicityBadge(toxicity: _catalog.petToxicity),
               const SizedBox(height: 24),
               Text(
                 t.catalog.detail.description,

@@ -86,7 +86,7 @@ class EnvSelectionStep extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isSelected ? AppColors.greenDark : AppColors.greyLight,
-            width: isSelected ? 2 : 1,
+            width: 1,
           ),
         ),
         child: Row(

@@ -46,7 +46,6 @@ class HomeScreen extends StatelessWidget {
           uid: uid,
           home: home,
           filter: state.filter,
-          recommendation: state.recommendation,
           isLoading: isLoading,
         ),
       );

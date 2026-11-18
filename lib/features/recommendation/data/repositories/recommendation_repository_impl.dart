@@ -9,52 +9,22 @@ import 'package:plant_match_v2/features/recommendation/domain/repositories/recom
 class RecommendationRepositoryImpl implements RecommendationRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  static const int _maxCandidates = 100;
+  static const int _maxCandidates = 200;
   static final RegExp _nonToxic = RegExp(r'non[\s-]*toxique');
 
   static bool _mentionsToxicity(String text) =>
       text.toLowerCase().replaceAll(_nonToxic, '').contains('toxique');
 
-  static Option<String> _environmentFilter(RecommendationAnswers answers) =>
-      answers.environment.flatMap(
-        (env) => switch (env) {
-          IndoorEnv() => Some(Environment.indoor.name),
-          OutdoorEnv() => Some(Environment.outdoor.name),
-          BothEnv() => const None(),
-        },
-      );
-
-  static Option<String> _lightingFilter(RecommendationAnswers answers) =>
-      answers.light.map(
-        (light) => switch (light) {
-          LowLight() => Lighting.shade.name,
-          IndirectLight() => Lighting.indirectLight.name,
-          DirectLight() => Lighting.sun.name,
-        },
-      );
-
-  static Option<String> _careFilter(RecommendationAnswers answers) =>
-      answers.careLevel.map(
-        (care) => switch (care) {
-          BeginnerCare() => LevelMaintenance.low.name,
-          IntermediateCare() => LevelMaintenance.medium.name,
-          ExpertCare() => LevelMaintenance.high.name,
-        },
-      );
-
-  static Query<Map<String, dynamic>> _whereOption(
-    Query<Map<String, dynamic>> query,
-    String field,
-    Option<String> value,
-  ) =>
-      value.match(() => query, (v) => query.where(field, isEqualTo: v));
-
   static bool _isPetSafe(Catalog plant, RecommendationAnswers answers) =>
       answers.petSafety.match(
         () => true,
         (safety) => switch (safety) {
-          SafeForPets() => !_mentionsToxicity(plant.description) &&
-              !_mentionsToxicity(plant.name),
+          SafeForPets() => switch (plant.petToxicity) {
+              PetSafe() => true,
+              PetToxic() => false,
+              PetToxicityUnknown() => !_mentionsToxicity(plant.description) &&
+                  !_mentionsToxicity(plant.name),
+            },
           IndifferentSafety() => true,
         },
       );
@@ -66,17 +36,9 @@ class RecommendationRepositoryImpl implements RecommendationRepository {
   ) =>
       TaskEither.tryCatch(
         () async {
-          final filtered = [
-            ('environment', _environmentFilter(answers)),
-            ('lighting', _lightingFilter(answers)),
-            ('levelMaintenance', _careFilter(answers)),
-          ].fold<Query<Map<String, dynamic>>>(
-            _firestore
-                .collection('catalogs')
-                .where('status', isEqualTo: CatalogStatus.published.name),
-            (query, filter) => _whereOption(query, filter.$1, filter.$2),
-          );
-          final snapshot = await filtered
+          final snapshot = await _firestore
+              .collection('catalogs')
+              .where('status', isEqualTo: CatalogStatus.published.name)
               .orderBy('createdAt', descending: true)
               .limit(_maxCandidates)
               .get();

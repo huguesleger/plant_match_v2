@@ -9,6 +9,7 @@ class AddPlantDraft {
     this.maintenance = const None(),
     this.watering = const None(),
     this.lighting = const None(),
+    this.petToxicity = const None(),
     this.offerType = const None(),
     this.publish = true,
   });
@@ -19,6 +20,7 @@ class AddPlantDraft {
   final Option<LevelMaintenance> maintenance;
   final Option<Watering> watering;
   final Option<Lighting> lighting;
+  final Option<PetToxicity> petToxicity;
   final Option<OfferType> offerType;
   final bool publish;
 
@@ -29,6 +31,7 @@ class AddPlantDraft {
     Option<LevelMaintenance> maintenance = const None(),
     Option<Watering> watering = const None(),
     Option<Lighting> lighting = const None(),
+    Option<PetToxicity> petToxicity = const None(),
     Option<OfferType> offerType = const None(),
     Option<bool> publish = const None(),
   }) =>
@@ -39,6 +42,7 @@ class AddPlantDraft {
         maintenance: maintenance.alt(() => this.maintenance),
         watering: watering.alt(() => this.watering),
         lighting: lighting.alt(() => this.lighting),
+        petToxicity: petToxicity.alt(() => this.petToxicity),
         offerType: offerType.alt(() => this.offerType),
         publish: publish.getOrElse(() => this.publish),
       );
@@ -61,6 +65,9 @@ class AddPlantDraft {
             Some(maintenance.getOrElse(() => LevelMaintenance.low)),
         newWatering: Some(watering.getOrElse(() => Watering.little)),
         newLighting: Some(lighting.getOrElse(() => Lighting.sun)),
+        newPetToxicity: Some(
+          petToxicity.getOrElse(() => const PetToxicityUnknown()),
+        ),
         newOfferType: Some(offerType.getOrElse(() => OfferType.exchange)),
         newStatus:
             Some(publish ? CatalogStatus.published : CatalogStatus.draft),

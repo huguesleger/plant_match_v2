@@ -37,7 +37,9 @@
       "content": "Êtes-vous sûr de vouloir supprimer \"${name}\" ?\n\nCette action est irréversible.",
       "cancel": "Annuler"
     },
-    "delete_error": "La suppression a échoué. Réessaie plus tard."
+    "delete_error": "La suppression a échoué. Réessaie plus tard.",
+    "pet_safe": "Non toxique pour les animaux",
+    "pet_toxic": "Toxique pour les animaux"
   },
   "edit": {
     "title": "Modifier ma plante",
@@ -78,6 +80,9 @@
     },
     "image": {
       "title": "Sélectionner une à trois photos de votre plante"
+    },
+    "pet_toxicity": {
+      "title": "Toxicité pour les animaux"
     }
   },
   "wizard": {
@@ -137,6 +142,14 @@
         "indirect": "Indirecte",
         "shade": "Ombre"
       },
+      "pet_toxicity": {
+        "title": "Animaux",
+        "description": "Cette plante est-elle dangereuse pour les chats et les chiens ?",
+        "label": "Toxicité",
+        "safe_subtitle": "Sans danger pour les animaux de compagnie",
+        "toxic_subtitle": "Dangereuse en cas d'ingestion",
+        "unknown_subtitle": "Les adoptants seront prévenus que ce n'est pas vérifié"
+      },
       "maintenance": {
         "title": "Entretien",
         "description": "Niveau de difficulté",
@@ -191,6 +204,11 @@
     "offer_type": {
       "exchange": "Échange",
       "donation": "Donation"
+    },
+    "pet_toxicity": {
+      "safe": "Non toxique",
+      "toxic": "Toxique",
+      "unknown": "Je ne sais pas"
     }
   },
   "sort": {

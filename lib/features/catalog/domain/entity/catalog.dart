@@ -42,6 +42,7 @@ class Catalog {
   final LevelMaintenance levelMaintenance;
   final Watering watering;
   final Lighting lighting;
+  final PetToxicity petToxicity;
   final CatalogStatus status;
   final DateTime createdAt;
   final OfferType offerType;
@@ -58,6 +59,7 @@ class Catalog {
     required this.levelMaintenance,
     required this.watering,
     required this.lighting,
+    required this.petToxicity,
     required this.status,
     required this.createdAt,
     required this.offerType,
@@ -75,6 +77,7 @@ class Catalog {
     Option<LevelMaintenance> newLevelMaintenance = const None(),
     Option<Watering> newWatering = const None(),
     Option<Lighting> newLighting = const None(),
+    Option<PetToxicity> newPetToxicity = const None(),
     Option<CatalogStatus> newStatus = const None(),
     Option<DateTime> newCreatedAt = const None(),
     Option<OfferType> newOfferType = const None(),
@@ -91,6 +94,7 @@ class Catalog {
       levelMaintenance: newLevelMaintenance.getOrElse(() => levelMaintenance),
       watering: newWatering.getOrElse(() => watering),
       lighting: newLighting.getOrElse(() => lighting),
+      petToxicity: newPetToxicity.getOrElse(() => petToxicity),
       status: newStatus.getOrElse(() => status),
       createdAt: newCreatedAt.getOrElse(() => createdAt),
       offerType: newOfferType.getOrElse(() => offerType),
@@ -117,6 +121,7 @@ class Catalog {
       levelMaintenance: LevelMaintenance.low,
       watering: Watering.little,
       lighting: Lighting.sun,
+      petToxicity: const PetToxicityUnknown(),
       status: CatalogStatus.draft,
       createdAt: DateTime.now(),
       offerType: OfferType.exchange,
@@ -138,11 +143,11 @@ class Catalog {
       catalogId: Option.fromNullable(id),
       name: json.string('name'),
       description: json.string('description'),
-      images:
-          json.listOf<String>('images'),
+      images: json.listOf<String>('images'),
       environment:
           _enumOr(Environment.values, json['environment'], Environment.outdoor),
-      family: json.listOf<Object>('family')
+      family: json
+          .listOf<Object>('family')
           .map((e) => Option.fromNullable(Family.values.asNameMap()[e]))
           .whereType<Some<Family>>()
           .map((found) => found.value)
@@ -155,6 +160,10 @@ class Catalog {
       watering: _enumOr(Watering.values, json['watering'], Watering.regularly),
       lighting:
           _enumOr(Lighting.values, json['lighting'], Lighting.indirectLight),
+      petToxicity: json.read<String>('petToxicity').match(
+            () => const PetToxicityUnknown(),
+            PetToxicity.fromName,
+          ),
       status: _enumOr(CatalogStatus.values, json['status'], legacyStatus),
       createdAt: createdAt is Timestamp ? createdAt.toDate() : DateTime.now(),
       offerType:
@@ -174,6 +183,7 @@ class Catalog {
       'levelMaintenance': levelMaintenance.name,
       'watering': watering.name,
       'lighting': lighting.name,
+      'petToxicity': petToxicity.name,
       'status': status.name,
       'createdAt': createdAt.toIso8601String(),
       'offerType': offerType.name,
@@ -214,6 +224,40 @@ enum Lighting {
   sun,
   indirectLight,
   shade,
+}
+
+sealed class PetToxicity {
+  const PetToxicity();
+
+  static PetToxicity fromName(String name) => switch (name) {
+        'safe' => const PetSafe(),
+        'toxic' => const PetToxic(),
+        _ => const PetToxicityUnknown(),
+      };
+
+  String get name => switch (this) {
+        PetSafe() => 'safe',
+        PetToxic() => 'toxic',
+        PetToxicityUnknown() => 'unknown',
+      };
+
+  String get label => switch (this) {
+        PetSafe() => t.catalog.enums.pet_toxicity.safe,
+        PetToxic() => t.catalog.enums.pet_toxicity.toxic,
+        PetToxicityUnknown() => t.catalog.enums.pet_toxicity.unknown,
+      };
+}
+
+class PetSafe extends PetToxicity {
+  const PetSafe();
+}
+
+class PetToxic extends PetToxicity {
+  const PetToxic();
+}
+
+class PetToxicityUnknown extends PetToxicity {
+  const PetToxicityUnknown();
 }
 
 enum OfferType {

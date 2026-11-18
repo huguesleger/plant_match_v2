@@ -3,18 +3,23 @@ import 'package:plant_match_v2/core/extension/task_either_minimal_delay/task_eit
 import 'package:plant_match_v2/core/util/safe_cubit.dart';
 import 'package:plant_match_v2/core/widgets/skeleton/skeleton_effect.dart';
 import 'package:plant_match_v2/features/recommendation/domain/entities/recommendation_answers.dart';
+import 'package:plant_match_v2/features/recommendation/domain/entities/recommendation_location.dart';
+import 'package:plant_match_v2/features/recommendation/domain/entities/recommendation_results.dart';
 import 'package:plant_match_v2/features/recommendation/domain/repositories/recommendation_repository.dart';
 import 'package:plant_match_v2/features/recommendation/presentation/cubit/recommendation_state.dart';
 
 class RecommendationCubit extends SafeCubit<RecommendationState> {
   final RecommendationRepository _repository;
   final String _userId;
+  final Option<RecommendationLocation> _location;
 
   RecommendationCubit({
     required RecommendationRepository repository,
     required String userId,
+    required Option<RecommendationLocation> location,
   })  : _repository = repository,
         _userId = userId,
+        _location = location,
         super(const RecommendationInitial());
 
   void startQuestionnaire() {
@@ -125,10 +130,16 @@ class RecommendationCubit extends SafeCubit<RecommendationState> {
     _repository
         .saveAnswers(_userId, answers)
         .flatMap((_) => _repository.getRecommendedPlants(_userId, answers))
+        .map((plants) => RecommendationResults.from(
+              plants: plants,
+              answers: answers,
+              location: _location,
+              now: DateTime.now(),
+            ))
         .withMinimalDelay(SkeletonEffect.shimmerMinimumDelay)
         .match<RecommendationState>(
           (failure) => RecommendationError(failure: failure),
-          (plants) => RecommendationResult(suggestedPlants: plants),
+          (results) => RecommendationResult(results: results),
         )
         .map(emit)
         .run();

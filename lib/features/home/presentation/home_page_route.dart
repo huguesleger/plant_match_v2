@@ -6,8 +6,9 @@ import 'package:plant_match_v2/features/auth/presentation/cubit/auth_cubit.dart'
 import 'package:plant_match_v2/features/home/presentation/cubit/home_cubit.dart';
 import 'package:plant_match_v2/features/home/presentation/home_screen.dart';
 import 'package:plant_match_v2/features/home/presentation/widgets/home_sync.dart';
+import 'package:plant_match_v2/features/home_highlight/data/repositories/active_deal_repository_impl.dart';
+import 'package:plant_match_v2/features/home_highlight/presentation/cubit/home_highlight_cubit.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
-import 'package:plant_match_v2/features/recommendation/data/repositories/recommendation_repository_impl.dart';
 
 class HomePageRoute extends StatelessWidget {
   const HomePageRoute({super.key});
@@ -16,14 +17,21 @@ class HomePageRoute extends StatelessWidget {
   Widget build(BuildContext context) {
     final uid = context.read<AuthCubit>().userId.getOrElse(() => '');
 
-    return BlocProvider(
-      create: (context) => HomeCubit(
-        recommendationRepository: RecommendationRepositoryImpl(),
-        userId: uid,
-      )
-        ..syncAroundMe(context.read<AroundMeCubit>().state)
-        ..syncProfil(context.read<ProfilCubit>().state)
-        ..loadRecommendations(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => HomeCubit()
+            ..syncAroundMe(context.read<AroundMeCubit>().state)
+            ..syncProfil(context.read<ProfilCubit>().state),
+        ),
+        BlocProvider(
+          create: (context) => HomeHighlightCubit(
+            repository: ActiveDealRepositoryImpl(),
+          )
+            ..listen(uid)
+            ..syncHome(context.read<HomeCubit>().state),
+        ),
+      ],
       child: HomeSync(child: HomeScreen(uid: uid)),
     );
   }

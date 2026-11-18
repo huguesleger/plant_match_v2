@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart' hide State;
 import 'package:plant_match_v2/core/i18n/translations.g.dart';
 import 'package:plant_match_v2/core/theme/app_colors.dart';
+import 'package:plant_match_v2/core/widgets/app_bar/app_bar_template.dart';
+import 'package:plant_match_v2/core/widgets/buttons/button_rounded.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/map/map_geo.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/map/radius/radius_preview_map.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/map/radius/radius_slider.dart';
@@ -27,14 +30,20 @@ class _RadiusFilterPageState extends State<RadiusFilterPage> {
   @override
   Widget build(BuildContext context) => Scaffold(
         backgroundColor: AppColors.white,
-        appBar: AppBar(
-          title: Text(
-            t.aroundMeMap.radius.title,
-            style: const TextStyle(color: AppColors.black),
-          ),
+        appBar: AppBarTemplate(
+          title: Some(t.aroundMeMap.radius.title),
           backgroundColor: AppColors.white,
-          elevation: 0,
-          iconTheme: const IconThemeData(color: AppColors.black),
+          surfaceTintColor: AppColors.white,
+          shadowColor: const Some(AppColors.black),
+          styleIconButton: Some(
+            IconButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              side: const BorderSide(color: AppColors.greyLight),
+            ),
+          ),
+          onPressed: Some(() => Navigator.pop(context)),
         ),
         body: SafeArea(
           child: Padding(
@@ -66,23 +75,12 @@ class _RadiusFilterPageState extends State<RadiusFilterPage> {
                 const Spacer(),
                 SizedBox(
                   width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () => Navigator.pop(context, _radius),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.blueGreen,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: Text(
-                      t.aroundMeMap.radius.apply,
-                      style: const TextStyle(
-                        color: AppColors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                  child: ButtonRounded(
+                    text: t.aroundMeMap.radius.apply,
+                    onPressed: Some(() => Navigator.pop(context, _radius)),
+                    bgColor: AppColors.blueGreen,
+                    textColor: AppColors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
                 ),
               ],

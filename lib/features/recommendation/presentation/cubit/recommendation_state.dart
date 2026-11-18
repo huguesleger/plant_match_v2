@@ -1,6 +1,6 @@
 import 'package:plant_match_v2/core/failures/failure.dart';
-import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
 import 'package:plant_match_v2/features/recommendation/domain/entities/recommendation_answers.dart';
+import 'package:plant_match_v2/features/recommendation/domain/entities/recommendation_results.dart';
 
 sealed class RecommendationState {
   const RecommendationState();
@@ -21,16 +21,16 @@ class RecommendationQuestionStep extends RecommendationState {
 }
 
 class RecommendationLoading extends RecommendationState {
-  final List<Catalog> boneMocks = List.generate(3, (_) => Catalog.boneMock());
+  final RecommendationResults boneMock = RecommendationResults.boneMock();
 
   RecommendationLoading();
 }
 
 class RecommendationResult extends RecommendationState {
-  final List<Catalog> suggestedPlants;
+  final RecommendationResults results;
 
   const RecommendationResult({
-    required this.suggestedPlants,
+    required this.results,
   });
 }
 

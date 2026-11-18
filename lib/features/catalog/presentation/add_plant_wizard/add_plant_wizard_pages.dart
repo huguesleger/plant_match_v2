@@ -11,6 +11,7 @@ import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/st
 import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/steps/step_maintenance.dart';
 import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/steps/step_name.dart';
 import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/steps/step_offer_type.dart';
+import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/steps/step_pet_toxicity.dart';
 import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/steps/step_publish.dart';
 import 'package:plant_match_v2/features/catalog/presentation/add_plant_wizard/steps/step_watering.dart';
 
@@ -26,7 +27,7 @@ class AddPlantWizardPages extends StatelessWidget {
     required this.onDraftChanged,
   });
 
-  static const int count = 10;
+  static const int count = 11;
 
   final PageController pageController;
   final int page;
@@ -58,7 +59,8 @@ class AddPlantWizardPages extends StatelessWidget {
           StepEnvironment(
             formKey: formKeys[1],
             selected: draft.environment,
-            onSelect: (v) => onDraftChanged(draft.copyWith(environment: Some(v))),
+            onSelect: (v) =>
+                onDraftChanged(draft.copyWith(environment: Some(v))),
           ),
           StepFamily(
             formKey: formKeys[2],
@@ -68,7 +70,8 @@ class AddPlantWizardPages extends StatelessWidget {
           StepMaintenance(
             formKey: formKeys[3],
             selected: draft.maintenance,
-            onSelect: (v) => onDraftChanged(draft.copyWith(maintenance: Some(v))),
+            onSelect: (v) =>
+                onDraftChanged(draft.copyWith(maintenance: Some(v))),
           ),
           StepWatering(
             formKey: formKeys[4],
@@ -80,22 +83,28 @@ class AddPlantWizardPages extends StatelessWidget {
             selected: draft.lighting,
             onSelect: (v) => onDraftChanged(draft.copyWith(lighting: Some(v))),
           ),
-          StepDescription(
+          StepPetToxicity(
             formKey: formKeys[6],
+            selected: draft.petToxicity,
+            onSelect: (v) =>
+                onDraftChanged(draft.copyWith(petToxicity: Some(v))),
+          ),
+          StepDescription(
+            formKey: formKeys[7],
             controller: descriptionController,
           ),
           StepImage(
-            formKey: formKeys[7],
+            formKey: formKeys[8],
             catalog: draft.catalog,
             onUpdate: (c) => onDraftChanged(draft.copyWith(catalog: Some(c))),
           ),
           StepOfferType(
-            formKey: formKeys[8],
+            formKey: formKeys[9],
             selected: draft.offerType,
             onSelect: (v) => onDraftChanged(draft.copyWith(offerType: Some(v))),
           ),
           StepPublish(
-            formKey: formKeys[9],
+            formKey: formKeys[10],
             value: draft.publish,
             onToggle: (v) => onDraftChanged(draft.copyWith(publish: Some(v))),
           ),

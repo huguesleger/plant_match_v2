@@ -51,6 +51,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final TranslationsGetStartedFr getStarted = TranslationsGetStartedFr.internal(_root);
 	late final TranslationsHistoryFr history = TranslationsHistoryFr.internal(_root);
 	late final TranslationsHomeFr home = TranslationsHomeFr.internal(_root);
+	late final TranslationsHomeHighlightFr homeHighlight = TranslationsHomeHighlightFr.internal(_root);
 	late final TranslationsLegalInformationFr legalInformation = TranslationsLegalInformationFr.internal(_root);
 	late final TranslationsLevelFr level = TranslationsLevelFr.internal(_root);
 	late final TranslationsLevelAwardedFr levelAwarded = TranslationsLevelAwardedFr.internal(_root);
@@ -230,8 +231,26 @@ class TranslationsHomeFr {
 	late final TranslationsHomeHeaderFr header = TranslationsHomeHeaderFr.internal(_root);
 	late final TranslationsHomeAroundMeFr around_me = TranslationsHomeAroundMeFr.internal(_root);
 	late final TranslationsHomeCardFr card = TranslationsHomeCardFr.internal(_root);
-	late final TranslationsHomeRecommendationFr recommendation = TranslationsHomeRecommendationFr.internal(_root);
 	late final TranslationsHomeRecentActivityFr recent_activity = TranslationsHomeRecentActivityFr.internal(_root);
+}
+
+// Path: homeHighlight
+class TranslationsHomeHighlightFr {
+	TranslationsHomeHighlightFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Quelqu'un'
+	String get someone => 'Quelqu\'un';
+
+	late final TranslationsHomeHighlightAnswerProposalFr answer_proposal = TranslationsHomeHighlightAnswerProposalFr.internal(_root);
+	late final TranslationsHomeHighlightValidateHandoverFr validate_handover = TranslationsHomeHighlightValidateHandoverFr.internal(_root);
+	late final TranslationsHomeHighlightGenerateCodeFr generate_code = TranslationsHomeHighlightGenerateCodeFr.internal(_root);
+	late final TranslationsHomeHighlightFirstPlantFr first_plant = TranslationsHomeHighlightFirstPlantFr.internal(_root);
+	late final TranslationsHomeHighlightEarnLeavesFr earn_leaves = TranslationsHomeHighlightEarnLeavesFr.internal(_root);
+	late final TranslationsHomeHighlightFindPlantFr find_plant = TranslationsHomeHighlightFindPlantFr.internal(_root);
 }
 
 // Path: legalInformation
@@ -905,6 +924,12 @@ class TranslationsCatalogDetailFr {
 
 	/// fr: 'La suppression a échoué. Réessaie plus tard.'
 	String get delete_error => 'La suppression a échoué. Réessaie plus tard.';
+
+	/// fr: 'Non toxique pour les animaux'
+	String get pet_safe => 'Non toxique pour les animaux';
+
+	/// fr: 'Toxique pour les animaux'
+	String get pet_toxic => 'Toxique pour les animaux';
 }
 
 // Path: catalog.edit
@@ -940,6 +965,7 @@ class TranslationsCatalogEditFr {
 	late final TranslationsCatalogEditWateringFr watering = TranslationsCatalogEditWateringFr.internal(_root);
 	late final TranslationsCatalogEditEnvironmentFr environment = TranslationsCatalogEditEnvironmentFr.internal(_root);
 	late final TranslationsCatalogEditImageFr image = TranslationsCatalogEditImageFr.internal(_root);
+	late final TranslationsCatalogEditPetToxicityFr pet_toxicity = TranslationsCatalogEditPetToxicityFr.internal(_root);
 }
 
 // Path: catalog.wizard
@@ -1029,6 +1055,7 @@ class TranslationsCatalogEnumsFr {
 	late final TranslationsCatalogEnumsMaintenanceFr maintenance = TranslationsCatalogEnumsMaintenanceFr.internal(_root);
 	late final TranslationsCatalogEnumsWateringFr watering = TranslationsCatalogEnumsWateringFr.internal(_root);
 	late final TranslationsCatalogEnumsOfferTypeFr offer_type = TranslationsCatalogEnumsOfferTypeFr.internal(_root);
+	late final TranslationsCatalogEnumsPetToxicityFr pet_toxicity = TranslationsCatalogEnumsPetToxicityFr.internal(_root);
 }
 
 // Path: catalog.sort
@@ -1510,33 +1537,6 @@ class TranslationsHomeCardFr {
 	String distance_owner({required Object distance, required Object name}) => '${distance} km • ${name}';
 }
 
-// Path: home.recommendation
-class TranslationsHomeRecommendationFr {
-	TranslationsHomeRecommendationFr.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// fr: 'Tes suggestions personnalisées'
-	String get title => 'Tes suggestions personnalisées';
-
-	/// fr: 'Ajuster mes préférences'
-	String get adjust_preferences => 'Ajuster mes préférences';
-
-	/// fr: 'Aucune plante ne correspond à tes préférences actuelles.'
-	String get empty => 'Aucune plante ne correspond à tes préférences actuelles.';
-
-	/// fr: 'Ajuster les filtres'
-	String get adjust_filters => 'Ajuster les filtres';
-
-	/// fr: 'Trouve ta plante idéale'
-	String get banner_title => 'Trouve ta plante idéale';
-
-	/// fr: 'Réponds à quelques questions et nous te suggérons des plantes !'
-	String get banner_subtitle => 'Réponds à quelques questions et nous te suggérons des plantes !';
-}
-
 // Path: home.recent_activity
 class TranslationsHomeRecentActivityFr {
 	TranslationsHomeRecentActivityFr.internal(this._root);
@@ -1553,6 +1553,120 @@ class TranslationsHomeRecentActivityFr {
 
 	/// fr: 'Aucune activité récente'
 	String get empty => 'Aucune activité récente';
+}
+
+// Path: homeHighlight.answer_proposal
+class TranslationsHomeHighlightAnswerProposalFr {
+	TranslationsHomeHighlightAnswerProposalFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Nouvelle demande à traiter'
+	String get title => 'Nouvelle demande à traiter';
+
+	/// fr: '${name} te propose son ${offered} contre ton ${target}.'
+	String exchange({required Object name, required Object offered, required Object target}) => '${name} te propose son ${offered} contre ton ${target}.';
+
+	/// fr: '${name} aimerait adopter ton ${plant}.'
+	String donation({required Object name, required Object plant}) => '${name} aimerait adopter ton ${plant}.';
+
+	/// fr: 'Répondre'
+	String get cta => 'Répondre';
+}
+
+// Path: homeHighlight.validate_handover
+class TranslationsHomeHighlightValidateHandoverFr {
+	TranslationsHomeHighlightValidateHandoverFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Valide ta remise'
+	String get title => 'Valide ta remise';
+
+	/// fr: '${name} t'a remis son ${plant} ? Saisis son code pour gagner 2 feuilles.'
+	String subtitle({required Object name, required Object plant}) => '${name} t\'a remis son ${plant} ? Saisis son code pour gagner 2 feuilles.';
+
+	/// fr: 'Valider la remise'
+	String get cta => 'Valider la remise';
+}
+
+// Path: homeHighlight.generate_code
+class TranslationsHomeHighlightGenerateCodeFr {
+	TranslationsHomeHighlightGenerateCodeFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Remise à préparer'
+	String get title => 'Remise à préparer';
+
+	/// fr: 'Génère ton code pour remettre ton ${plant} à ${name}.'
+	String subtitle({required Object plant, required Object name}) => 'Génère ton code pour remettre ton ${plant} à ${name}.';
+
+	/// fr: 'Générer le code'
+	String get cta => 'Générer le code';
+}
+
+// Path: homeHighlight.first_plant
+class TranslationsHomeHighlightFirstPlantFr {
+	TranslationsHomeHighlightFirstPlantFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Publie ta première plante'
+	String get title => 'Publie ta première plante';
+
+	/// fr: 'Propose une plante en don ou en échange pour commencer.'
+	String get subtitle => 'Propose une plante en don ou en échange pour commencer.';
+
+	/// fr: 'Publier une plante'
+	String get cta => 'Publier une plante';
+}
+
+// Path: homeHighlight.earn_leaves
+class TranslationsHomeHighlightEarnLeavesFr {
+	TranslationsHomeHighlightEarnLeavesFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Plus de feuilles pour contacter'
+	String get title => 'Plus de feuilles pour contacter';
+
+	/// fr: 'Parraine un ami et gagne 2 feuilles.'
+	String get subtitle => 'Parraine un ami et gagne 2 feuilles.';
+
+	/// fr: 'Partager mon code'
+	String get cta => 'Partager mon code';
+
+	/// fr: 'Rejoins-moi sur PlantMatch pour échanger des plantes ! Utilise mon code de parrainage ${code} à l'inscription.'
+	String share({required Object code}) => 'Rejoins-moi sur PlantMatch pour échanger des plantes ! Utilise mon code de parrainage ${code} à l\'inscription.';
+}
+
+// Path: homeHighlight.find_plant
+class TranslationsHomeHighlightFindPlantFr {
+	TranslationsHomeHighlightFindPlantFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Trouve ta plante idéale'
+	String get title => 'Trouve ta plante idéale';
+
+	/// fr: 'Réponds à quelques questions et nous te suggérons des plantes !'
+	String get subtitle => 'Réponds à quelques questions et nous te suggérons des plantes !';
+
+	/// fr: 'Commencer'
+	String get cta => 'Commencer';
 }
 
 // Path: legalInformation.screen
@@ -2194,6 +2308,12 @@ class TranslationsRecommendationResultFr {
 
 	/// fr: 'Refaire le test'
 	String get retake => 'Refaire le test';
+
+	/// fr: 'Aucune plante ne correspond exactement, mais celles-ci s'en approchent !'
+	String get no_exact_match => 'Aucune plante ne correspond exactement, mais celles-ci s\'en approchent !';
+
+	/// fr: 'Ça pourrait aussi te plaire'
+	String get alternatives_title => 'Ça pourrait aussi te plaire';
 }
 
 // Path: recommendation.card
@@ -2206,6 +2326,11 @@ class TranslationsRecommendationCardFr {
 
 	/// fr: 'Aucune description'
 	String get no_description => 'Aucune description';
+
+	/// fr: '${score} %'
+	String score({required Object score}) => '${score} %';
+
+	late final TranslationsRecommendationCardReasonsFr reasons = TranslationsRecommendationCardReasonsFr.internal(_root);
 }
 
 // Path: user.bio
@@ -2846,6 +2971,18 @@ class TranslationsCatalogEditImageFr {
 	String get title => 'Sélectionner une à trois photos de votre plante';
 }
 
+// Path: catalog.edit.pet_toxicity
+class TranslationsCatalogEditPetToxicityFr {
+	TranslationsCatalogEditPetToxicityFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Toxicité pour les animaux'
+	String get title => 'Toxicité pour les animaux';
+}
+
 // Path: catalog.wizard.quit_dialog
 class TranslationsCatalogWizardQuitDialogFr {
 	TranslationsCatalogWizardQuitDialogFr.internal(this._root);
@@ -2881,6 +3018,7 @@ class TranslationsCatalogWizardStepsFr {
 	late final TranslationsCatalogWizardStepsImageFr image = TranslationsCatalogWizardStepsImageFr.internal(_root);
 	late final TranslationsCatalogWizardStepsWateringFr watering = TranslationsCatalogWizardStepsWateringFr.internal(_root);
 	late final TranslationsCatalogWizardStepsLightingFr lighting = TranslationsCatalogWizardStepsLightingFr.internal(_root);
+	late final TranslationsCatalogWizardStepsPetToxicityFr pet_toxicity = TranslationsCatalogWizardStepsPetToxicityFr.internal(_root);
 	late final TranslationsCatalogWizardStepsMaintenanceFr maintenance = TranslationsCatalogWizardStepsMaintenanceFr.internal(_root);
 	late final TranslationsCatalogWizardStepsOfferTypeFr offer_type = TranslationsCatalogWizardStepsOfferTypeFr.internal(_root);
 	late final TranslationsCatalogWizardStepsPublishFr publish = TranslationsCatalogWizardStepsPublishFr.internal(_root);
@@ -2965,6 +3103,24 @@ class TranslationsCatalogEnumsOfferTypeFr {
 
 	/// fr: 'Donation'
 	String get donation => 'Donation';
+}
+
+// Path: catalog.enums.pet_toxicity
+class TranslationsCatalogEnumsPetToxicityFr {
+	TranslationsCatalogEnumsPetToxicityFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Non toxique'
+	String get safe => 'Non toxique';
+
+	/// fr: 'Toxique'
+	String get toxic => 'Toxique';
+
+	/// fr: 'Je ne sais pas'
+	String get unknown => 'Je ne sais pas';
 }
 
 // Path: chatPlant.view.unblock_dialog
@@ -3602,6 +3758,30 @@ class TranslationsProfilCardsAwardsFr {
 	String get description => 'Mes badges et mon niveau';
 }
 
+// Path: recommendation.card.reasons
+class TranslationsRecommendationCardReasonsFr {
+	TranslationsRecommendationCardReasonsFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Lumière idéale'
+	String get light => 'Lumière idéale';
+
+	/// fr: 'Entretien adapté'
+	String get care => 'Entretien adapté';
+
+	/// fr: 'À ${distance} km'
+	String nearby({required Object distance}) => 'À ${distance} km';
+
+	/// fr: 'Sans danger pour tes animaux'
+	String get pet_safe => 'Sans danger pour tes animaux';
+
+	/// fr: 'Toxicité non vérifiée'
+	String get pet_unverified => 'Toxicité non vérifiée';
+}
+
 // Path: user.detail_plant.no_leaves
 class TranslationsUserDetailPlantNoLeavesFr {
 	TranslationsUserDetailPlantNoLeavesFr.internal(this._root);
@@ -4004,6 +4184,33 @@ class TranslationsCatalogWizardStepsLightingFr {
 	String get shade => 'Ombre';
 }
 
+// Path: catalog.wizard.steps.pet_toxicity
+class TranslationsCatalogWizardStepsPetToxicityFr {
+	TranslationsCatalogWizardStepsPetToxicityFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Animaux'
+	String get title => 'Animaux';
+
+	/// fr: 'Cette plante est-elle dangereuse pour les chats et les chiens ?'
+	String get description => 'Cette plante est-elle dangereuse pour les chats et les chiens ?';
+
+	/// fr: 'Toxicité'
+	String get label => 'Toxicité';
+
+	/// fr: 'Sans danger pour les animaux de compagnie'
+	String get safe_subtitle => 'Sans danger pour les animaux de compagnie';
+
+	/// fr: 'Dangereuse en cas d'ingestion'
+	String get toxic_subtitle => 'Dangereuse en cas d\'ingestion';
+
+	/// fr: 'Les adoptants seront prévenus que ce n'est pas vérifié'
+	String get unknown_subtitle => 'Les adoptants seront prévenus que ce n\'est pas vérifié';
+}
+
 // Path: catalog.wizard.steps.maintenance
 class TranslationsCatalogWizardStepsMaintenanceFr {
 	TranslationsCatalogWizardStepsMaintenanceFr.internal(this._root);
@@ -4303,6 +4510,8 @@ extension on Translations {
 			'catalog.detail.delete_dialog.content' => ({required Object name}) => 'Êtes-vous sûr de vouloir supprimer "${name}" ?\n\nCette action est irréversible.',
 			'catalog.detail.delete_dialog.cancel' => 'Annuler',
 			'catalog.detail.delete_error' => 'La suppression a échoué. Réessaie plus tard.',
+			'catalog.detail.pet_safe' => 'Non toxique pour les animaux',
+			'catalog.detail.pet_toxic' => 'Toxique pour les animaux',
 			'catalog.edit.title' => 'Modifier ma plante',
 			'catalog.edit.modifier_with_name' => ({required Object name}) => 'Modifier ${name}',
 			'catalog.edit.save' => 'Enregistrer les modifications',
@@ -4324,6 +4533,7 @@ extension on Translations {
 			'catalog.edit.watering.title' => 'Sélectionner le besoin en eau',
 			'catalog.edit.environment.title' => 'Sélectionner une catégorie pour votre plante',
 			'catalog.edit.image.title' => 'Sélectionner une à trois photos de votre plante',
+			'catalog.edit.pet_toxicity.title' => 'Toxicité pour les animaux',
 			'catalog.wizard.title' => 'Ajouter une plante',
 			'catalog.wizard.error_image' => 'Erreur lors de la sélection d’image.',
 			'catalog.wizard.select_images' => 'Sélectionner des images',
@@ -4363,6 +4573,12 @@ extension on Translations {
 			'catalog.wizard.steps.lighting.sun' => 'Soleil',
 			'catalog.wizard.steps.lighting.indirect' => 'Indirecte',
 			'catalog.wizard.steps.lighting.shade' => 'Ombre',
+			'catalog.wizard.steps.pet_toxicity.title' => 'Animaux',
+			'catalog.wizard.steps.pet_toxicity.description' => 'Cette plante est-elle dangereuse pour les chats et les chiens ?',
+			'catalog.wizard.steps.pet_toxicity.label' => 'Toxicité',
+			'catalog.wizard.steps.pet_toxicity.safe_subtitle' => 'Sans danger pour les animaux de compagnie',
+			'catalog.wizard.steps.pet_toxicity.toxic_subtitle' => 'Dangereuse en cas d\'ingestion',
+			'catalog.wizard.steps.pet_toxicity.unknown_subtitle' => 'Les adoptants seront prévenus que ce n\'est pas vérifié',
 			'catalog.wizard.steps.maintenance.title' => 'Entretien',
 			'catalog.wizard.steps.maintenance.description' => 'Niveau de difficulté',
 			'catalog.wizard.steps.maintenance.label' => 'Difficulté',
@@ -4397,6 +4613,9 @@ extension on Translations {
 			'catalog.enums.watering.regularly' => 'Régulier',
 			'catalog.enums.offer_type.exchange' => 'Échange',
 			'catalog.enums.offer_type.donation' => 'Donation',
+			'catalog.enums.pet_toxicity.safe' => 'Non toxique',
+			'catalog.enums.pet_toxicity.toxic' => 'Toxique',
+			'catalog.enums.pet_toxicity.unknown' => 'Je ne sais pas',
 			'catalog.sort.title' => 'Trier par',
 			'catalog.sort.newest' => 'Plus récent',
 			'catalog.sort.nameAsc' => 'Nom de la plante : A à Z',
@@ -4508,15 +4727,30 @@ extension on Translations {
 			'home.card.exchange' => 'Échange',
 			'home.card.donation' => 'Donation',
 			'home.card.distance_owner' => ({required Object distance, required Object name}) => '${distance} km • ${name}',
-			'home.recommendation.title' => 'Tes suggestions personnalisées',
-			'home.recommendation.adjust_preferences' => 'Ajuster mes préférences',
-			'home.recommendation.empty' => 'Aucune plante ne correspond à tes préférences actuelles.',
-			'home.recommendation.adjust_filters' => 'Ajuster les filtres',
-			'home.recommendation.banner_title' => 'Trouve ta plante idéale',
-			'home.recommendation.banner_subtitle' => 'Réponds à quelques questions et nous te suggérons des plantes !',
 			'home.recent_activity.title' => 'Activité récente',
 			'home.recent_activity.see_all' => 'Voir tout',
 			'home.recent_activity.empty' => 'Aucune activité récente',
+			'homeHighlight.someone' => 'Quelqu\'un',
+			'homeHighlight.answer_proposal.title' => 'Nouvelle demande à traiter',
+			'homeHighlight.answer_proposal.exchange' => ({required Object name, required Object offered, required Object target}) => '${name} te propose son ${offered} contre ton ${target}.',
+			'homeHighlight.answer_proposal.donation' => ({required Object name, required Object plant}) => '${name} aimerait adopter ton ${plant}.',
+			'homeHighlight.answer_proposal.cta' => 'Répondre',
+			'homeHighlight.validate_handover.title' => 'Valide ta remise',
+			'homeHighlight.validate_handover.subtitle' => ({required Object name, required Object plant}) => '${name} t\'a remis son ${plant} ? Saisis son code pour gagner 2 feuilles.',
+			'homeHighlight.validate_handover.cta' => 'Valider la remise',
+			'homeHighlight.generate_code.title' => 'Remise à préparer',
+			'homeHighlight.generate_code.subtitle' => ({required Object plant, required Object name}) => 'Génère ton code pour remettre ton ${plant} à ${name}.',
+			'homeHighlight.generate_code.cta' => 'Générer le code',
+			'homeHighlight.first_plant.title' => 'Publie ta première plante',
+			'homeHighlight.first_plant.subtitle' => 'Propose une plante en don ou en échange pour commencer.',
+			'homeHighlight.first_plant.cta' => 'Publier une plante',
+			'homeHighlight.earn_leaves.title' => 'Plus de feuilles pour contacter',
+			'homeHighlight.earn_leaves.subtitle' => 'Parraine un ami et gagne 2 feuilles.',
+			'homeHighlight.earn_leaves.cta' => 'Partager mon code',
+			'homeHighlight.earn_leaves.share' => ({required Object code}) => 'Rejoins-moi sur PlantMatch pour échanger des plantes ! Utilise mon code de parrainage ${code} à l\'inscription.',
+			'homeHighlight.find_plant.title' => 'Trouve ta plante idéale',
+			'homeHighlight.find_plant.subtitle' => 'Réponds à quelques questions et nous te suggérons des plantes !',
+			'homeHighlight.find_plant.cta' => 'Commencer',
 			'legalInformation.screen.title' => 'Informations juridiques',
 			'legalInformation.items.privacy_policy' => 'Politique de confidentialité',
 			'legalInformation.items.terms' => 'Conditions d\'utilisation',
@@ -4647,6 +4881,8 @@ extension on Translations {
 			'personalInformation.avatar.none' => 'Aucune photo',
 			'personalInformation.avatar.cancel' => 'Annuler',
 			'personalInformation.avatar.validate' => 'Valider',
+			_ => null,
+		} ?? switch (path) {
 			'personalInformation.avatar.dialog_title' => 'Sélectionnez un avatar',
 			'profil.navigation.personal_info' => 'Informations personnelles',
 			'profil.navigation.history' => 'Historique d’échanges',
@@ -4674,8 +4910,6 @@ extension on Translations {
 			'recentActivity.tile.hours' => ({required Object count}) => '${count} h',
 			'recentActivity.tile.days' => ({required Object count}) => '${count} j',
 			'recommendation.screen.title' => 'Trouve ta plante',
-			_ => null,
-		} ?? switch (path) {
 			'recommendation.screen.step' => ({required Object current, required Object total}) => 'Étape ${current} sur ${total}',
 			'recommendation.footer.back' => 'Retour',
 			'recommendation.footer.next' => 'Suivant',
@@ -4715,7 +4949,15 @@ extension on Translations {
 			'recommendation.result.restart' => 'Recommencer le questionnaire',
 			'recommendation.result.found' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Nous avons trouvé 1 plante idéale pour toi !', other: 'Nous avons trouvé ${n} plantes idéales pour toi !', ), 
 			'recommendation.result.retake' => 'Refaire le test',
+			'recommendation.result.no_exact_match' => 'Aucune plante ne correspond exactement, mais celles-ci s\'en approchent !',
+			'recommendation.result.alternatives_title' => 'Ça pourrait aussi te plaire',
 			'recommendation.card.no_description' => 'Aucune description',
+			'recommendation.card.score' => ({required Object score}) => '${score} %',
+			'recommendation.card.reasons.light' => 'Lumière idéale',
+			'recommendation.card.reasons.care' => 'Entretien adapté',
+			'recommendation.card.reasons.nearby' => ({required Object distance}) => 'À ${distance} km',
+			'recommendation.card.reasons.pet_safe' => 'Sans danger pour tes animaux',
+			'recommendation.card.reasons.pet_unverified' => 'Toxicité non vérifiée',
 			'user.bio.empty' => 'Pas encore de description...',
 			'user.stats.plants' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'plante', other: 'plantes', ), 
 			'user.stats.matches' => 'plantMatch',

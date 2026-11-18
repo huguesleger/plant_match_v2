@@ -5,7 +5,6 @@ import 'package:plant_match_v2/core/widgets/refresh/refresh_screen.dart';
 import 'package:plant_match_v2/features/around_me_map/presentation/cubit/around_me_cubit.dart';
 import 'package:plant_match_v2/features/home/domain/entities/home.dart';
 import 'package:plant_match_v2/features/home/presentation/cubit/home_cubit.dart';
-import 'package:plant_match_v2/features/home/presentation/cubit/home_recommendation.dart';
 import 'package:plant_match_v2/features/home/presentation/widgets/home_sections.dart';
 import 'package:plant_match_v2/features/profil/presentation/cubit/profil_cubit.dart';
 import 'package:plant_match_v2/features/user/domain/entities/catalog_filter.dart';
@@ -16,14 +15,12 @@ class HomeContent extends StatelessWidget {
     required this.uid,
     required this.home,
     required this.filter,
-    required this.recommendation,
     required this.isLoading,
   });
 
   final String uid;
   final Home home;
   final CatalogFilter filter;
-  final HomeRecommendation recommendation;
   final bool isLoading;
 
   @override
@@ -44,7 +41,6 @@ class HomeContent extends StatelessWidget {
             padding: const EdgeInsets.only(top: 24, bottom: 16),
             child: HomeSections(
               home: home,
-              recommendation: recommendation,
               isLoading: isLoading,
             ),
           ),
