@@ -1,0 +1,10 @@
+{
+  "count(n)": {
+    "one": "$n plante disponible",
+    "other": "$n plantes disponibles"
+  },
+  "filter_empty": "Aucune plante de cette famille ne correspond à ce filtre.",
+  "empty_title": "Aucune plante de la famille ${family} pour l'instant",
+  "empty_description": "Sois le premier à en proposer une, en don ou en échange !",
+  "publish": "Publier une plante"
+}

@@ -15,6 +15,11 @@ final List<FamilyItem> familyItems = [
     icon: LucideIcons.clover,
   ),
   FamilyItem(
+    label: t.catalog.families.cactus,
+    value: Family.cactus,
+    icon: LucideIcons.shrub,
+  ),
+  FamilyItem(
     label: t.catalog.families.aquatic,
     value: Family.aquatic,
     icon: LucideIcons.waves,

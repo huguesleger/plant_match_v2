@@ -144,6 +144,9 @@ class $ResImagesGen {
   AssetGenImage get emptyTchat =>
       const AssetGenImage('res/images/empty_tchat.png');
 
+  /// Directory path: res/images/family
+  $ResImagesFamilyGen get family => const $ResImagesFamilyGen();
+
   /// File path: res/images/header_catalog.jpg
   AssetGenImage get headerCatalog =>
       const AssetGenImage('res/images/header_catalog.jpg');
@@ -313,6 +316,64 @@ class $ResImagesAvatarGen {
         avatar7,
         avatar8,
         avatar9
+      ];
+}
+
+class $ResImagesFamilyGen {
+  const $ResImagesFamilyGen();
+
+  /// File path: res/images/family/aquatic.jpg
+  AssetGenImage get aquatic =>
+      const AssetGenImage('res/images/family/aquatic.jpg');
+
+  /// File path: res/images/family/aromatic.jpg
+  AssetGenImage get aromatic =>
+      const AssetGenImage('res/images/family/aromatic.jpg');
+
+  /// File path: res/images/family/bonsai.jpg
+  AssetGenImage get bonsai =>
+      const AssetGenImage('res/images/family/bonsai.jpg');
+
+  /// File path: res/images/family/cactus.jpg
+  AssetGenImage get cactus =>
+      const AssetGenImage('res/images/family/cactus.jpg');
+
+  /// File path: res/images/family/carnivorous.jpg
+  AssetGenImage get carnivorous =>
+      const AssetGenImage('res/images/family/carnivorous.jpg');
+
+  /// File path: res/images/family/climbing.jpg
+  AssetGenImage get climbing =>
+      const AssetGenImage('res/images/family/climbing.jpg');
+
+  /// File path: res/images/family/flower.jpg
+  AssetGenImage get flower =>
+      const AssetGenImage('res/images/family/flower.jpg');
+
+  /// File path: res/images/family/medical.jpg
+  AssetGenImage get medical =>
+      const AssetGenImage('res/images/family/medical.jpg');
+
+  /// File path: res/images/family/succulent.jpg
+  AssetGenImage get succulent =>
+      const AssetGenImage('res/images/family/succulent.jpg');
+
+  /// File path: res/images/family/tropical.jpg
+  AssetGenImage get tropical =>
+      const AssetGenImage('res/images/family/tropical.jpg');
+
+  /// List of all assets
+  List<AssetGenImage> get values => [
+        aquatic,
+        aromatic,
+        bonsai,
+        cactus,
+        carnivorous,
+        climbing,
+        flower,
+        medical,
+        succulent,
+        tropical
       ];
 }
 

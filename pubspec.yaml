@@ -141,6 +141,7 @@ flutter:
     - res/images/onboarding/
     - res/images/auth/
     - res/images/avatar/
+    - res/images/family/
     - res/animations/
 
   # An image asset can refer to one or more resolution-specific "variants", see

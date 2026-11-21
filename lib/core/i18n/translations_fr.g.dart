@@ -47,6 +47,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final TranslationsChatPlantFr chatPlant = TranslationsChatPlantFr.internal(_root);
 	late final TranslationsCommonFr common = TranslationsCommonFr.internal(_root);
 	late final TranslationsExchangeFr exchange = TranslationsExchangeFr.internal(_root);
+	late final TranslationsFamilyExplorerFr familyExplorer = TranslationsFamilyExplorerFr.internal(_root);
 	late final TranslationsFavoriteFr favorite = TranslationsFavoriteFr.internal(_root);
 	late final TranslationsGetStartedFr getStarted = TranslationsGetStartedFr.internal(_root);
 	late final TranslationsHistoryFr history = TranslationsHistoryFr.internal(_root);
@@ -177,6 +178,33 @@ class TranslationsExchangeFr {
 	late final TranslationsExchangePickerFr picker = TranslationsExchangePickerFr.internal(_root);
 }
 
+// Path: familyExplorer
+class TranslationsFamilyExplorerFr {
+	TranslationsFamilyExplorerFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '(one) {$n plante disponible} (other) {$n plantes disponibles}'
+	String count({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} plante disponible',
+		other: '${n} plantes disponibles',
+	);
+
+	/// fr: 'Aucune plante de cette famille ne correspond à ce filtre.'
+	String get filter_empty => 'Aucune plante de cette famille ne correspond à ce filtre.';
+
+	/// fr: 'Aucune plante de la famille ${family} pour l'instant'
+	String empty_title({required Object family}) => 'Aucune plante de la famille ${family} pour l\'instant';
+
+	/// fr: 'Sois le premier à en proposer une, en don ou en échange !'
+	String get empty_description => 'Sois le premier à en proposer une, en don ou en échange !';
+
+	/// fr: 'Publier une plante'
+	String get publish => 'Publier une plante';
+}
+
 // Path: favorite
 class TranslationsFavoriteFr {
 	TranslationsFavoriteFr.internal(this._root);
@@ -229,6 +257,7 @@ class TranslationsHomeFr {
 
 	// Translations
 	late final TranslationsHomeHeaderFr header = TranslationsHomeHeaderFr.internal(_root);
+	late final TranslationsHomeFamiliesFr families = TranslationsHomeFamiliesFr.internal(_root);
 	late final TranslationsHomeAroundMeFr around_me = TranslationsHomeAroundMeFr.internal(_root);
 	late final TranslationsHomeCardFr card = TranslationsHomeCardFr.internal(_root);
 	late final TranslationsHomeRecentActivityFr recent_activity = TranslationsHomeRecentActivityFr.internal(_root);
@@ -1021,6 +1050,9 @@ class TranslationsCatalogFamiliesFr {
 	/// fr: 'Succulente'
 	String get succulent => 'Succulente';
 
+	/// fr: 'Cactus'
+	String get cactus => 'Cactus';
+
 	/// fr: 'Aquatique'
 	String get aquatic => 'Aquatique';
 
@@ -1496,6 +1528,27 @@ class TranslationsHomeHeaderFr {
 
 	/// fr: 'Prêt à échanger ou donner de nouvelles plantes ?'
 	String get subtitle => 'Prêt à échanger ou donner\nde nouvelles plantes ?';
+}
+
+// Path: home.families
+class TranslationsHomeFamiliesFr {
+	TranslationsHomeFamiliesFr.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Explorer par famille'
+	String get title => 'Explorer par famille';
+
+	/// fr: '(one) {$n plante} (other) {$n plantes}'
+	String count({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} plante',
+		other: '${n} plantes',
+	);
+
+	/// fr: 'Aucune pour l'instant'
+	String get empty => 'Aucune pour l\'instant';
 }
 
 // Path: home.around_me
@@ -4594,6 +4647,7 @@ extension on Translations {
 			'catalog.wizard.quota_reached' => ({required Object max}) => 'Tu as déjà publié ${max} plantes identiques ces dernières 48 h. Réessaie un peu plus tard.',
 			'catalog.families.tropical' => 'Tropicale',
 			'catalog.families.succulent' => 'Succulente',
+			'catalog.families.cactus' => 'Cactus',
 			'catalog.families.aquatic' => 'Aquatique',
 			'catalog.families.climbing' => 'Grimpante',
 			'catalog.families.bonsai' => 'Bonsaï',
@@ -4690,6 +4744,11 @@ extension on Translations {
 			'exchange.picker.no_plants_description' => 'Ajoute une plante proposée à l\'échange pour pouvoir la proposer en retour.',
 			'exchange.picker.add_plant' => 'Ajouter une plante',
 			'exchange.picker.subtitle' => 'Sélectionne la plante que tu veux proposer en échange.',
+			'familyExplorer.count' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} plante disponible', other: '${n} plantes disponibles', ), 
+			'familyExplorer.filter_empty' => 'Aucune plante de cette famille ne correspond à ce filtre.',
+			'familyExplorer.empty_title' => ({required Object family}) => 'Aucune plante de la famille ${family} pour l\'instant',
+			'familyExplorer.empty_description' => 'Sois le premier à en proposer une, en don ou en échange !',
+			'familyExplorer.publish' => 'Publier une plante',
 			'favorite.screen.title' => 'Mes Favoris',
 			'favorite.screen.plants_tab' => ({required Object count}) => 'Plantes (${count})',
 			'favorite.screen.users_tab' => ({required Object count}) => 'Profils (${count})',
@@ -4720,6 +4779,9 @@ extension on Translations {
 			'history.status.pending' => 'En attente',
 			'home.header.greeting' => ({required Object name}) => 'Hello, ${name}',
 			'home.header.subtitle' => 'Prêt à échanger ou donner\nde nouvelles plantes ?',
+			'home.families.title' => 'Explorer par famille',
+			'home.families.count' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} plante', other: '${n} plantes', ), 
+			'home.families.empty' => 'Aucune pour l\'instant',
 			'home.around_me.title' => 'Autour de toi',
 			'home.around_me.see_on_map' => 'Voir sur la carte',
 			'home.around_me.no_location' => 'Activez la géolocalisation pour voir les plantes autour de vous',
@@ -4872,6 +4934,8 @@ extension on Translations {
 			'personalInformation.wizard.referral.hint' => 'Ex : PM-XYZ12',
 			'personalInformation.wizard.referral.label' => 'Code de parrainage (Optionnel)',
 			'personalInformation.wizard.leave.title' => 'Quitter sans enregistrer ?',
+			_ => null,
+		} ?? switch (path) {
 			'personalInformation.wizard.leave.content' => 'Vos modifications ne seront pas enregistrées.',
 			'personalInformation.wizard.leave.confirm' => 'Quitter',
 			'personalInformation.avatar.sheet_title' => 'Photo de profil',
@@ -4881,8 +4945,6 @@ extension on Translations {
 			'personalInformation.avatar.none' => 'Aucune photo',
 			'personalInformation.avatar.cancel' => 'Annuler',
 			'personalInformation.avatar.validate' => 'Valider',
-			_ => null,
-		} ?? switch (path) {
 			'personalInformation.avatar.dialog_title' => 'Sélectionnez un avatar',
 			'profil.navigation.personal_info' => 'Informations personnelles',
 			'profil.navigation.history' => 'Historique d’échanges',

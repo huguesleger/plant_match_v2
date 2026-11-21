@@ -3,6 +3,14 @@
     "greeting": "Hello, ${name}",
     "subtitle": "Prêt à échanger ou donner\nde nouvelles plantes ?"
   },
+  "families": {
+    "title": "Explorer par famille",
+    "count(n)": {
+      "one": "$n plante",
+      "other": "$n plantes"
+    },
+    "empty": "Aucune pour l'instant"
+  },
   "around_me": {
     "title": "Autour de toi",
     "see_on_map": "Voir sur la carte",

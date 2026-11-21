@@ -1,6 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:plant_match_v2/core/util/distance/distance_helper.dart';
 import 'package:plant_match_v2/features/catalog/domain/entity/catalog.dart';
+import 'package:plant_match_v2/features/home/domain/entities/family_overview.dart';
 import 'package:plant_match_v2/features/profil/domain/entity/profil_user.dart';
 import 'package:plant_match_v2/features/recent_activity/domain/entities/recent_activity.dart';
 import 'package:plant_match_v2/features/user/domain/entities/catalog_filter.dart';
@@ -11,6 +12,7 @@ class Home {
   final Map<String, List<Catalog>> userCatalogs;
   final List<(Catalog, ProfilUser, double)> nearbyPlants;
   final List<RecentActivity> recentActivities;
+  final List<FamilyOverview> families;
   final bool isGeolocated;
 
   const Home({
@@ -19,6 +21,7 @@ class Home {
     required this.userCatalogs,
     required this.nearbyPlants,
     required this.recentActivities,
+    required this.families,
     required this.isGeolocated,
   });
 
@@ -41,6 +44,12 @@ class Home {
         users: users,
         userCatalogs: userCatalogs,
       ).take(_recentActivitiesLimit).toList(),
+      families: FamilyOverview.fromPlants(
+        others
+            .expand((other) => other.$2)
+            .where(_isPublished)
+            .toList(),
+      ),
       isGeolocated: DistanceHelper.hasValidLocation(currentUser),
     );
   }
@@ -54,6 +63,7 @@ class Home {
           (_) => (Catalog.boneMock(), ProfilUser.boneMock(), 1.5),
         ),
         recentActivities: List.generate(3, (_) => RecentActivity.boneMock()),
+        families: FamilyOverview.boneMocks(),
         isGeolocated: true,
       );
 
@@ -103,12 +113,5 @@ class Home {
       catalog.status == CatalogStatus.published;
 
   static bool _matches(Catalog catalog, CatalogFilter filter) =>
-      _isPublished(catalog) &&
-      switch (filter) {
-        CatalogFilter.all => true,
-        CatalogFilter.donation => catalog.offerType == OfferType.donation,
-        CatalogFilter.exchange => catalog.offerType == OfferType.exchange,
-        CatalogFilter.outdoor => catalog.environment == Environment.outdoor,
-        CatalogFilter.indoor => catalog.environment == Environment.indoor,
-      };
+      _isPublished(catalog) && filter.accepts(catalog);
 }

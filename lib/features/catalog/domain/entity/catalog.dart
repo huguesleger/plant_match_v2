@@ -200,6 +200,7 @@ enum Environment {
 enum Family {
   tropical,
   succulent,
+  cactus,
   aquatic,
   climbing,
   bonsai,
@@ -284,6 +285,7 @@ extension FamilyExtension on Family {
   String get familyName => switch (this) {
         Family.tropical => t.catalog.families.tropical,
         Family.succulent => t.catalog.families.succulent,
+        Family.cactus => t.catalog.families.cactus,
         Family.aquatic => t.catalog.families.aquatic,
         Family.climbing => t.catalog.families.climbing,
         Family.bonsai => t.catalog.families.bonsai,
